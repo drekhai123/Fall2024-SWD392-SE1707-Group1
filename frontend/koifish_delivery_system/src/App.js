@@ -1,10 +1,11 @@
-import logo from './logo.svg';
+
 import './App.css';
-import Homepage from './components/common/Homepage';
+import Homepage from './components/common/homepage';
+
 
 function App() {
   return (
-   <Homepage/>
+    <Homepage/>
   );
 }
 

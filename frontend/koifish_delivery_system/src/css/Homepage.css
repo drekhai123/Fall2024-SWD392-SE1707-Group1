@@ -1,29 +1,52 @@
-/* homepage.css */
+/* Content Section Styles */
+.content-section {
+  padding: 0px 5vw;
+}
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-  }
-  
-  .header {
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .main-content {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-  }
-  
-  .footer {
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-  }
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 50px;
+  gap: 20px;
+  opacity: 0; /* Initially hidden */
+  transform: translateX(-100px); /* Start off-screen to the left */
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Transition for animation */
+}
+
+/* When row becomes visible, apply the animation */
+.row.visible {
+  opacity: 1;
+  transform: translateX(0); /* Slide back to its normal position */
+}
+
+.row.reverse {
+  flex-direction: row-reverse; /* Flip image and text positions */
+}
+
+.content-image {
+  width: 400px;
+  height: 300px;
+  object-fit: cover;
+}
+
+.content-text {
+  max-width: 500px;
+}
+
+.content-text h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.content-text p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.divider {
+  height: 2px;
+  width: 80%;
+  background-color: #ff7700; /* Color of the divider */
+  margin: 40px auto; /* Center it horizontally */
+}
