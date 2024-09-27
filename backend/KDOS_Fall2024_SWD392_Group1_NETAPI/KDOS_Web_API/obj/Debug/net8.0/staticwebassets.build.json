@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "7IqW5H83tvzwspMY3hYMa8wiJjG72o6wQ7t9T3aMNdU=",
+  "Source": "KDOS_Web_API",
+  "BasePath": "_content/KDOS_Web_API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
