@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KDOS_Web_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+511044bb158d6a95503de8bf6ba061ac800a8665")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4cb147942490acc2a43c0862b1c7ce12a7c63686")]
 [assembly: System.Reflection.AssemblyProductAttribute("KDOS_Web_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KDOS_Web_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
