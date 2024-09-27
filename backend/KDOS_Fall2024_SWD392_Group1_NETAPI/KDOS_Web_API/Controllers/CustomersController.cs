@@ -14,7 +14,7 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class CustomersController : Controller
     {
-        // GET: /<controller>/
+        // GETALLcustomer /<controller>/
         [HttpGet]
         public IActionResult GetAllCustomers()
         {

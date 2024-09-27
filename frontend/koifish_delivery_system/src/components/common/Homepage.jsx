@@ -3,6 +3,7 @@ import Navbar from './navbar'
 import "../../css/homepage.css"
 import Footer from "./footer";
 import Blogcarousel from "./blogcarousel";
+import Customerdashboard from "../admin/customerdashboard";
 export default function Homepage() {
     const rowsRef = useRef([]);
     const imageList = [
@@ -90,6 +91,8 @@ export default function Homepage() {
       </div>
       <div className="divider"></div>
       <Blogcarousel/>
+      <div className="divider"></div>
+      <Customerdashboard/>
     </section>
     </div>
     <Footer/>
