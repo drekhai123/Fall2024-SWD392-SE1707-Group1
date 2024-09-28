@@ -1,16 +1,12 @@
 ﻿using System;
+using System.Xml.Linq;
 using KDOS.Data.Models;
 
 namespace KDOS.Data.Data
 {
 	public class CustomerData
 	{
-		public CustomerData()
-		{
-		}
-		public List<Customer> GetAllData()
-		{
-            var customerList = new List<Customer>
+        List<Customer> customerList = new List<Customer>
             { new Customer
                 {
                     CustomerId = Guid.NewGuid(),
@@ -30,8 +26,34 @@ namespace KDOS.Data.Data
                     Email="inusakuya@gensokyo.com",
                 }
             };
+        public List<Customer> GetAllData()
+		{
             return customerList;
         }
-	}
+        public Customer GetCustomerById(Guid id)
+        {
+            Customer? foundCustomer = null;
+            foreach (Customer customer in customerList)
+            {
+                if (customer.CustomerId.Equals(id))
+                {
+                    foundCustomer = customer;
+                }
+            }
+            return foundCustomer!; //Possible Null value !
+        }
+        public Customer GetCustomerByName(String name)
+        {
+            Customer? foundCustomer = null;
+            foreach (Customer customer in customerList)
+            {
+                if (customer.CustomerName.Equals(name))
+                {
+                    foundCustomer = customer;
+                }
+            }
+            return foundCustomer!; //Possible Null value !
+        }
+    }
 }
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KDOS.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4cb147942490acc2a43c0862b1c7ce12a7c63686")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd265944a74f0f8458c9d816226e528a7b686781")]
 [assembly: System.Reflection.AssemblyProductAttribute("KDOS.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KDOS.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
