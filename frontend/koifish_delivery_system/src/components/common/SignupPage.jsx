@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import '../../css/SignupPage.css';
 
-const LoginPage = () => {
+const SignupPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
   const handleChangeUsername = (e) => {
@@ -13,21 +14,24 @@ const LoginPage = () => {
   const handleChangePassword = (e) => {
     setPassword(e.target.value);
   };
-  const handleLoginClick = (e) => {
+  const handleChangeConfirmPassword = (e) => {
+    setConfirmPassword(e.target.value);
+  };
+  const handleSignupClick = (e) => {
     e.preventDefault();
   };
-  const handleSignupClick = () => {
-    navigate('/signup');
+  const handleLoginClick = () => {
+    navigate('/login');
   };
 
   return (
-    <div className='login-page-container'>
+    <div className='signup-page-container'>
       <div className='brand-container'>
         <img src='/assets/brand.jpg' alt='Brand' className='brand-img' />
       </div>
-      <div className='login-container'>
-        <form className='login-form'>
-          <p className='login-form-title'>
+      <div className='signup-container'>
+        <form className='signup-form'>
+          <p className='signup-form-title'>
             Welcome to Koi Transportation Service
           </p>
           <input
@@ -44,13 +48,20 @@ const LoginPage = () => {
             value={password}
             onChange={handleChangePassword}
           />
-          <button className='login-btn' onClick={handleLoginClick}>
-            Login
+          <input
+            type='text'
+            className='confirm-password-input'
+            placeholder='Confirm Your Password'
+            value={confirmPassword}
+            onChange={handleChangeConfirmPassword}
+          />
+          <button className='signup-btn' onClick={handleSignupClick}>
+            Create Account
           </button>
-          <div className='to-signup-container'>
-            <p className='to-signup-text'>Don't have an account?</p>
-            <button className='to-signup-btn' onClick={handleSignupClick}>
-              Sign Up.
+          <div className='to-login-container'>
+            <p className='to-login-text'>Already have an account?</p>
+            <button className='to-login-btn' onClick={handleLoginClick}>
+              Log In.
             </button>
           </div>
         </form>
@@ -59,4 +70,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

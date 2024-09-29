@@ -1,4 +1,4 @@
-import './OrderHistoryPage.css';
+import '../../css/OrderHistoryPage.css';
 import OrderItem from './OrderItem';
 
 const OrderHistoryPage = () => {
