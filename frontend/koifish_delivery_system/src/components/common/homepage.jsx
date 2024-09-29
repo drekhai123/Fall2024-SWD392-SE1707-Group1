@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import Navbar from './navbar'
-import "../../css/Homepage.css"
+import Navbar from './navbar';
+import "../../css/homepage.css";
 import Footer from "./footer";
 import Blogcarousel from "./blogcarousel";
 import Customerdashboard from "../admin/customerdashboard";
+import OrderNoti from './OrderNoti'; // Import the OrderNoti component
 export default function Homepage() {
     const rowsRef = useRef([]);
     const imageList = [
@@ -34,7 +35,6 @@ export default function Homepage() {
           observer.observe(row);
         }
       });
-  
       return () => {
         // Cleanup: unobserve all rows when component unmounts
         rows.forEach((row) => {
@@ -42,11 +42,12 @@ export default function Homepage() {
         });
       };
     }, []); // Empty dependency array so this runs only on mount
-  
   return (
     <>
     <div>
         <Navbar/>
+        <OrderNoti /> {/* Add the OrderNoti component here */}
+
         <section className="content-section">
       <div className="row" ref={(el) => (rowsRef.current[0] = el)}>
         <img
@@ -97,5 +98,6 @@ export default function Homepage() {
     </div>
     <Footer/>
     </>   
+
   )
 }
