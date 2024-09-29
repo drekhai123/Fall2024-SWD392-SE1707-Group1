@@ -1,32 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\KDOS_Web_API.csproj": {}
+    "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\KDOS_Web_API.csproj": {
+    "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\KDOS_Web_API.csproj",
+        "projectUniqueName": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj",
         "projectName": "KDOS_Web_API",
-        "projectPath": "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\KDOS_Web_API.csproj",
-        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\obj\\",
+        "projectPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj",
+        "packagesPath": "/Users/hendrix/.nuget/packages/",
+        "outputPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/hendrix/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/local/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -45,9 +39,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "MySql.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.5, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.8.0, )"
             }
           },
           "imports": [
@@ -69,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.201/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

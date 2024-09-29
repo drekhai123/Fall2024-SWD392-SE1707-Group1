@@ -1,0 +1,205 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "KDOS_Web_API/1.0.0": {
+        "dependencies": {
+          "KDOS.Data": "1.0.0",
+          "Swashbuckle.AspNetCore": "6.8.0",
+          "MySql.Data": "8.2.0.0"
+        },
+        "runtime": {
+          "KDOS_Web_API.dll": {}
+        }
+      },
+      "Microsoft.Extensions.ApiDescription.Server/6.0.5": {},
+      "Microsoft.OpenApi/1.6.14": {
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.OpenApi.dll": {
+            "assemblyVersion": "1.6.14.0",
+            "fileVersion": "1.6.14.0"
+          }
+        }
+      },
+      "Swashbuckle.AspNetCore/6.8.0": {
+        "dependencies": {
+          "Microsoft.Extensions.ApiDescription.Server": "6.0.5",
+          "Swashbuckle.AspNetCore.Swagger": "6.8.0",
+          "Swashbuckle.AspNetCore.SwaggerGen": "6.8.0",
+          "Swashbuckle.AspNetCore.SwaggerUI": "6.8.0"
+        }
+      },
+      "Swashbuckle.AspNetCore.Swagger/6.8.0": {
+        "dependencies": {
+          "Microsoft.OpenApi": "1.6.14"
+        },
+        "runtime": {
+          "lib/net8.0/Swashbuckle.AspNetCore.Swagger.dll": {
+            "assemblyVersion": "6.8.0.0",
+            "fileVersion": "6.8.0.744"
+          }
+        }
+      },
+      "Swashbuckle.AspNetCore.SwaggerGen/6.8.0": {
+        "dependencies": {
+          "Swashbuckle.AspNetCore.Swagger": "6.8.0"
+        },
+        "runtime": {
+          "lib/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll": {
+            "assemblyVersion": "6.8.0.0",
+            "fileVersion": "6.8.0.744"
+          }
+        }
+      },
+      "Swashbuckle.AspNetCore.SwaggerUI/6.8.0": {
+        "runtime": {
+          "lib/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll": {
+            "assemblyVersion": "6.8.0.0",
+            "fileVersion": "6.8.0.744"
+          }
+        }
+      },
+      "KDOS.Data/1.0.0": {
+        "runtime": {
+          "KDOS.Data.dll": {}
+        }
+      },
+      "MySql.Data/8.2.0.0": {
+        "runtime": {
+          "MySql.Data.dll": {
+            "assemblyVersion": "8.2.0.0",
+            "fileVersion": "8.2.0.0"
+          }
+        }
+      },
+      "ZstdSharp/0.7.1.0": {
+        "runtime": {
+          "ZstdSharp.dll": {
+            "assemblyVersion": "0.7.1.0",
+            "fileVersion": "0.7.1.0"
+          }
+        }
+      },
+      "System.Security.Permissions/4.0.3.0": {
+        "runtime": {
+          "System.Security.Permissions.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "System.Configuration.ConfigurationManager/4.0.0.0": {
+        "runtime": {
+          "System.Configuration.ConfigurationManager.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.6.25921.2"
+          }
+        }
+      },
+      "System.Windows.Extensions/4.0.1.0": {
+        "runtime": {
+          "System.Windows.Extensions.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
+      "System.Security.Cryptography.ProtectedData/4.0.2.0": {
+        "runtime": {
+          "System.Security.Cryptography.ProtectedData.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.6.25519.3"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "KDOS_Web_API/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Extensions.ApiDescription.Server/6.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ckb5EDBUNJdFWyajfXzUIMRkhf52fHZOQuuZg/oiu8y7zDCVwD0iHhew6MnThjHmevanpxL3f5ci2TtHQEN6bw==",
+      "path": "microsoft.extensions.apidescription.server/6.0.5",
+      "hashPath": "microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512"
+    },
+    "Microsoft.OpenApi/1.6.14": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-tTaBT8qjk3xINfESyOPE2rIellPvB7qpVqiWiyA/lACVvz+xOGiXhFUfohcx82NLbi5avzLW0lx+s6oAqQijfw==",
+      "path": "microsoft.openapi/1.6.14",
+      "hashPath": "microsoft.openapi.1.6.14.nupkg.sha512"
+    },
+    "Swashbuckle.AspNetCore/6.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0Mk8/31efsxFNVeFzLjUVYDFTjYKtEi2UCSaI9+HIkSQ/duu++28gfq1+gwWDRLHkRMOkUgoWMLe0UoayAZySA==",
+      "path": "swashbuckle.aspnetcore/6.8.0",
+      "hashPath": "swashbuckle.aspnetcore.6.8.0.nupkg.sha512"
+    },
+    "Swashbuckle.AspNetCore.Swagger/6.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-f6Utk5eLFWRJbDFIqHGeb9Kb+w/9b+z0WIJUIAPY4hP263MPXI8ZbejdOktS10gvCLaQ3YCFl6fAVlCIUFKsRQ==",
+      "path": "swashbuckle.aspnetcore.swagger/6.8.0",
+      "hashPath": "swashbuckle.aspnetcore.swagger.6.8.0.nupkg.sha512"
+    },
+    "Swashbuckle.AspNetCore.SwaggerGen/6.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bmWglb1jeKD+tUE56wL2zE6lnlpJZbgDLXMlEOgl8xTqEs9g8C6eNNKGuMcnfxFt0CgZaBClaDqad2JDjZW5Fw==",
+      "path": "swashbuckle.aspnetcore.swaggergen/6.8.0",
+      "hashPath": "swashbuckle.aspnetcore.swaggergen.6.8.0.nupkg.sha512"
+    },
+    "Swashbuckle.AspNetCore.SwaggerUI/6.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-tG1FL+aFmmuqZ3eKVHgvSFvrzJoKbDzOmvK8YACucfbIBYfHQd45uQ18MhMF3xDaR46qdggdaHGqmfYo+nxwrw==",
+      "path": "swashbuckle.aspnetcore.swaggerui/6.8.0",
+      "hashPath": "swashbuckle.aspnetcore.swaggerui.6.8.0.nupkg.sha512"
+    },
+    "KDOS.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MySql.Data/8.2.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ZstdSharp/0.7.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Security.Permissions/4.0.3.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Configuration.ConfigurationManager/4.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Windows.Extensions/4.0.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Security.Cryptography.ProtectedData/4.0.2.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
