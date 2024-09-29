@@ -5,11 +5,10 @@
 }
 
 .order-item-container .order-id,
-.order-item-container .customer-name,
-.order-item-container .order-amount,
-.order-item-container .order-price,
-.order-item-container .order-status,
-.order-item-container .ship-time {
+.order-item-container .order-dates,
+.order-item-container .delivery-price,
+.order-item-container .date-arrived,
+.order-item-container .order-status {
   color: white;
   font-size: 20px;
   line-height: 2rem;

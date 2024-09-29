@@ -5,44 +5,42 @@ const OrderHistoryPage = () => {
   const fakeData = [
     {
       orderId: '734538957343',
-      customerName: 'Nguyen Van A',
-      orderAmount: 4,
-      orderPrice: 200000,
+      orderDates: '28/09/2024',
+      deliveryPrice: 20000,
+      dateShipmentArrived: '12/10/2025',
       orderStatus: 'Deliveried',
-      shipTime: '28/09/2024',
     },
     {
-      orderId: '4738394857',
-      customerName: 'Le Thi B',
-      orderAmount: 1,
-      orderPrice: 50000,
-      orderStatus: 'Prepared',
-      shipTime: '27/09/2024',
+      orderId: '157684956738',
+      orderDates: '28/09/2024',
+      deliveryPrice: 20000,
+      dateShipmentArrived: '30/09/2024',
+      orderStatus: 'Cancle',
     },
     {
-      orderId: '3940597485',
-      customerName: 'Tran Thanh C',
-      orderAmount: 2,
-      orderPrice: 100000,
-      orderStatus: 'Shipped',
-      shipTime: '26/09/2024',
-    },
-    {
-      orderId: '2059483746',
-      customerName: 'Pham Minh D',
-      orderAmount: 2,
-      orderPrice: 150000,
-      orderStatus: 'Shipped',
-      shipTime: '25/09/2024',
-    },
-    {
-      orderId: '2948574639',
-      customerName: 'Phan Ngoc E',
-      orderAmount: 2,
-      orderPrice: 100000,
+      orderId: '748395647385',
+      orderDates: '28/09/2024',
+      deliveryPrice: 20000,
+      dateShipmentArrived: '30/09/2024',
       orderStatus: 'Deliveried',
-      shipTime: '24/09/2024',
     },
+    {
+      orderId: '458496847564',
+      orderDates: '28/09/2024',
+      deliveryPrice: 20000,
+      dateShipmentArrived: '30/09/2024',
+      orderStatus: 'Deliveried',
+    },
+    {
+      orderId: '564758694657',
+      orderDates: '28/09/2024',
+      deliveryPrice: 20000,
+      dateShipmentArrived: '30/09/2024',
+      orderStatus: 'Deliveried',
+    },
+
+
+
   ];
 
   return (
@@ -54,11 +52,11 @@ const OrderHistoryPage = () => {
             <OrderItem
               key={data.orderId}
               orderId={data.orderId}
-              customerName={data.customerName}
-              orderAmount={data.orderAmount}
-              orderPrice={data.orderPrice}
+              orderDates={data.orderDates}
+              deliveryPrice={data.deliveryPrice}
+              dateShipmentArrived={data.dateShipmentArrived}
               orderStatus={data.orderStatus}
-              shipTime={data.shipTime}
+
             />
           );
         })}
