@@ -5,6 +5,9 @@
   },
   "projects": {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
     "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\KDOS_Web_API.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -13,6 +16,7 @@
         "projectPath": "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\KDOS_Web_API.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS_Web_API\\obj\\",
+<<<<<<< Updated upstream
 =======
     "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS.Data\\KDOS.Data.csproj": {
       "version": "1.0.0",
@@ -22,6 +26,8 @@
         "projectPath": "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS.Data\\KDOS.Data.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\HP\\Desktop\\Fall2024-SWD392-SE1707-Group1\\backend\\KDOS_Fall2024_SWD392_Group1_NETAPI\\KDOS.Data\\obj\\",
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         "projectStyle": "PackageReference",
         "fallbackFolders": [
