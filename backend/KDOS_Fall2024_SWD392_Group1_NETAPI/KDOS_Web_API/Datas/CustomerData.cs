@@ -1,32 +1,31 @@
-﻿using System;
-using System.Xml.Linq;
-using KDOS_Web_API.Models;
-namespace KDOS_Web_API.Data
+﻿using KDOS_Web_API.Models;
+
+namespace KDOS_Web_API.Datas
 {
-	public class CustomerData
-	{
+    public class CustomerData
+    {
         List<Customer> customerList = new List<Customer>
-            { new Customer
-                {
-                    CustomerId = Guid.NewGuid(),
-                    CustomerName = "Hakurei Reimu",
-                    Addresses= new string[]{"Hakurei Shrine, Gensokyo"},
-                    Age=19,
-                    Email="hakureimoney@gensokyo.com",
+        { new Customer
+            {
+                CustomerId = Guid.NewGuid(),
+                CustomerName = "Hakurei Reimu",
+                Addresses= new string[]{"Hakurei Shrine, Gensokyo"},
+                Age=19,
+                Email="hakureimoney@gensokyo.com",
 
 
-                },
-                new Customer
-                {
-                    CustomerId = Guid.NewGuid(),
-                    CustomerName = "Sakuya Izayoi",
-                    Addresses= new string[]{"S.D.M, Gensokyo"},
-                    Age=23,
-                    Email="inusakuya@gensokyo.com",
-                }
-            };
+            },
+            new Customer
+            {
+                CustomerId = Guid.NewGuid(),
+                CustomerName = "Sakuya Izayoi",
+                Addresses= new string[]{"S.D.M, Gensokyo"},
+                Age=23,
+                Email="inusakuya@gensokyo.com",
+            }
+        };
         public List<Customer> GetAllData()
-		{
+        {
             return customerList;
         }
         public Customer GetCustomerById(Guid id)
@@ -55,4 +54,3 @@ namespace KDOS_Web_API.Data
         }
     }
 }
-
