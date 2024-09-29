@@ -1,11 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom';
-
 import LoginPage from './components/common/LoginPage';
 import SignupPage from './components/common/SignupPage';
 import ProfilePage from './components/customer/ProfilePage';
 import OrderHistoryPage from './components/customer/OrderHistoryPage';
-
-import Homepage from './components/common/homepage';
+import Homepage from './components/common/Homepage';
 import Feedback from './components/customer/Feedback';
 import FeedbackList from './components/customer/FeedbackList';
 

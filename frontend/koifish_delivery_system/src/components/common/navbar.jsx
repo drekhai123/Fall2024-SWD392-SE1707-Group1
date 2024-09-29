@@ -38,14 +38,3 @@ export default function Navbar() {
     </header>
   );
 }
-    <div className="header-content">
-      <img
-        src="images/header.png"
-        alt="Service"
-        className="service-image"
-      />
-      <h1 className="service-name">Koi <br></br>Delivery</h1>
-    </div>
-  </header>
-  )
-}
