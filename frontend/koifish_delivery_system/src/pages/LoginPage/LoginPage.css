@@ -1,0 +1,84 @@
+.login-page-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.login-page-container .brand-container {
+  height: 100%;
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-page-container .brand-container .brand-img {
+  width: 700px;
+}
+
+.login-page-container .login-container {
+  width: 40%;
+  background-color: black;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-page-container .login-container .login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  align-items: center;
+}
+
+.login-page-container .login-container .login-form .login-form-title {
+  color: white;
+  font-size: 40px;
+  width: 70%;
+  margin-bottom: 50px;
+}
+
+.login-page-container .login-container .login-form .username-input,
+.login-page-container .login-container .login-form .password-input {
+  font-size: 20px;
+  padding: 12px 8px;
+  width: 70%;
+  border: 1px solid #5e5e5f;
+  border-radius: 5px;
+  background-color: #10100f;
+  color: white;
+}
+
+.login-page-container .login-container .login-form .login-btn {
+  font-size: 20px;
+  padding: 12px 8px;
+  width: 70%;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  background-color: #e50914;
+  cursor: pointer;
+}
+
+.login-page-container .login-container .login-form .to-signup-container {
+  margin-top: 30px;
+  display: flex;
+  gap: 4px;
+}
+
+.login-page-container .login-container .login-form .to-signup-container .to-signup-text {
+  color: white;
+  font-size: 20px;
+}
+
+.login-page-container .login-container .login-form .to-signup-container .to-signup-btn {
+  color: #e50914;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  font-family: 'Times New Roman', Times, serif;
+  cursor: pointer;
+}

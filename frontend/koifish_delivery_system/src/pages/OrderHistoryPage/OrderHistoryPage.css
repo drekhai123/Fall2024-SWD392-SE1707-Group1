@@ -1,0 +1,25 @@
+.order-history-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: black;
+  overflow-y: scroll;
+}
+
+.order-history-page-container .order-history-title {
+  color: white;
+  font-size: 40px;
+  margin-bottom: 50px;
+}
+
+.order-history-page-container .list-order-container {
+  width: 50%;
+  max-width: 625px;
+  min-width: 350px;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
