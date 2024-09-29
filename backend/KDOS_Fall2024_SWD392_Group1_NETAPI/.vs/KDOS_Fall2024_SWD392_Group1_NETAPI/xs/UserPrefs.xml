@@ -3,23 +3,17 @@
   <MonoDevelop.Ide.ItemProperties.KDOS__Web__API PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
   <MonoDevelop.Ide.Workbench ActiveDocument="KDOS_Web_API/Controllers/CustomersController.cs">
     <Files>
-      <File FileName="KDOS_Web_API/Controllers/CustomersController.cs" Line="48" Column="14" />
-      <File FileName="KDOS_Web_API/Program.cs" Line="24" Column="1" />
-      <File FileName="KDOS.Data/Data/CustomerData.cs" Line="45" Column="42" />
+      <File FileName="KDOS_Web_API/Controllers/CustomersController.cs" Line="5" Column="32" />
+      <File FileName="KDOS_Web_API/Program.cs" />
+      <File FileName="KDOS_Web_API/appsettings.json" Line="11" Column="4" />
+      <File FileName="KDOS_Web_API/Data/CustomerData.cs" Line="4" Column="28" />
+      <File FileName="KDOS_Web_API/Models/Customer.cs" Line="7" Column="30" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="KDOS_Fall2024_SWD392_Group1_NETAPI" expanded="True">
-            <Node name="KDOS.Data">
-              <Node name="Data" expanded="True" />
-              <Node name="Models" expanded="True" />
-            </Node>
-            <Node name="KDOS_Web_API">
-              <Node name="Controllers" expanded="True">
-                <Node name="CustomersController.cs" selected="True" />
-              </Node>
-            </Node>
+          <Node name="KDOS_Fall2024_SWD392_Group1_NETAPI" selected="True">
+            <Node name="KDOS_Web_API" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -27,5 +21,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>
