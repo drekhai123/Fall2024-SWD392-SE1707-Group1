@@ -1,11 +1,17 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import LoginPage from './pages/LoginPage/LoginPage';
-import SignupPage from './pages/SignupPage/SignupPage';
-import ProfilePage from './pages/ProfilePage/ProfilePage';
-import OrderHistoryPage from './pages/OrderHistoryPage/OrderHistoryPage';
+import LoginPage from './components/common/LoginPage';
+import SignupPage from './components/common/SignupPage';
+import ProfilePage from './components/customer/ProfilePage';
+import OrderHistoryPage from './components/customer/OrderHistoryPage';
+import Homepage from './components/common/Homepage';
+
 
 export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Homepage/>,
+  },
   {
     path: '/login',
     element: <LoginPage />,

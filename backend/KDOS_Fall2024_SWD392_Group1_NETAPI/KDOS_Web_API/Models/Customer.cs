@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace KDOS_Web_API.Models
 {
     public class Customer
     {
         public Guid CustomerId { get; set; }
-        public required String CustomerName { get; set; }
-        public required int Age { get; set; }
-        public required String Email { get; set; }
-        public required String[] Addresses { get; set; }
+        [Required]
+        public String CustomerName { get; set; }
+        [Required]
+        public int Age { get; set; }
+        [Required]
+        public String Email { get; set; }
+        [Required]
+        public String[] Addresses { get; set; }
     }
-    
 }
