@@ -51,7 +51,7 @@ namespace KDOS_Web_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Addresses")
+                    b.Property<string>("Addressess")
                         .HasColumnType("longtext");
 
                     b.Property<int>("Age")
@@ -71,7 +71,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customer");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.KoiFish", b =>

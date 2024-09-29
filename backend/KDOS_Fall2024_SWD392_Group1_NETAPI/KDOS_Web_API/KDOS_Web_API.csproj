@@ -19,6 +19,10 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Migrations\" />
+  </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ namespace KDOS_Web_API.Models
          public String? Gender { get; set; }
          public String? Email { get; set; }
          public String? PhoneNumber { get; set; }
-        public String[]? Addresses { get; set; }
+        public List<String>? Addressess { get; set; }
 
     }
 }
