@@ -5,7 +5,6 @@ import Footer from "./footer";
 import Blogcarousel from "./blogcarousel";
 import Customerdashboard from "../admin/customerdashboard";
 import OrderNoti from './OrderNoti'; // Import the OrderNoti component
-
 export default function Homepage() {
     const rowsRef = useRef([]);
     const imageList = [
@@ -26,17 +25,16 @@ export default function Homepage() {
         },
         { threshold: 0.1 } // Trigger when 10% of the row is visible
       );
-
+  
       // Copy the current ref values to a local variable
       const rows = rowsRef.current;
-
+  
       // Observe each row
       rows.forEach((row) => {
         if (row) {
           observer.observe(row);
         }
       });
-
       return () => {
         // Cleanup: unobserve all rows when component unmounts
         rows.forEach((row) => {
@@ -44,12 +42,12 @@ export default function Homepage() {
         });
       };
     }, []); // Empty dependency array so this runs only on mount
-
   return (
     <>
     <div>
         <Navbar/>
         <OrderNoti /> {/* Add the OrderNoti component here */}
+
         <section className="content-section">
       <div className="row" ref={(el) => (rowsRef.current[0] = el)}>
         <img
@@ -99,6 +97,7 @@ export default function Homepage() {
     </section>
     </div>
     <Footer/>
-    </>
+    </>   
+
   )
 }

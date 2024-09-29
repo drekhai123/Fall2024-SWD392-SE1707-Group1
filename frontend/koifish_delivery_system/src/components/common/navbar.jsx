@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import "../../css/navbar.css";
@@ -36,4 +37,15 @@ export default function Navbar() {
       </div>
     </header>
   );
+}
+    <div className="header-content">
+      <img
+        src="images/header.png"
+        alt="Service"
+        className="service-image"
+      />
+      <h1 className="service-name">Koi <br></br>Delivery</h1>
+    </div>
+  </header>
+  )
 }
