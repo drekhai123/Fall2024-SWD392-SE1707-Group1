@@ -1,4 +1,4 @@
-import './OrderItem.css';
+import '../../css/OrderItem.css';
 
 const OrderItem = ({
   orderId,
