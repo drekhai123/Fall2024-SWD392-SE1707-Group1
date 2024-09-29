@@ -38,7 +38,7 @@ export default function OrderNoti() {
       toast.info(`${getStatusText(newNotif.status)} - ${newNotif.orderId}`, {
         autoClose: 3000,
       });
-    }, 5000);
+    }, 500000000); // CHANGE THIS LATER
 
     return () => clearInterval(interval);
   }, []);
