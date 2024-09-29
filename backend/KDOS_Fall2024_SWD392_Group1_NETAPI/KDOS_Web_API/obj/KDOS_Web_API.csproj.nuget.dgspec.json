@@ -4,14 +4,14 @@
     "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj": {}
   },
   "projects": {
-    "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS.Data/KDOS.Data.csproj": {
+    "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS.Data/KDOS.Data.csproj",
-        "projectName": "KDOS.Data",
-        "projectPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS.Data/KDOS.Data.csproj",
+        "projectUniqueName": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj",
+        "projectName": "KDOS_Web_API",
+        "projectPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj",
         "packagesPath": "/Users/hendrix/.nuget/packages/",
-        "outputPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS.Data/obj/",
+        "outputPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hendrix/.nuget/NuGet/NuGet.Config"
@@ -38,65 +38,15 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48",
-            "net481"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.201/PortableRuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj",
-        "projectName": "KDOS_Web_API",
-        "projectPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/KDOS_Web_API.csproj",
-        "packagesPath": "/Users/hendrix/.nuget/packages/",
-        "outputPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS_Web_API/obj/",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "/Users/hendrix/.nuget/NuGet/NuGet.Config"
-        ],
-        "originalTargetFrameworks": [
-          "net8.0"
-        ],
-        "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
-            "projectReferences": {
-              "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS.Data/KDOS.Data.csproj": {
-                "projectPath": "/Volumes/Ze_Data/Document/SWD392/Fall2024-SWD392-SE1707-Group1/backend/KDOS_Fall2024_SWD392_Group1_NETAPI/KDOS.Data/KDOS.Data.csproj"
-              }
-            }
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
           "dependencies": {
+            "MySql.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.5, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.8.0, )"

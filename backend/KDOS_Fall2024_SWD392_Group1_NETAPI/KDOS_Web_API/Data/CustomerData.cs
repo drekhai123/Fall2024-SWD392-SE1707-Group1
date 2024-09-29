@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
-using KDOS.Data.Models;
-
-namespace KDOS.Data.Data
+using KDOS_Web_API.Models;
+namespace KDOS_Web_API.Data
 {
 	public class CustomerData
 	{
