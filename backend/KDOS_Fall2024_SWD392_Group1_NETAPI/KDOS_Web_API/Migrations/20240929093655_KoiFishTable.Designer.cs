@@ -4,6 +4,7 @@ using KDOS_Web_API.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KDOS_Web_API.Migrations
 {
     [DbContext(typeof(KDOSDbContext))]
-    partial class KDOSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240929093655_KoiFishTable")]
+    partial class KoiFishTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,29 +25,6 @@ namespace KDOS_Web_API.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("KDOS_Web_API.Models.Account", b =>
-                {
-                    b.Property<Guid>("AccountId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("AccountId");
-
-                    b.ToTable("Account");
-                });
-
             modelBuilder.Entity("KDOS_Web_API.Models.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
@@ -52,21 +32,18 @@ namespace KDOS_Web_API.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Addresses")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerName")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("CustomerId");
@@ -76,68 +53,42 @@ namespace KDOS_Web_API.Migrations
 
             modelBuilder.Entity("KDOS_Web_API.Models.KoiFish", b =>
                 {
-                    b.Property<Guid>("KoiFishId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("FishType")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("HealthStatus")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("KoiFishId");
+                    b.HasKey("Id");
 
                     b.ToTable("KoiFish");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.OrderDetails", b =>
                 {
-                    b.Property<Guid>("OrderDetailsId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double");
-
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<float>("Weight")
+                    b.Property<float?>("Weight")
                         .HasColumnType("float");
 
-                    b.HasKey("OrderDetailsId");
+                    b.HasKey("Id");
 
                     b.ToTable("OrderDetails");
-                });
-
-            modelBuilder.Entity("KDOS_Web_API.Models.Staff", b =>
-                {
-                    b.Property<Guid>("StaffId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("StaffName")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("StaffId");
-
-                    b.ToTable("Staff");
                 });
 #pragma warning restore 612, 618
         }
