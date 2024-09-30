@@ -33,8 +33,7 @@ export default function Customerdashboard() {
     useEffect(() => {
         async function getCustomerData(){
         axios.get('https://localhost:7059/api/CustomersAPI')
-        .then(response => response.data)
-        .then (data =>setCustomer(data))
+        .then(response => setCustomer(response.data))
         .catch(error => {
           console.error(error)
           alert('Error fetching data')
