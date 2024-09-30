@@ -6,7 +6,7 @@
   height: 100vh; 
   background-position: center; 
   background-size: cover; 
-  background: url('./assets/background.jpg');
+  background: url('../../public/images/background.jpg');
 }
 
 .content {
