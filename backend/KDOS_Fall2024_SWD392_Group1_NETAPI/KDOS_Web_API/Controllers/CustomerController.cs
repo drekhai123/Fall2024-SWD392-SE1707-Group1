@@ -23,12 +23,22 @@ namespace KDOS_Web_API.Controllers
         [HttpGet]
         public IActionResult GetAllCustomer()
         {
+            // This method get data DIRECTLY from database -> not best practice
            var customerList = customerContext.Customer.ToList();
-            if(customerList == null)
-            {
-                return Ok();
-            }
             return Ok(customerList);
+        }
+        // GET 1 customer by ID
+        [HttpGet]
+        [Route("{customerId}")] // get the "value" from the parameter
+        public IActionResult GetCustomerById([FromRoute]int customerId) //Identify this value is get from Route -> ALL NAMING form route and parameter must match
+        {
+            //var customer = customerContext.Customer.Find(customerId); // Method will only work with fidning [Key] like Id
+            var customer = customerContext.Customer.FirstOrDefault(x => x.CustomerId == customerId); // Method will  work with ALL property you want to seach: name, add, phone, 
+            if (customer == null)
+            {
+                return NotFound(); //return 404
+            }
+            return Ok(customer); //return 200 ok
         }
 
     }
