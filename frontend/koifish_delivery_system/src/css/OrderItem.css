@@ -9,7 +9,6 @@
 .order-item-container .delivery-price,
 .order-item-container .date-arrived,
 .order-item-container .order-status {
-  color: white;
   font-size: 20px;
   line-height: 2rem;
 }
