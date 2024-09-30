@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/LoginPage.css';
 
+
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +24,7 @@ const LoginPage = () => {
   return (
     <div className='login-page-container'>
       <div className='brand-container'>
-        <img src='/assets/brand.jpg' alt='Brand' className='brand-img' />
+      <img src='/images/coco.jpg' alt='Brand' className='brand-img' />
       </div>
       <div className='login-container'>
         <form className='login-form'>
