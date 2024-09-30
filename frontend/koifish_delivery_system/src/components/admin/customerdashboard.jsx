@@ -35,6 +35,10 @@ export default function Customerdashboard() {
         axios.get('https://localhost:7059/api/CustomersAPI')
         .then(response => response.data)
         .then (data =>setCustomer(data))
+        .catch(error => {
+          console.error(error)
+          alert('Error fetching data')
+        })
         };
         getCustomerData()
     }, []);
