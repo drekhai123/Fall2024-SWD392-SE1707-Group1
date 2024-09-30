@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
     element: <Feedback />,
   },
   {
-    path: '/OrderForm',
+    path: '/orderform',
     element: <OrderForm />,
   },
   {
