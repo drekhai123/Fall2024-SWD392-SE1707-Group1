@@ -1,9 +1,9 @@
 ﻿using System;
 namespace KDOS_Web_API.Models.DTOs
 {
-    public class CustomerDTO
-    {
-        public int CustomerId { get; set; }
+	public class AddNewCustomerDTO
+	{
+
         public String? CustomerName { get; set; }
         public int Age { get; set; }
         public String? Gender { get; set; }
