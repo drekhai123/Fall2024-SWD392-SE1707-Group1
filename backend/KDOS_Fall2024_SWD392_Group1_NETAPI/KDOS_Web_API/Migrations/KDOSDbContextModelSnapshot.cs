@@ -22,30 +22,122 @@ namespace KDOS_Web_API.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("KDOS_Web_API.Models.Account", b =>
+                {
+                    b.Property<Guid>("AccountId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("AccountId");
+
+                    b.ToTable("Account");
+                });
+
             modelBuilder.Entity("KDOS_Web_API.Models.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Addresses")
-                        .IsRequired()
+                    b.Property<string>("Addressess")
                         .HasColumnType("longtext");
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
-                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customer");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.KoiFish", b =>
+                {
+                    b.Property<Guid>("KoiFishId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FishType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("HealthStatus")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("KoiFishId");
+
+                    b.ToTable("KoiFish");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.OrderDetails", b =>
+                {
+                    b.Property<Guid>("OrderDetailsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("float");
+
+                    b.HasKey("OrderDetailsId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.Staff", b =>
+                {
+                    b.Property<Guid>("StaffId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("StaffName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("StaffId");
+
+                    b.ToTable("Staff");
                 });
 #pragma warning restore 612, 618
         }

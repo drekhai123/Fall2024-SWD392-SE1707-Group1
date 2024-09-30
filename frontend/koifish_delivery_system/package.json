@@ -16,14 +16,24 @@
     "graphql": "^16.9.0",
     "install": "^0.13.0",
     "npm": "^10.8.3",
+    "qrcode.react": "^4.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-google-maps": "^9.4.5",
+<<<<<<< HEAD
     "react-paginate": "^8.2.0",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.26.2",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
+=======
+    "react-modal": "^3.16.1",
+    "react-quill": "^2.0.0",
+    "react-router-dom": "^6.26.2",
+    "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.5",
+    "sweetalert2": "^11.14.1",
+>>>>>>> d626a282c9ddd61679b871579060a880c315e9cc
     "swiper": "^11.1.14",
     "web-vitals": "^2.1.4"
   },
