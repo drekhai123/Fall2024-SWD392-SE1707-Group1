@@ -20,9 +20,13 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Models\DTOs\" />
+    <Folder Include="Models\Domains\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Migrations\" />
+    <None Remove="Models\DTOs\" />
+    <None Remove="Models\Domains\" />
   </ItemGroup>
 </Project>
