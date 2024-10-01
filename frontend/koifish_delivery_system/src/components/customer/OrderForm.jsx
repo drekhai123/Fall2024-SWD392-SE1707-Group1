@@ -100,7 +100,7 @@ export default function OrderForm() {
     });
   };
 
-  // Lỗi mình code k để ý bị re-render
+  // Lỗi tui code k để ý bị re-render
   //useEffect(() => {
   //  const updatedOrders = fishOrders.map(order => ({
   //    ...order,
@@ -140,7 +140,7 @@ export default function OrderForm() {
               <th className="label-table">Weight (kg)</th>
               <th className="label-table">Price (VND/Kg)</th>
               <th className="label-table">Health Status</th>
-              <th className="label-table">Action</th>
+             
             </tr>
           </thead>
           <tbody>
