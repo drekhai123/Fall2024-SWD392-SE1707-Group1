@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KDOS_Web_API.Models.DTOs
 {
@@ -7,11 +8,18 @@ namespace KDOS_Web_API.Models.DTOs
 	{
         [Key]
         public int StaffId { get; set; }
-        public String? StaffName { get; set; }
-        public int Age { get; set; }
-        public String? Gender { get; set; }
-        public String? Email { get; set; }
-        public String? PhoneNumber { get; set; }
+        public int AccountId { get; set; }
+        [Required]
+        required public String StaffName { get; set; }
+        [Required]
+        required public int Age { get; set; }
+        [Required]
+        required public String Gender { get; set; }
+        [Required]
+        required public String PhoneNumber { get; set; }
+        [ForeignKey("AccountId")]
+        [Required]
+         public Account? Account { get; set; }
     }
 }
 

@@ -1,17 +1,22 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KDOS_Web_API.Models.DTOs
 {
 	public class AddNewStaffDTO
 	{
-        [Key]
-        public int StaffId { get; set; }
-        public String? StaffName { get; set; }
-        public int Age { get; set; }
-        public String? Gender { get; set; }
-        public String? Email { get; set; }
-        public String? PhoneNumber { get; set; }
+        [Required]
+        required public String StaffName { get; set; }
+        [Required]
+        required public int Age { get; set; }
+        [Required]
+        required public int AccountId { get; set; }
+        [Required]
+        required public String Gender { get; set; }
+        [Required]
+        required public String PhoneNumber { get; set; }
+        
     }
 }
 

@@ -35,7 +35,6 @@ namespace KDOS_Web_API.Controllers
                     CustomerName = customer.CustomerName,
                     Address = customer.Address,
                     Age = customer.Age,
-                    Email = customer.Email,
                     Gender = customer.Gender,
                     PhoneNumber = customer.PhoneNumber
                 });
@@ -53,7 +52,6 @@ namespace KDOS_Web_API.Controllers
                 CustomerName = customer.CustomerName,
                 Address = customer.Address,
                 Age = customer.Age,
-                Email = customer.Email,
                 Gender = customer.Gender,
                 PhoneNumber = customer.PhoneNumber
             };
@@ -68,7 +66,6 @@ namespace KDOS_Web_API.Controllers
                 CustomerName = customerModel.CustomerName,
                 Address = customerModel.Address,
                 Age = customerModel.Age,
-                Email = customerModel.Email,
                 Gender = customerModel.Gender,
                 PhoneNumber = customerModel.PhoneNumber
             };
@@ -126,7 +123,6 @@ namespace KDOS_Web_API.Controllers
                     CustomerName = customer.CustomerName,
                     Address = customer.Address,
                     Age = customer.Age,
-                    Email = customer.Email,
                     Gender = customer.Gender,
                     PhoneNumber = customer.PhoneNumber
                 };
@@ -153,7 +149,6 @@ namespace KDOS_Web_API.Controllers
                 customerModel.Age = updateCustomerDto.Age;
                 customerModel.Address = updateCustomerDto.Address;
                 customerModel.Gender = updateCustomerDto.Gender;
-                customerModel.Email = updateCustomerDto.Email;
                 customerModel.PhoneNumber = updateCustomerDto.PhoneNumber;
                 customerContext.SaveChanges();
                 // Turn Model back to DTO
@@ -163,7 +158,6 @@ namespace KDOS_Web_API.Controllers
                     CustomerName = customerModel.CustomerName,
                     Address = customerModel.Address,
                     Age = customerModel.Age,
-                    Email = customerModel.Email,
                     Gender = customerModel.Gender,
                     PhoneNumber = customerModel.PhoneNumber
                 };
@@ -190,7 +184,6 @@ namespace KDOS_Web_API.Controllers
                     CustomerName = deleteCustomer.CustomerName,
                     Address = deleteCustomer.Address,
                     Age = deleteCustomer.Age,
-                    Email = deleteCustomer.Email,
                     Gender = deleteCustomer.Gender,
                     PhoneNumber = deleteCustomer.PhoneNumber
                 };

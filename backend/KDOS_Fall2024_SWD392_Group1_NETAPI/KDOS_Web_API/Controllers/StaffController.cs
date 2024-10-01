@@ -34,7 +34,6 @@ namespace KDOS_Web_API.Controllers
                     StaffId = staff.StaffId,
                     StaffName = staff.StaffName,
                     Age = staff.Age,
-                    Email = staff.Email,
                     Gender = staff.Gender,
                     PhoneNumber = staff.PhoneNumber
                 }) ;
@@ -49,7 +48,6 @@ namespace KDOS_Web_API.Controllers
             {
                 StaffName = addNewStaffDTO.StaffName,
                 Age = addNewStaffDTO.Age,
-                Email = addNewStaffDTO.Email,
                 Gender = addNewStaffDTO.Gender,
                 PhoneNumber = addNewStaffDTO.PhoneNumber
             };
@@ -61,7 +59,6 @@ namespace KDOS_Web_API.Controllers
                 StaffId = staffModel.StaffId,
                 StaffName = staffModel.StaffName,
                 Age = staffModel.Age,
-                Email = staffModel.Email,
                 Gender = staffModel.Gender,
                 PhoneNumber = staffModel.PhoneNumber
             };
@@ -88,7 +85,6 @@ namespace KDOS_Web_API.Controllers
                     StaffId = staffModel.StaffId,
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
-                    Email = staffModel.Email,
                     Gender = staffModel.Gender,
                     PhoneNumber = staffModel.PhoneNumber
                 };
@@ -110,7 +106,6 @@ namespace KDOS_Web_API.Controllers
                 //Convert Client Data (DTO) to Model
                 staffModel.StaffName = updateStaffDTO.StaffName;
                 staffModel.Age = updateStaffDTO.Age;
-                staffModel.Email = updateStaffDTO.Email;
                 staffModel.Gender = updateStaffDTO.Gender;
                 staffModel.PhoneNumber = updateStaffDTO.PhoneNumber;
                 staffContext.SaveChanges();
@@ -120,7 +115,6 @@ namespace KDOS_Web_API.Controllers
                     StaffId = staffModel.StaffId,
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
-                    Email = staffModel.Email,
                     Gender = staffModel.Gender,
                     PhoneNumber = staffModel.PhoneNumber
                 };
@@ -148,7 +142,6 @@ namespace KDOS_Web_API.Controllers
                     StaffId = staffModel.StaffId,
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
-                    Email = staffModel.Email,
                     Gender = staffModel.Gender,
                     PhoneNumber = staffModel.PhoneNumber
                 };
