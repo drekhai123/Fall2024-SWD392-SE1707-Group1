@@ -1,12 +1,11 @@
-﻿using System;
+﻿
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace KDOS_Web_API.Models.DTOs
 {
-	public class StaffDTO
+	public class UpdateStaffDTO
 	{
-        [Key]
-        public int StaffId { get; set; }
         public String? StaffName { get; set; }
         public int Age { get; set; }
         public String? Gender { get; set; }
