@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KDOS_Web_API.Models.DTOs
 {
-	public class StaffDTO
+	public class AddNewStaffDTO
 	{
         [Key]
         public int StaffId { get; set; }

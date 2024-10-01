@@ -13,7 +13,7 @@
     top: 0;
     width: 100vw;
     padding: 15px 0px;
-    background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+    background-color: rgba(0, 0, 0, 0.8); /* Transparent background */
     transition: all 0.3s ease-in-out;
     opacity: 50%;
   }
@@ -82,11 +82,7 @@
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   }
 
-  .nav-item a {
-    color: black;
-  }
-
-  .nav-item a {
+a {
     text-decoration: none;
     color: inherit;
   }
