@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
-import "../../css/homepage.css"
+import "../../css/Homepage.css"
 import Footer from "./footer";
 import Blogcarousel from "./blogcarousel";
 import Customerdashboard from "../admin/customerdashboard";
-import OrderNoti from './OrderNoti'; // Import the OrderNoti component
+import OrderNoti from './OrderNoti'; 
 export default function Homepage() {
     const rowsRef = useRef([]);
     const imageList = [
