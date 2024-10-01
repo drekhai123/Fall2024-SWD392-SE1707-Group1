@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using KDOS_Web_API.Models.Domains;
 
 namespace KDOS_Web_API.Models
 {
-	public class OrderDetails
+    public class OrderDetails
 	{
         [Key]
         public int OrderDetailsId { get; set; }
