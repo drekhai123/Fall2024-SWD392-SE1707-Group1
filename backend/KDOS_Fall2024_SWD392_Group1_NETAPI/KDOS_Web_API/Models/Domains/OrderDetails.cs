@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using KDOS_Web_API.Models.Domains;
 
 namespace KDOS_Web_API.Models
 {
