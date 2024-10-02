@@ -22,9 +22,10 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    
     app.UseSwaggerUI();
 }
+app.UseSwagger(); // Use Swagger in deployment, not just Dev mode
 
 app.UseHttpsRedirection();
 app.UseCors("AllowOrigin"); // Set Allow Cross Origins Connection
