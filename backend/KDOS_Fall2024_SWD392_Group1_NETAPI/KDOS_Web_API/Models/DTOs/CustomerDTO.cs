@@ -8,7 +8,8 @@ namespace KDOS_Web_API.Models.DTOs
     {
         [Key]
         public int CustomerId { get; set; }
-        public int AccountId { get; set; }
+        [Required]
+        required public int AccountId { get; set; }
         [Required]
         required public String CustomerName { get; set; }
         [Required]

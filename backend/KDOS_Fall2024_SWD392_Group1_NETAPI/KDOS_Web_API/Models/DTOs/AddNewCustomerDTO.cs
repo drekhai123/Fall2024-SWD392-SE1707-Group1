@@ -11,6 +11,8 @@ namespace KDOS_Web_API.Models.DTOs
         [Required]
         required public int Age { get; set; }
         [Required]
+        required public int AccountId { get; set; }
+        [Required]
         required public String Gender { get; set; }
         [Required]
         required public String PhoneNumber { get; set; }

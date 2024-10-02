@@ -31,6 +31,7 @@ namespace KDOS_Web_API.Controllers
             {
                 customerDto.Add(new CustomerDTO()
                 {
+                    AccountId = customer.AccountId,
                     CustomerId = customer.CustomerId,
                     CustomerName = customer.CustomerName,
                     Address = customer.Address,
@@ -47,13 +48,20 @@ namespace KDOS_Web_API.Controllers
         public IActionResult AddNewCustomer([FromBody] AddNewCustomerDTO customer)
         {
             // using the DTO to convert Model
+            var accountModel = customerContext.Account.FirstOrDefault(x => x.AccountId == customer.AccountId);
+            if (accountModel == null)
+            {
+                return NotFound();
+                // Custom a response later
+            }
             var customerModel = new Customer
             {
+                AccountId = customer.AccountId, //Foreign Key Identify
                 CustomerName = customer.CustomerName,
                 Address = customer.Address,
                 Age = customer.Age,
                 Gender = customer.Gender,
-                PhoneNumber = customer.PhoneNumber
+                PhoneNumber = customer.PhoneNumber,
             };
             //using Model to create a Customer
             customerContext.Customer.Add(customerModel);
@@ -62,6 +70,7 @@ namespace KDOS_Web_API.Controllers
             //Map Model back to DTO
             var customerDto = new CustomerDTO
             {
+                AccountId = customer.AccountId,
                 CustomerId = customerModel.CustomerId,
                 CustomerName = customerModel.CustomerName,
                 Address = customerModel.Address,
@@ -119,6 +128,7 @@ namespace KDOS_Web_API.Controllers
             {
                 var customerDto = new CustomerDTO
                 {
+                    AccountId = customer.AccountId,
                     CustomerId = customer!.CustomerId,
                     CustomerName = customer.CustomerName,
                     Address = customer.Address,
@@ -154,6 +164,7 @@ namespace KDOS_Web_API.Controllers
                 // Turn Model back to DTO
                 var customerDto = new CustomerDTO
                 {
+                    AccountId = customerModel.AccountId,
                     CustomerId = customerModel.CustomerId,
                     CustomerName = customerModel.CustomerName,
                     Address = customerModel.Address,
@@ -180,6 +191,7 @@ namespace KDOS_Web_API.Controllers
                 //Return the customer info got deleted back
                 var customerDto = new CustomerDTO
                 {
+                    AccountId = deleteCustomer.AccountId,
                     CustomerId = deleteCustomer.CustomerId,
                     CustomerName = deleteCustomer.CustomerName,
                     Address = deleteCustomer.Address,

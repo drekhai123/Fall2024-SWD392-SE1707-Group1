@@ -8,7 +8,8 @@ namespace KDOS_Web_API.Models.DTOs
 	{
         [Key]
         public int StaffId { get; set; }
-        public int AccountId { get; set; }
+        [Required]
+        required public int AccountId { get; set; }
         [Required]
         required public String StaffName { get; set; }
         [Required]
@@ -19,7 +20,7 @@ namespace KDOS_Web_API.Models.DTOs
         required public String PhoneNumber { get; set; }
         [ForeignKey("AccountId")]
         [Required]
-         public Account? Account { get; set; }
+        public Account? Account { get; set; }
     }
 }
 
