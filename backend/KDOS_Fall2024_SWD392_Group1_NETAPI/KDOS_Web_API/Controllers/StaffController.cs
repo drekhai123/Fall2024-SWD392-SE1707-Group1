@@ -80,6 +80,32 @@ namespace KDOS_Web_API.Controllers
             // nameof() run the fucntion inside (GetStaffById) => return the new staff id, and return the properties of the staff we added
         }
 
+        [HttpPost]
+        [Route("searchbyname")]
+        public IActionResult FindStaffByName([FromBody] String customerName)
+        {
+            //Find by name
+            var staffModel = staffContext.Staff.FirstOrDefault(x => x.StaffName == customerName); // enforce ! to make sure name is not null
+            if (staffModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                //Turn Model to DTO
+                var staffDto = new StaffDTO
+                {
+                    AccountId = staffModel.AccountId,
+                    StaffId = staffModel.StaffId,
+                    StaffName = staffModel.StaffName,
+                    Age = staffModel.Age,
+                    Gender = staffModel.Gender,
+                    PhoneNumber = staffModel.PhoneNumber
+                };
+                return Ok(staffDto);
+            }
+        }
+
         [HttpGet]
         [Route("{staffId}")]
         public IActionResult GetStaffById([FromRoute] int staffId)
