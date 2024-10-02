@@ -31,10 +31,10 @@ namespace KDOS_Web_API.Controllers
             {
                 stafDto.Add(new StaffDTO
                 {
+                    AccountId = staff.AccountId,
                     StaffId = staff.StaffId,
                     StaffName = staff.StaffName,
                     Age = staff.Age,
-                    Email = staff.Email,
                     Gender = staff.Gender,
                     PhoneNumber = staff.PhoneNumber
                 }) ;
@@ -44,24 +44,29 @@ namespace KDOS_Web_API.Controllers
         [HttpPost]
         public IActionResult AddNewStaff([FromBody]AddNewStaffDTO addNewStaffDTO)
         {
+            var accountModel = staffContext.Account.FirstOrDefault(x => x.AccountId == addNewStaffDTO.AccountId);
+            if (accountModel == null)
+            {
+                return NotFound();
+            }
             // turn DTO to Model
             var staffModel = new Staff
             {
+                AccountId = accountModel.AccountId,
                 StaffName = addNewStaffDTO.StaffName,
                 Age = addNewStaffDTO.Age,
-                Email = addNewStaffDTO.Email,
                 Gender = addNewStaffDTO.Gender,
-                PhoneNumber = addNewStaffDTO.PhoneNumber
+                PhoneNumber = addNewStaffDTO.PhoneNumber,
             };
             staffContext.Staff.Add(staffModel);
             staffContext.SaveChanges();
             // Map model back to DTO and send to Client
             var staffDto = new StaffDTO()
             {
+                AccountId = accountModel.AccountId,
                 StaffId = staffModel.StaffId,
                 StaffName = staffModel.StaffName,
                 Age = staffModel.Age,
-                Email = staffModel.Email,
                 Gender = staffModel.Gender,
                 PhoneNumber = staffModel.PhoneNumber
             };
@@ -85,10 +90,10 @@ namespace KDOS_Web_API.Controllers
                 //Convert Model to DTO
                 var staffDto = new StaffDTO
                 {
+                    AccountId = staffModel.AccountId,
                     StaffId = staffModel.StaffId,
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
-                    Email = staffModel.Email,
                     Gender = staffModel.Gender,
                     PhoneNumber = staffModel.PhoneNumber
                 };
@@ -110,17 +115,16 @@ namespace KDOS_Web_API.Controllers
                 //Convert Client Data (DTO) to Model
                 staffModel.StaffName = updateStaffDTO.StaffName;
                 staffModel.Age = updateStaffDTO.Age;
-                staffModel.Email = updateStaffDTO.Email;
                 staffModel.Gender = updateStaffDTO.Gender;
                 staffModel.PhoneNumber = updateStaffDTO.PhoneNumber;
                 staffContext.SaveChanges();
                 //Turn Model back to DTO to send to Client
                 var staffDto = new StaffDTO
                 {
+                    AccountId = staffModel.AccountId,
                     StaffId = staffModel.StaffId,
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
-                    Email = staffModel.Email,
                     Gender = staffModel.Gender,
                     PhoneNumber = staffModel.PhoneNumber
                 };
@@ -143,16 +147,16 @@ namespace KDOS_Web_API.Controllers
                 staffContext.Staff.Remove(staffModel);
                 staffContext.SaveChanges();
                 //Convert Model to DTO
-                var staffDto = new StaffDTO
+                var deletedstaffDto = new StaffDTO
                 {
+                    AccountId = staffModel.AccountId,
                     StaffId = staffModel.StaffId,
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
-                    Email = staffModel.Email,
                     Gender = staffModel.Gender,
                     PhoneNumber = staffModel.PhoneNumber
                 };
-                return Ok(staffDto);
+                return Ok(deletedstaffDto);
             }
         }
     }

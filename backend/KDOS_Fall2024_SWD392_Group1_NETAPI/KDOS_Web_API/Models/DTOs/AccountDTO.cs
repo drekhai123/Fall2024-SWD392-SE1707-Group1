@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace KDOS_Web_API.Models
+namespace KDOS_Web_API.Models.DTOs
 {
-	public class Account
+	public class AccountDTO
 	{
         [Key]
         public int AccountId { get; set; }
@@ -12,7 +12,6 @@ namespace KDOS_Web_API.Models
         required public String UserName { get; set; }
         required public String Password { get; set; }
         required public String Role { get; set; }
-        public Customer? Customer { get; set; }
-        public Staff? Staff { get; set; }
     }
 }
+
