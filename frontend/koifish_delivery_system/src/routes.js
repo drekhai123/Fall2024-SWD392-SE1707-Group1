@@ -3,13 +3,12 @@ import LoginPage from './components/common/LoginPage';
 import SignupPage from './components/common/SignupPage';
 import ProfilePage from './components/customer/ProfilePage';
 import OrderHistoryPage from './components/customer/OrderHistoryPage';
-import Homepage from './components/common/Homepage';
+import Homepage from './components/common/Homepages';
 import Feedback from './components/customer/Feedback';
 import FeedbackList from './components/customer/FeedbackList';
 import OrderForm from './components/customer/OrderForm';
 import OrderStatusTracking from './components/customer/OrderStatusTracking';
 import TrackingStaff from './components/admin/TrackingStaff';
-
 
 export const router = createBrowserRouter([
   {

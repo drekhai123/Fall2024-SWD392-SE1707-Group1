@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
-import "../../css/Homepage.css"
+import "../../css/Homepages.css"
 import Footer from "./footer";
 import Blogcarousel from "./blogcarousel";
 import Customerdashboard from "../admin/customerdashboard";
