@@ -45,23 +45,29 @@ namespace KDOS_Web_API.Controllers
         }
 
         [HttpPost] // Post for create - FromBody is the data send from Client in the Respone Body
-        public IActionResult AddNewCustomer([FromBody] AddNewCustomerDTO customer)
+        public IActionResult AddNewCustomer([FromBody] AddNewCustomerDTO addNewCustomerDTO)
         {
             // using the DTO to convert Model
-            var accountModel = customerContext.Account.FirstOrDefault(x => x.AccountId == customer.AccountId);
-            if (accountModel == null)
+            var accountModel = customerContext.Account.FirstOrDefault(x => x.AccountId == addNewCustomerDTO.AccountId);
+            if (accountModel == null || !accountModel.Role.Equals("customer"))
             {
-                return NotFound();
-                // Custom a response later
+                return NotFound("Error 404: Account Not Found");
+                // Custom a response 
+            }
+            var customerExist = customerContext.Customer.FirstOrDefault(x => x.AccountId == addNewCustomerDTO.AccountId);
+            if (customerExist != null)
+            {
+                return BadRequest("Error 400: Account Already Exist!!!");
+                // Custom a response 
             }
             var customerModel = new Customer
             {
-                AccountId = customer.AccountId, //Foreign Key Identify
-                CustomerName = customer.CustomerName,
-                Address = customer.Address,
-                Age = customer.Age,
-                Gender = customer.Gender,
-                PhoneNumber = customer.PhoneNumber,
+                AccountId = addNewCustomerDTO.AccountId, //Foreign Key Identify
+                CustomerName = addNewCustomerDTO.CustomerName,
+                Address = addNewCustomerDTO.Address,
+                Age = addNewCustomerDTO.Age,
+                Gender = addNewCustomerDTO.Gender,
+                PhoneNumber = addNewCustomerDTO.PhoneNumber,
             };
             //using Model to create a Customer
             customerContext.Customer.Add(customerModel);
@@ -70,7 +76,7 @@ namespace KDOS_Web_API.Controllers
             //Map Model back to DTO
             var customerDto = new CustomerDTO
             {
-                AccountId = customer.AccountId,
+                AccountId = accountModel.AccountId,
                 CustomerId = customerModel.CustomerId,
                 CustomerName = customerModel.CustomerName,
                 Address = customerModel.Address,
@@ -82,33 +88,33 @@ namespace KDOS_Web_API.Controllers
             return CreatedAtAction(nameof(GetCustomerById), new { customerId = customerModel.CustomerId }, customerDto); // Respone with code 201 - Created Complete
             //CreatedAtAction will trigger the action GetCustomerById to search for the created customer in the db using the id generate by the EF. Then convert the data to a DTO and respone that bakc to client. So we can know what dot created 
         }
-        // TODO
-        //[HttpGet]
-        //[Route("{customerName}")]
-        //public IActionResult FindCustomerByName([FromBody] String customerName)
-        //{
-        //    //Find by name
-        //    var customerModel = customerContext.Customer.F; // enforce ! to make sure name is not null
-        //    if (customerModel == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    else
-        //    {
-        //        //Turn Model to DTO
-        //        var customerDto = new CustomerDTO
-        //        {
-        //            CustomerId = customerModel.CustomerId,
-        //            CustomerName = customerModel.CustomerName,
-        //            Address = customerModel.Address,
-        //            Age = customerModel.Age,
-        //            Email = customerModel.Email,
-        //            Gender = customerModel.Gender,
-        //            PhoneNumber = customerModel.PhoneNumber
-        //        };
-        //        return Ok(customerDto);
-        //    }
-        //}
+        
+        [HttpPost]
+        [Route("searchbyname")]
+        public IActionResult FindCustomerByName([FromBody] String customerName)
+        {
+            //Find by name
+            var customerModel = customerContext.Customer.FirstOrDefault(x=>x.CustomerName==customerName); // enforce ! to make sure name is not null
+            if (customerModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                //Turn Model to DTO
+                var customerDto = new CustomerDTO
+                {
+                    AccountId = customerModel.AccountId,
+                    CustomerId = customerModel.CustomerId,
+                    CustomerName = customerModel.CustomerName,
+                    Address = customerModel.Address,
+                    Age = customerModel.Age,
+                    Gender = customerModel.Gender,
+                    PhoneNumber = customerModel.PhoneNumber
+                };
+                return Ok(customerDto);
+            }
+        }
 
 
 
@@ -134,7 +140,7 @@ namespace KDOS_Web_API.Controllers
                     Address = customer.Address,
                     Age = customer.Age,
                     Gender = customer.Gender,
-                    PhoneNumber = customer.PhoneNumber
+                    PhoneNumber = customer.PhoneNumber,
                 };
 
                 return Ok(customerDto); //return 200 ok

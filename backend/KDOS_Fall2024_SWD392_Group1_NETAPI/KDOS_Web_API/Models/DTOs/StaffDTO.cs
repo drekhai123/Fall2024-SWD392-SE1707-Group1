@@ -18,9 +18,6 @@ namespace KDOS_Web_API.Models.DTOs
         required public String Gender { get; set; }
         [Required]
         required public String PhoneNumber { get; set; }
-        [ForeignKey("AccountId")]
-        [Required]
-        public Account? Account { get; set; }
     }
 }
 

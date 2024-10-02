@@ -123,7 +123,6 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
-
         [HttpDelete]
         [Route("{accountId}")]
         public IActionResult DeleteAccountById([FromRoute] int accountId)

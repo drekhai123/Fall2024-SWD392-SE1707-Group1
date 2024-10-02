@@ -26,10 +26,10 @@ namespace KDOS_Web_API.Controllers
         {
             // Get Model Data from DB
             var staffList = staffContext.Staff.ToList<Staff>();
-            var stafDto = new List<StaffDTO>();
+            var staffDto = new List<StaffDTO>();
             foreach(Staff staff in staffList)
             {
-                stafDto.Add(new StaffDTO
+                staffDto.Add(new StaffDTO
                 {
                     AccountId = staff.AccountId,
                     StaffId = staff.StaffId,
@@ -39,15 +39,20 @@ namespace KDOS_Web_API.Controllers
                     PhoneNumber = staff.PhoneNumber
                 }) ;
             }
-            return Ok(stafDto);
+            return Ok(staffDto);
         }
         [HttpPost]
-        public IActionResult AddNewStaff([FromBody]AddNewStaffDTO addNewStaffDTO)
+        public IActionResult AddNewStaff( AddNewStaffDTO addNewStaffDTO)
         {
             var accountModel = staffContext.Account.FirstOrDefault(x => x.AccountId == addNewStaffDTO.AccountId);
-            if (accountModel == null)
+            if (accountModel == null || !accountModel.Role.Equals("staff"))
             {
-                return NotFound();
+                return NotFound("Error 404: Account Not Found");
+            }
+            var staffExist = staffContext.Staff.FirstOrDefault(x => x.AccountId == addNewStaffDTO.AccountId);
+            if (staffExist != null)
+            {
+                return BadRequest("Error 400: Account Already Exist!!!");
             }
             // turn DTO to Model
             var staffModel = new Staff
@@ -95,7 +100,7 @@ namespace KDOS_Web_API.Controllers
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
                     Gender = staffModel.Gender,
-                    PhoneNumber = staffModel.PhoneNumber
+                    PhoneNumber = staffModel.PhoneNumber,
                 };
                 return Ok(staffDto);
             }
