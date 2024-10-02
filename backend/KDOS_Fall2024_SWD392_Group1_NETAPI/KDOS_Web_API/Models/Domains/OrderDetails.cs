@@ -15,7 +15,7 @@ namespace KDOS_Web_API.Models
 
         // Relationships
         public int OrderId { get; set; } // Foreign key
-        public Order Order { get; set; } // Many-to-one relationship with Order
+        public Orders Order { get; set; } // Many-to-one relationship with Order
 
         public int KoiFishId { get; set; } // Foreign key
         public KoiFish KoiFish { get; set; } // Many-to-one relationship with KoiFish

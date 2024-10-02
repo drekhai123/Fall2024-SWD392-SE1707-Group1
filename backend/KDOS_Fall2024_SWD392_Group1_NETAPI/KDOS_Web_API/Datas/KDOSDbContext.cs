@@ -1,5 +1,7 @@
 ﻿using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.Domains;
 using Microsoft.EntityFrameworkCore;
+using Mysqlx.Crud;
 
 namespace KDOS_Web_API.Datas
 {
@@ -10,7 +12,7 @@ namespace KDOS_Web_API.Datas
         public DbSet<Account> Account { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Customer> Customer { get; set; }
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Orders> Orders { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configuring one-to-one relationship between Customer and Account
@@ -25,6 +27,21 @@ namespace KDOS_Web_API.Datas
                 .WithOne(a => a.Staff)         // An Account has one Customer
                 .HasForeignKey<Staff>(s => s.AccountId)  // Customer holds the foreign key
                 .OnDelete(DeleteBehavior.Cascade);  // Optional: cascade delete when Staff is deleted Meaning delete Account will Delete Customer or Visersa
+            modelBuilder.Entity<Orders>()
+                .HasOne(o => o.Sender) // Sender
+                .WithMany()
+                .HasForeignKey(o => o.SenderId);
+            modelBuilder.Entity<OrderDetails>()
+                .HasOne(od => od.Order) // Each OrderDetails references one Order
+                .WithMany(o => o.OrderDetails) // An Order can have many OrderDetails
+                .HasForeignKey(od => od.OrderId)
+                .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete if needed
+
+            modelBuilder.Entity<OrderDetails>()
+                .HasOne(od => od.KoiFish) // Each OrderDetails references one KoiFish
+                .WithMany() // Assuming KoiFish has no navigation property back to OrderDetails
+                .HasForeignKey(od => od.KoiFishId)
+                .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete if needed
         }
         public KDOSDbContext(DbContextOptions<KDOSDbContext> options) : base(options)
         {
