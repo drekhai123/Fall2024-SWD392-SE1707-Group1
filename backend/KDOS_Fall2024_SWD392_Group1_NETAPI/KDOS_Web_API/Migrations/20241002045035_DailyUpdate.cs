@@ -5,7 +5,7 @@
 namespace KDOS_Web_API.Migrations
 {
     /// <inheritdoc />
-    public partial class ChangeAddressType : Migration
+    public partial class DailyUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
