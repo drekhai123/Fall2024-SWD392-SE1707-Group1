@@ -7,12 +7,21 @@ namespace KDOS_Web_API.Models.Domains
     public class Order
     {
         [Key]
-        public int OrderId { get; set; }         // Keep from both versions
-        public DateTime OrderDate { get; set; } // Use CreatedDate from the second version
-        public double TotalCost { get; set; }     // Keep from the first version
-        public int OrderStatus { get; set; }      // Keep from the first version
-        public String Location { get; set; }      // Keep from the first version
-        public Customer Customer { get; set; }    // Keep from the first version
-        public List<OrderDetails> OrderDetails { get; set; } // Keep from the first version
+        public int OrderId { get; set; }
+
+        public string? RecipientAddress { get; set; }
+        public string? RecipientName { get; set; }
+        public string? RecipientPhoneNumber { get; set; }
+        public string? RecipientEmail { get; set; }
+        public double TotalCost { get; set; }
+        public int OrderStatus { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        // Relationships
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; } // Many-to-one relationship with Customer
+
+        public List<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
     }
 }
