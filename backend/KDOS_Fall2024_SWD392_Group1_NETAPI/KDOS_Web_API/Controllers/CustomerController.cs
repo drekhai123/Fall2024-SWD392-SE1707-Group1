@@ -6,6 +6,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,10 +22,10 @@ namespace KDOS_Web_API.Controllers
             this.customerContext = customerContext;
         }
         [HttpGet]
-        public IActionResult GetAllCustomer()
+        public async Task<IActionResult> GetAllCustomer()
         {
             // This method get data DIRECTLY from database -> not best practice
-            var customerList = customerContext.Customer.ToList();
+            var customerList = await customerContext.Customer.ToListAsync();
             var customerDto = new List<CustomerDTO>();
             foreach (Customer customer in customerList)
             {
@@ -44,10 +45,10 @@ namespace KDOS_Web_API.Controllers
         }
 
         [HttpPost] // Post for create - FromBody is the data send from Client in the Respone Body
-        public IActionResult AddNewCustomer([FromBody] AddNewCustomerDTO addNewCustomerDTO)
+        public async Task<IActionResult> AddNewCustomer([FromBody] AddNewCustomerDTO addNewCustomerDTO)
         {
             // using the DTO to convert Model
-            var accountModel = customerContext.Account.FirstOrDefault(x => x.AccountId == addNewCustomerDTO.AccountId);
+            var accountModel = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == addNewCustomerDTO.AccountId);
             if (accountModel == null || !accountModel.Role.Equals("customer"))
             {
                 return NotFound("Error 404: Account Not Found");
@@ -69,9 +70,9 @@ namespace KDOS_Web_API.Controllers
                 PhoneNumber = addNewCustomerDTO.PhoneNumber,
             };
             //using Model to create a Customer
-            customerContext.Customer.Add(customerModel);
+            await customerContext.Customer.AddAsync(customerModel);
             //Save the Customer to the database. ID will auto increase by the EF
-            customerContext.SaveChanges();
+            await customerContext.SaveChangesAsync();
             //Map Model back to DTO
             var customerDto = new CustomerDTO
             {
@@ -90,10 +91,10 @@ namespace KDOS_Web_API.Controllers
         
         [HttpPost]
         [Route("searchbyname")]
-        public IActionResult FindCustomerByName([FromBody] String customerName)
+        public async Task<IActionResult> FindCustomerByName([FromBody] String customerName)
         {
             //Find by name
-            var customerModel = customerContext.Customer.FirstOrDefault(x=>x.CustomerName==customerName); // enforce ! to make sure name is not null
+            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x=>x.CustomerName==customerName); // enforce ! to make sure name is not null
             if (customerModel == null)
             {
                 return NotFound();
@@ -120,10 +121,10 @@ namespace KDOS_Web_API.Controllers
         // GET 1 customer by ID
         [HttpGet]
         [Route("{customerId}")] // get the "value" from the parameter
-        public IActionResult GetCustomerById([FromRoute]int customerId) //Identify this value is get from Route -> ALL NAMING form route and parameter must match
+        public async Task<IActionResult> GetCustomerById([FromRoute]int customerId) //Identify this value is get from Route -> ALL NAMING form route and parameter must match
         {
             //var customer = customerContext.Customer.Find(customerId); // Method will only work with fidning [Key] like Id
-            var customer = customerContext.Customer.FirstOrDefault(x => x.CustomerId == customerId); // Method will  work with ALL property you want to seach: name, add, phone,
+            var customer = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == customerId); // Method will  work with ALL property you want to seach: name, add, phone,
             //follow best practice
             if (customer == null)
             {
@@ -149,10 +150,10 @@ namespace KDOS_Web_API.Controllers
         // PUT - Update a customer through their Id
         [HttpPut]
         [Route("{customerId}")]
-        public IActionResult UpdateCustomer([FromRoute] int customerId, [FromBody] UpdateCustomerDTO updateCustomerDto)
+        public async Task<IActionResult> UpdateCustomer([FromRoute] int customerId, [FromBody] UpdateCustomerDTO updateCustomerDto)
         {
             //Find the customer with the Id
-            var customerModel = customerContext.Customer.FirstOrDefault(x => x.CustomerId == customerId);
+            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == customerId);
             if(customerModel == null)
             {
                 return NotFound();
@@ -165,7 +166,7 @@ namespace KDOS_Web_API.Controllers
                 customerModel.Address = updateCustomerDto.Address;
                 customerModel.Gender = updateCustomerDto.Gender;
                 customerModel.PhoneNumber = updateCustomerDto.PhoneNumber;
-                customerContext.SaveChanges();
+                await customerContext.SaveChangesAsync();
                 // Turn Model back to DTO
                 var customerDto = new CustomerDTO
                 {
@@ -182,17 +183,17 @@ namespace KDOS_Web_API.Controllers
         }
         [HttpDelete]
         [Route("{customerId}")]
-        public IActionResult DeleteCustomer([FromHeader] int customerId)
+        public async Task<IActionResult> DeleteCustomer([FromHeader] int customerId)
         {
-            var deleteCustomer = customerContext.Customer.FirstOrDefault(x => x.CustomerId == customerId);
+            var deleteCustomer = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == customerId);
             if (deleteCustomer == null)
             {
                 return NotFound();
             }
             else
             {
-                customerContext.Customer.Remove(deleteCustomer);
-                customerContext.SaveChanges();
+                customerContext.Customer.Remove(deleteCustomer); // no async remove
+                await customerContext.SaveChangesAsync();
                 //Return the customer info got deleted back
                 var customerDto = new CustomerDTO
                 {
