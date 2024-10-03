@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using KDOS_Web_API.Models.Domains;
 
 namespace KDOS_Web_API.Models.DTOs
 {
@@ -18,6 +19,7 @@ namespace KDOS_Web_API.Models.DTOs
         required public String Gender { get; set; }
         [Required]
         required public String PhoneNumber { get; set; }
+        public Account Account { get; set; } = null!;
     }
 }
 

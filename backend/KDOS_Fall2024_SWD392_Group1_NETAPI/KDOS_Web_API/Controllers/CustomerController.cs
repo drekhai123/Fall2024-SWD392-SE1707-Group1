@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -132,6 +133,8 @@ namespace KDOS_Web_API.Controllers
             }
             else
             {
+                //Get Customer Account info
+                var accountDto = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == customer.AccountId);
                 var customerDto = new CustomerDTO
                 {
                     AccountId = customer.AccountId,
@@ -141,6 +144,12 @@ namespace KDOS_Web_API.Controllers
                     Age = customer.Age,
                     Gender = customer.Gender,
                     PhoneNumber = customer.PhoneNumber,
+                    Account = new CustomerViewAccountDTO
+                    {
+                        UserName = accountDto!.UserName,
+                        Email = accountDto!.Email,
+                        Password = accountDto.Password,
+                    }
                 };
 
                 return Ok(customerDto); //return 200 ok
