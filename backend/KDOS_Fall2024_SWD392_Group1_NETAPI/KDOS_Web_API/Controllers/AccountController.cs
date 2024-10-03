@@ -6,8 +6,10 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,7 +17,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         private readonly KDOSDbContext accountContext;
 
@@ -24,9 +26,10 @@ namespace KDOS_Web_API.Controllers
             this.accountContext = accountContext;
         }
         [HttpGet]
-        public IActionResult GetALlAcount()
+        // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
+        public async Task<IActionResult> GetALlAcount()
         {
-            var accountList = accountContext.Account.ToList();
+            var accountList = await accountContext.Account.ToListAsync();
             var accountDto = new List<AccountDTO>();
             foreach(Account account in accountList)
             {
@@ -44,7 +47,7 @@ namespace KDOS_Web_API.Controllers
             return Ok(accountDto);
         }
         [HttpPost]
-        public IActionResult AddNewAccount([FromBody]AddNewAccountDTO addNewAccountDTO)
+        public async Task<IActionResult> AddNewAccount([FromBody]AddNewAccountDTO addNewAccountDTO)
         {
             // Turn Data to Model
             var accountModel = new Account
@@ -55,8 +58,8 @@ namespace KDOS_Web_API.Controllers
                 Banned = addNewAccountDTO.Banned,
                 Role = addNewAccountDTO.Role
             };
-            accountContext.Account.Add(accountModel);
-            accountContext.SaveChanges();
+            await accountContext.Account.AddAsync(accountModel);
+            await accountContext.SaveChangesAsync();
             // Turn Model to DTO for returning a response
             var accountDto = new AccountDTO
             {
@@ -72,9 +75,9 @@ namespace KDOS_Web_API.Controllers
 
         [HttpGet]
         [Route("{accountId}")]
-        public IActionResult GetAccountById([FromRoute] int accountId)
+        public async Task<IActionResult> GetAccountById([FromRoute] int accountId)
         {
-            var accountModel = accountContext.Account.FirstOrDefault(x => x.AccountId == accountId);
+            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
             if(accountModel == null)
             {
                 return NotFound();
@@ -96,9 +99,9 @@ namespace KDOS_Web_API.Controllers
         }
         [HttpPut]
         [Route("{accountId}")]
-        public IActionResult UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
+        public async Task<IActionResult> UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
         {
-            var accountModel = accountContext.Account.FirstOrDefault(x => x.AccountId == accountId);
+            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
             if (accountModel == null)
             {
                 return NotFound();
@@ -110,7 +113,7 @@ namespace KDOS_Web_API.Controllers
                   accountModel.Password = updateAccountDTO.Password;
                   accountModel.Banned = updateAccountDTO.Banned;
                   accountModel.Role = updateAccountDTO.Role;
-                accountContext.SaveChanges();
+                await accountContext.SaveChangesAsync();
                 var accountDto = new AccountDTO
                 {
                     AccountId = accountModel.AccountId,
@@ -123,20 +126,19 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
-
         [HttpDelete]
         [Route("{accountId}")]
-        public IActionResult DeleteAccountById([FromRoute] int accountId)
+        public async Task<IActionResult> DeleteAccountById([FromRoute] int accountId)
         {
-            var accountModel = accountContext.Account.FirstOrDefault(x => x.AccountId == accountId);
+            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
             if (accountModel == null)
             {
                 return NotFound();
             }
             else
             {
-                accountContext.Account.Remove(accountModel);
-                accountContext.SaveChanges();
+                accountContext.Account.Remove(accountModel); // remove cannot be Async. No method
+                await accountContext.SaveChangesAsync();
                 var accountDto = new AccountDTO
                 {
                     AccountId = accountModel.AccountId,

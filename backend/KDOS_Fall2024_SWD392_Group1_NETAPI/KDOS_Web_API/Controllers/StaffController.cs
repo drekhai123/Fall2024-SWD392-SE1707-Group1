@@ -13,7 +13,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StaffController : Controller
+    public class StaffController : ControllerBase
     {
         private readonly KDOSDbContext staffContext;
 
@@ -26,10 +26,10 @@ namespace KDOS_Web_API.Controllers
         {
             // Get Model Data from DB
             var staffList = staffContext.Staff.ToList<Staff>();
-            var stafDto = new List<StaffDTO>();
+            var staffDto = new List<StaffDTO>();
             foreach(Staff staff in staffList)
             {
-                stafDto.Add(new StaffDTO
+                staffDto.Add(new StaffDTO
                 {
                     AccountId = staff.AccountId,
                     StaffId = staff.StaffId,
@@ -39,15 +39,20 @@ namespace KDOS_Web_API.Controllers
                     PhoneNumber = staff.PhoneNumber
                 }) ;
             }
-            return Ok(stafDto);
+            return Ok(staffDto);
         }
         [HttpPost]
-        public IActionResult AddNewStaff([FromBody]AddNewStaffDTO addNewStaffDTO)
+        public IActionResult AddNewStaff( AddNewStaffDTO addNewStaffDTO)
         {
             var accountModel = staffContext.Account.FirstOrDefault(x => x.AccountId == addNewStaffDTO.AccountId);
-            if (accountModel == null)
+            if (accountModel == null || !accountModel.Role.Equals("staff"))
             {
-                return NotFound();
+                return NotFound("Error 404: Account Not Found");
+            }
+            var staffExist = staffContext.Staff.FirstOrDefault(x => x.AccountId == addNewStaffDTO.AccountId);
+            if (staffExist != null)
+            {
+                return BadRequest("Error 400: Account Already Exist!!!");
             }
             // turn DTO to Model
             var staffModel = new Staff
@@ -75,6 +80,32 @@ namespace KDOS_Web_API.Controllers
             // nameof() run the fucntion inside (GetStaffById) => return the new staff id, and return the properties of the staff we added
         }
 
+        [HttpPost]
+        [Route("searchbyname")]
+        public IActionResult FindStaffByName([FromBody] String customerName)
+        {
+            //Find by name
+            var staffModel = staffContext.Staff.FirstOrDefault(x => x.StaffName == customerName); // enforce ! to make sure name is not null
+            if (staffModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                //Turn Model to DTO
+                var staffDto = new StaffDTO
+                {
+                    AccountId = staffModel.AccountId,
+                    StaffId = staffModel.StaffId,
+                    StaffName = staffModel.StaffName,
+                    Age = staffModel.Age,
+                    Gender = staffModel.Gender,
+                    PhoneNumber = staffModel.PhoneNumber
+                };
+                return Ok(staffDto);
+            }
+        }
+
         [HttpGet]
         [Route("{staffId}")]
         public IActionResult GetStaffById([FromRoute] int staffId)
@@ -95,7 +126,7 @@ namespace KDOS_Web_API.Controllers
                     StaffName = staffModel.StaffName,
                     Age = staffModel.Age,
                     Gender = staffModel.Gender,
-                    PhoneNumber = staffModel.PhoneNumber
+                    PhoneNumber = staffModel.PhoneNumber,
                 };
                 return Ok(staffDto);
             }

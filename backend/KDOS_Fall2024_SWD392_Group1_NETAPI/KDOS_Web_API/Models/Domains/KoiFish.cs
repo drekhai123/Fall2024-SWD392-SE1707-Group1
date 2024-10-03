@@ -10,9 +10,8 @@ namespace KDOS_Web_API.Models
 
         public string? FishType { get; set; }
         public string? HealthStatus { get; set; }
-
-        // Navigation property for related order details
-        public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
+        public int OrderDetailsId { get; set; }// One-to-many relationship with OrderDetails
+        public OrderDetails OrderDetails { get; set; } = null!; // REQUIRED relationship
     }
 }
 

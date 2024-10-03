@@ -27,9 +27,9 @@ namespace KDOS_Web_API.Models.Domains
 
         // Relationships
         public int CustomerId { get; set; }
-        public Customer Customer { get; set; } // Many-to-one relationship with Customer
-        public int SenderId { get; set; }
-        public Customer Sender { get; set; }
-        public List<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
+        public Customer Customer { get; set; } = null!; // REQUIRED Many-to-one relationship with Customer
+        public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
+        public int TransportId { get; set; } // Foreign key to transport. 1 transport can have Many Order
+        public Transport? Transport { get; set; } // many-1 relationship with Tranport
     }
 }
