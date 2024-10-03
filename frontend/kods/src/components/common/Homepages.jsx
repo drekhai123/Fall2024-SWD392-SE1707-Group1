@@ -1,14 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
-<<<<<<< HEAD:frontend/koifish_delivery_system/src/components/common/homepage.jsx
-import "../../css/homepage.css"
-=======
 import "../../css/Homepages.css"
->>>>>>> main:frontend/kods/src/components/common/Homepages.jsx
 import Footer from "./footer";
 import Blogcarousel from "./blogcarousel";
 import Customerdashboard from "../admin/customerdashboard";
-import OrderNoti from './OrderNoti'; 
+import OrderNoti from './OrderNoti';
 export default function Homepage() {
     const rowsRef = useRef([]);
     const imageList = [
@@ -29,10 +25,10 @@ export default function Homepage() {
         },
         { threshold: 0.1 } // Trigger when 10% of the row is visible
       );
-  
+
       // Copy the current ref values to a local variable
       const rows = rowsRef.current;
-  
+
       // Observe each row
       rows.forEach((row) => {
         if (row) {
@@ -101,7 +97,7 @@ export default function Homepage() {
     </section>
     </div>
     <Footer/>
-    </>   
+    </>
 
   )
 }

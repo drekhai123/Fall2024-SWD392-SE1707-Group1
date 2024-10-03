@@ -13,33 +13,30 @@
 
 .container {
   border-radius: 8px;
-<<<<<<< HEAD:frontend/koifish_delivery_system/src/css/OrderForm.css
-  width: 70%;
-=======
+
   width: 80%;
->>>>>>> main:frontend/kods/src/css/OrderForm.css
     margin: auto;
     padding: 20px;
     border: 1px solid #ccc;
     background: white;
   }
-  
+
   .content {
     padding: 10px;
   }
-  
+
   .fixed-table {
     width: 100%;
     border-collapse: collapse;
   }
-  
+
   .fixed-table th,
   .fixed-table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
   }
-  
+
   .custom-dropdown {
     width: 100%;
     padding: 8px;
@@ -47,13 +44,13 @@
     border-radius: 6px;
     border: #007bff 1px solid;
   }
-  
+
   .add-button, .checkout-button, .confirm-button {
     padding: 10px;
     margin-top: 10px;
     cursor: pointer;
   }
-  
+
   .delete-button {
     cursor: pointer;
     padding: 8px 12px;
@@ -63,7 +60,7 @@
     border-radius: 8px;
     color: white;
   }
-  
+
   .add-button {
     background-color: rgb(75, 75, 205);
     cursor: pointer;
@@ -73,7 +70,7 @@
     border-radius: 8px;
     color: white;
   }
-  
+
   .checkout-button {
     background-color: rgb(35, 191, 56);
     cursor: pointer;
@@ -85,12 +82,12 @@
     margin-top: 24px;
     font-size: 16px;
   }
-  
+
   .confirm-button {
     background-color: #007bff;
     color: white;
   }
-  
+
   .sender-info {
     width: 100%;
   }
@@ -137,7 +134,7 @@
     margin-top: 8px;
   }
 
-  
+
   .label-total{
     font-size: 18px;
     font-weight: 600;

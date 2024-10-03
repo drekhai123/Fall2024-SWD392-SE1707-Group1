@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { QRCodeSVG } from 'qrcode.react';
-import '../../css/OrderForm.css'; 
+import '../../css/OrderForm.css';
 
 export default function OrderForm() {
   const [showQRCode, setShowQRCode] = useState(false);
@@ -100,19 +100,6 @@ export default function OrderForm() {
     });
   };
 
-<<<<<<< HEAD:frontend/koifish_delivery_system/src/components/customer/OrderForm.jsx
-  // Lỗi tui code k để ý bị re-render
-=======
-  // Lỗi mình code k để ý bị re-render
->>>>>>> main:frontend/kods/src/components/customer/OrderForm.jsx
-  //useEffect(() => {
-  //  const updatedOrders = fishOrders.map(order => ({
-  //    ...order,
-  //    total: order.quantity * order.price,
-  //  }));
-  //  setFishOrders(updatedOrders);
-  //}, [fishOrders]);
-
   useEffect(() => {
     localStorage.setItem('fishOrders', JSON.stringify(fishOrders));
   }, [fishOrders]);
@@ -130,7 +117,7 @@ export default function OrderForm() {
     Swal.fire('Success!', 'Order confirmed!', 'success');
     setShowQRCode(false);
   };
-  
+
   return (
 <div className="order-form">
    <div className="container">
@@ -144,11 +131,7 @@ export default function OrderForm() {
               <th className="label-table">Weight (kg)</th>
               <th className="label-table">Price (VND/Kg)</th>
               <th className="label-table">Health Status</th>
-<<<<<<< HEAD:frontend/koifish_delivery_system/src/components/customer/OrderForm.jsx
-             
-=======
               <th className="label-table">Action</th>
->>>>>>> main:frontend/kods/src/components/customer/OrderForm.jsx
             </tr>
           </thead>
           <tbody>
@@ -226,13 +209,13 @@ export default function OrderForm() {
         </div>
 
         </div>
-        
+
           <div className="layout-total">
           <p className="label-total">Shipping fee: {calculateShippingFee() || 0} VND</p>
         <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
         <h3 className="total-amount">Total Amount: {getTotalAmount() + parseInt(calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))} VND</h3>
           </div>
-       
+
 
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
@@ -266,6 +249,6 @@ export default function OrderForm() {
       </div>
     </div>
     </div>
-    
+
   );
 }
