@@ -2,20 +2,19 @@ import '../../css/OrderItem.css';
 
 const OrderItem = ({
   orderId,
-  customerName,
-  orderAmount,
-  orderPrice,
+  orderDates,
+  deliveryPrice,
+  dateShipmentArrived,
   orderStatus,
-  shipTime,
+
 }) => {
   return (
     <div className='order-item-container'>
       <p className='order-id'>Order ID: {orderId}</p>
-      <p className='customer-name'>Customer Name: {customerName}</p>
-      <p className='order-amount'>Order Amount: {orderAmount}</p>
-      <p className='order-price'>Order Price: {orderPrice}</p>
+      <p className='order-dates'>Order Dates: {orderDates}</p>
+      <p className='delivery-price'>Delivery Price: {deliveryPrice}</p>
+      <p className='date-arrived'>Date arrived: {dateShipmentArrived}</p>
       <p className='order-status'>Order Status: {orderStatus}</p>
-      <p className='ship-time'>Ship time: {shipTime}</p>
     </div>
   );
 };
