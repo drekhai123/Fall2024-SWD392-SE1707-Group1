@@ -13,7 +13,7 @@ import TrackingStaff from './components/admin/TrackingStaff';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Homepage/>,
+    element: <Homepage />,
   },
   {
     path: '/login',
