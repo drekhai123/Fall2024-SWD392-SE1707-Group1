@@ -1,0 +1,14 @@
+.order-item-container {
+  border: 1px solid #5e5e5f;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.order-item-container .order-id,
+.order-item-container .order-dates,
+.order-item-container .delivery-price,
+.order-item-container .date-arrived,
+.order-item-container .order-status {
+  font-size: 20px;
+  line-height: 2rem;
+}

@@ -4,6 +4,7 @@ using KDOS_Web_API.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KDOS_Web_API.Migrations
 {
     [DbContext(typeof(KDOSDbContext))]
-    partial class KDOSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241002190506_UpdateFeedbackTable")]
+    partial class UpdateFeedbackTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +54,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Account", (string)null);
+                    b.ToTable("Account");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Customer", b =>
@@ -102,7 +105,7 @@ namespace KDOS_Web_API.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Customer", (string)null);
+                    b.ToTable("Customer");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Orders", b =>
@@ -167,7 +170,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.KoiFish", b =>
@@ -186,7 +189,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasKey("KoiFishId");
 
-                    b.ToTable("KoiFish", (string)null);
+                    b.ToTable("KoiFish");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.OrderDetails", b =>
@@ -215,7 +218,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Staff", b =>
@@ -249,7 +252,7 @@ namespace KDOS_Web_API.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Staff", (string)null);
+                    b.ToTable("Staff");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Customer", b =>
