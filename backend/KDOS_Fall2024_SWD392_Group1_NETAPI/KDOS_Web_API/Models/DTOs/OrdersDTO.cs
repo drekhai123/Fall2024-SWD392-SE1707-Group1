@@ -8,16 +8,16 @@ namespace KDOS_Web_API.Models.DTOs
         public int OrderId { get; set; }
 
         [Required]
-        public string RecipientAddress { get; set; }
+        public required string RecipientAddress { get; set; }
 
         [Required]
-        public string RecipientName { get; set; }
+        public required string RecipientName { get; set; }
 
         [Required]
-        public string RecipientPhoneNumber { get; set; }
+        public required string RecipientPhoneNumber { get; set; }
 
         [EmailAddress]
-        public string RecipientEmail { get; set; }
+        public required string RecipientEmail { get; set; }
 
         [Required]
         public PaymentMethod PaymentMethod { get; set; }
@@ -25,7 +25,7 @@ namespace KDOS_Web_API.Models.DTOs
         public PaymentStatus PaymentStatus { get; set; }
         public OrderStatus DeliveryStatus { get; set; }
 
-        public string DeliveryNote { get; set; }
+        public required string DeliveryNote { get; set; }
 
         [Required]
         public int Quantity { get; set; }
