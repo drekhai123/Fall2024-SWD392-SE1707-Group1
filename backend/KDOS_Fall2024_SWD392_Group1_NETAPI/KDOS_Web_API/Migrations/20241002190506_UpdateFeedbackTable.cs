@@ -13,7 +13,11 @@ namespace KDOS_Web_API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Order");
+
+            migrationBuilder.DropColumn(
+                name: "Price",
+                table: "OrderDetails");
 
             migrationBuilder.DropColumn(
                 name: "Description",
@@ -25,12 +29,6 @@ namespace KDOS_Web_API.Migrations
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "KoiFishId1",
-                table: "OrderDetails",
-                type: "int",
-                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "OrderId",
@@ -81,6 +79,13 @@ namespace KDOS_Web_API.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     RecipientEmail = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    DeliveryStatus = table.Column<int>(type: "int", nullable: false),
+                    DeliveryNote = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    TotalWeight = table.Column<double>(type: "double", nullable: false),
                     TotalCost = table.Column<double>(type: "double", nullable: false),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -112,11 +117,6 @@ namespace KDOS_Web_API.Migrations
                 column: "KoiFishId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderDetails_KoiFishId1",
-                table: "OrderDetails",
-                column: "KoiFishId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_OrderId",
                 table: "OrderDetails",
                 column: "OrderId");
@@ -140,13 +140,6 @@ namespace KDOS_Web_API.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_OrderDetails_KoiFish_KoiFishId1",
-                table: "OrderDetails",
-                column: "KoiFishId1",
-                principalTable: "KoiFish",
-                principalColumn: "KoiFishId");
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_OrderDetails_Orders_OrderId",
                 table: "OrderDetails",
                 column: "OrderId",
@@ -163,10 +156,6 @@ namespace KDOS_Web_API.Migrations
                 table: "OrderDetails");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_OrderDetails_KoiFish_KoiFishId1",
-                table: "OrderDetails");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_OrderDetails_Orders_OrderId",
                 table: "OrderDetails");
 
@@ -178,19 +167,11 @@ namespace KDOS_Web_API.Migrations
                 table: "OrderDetails");
 
             migrationBuilder.DropIndex(
-                name: "IX_OrderDetails_KoiFishId1",
-                table: "OrderDetails");
-
-            migrationBuilder.DropIndex(
                 name: "IX_OrderDetails_OrderId",
                 table: "OrderDetails");
 
             migrationBuilder.DropColumn(
                 name: "KoiFishId",
-                table: "OrderDetails");
-
-            migrationBuilder.DropColumn(
-                name: "KoiFishId1",
                 table: "OrderDetails");
 
             migrationBuilder.DropColumn(
@@ -213,6 +194,13 @@ namespace KDOS_Web_API.Migrations
                 name: "UpdatedAt",
                 table: "Customer");
 
+            migrationBuilder.AddColumn<double>(
+                name: "Price",
+                table: "OrderDetails",
+                type: "double",
+                nullable: false,
+                defaultValue: 0.0);
+
             migrationBuilder.AddColumn<string>(
                 name: "Description",
                 table: "KoiFish",
@@ -221,7 +209,7 @@ namespace KDOS_Web_API.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "Order",
                 columns: table => new
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false)
@@ -233,7 +221,7 @@ namespace KDOS_Web_API.Migrations
                 {
                     table.PrimaryKey("PK_Order", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_Orders_OrderDetails_OrderDetailsId",
+                        name: "FK_Order_OrderDetails_OrderDetailsId",
                         column: x => x.OrderDetailsId,
                         principalTable: "OrderDetails",
                         principalColumn: "OrderDetailsId");
@@ -241,8 +229,8 @@ namespace KDOS_Web_API.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_OrderDetailsId",
-                table: "Orders",
+                name: "IX_Order_OrderDetailsId",
+                table: "Order",
                 column: "OrderDetailsId");
         }
     }

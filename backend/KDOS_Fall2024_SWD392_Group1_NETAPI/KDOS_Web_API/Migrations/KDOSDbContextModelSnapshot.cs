@@ -51,7 +51,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Account");
+                    b.ToTable("Account", (string)null);
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Customer", b =>
@@ -102,7 +102,7 @@ namespace KDOS_Web_API.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Customer");
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Orders", b =>
@@ -119,7 +119,22 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("DeliveryNote")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("DeliveryStatus")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<string>("RecipientAddress")
@@ -140,6 +155,9 @@ namespace KDOS_Web_API.Migrations
                     b.Property<double>("TotalCost")
                         .HasColumnType("double");
 
+                    b.Property<double>("TotalWeight")
+                        .HasColumnType("double");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -149,7 +167,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.KoiFish", b =>
@@ -168,7 +186,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasKey("KoiFishId");
 
-                    b.ToTable("KoiFish");
+                    b.ToTable("KoiFish", (string)null);
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.OrderDetails", b =>
@@ -182,14 +200,8 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("KoiFishId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("KoiFishId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("double");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -201,11 +213,9 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasIndex("KoiFishId");
 
-                    b.HasIndex("KoiFishId1");
-
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Staff", b =>
@@ -239,7 +249,7 @@ namespace KDOS_Web_API.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Staff");
+                    b.ToTable("Staff", (string)null);
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Customer", b =>
@@ -275,14 +285,10 @@ namespace KDOS_Web_API.Migrations
             modelBuilder.Entity("KDOS_Web_API.Models.OrderDetails", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.KoiFish", "KoiFish")
-                        .WithMany()
+                        .WithMany("OrderDetails")
                         .HasForeignKey("KoiFishId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("KDOS_Web_API.Models.KoiFish", null)
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("KoiFishId1");
 
                     b.HasOne("KDOS_Web_API.Models.Domains.Orders", "Order")
                         .WithMany("OrderDetails")
