@@ -1,4 +1,5 @@
 using KDOS_Web_API.Datas;
+using KDOS_Web_API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,9 @@ builder.Services.AddCors(c =>
 builder.Services.AddDbContext<KDOSDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 30))));
+// Inject the Account Repository
+builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
+//
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

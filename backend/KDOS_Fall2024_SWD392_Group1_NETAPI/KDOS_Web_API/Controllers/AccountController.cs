@@ -8,6 +8,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,16 +21,21 @@ namespace KDOS_Web_API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly KDOSDbContext accountContext;
+        private readonly IAccountRepository accountRepository;
 
-        public AccountController(KDOSDbContext accountContext)
+        // Adding in the Repository Inject
+        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository)
         {
             this.accountContext = accountContext;
+            this.accountRepository = accountRepository;
         }
         [HttpGet]
         // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
         public async Task<IActionResult> GetALlAcount()
         {
-            var accountList = await accountContext.Account.ToListAsync();
+            // Now we don't call the DB directly but through the Depository
+            // var accountList = await accountContext.Account.ToListAsync();
+            var accountList = await accountRepository.GetAllAccountAsync();
             var accountDto = new List<AccountDTO>();
             foreach(Account account in accountList)
             {

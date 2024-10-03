@@ -6,6 +6,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,10 +23,10 @@ namespace KDOS_Web_API.Controllers
             this.staffContext = staffContext;
         }
         [HttpGet]
-        public IActionResult GetAllStaff()
+        public async Task<IActionResult> GetAllStaff()
         {
             // Get Model Data from DB
-            var staffList = staffContext.Staff.ToList<Staff>();
+            var staffList = await staffContext.Staff.ToListAsync<Staff>();
             var staffDto = new List<StaffDTO>();
             foreach(Staff staff in staffList)
             {
@@ -42,9 +43,9 @@ namespace KDOS_Web_API.Controllers
             return Ok(staffDto);
         }
         [HttpPost]
-        public IActionResult AddNewStaff( AddNewStaffDTO addNewStaffDTO)
+        public async Task<IActionResult> AddNewStaff( AddNewStaffDTO addNewStaffDTO)
         {
-            var accountModel = staffContext.Account.FirstOrDefault(x => x.AccountId == addNewStaffDTO.AccountId);
+            var accountModel = await staffContext.Account.FirstOrDefaultAsync(x => x.AccountId == addNewStaffDTO.AccountId);
             if (accountModel == null || !accountModel.Role.Equals("staff"))
             {
                 return NotFound("Error 404: Account Not Found");
@@ -63,8 +64,8 @@ namespace KDOS_Web_API.Controllers
                 Gender = addNewStaffDTO.Gender,
                 PhoneNumber = addNewStaffDTO.PhoneNumber,
             };
-            staffContext.Staff.Add(staffModel);
-            staffContext.SaveChanges();
+            await staffContext.Staff.AddAsync(staffModel);
+            await staffContext.SaveChangesAsync();
             // Map model back to DTO and send to Client
             var staffDto = new StaffDTO()
             {
@@ -82,10 +83,10 @@ namespace KDOS_Web_API.Controllers
 
         [HttpPost]
         [Route("searchbyname")]
-        public IActionResult FindStaffByName([FromBody] String customerName)
+        public async Task<IActionResult> FindStaffByName([FromBody] String customerName)
         {
             //Find by name
-            var staffModel = staffContext.Staff.FirstOrDefault(x => x.StaffName == customerName); // enforce ! to make sure name is not null
+            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffName == customerName); // enforce ! to make sure name is not null
             if (staffModel == null)
             {
                 return NotFound();
@@ -108,10 +109,10 @@ namespace KDOS_Web_API.Controllers
 
         [HttpGet]
         [Route("{staffId}")]
-        public IActionResult GetStaffById([FromRoute] int staffId)
+        public async Task<IActionResult> GetStaffById([FromRoute] int staffId)
         {
             //Find StaffModel in db
-            var staffModel = staffContext.Staff.FirstOrDefault(x => x.StaffId == staffId);
+            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffId == staffId);
             if(staffModel == null)
             {
                 return NotFound();
@@ -133,10 +134,10 @@ namespace KDOS_Web_API.Controllers
         }
         [HttpPut]
         [Route("{staffId}")]
-        public IActionResult UpdateStaffById([FromRoute] int staffId, [FromBody] UpdateStaffDTO updateStaffDTO)
+        public async Task<IActionResult> UpdateStaffById([FromRoute] int staffId, [FromBody] UpdateStaffDTO updateStaffDTO)
         {
             //Find StaffModel in db
-            var staffModel = staffContext.Staff.FirstOrDefault(x => x.StaffId == staffId);
+            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffId == staffId);
             if (staffModel == null)
             {
                 return NotFound();
@@ -148,7 +149,7 @@ namespace KDOS_Web_API.Controllers
                 staffModel.Age = updateStaffDTO.Age;
                 staffModel.Gender = updateStaffDTO.Gender;
                 staffModel.PhoneNumber = updateStaffDTO.PhoneNumber;
-                staffContext.SaveChanges();
+                await staffContext.SaveChangesAsync();
                 //Turn Model back to DTO to send to Client
                 var staffDto = new StaffDTO
                 {
@@ -165,18 +166,18 @@ namespace KDOS_Web_API.Controllers
 
         [HttpDelete]
         [Route("{staffId}")]
-        public IActionResult DeleteStaffById([FromRoute] int staffId)
+        public async Task<IActionResult> DeleteStaffById([FromRoute] int staffId)
         {
             //Find StaffModel in db
-            var staffModel = staffContext.Staff.FirstOrDefault(x => x.StaffId == staffId);
+            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffId == staffId);
             if (staffModel == null)
             {
                 return NotFound();
             }
             else
             {
-                staffContext.Staff.Remove(staffModel);
-                staffContext.SaveChanges();
+                staffContext.Staff.Remove(staffModel); // No Async Remove
+                await staffContext.SaveChangesAsync();
                 //Convert Model to DTO
                 var deletedstaffDto = new StaffDTO
                 {

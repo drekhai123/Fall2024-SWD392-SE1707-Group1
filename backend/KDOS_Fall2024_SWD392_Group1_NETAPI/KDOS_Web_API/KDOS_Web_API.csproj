@@ -22,11 +22,13 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Migrations\" />
     <None Remove="Models\DTOs\" />
     <None Remove="Models\Domains\" />
+    <None Remove="Repositories\" />
   </ItemGroup>
 </Project>
