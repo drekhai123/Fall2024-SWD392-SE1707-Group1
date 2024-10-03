@@ -4,7 +4,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController : Controller
+    public class OrdersController : ControllerBase
     {
         
     }

@@ -13,7 +13,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StaffController : Controller
+    public class StaffController : ControllerBase
     {
         private readonly KDOSDbContext staffContext;
 

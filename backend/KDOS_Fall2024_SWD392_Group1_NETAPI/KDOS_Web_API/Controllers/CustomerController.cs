@@ -13,8 +13,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : Controller
-    {
+    public class CustomerController : ControllerBase    {
         private readonly KDOSDbContext customerContext;
 
         public CustomerController(KDOSDbContext customerContext)
