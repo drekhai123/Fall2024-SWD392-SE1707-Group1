@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KDOS_Web_API.Migrations
 {
     [DbContext(typeof(KDOSDbContext))]
-    [Migration("20241002124546_UpdateFeedbackTable")]
+    [Migration("20241002190506_UpdateFeedbackTable")]
     partial class UpdateFeedbackTable
     {
         /// <inheritdoc />
@@ -122,7 +122,22 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("DeliveryNote")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("DeliveryStatus")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<string>("RecipientAddress")
@@ -141,6 +156,9 @@ namespace KDOS_Web_API.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("TotalCost")
+                        .HasColumnType("double");
+
+                    b.Property<double>("TotalWeight")
                         .HasColumnType("double");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -185,14 +203,8 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("KoiFishId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("KoiFishId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("double");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -203,8 +215,6 @@ namespace KDOS_Web_API.Migrations
                     b.HasKey("OrderDetailsId");
 
                     b.HasIndex("KoiFishId");
-
-                    b.HasIndex("KoiFishId1");
 
                     b.HasIndex("OrderId");
 
@@ -278,14 +288,10 @@ namespace KDOS_Web_API.Migrations
             modelBuilder.Entity("KDOS_Web_API.Models.OrderDetails", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.KoiFish", "KoiFish")
-                        .WithMany()
+                        .WithMany("OrderDetails")
                         .HasForeignKey("KoiFishId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("KDOS_Web_API.Models.KoiFish", null)
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("KoiFishId1");
 
                     b.HasOne("KDOS_Web_API.Models.Domains.Orders", "Order")
                         .WithMany("OrderDetails")

@@ -27,22 +27,23 @@ namespace KDOS_Web_API.Datas
                 .WithOne(a => a.Staff)         // An Account has one Customer
                 .HasForeignKey<Staff>(s => s.AccountId)  // Customer holds the foreign key
                 .OnDelete(DeleteBehavior.Cascade);  // Optional: cascade delete when Staff is deleted Meaning delete Account will Delete Customer or Visersa
+            modelBuilder.Entity<OrderDetails>()
+                .HasOne(od => od.Order)
+                .WithMany(o => o.OrderDetails)
+                .HasForeignKey(od => od.OrderId);
             modelBuilder.Entity<Orders>()
-                .HasOne(o => o.Sender) // Sender
-                .WithMany()
-                .HasForeignKey(o => o.SenderId);
+               .HasOne(o => o.Sender) // Sender
+               .WithMany()
+               .HasForeignKey(o => o.SenderId);
             modelBuilder.Entity<OrderDetails>()
-                .HasOne(od => od.Order) // Each OrderDetails references one Order
-                .WithMany(o => o.OrderDetails) // An Order can have many OrderDetails
-                .HasForeignKey(od => od.OrderId)
-                .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete if needed
-
-            modelBuilder.Entity<OrderDetails>()
-                .HasOne(od => od.KoiFish) // Each OrderDetails references one KoiFish
-                .WithMany() // Assuming KoiFish has no navigation property back to OrderDetails
-                .HasForeignKey(od => od.KoiFishId)
-                .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete if needed
-        }
+                .HasOne(od => od.KoiFish)
+                .WithMany(k => k.OrderDetails)
+                .HasForeignKey(od => od.KoiFishId);
+            modelBuilder.Entity<Customer>()
+                .HasMany(c => c.Orders) // Customer has many Orders
+                .WithOne(o => o.Customer) // Each Order has one Customer
+                .HasForeignKey(o => o.CustomerId); // Foreign key in Orders table
+                }
         public KDOSDbContext(DbContextOptions<KDOSDbContext> options) : base(options)
         {
         }

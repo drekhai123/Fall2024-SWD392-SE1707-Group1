@@ -11,7 +11,6 @@ namespace KDOS_Web_API.Models
 
         public int Quantity { get; set; }
         public float Weight { get; set; }
-        public double Price { get; set; }
 
         // Relationships
         public int OrderId { get; set; } // Foreign key
