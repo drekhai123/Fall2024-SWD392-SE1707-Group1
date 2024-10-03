@@ -35,7 +35,6 @@ namespace KDOS_Web_API.Models
 
         // Link between Account and Customer
         public Account? Account { get; set; }
-
-        public ICollection<Orders> Orders { get; set; } = new List<Orders>(); // One-to-many relationship with Order
+        public ICollection<Orders> Orders { get; set; } = new List<Orders>(); // Navigation property
     }
 }
