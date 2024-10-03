@@ -1,4 +1,5 @@
 using KDOS_Web_API.Models.Domains;
+using Microsoft.VisualStudio.Web.CodeGeneration.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,22 +14,19 @@ namespace KDOS_Web_API.Models
         public int AccountId { get; set; } // FK
 
         [Required]
-        public string CustomerName { get; set; }
+        public required string  CustomerName { get; set; }
 
         [Required]
         public int Age { get; set; }
 
         [Required]
-        public string Gender { get; set; }
+        public required string Gender { get; set; }
 
         [Required]
-        public string Email { get; set; } // Include Email as it was in one version
+        public required string PhoneNumber { get; set; }
 
         [Required]
-        public string PhoneNumber { get; set; }
-
-        [Required]
-        public string Address { get; set; }
+        public required string Address { get; set; }
         public int OrderId { get; set; } // FK
         public DateTime CreatedAt { get; set; } // Include CreatedAt
         public DateTime UpdatedAt { get; set; } // Include UpdatedAt

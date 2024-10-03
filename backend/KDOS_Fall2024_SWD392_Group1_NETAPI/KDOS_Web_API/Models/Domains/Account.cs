@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace KDOS_Web_API.Models
+namespace KDOS_Web_API.Models.Domains
 {
 	public class Account
 	{
@@ -14,5 +14,6 @@ namespace KDOS_Web_API.Models
         required public String Role { get; set; }
         public Customer? Customer { get; set; }
         public Staff? Staff { get; set; }
+        public DeliveryStaff? DeliveryStaff { get; set; }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using KDOS_Web_API.Models.Domains;
 
-namespace KDOS_Web_API.Models
+namespace KDOS_Web_API.Models.Domains
 {
-	public class Staff
+	public class DeliveryStaff
 	{
         [Key]
         public int StaffId { get; set; }
@@ -20,8 +18,8 @@ namespace KDOS_Web_API.Models
         required public String PhoneNumber { get; set; }
         // Link between Account and Staff
         [Required]
-        public Account? Account { get; set; }
-
+        public Account? Account { get; set; } // 1-1 Relation
+        public Transport? Transport { get; set; } //1-1 Relation
     }
 }
 
