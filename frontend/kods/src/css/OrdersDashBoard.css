@@ -1,0 +1,236 @@
+.checkout-form {
+    width: 100vw;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: auto;
+    background-position: auto;
+    background-size: cover !important;
+    object-fit: cover;
+    margin-top: 100px;
+    background: url('../../public/images/background.jpg');
+    margin-top: 0;
+  }
+  
+  .title-popup {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #007bff;
+    text-align: center;
+  }
+  
+  .container {
+    border-radius: 12px; /* Bo góc mềm mại hơn */
+    width: 80%;
+    margin: 40px auto; /* Thêm khoảng cách trên và dưới */
+    padding: 30px; /* Tăng padding để nội dung thoáng hơn */
+    border: none; /* Loại bỏ viền mặc định */
+    background: #ffffff; /* Màu nền trắng */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
+    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Hiệu ứng khi hover */
+}
+  
+  .layout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0 8px;
+    margin-top: 8px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .label-table {
+    font-size: 18px;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table th,
+  table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  table td {
+    background-color: #fff;
+  }
+  
+  tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .my-4 {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .table-striped tbody tr:nth-of-type(even) {
+    background-color: #fdfdfd;
+  }
+  
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .container-popup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 600px;
+    width: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .title-popup {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .customer-info,
+  .product-info {
+    margin-bottom: 20px;
+  }
+  
+  .customer-info h4,
+  .product-info h4 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .customer-info p,
+  .product-info p {
+    margin: 5px 0;
+  }
+  
+  .product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .product-table th,
+  .product-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .product-table th {
+    background-color: #f8f9fa;
+  }
+  
+  .layout-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
+  .layout-info {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .cancel-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #5ee73c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .cancel-btn:hover {
+    background-color: #c0392b;
+  }
+  
+  .form-datePicker {
+    width: 30%;
+    margin-bottom: 16px; 
+}
+
+.date-picker, .date-picker2 {
+    padding: 10px 14px;
+    font-size: 16px;
+    outline: none;
+    border: 1px solid #ced4da; 
+    border-radius: 6px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f8f9fa; 
+}
+
+.date-picker:hover, .date-picker2:hover {
+    border-color: #80bdff; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.date-picker:focus, .date-picker2:focus {
+    border-color: #007bff; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+.date-picker2 {
+    padding: 10px 36px 10px 14px; 
+}
+
+.layout-date-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+}
+
+  
