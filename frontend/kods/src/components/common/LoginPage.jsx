@@ -25,7 +25,7 @@ const LoginPage = () => {
     var account = LoginApi(login)
         if (account!=null) {
           navigate('/');
-        } else {
+        // } else {
           alert('Invalid credentials');
         }
   };
