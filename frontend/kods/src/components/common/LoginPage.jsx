@@ -1,25 +1,38 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/LoginPage.css';
+import {LoginApi} from '../api/LoginApi';
 
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const [usernameoremail, setUsernameoremail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleChangeUsername = (e) => {
-    setUsername(e.target.value);
+    setUsernameoremail(e.target.value);
   };
   const handleChangePassword = (e) => {
     setPassword(e.target.value);
   };
-  const handleLoginClick = (e) => {
+  const handleLoginClick = async (e) => {
     e.preventDefault();
+    var login = {
+      usernameoremail: usernameoremail,
+      password: password
+    }
+   //console.log(login)
+    var account = LoginApi(login)
+        if (account!=null) {
+          navigate('/');
+        } else {
+          alert('Invalid credentials');
+        }
   };
   const handleSignupClick = () => {
     navigate('/signup');
   };
+
 
   return (
     <div className='login-page-container'>
@@ -35,7 +48,7 @@ const LoginPage = () => {
             type='text'
             className='username-input'
             placeholder='Enter Your Username'
-            value={username}
+            value={usernameoremail}
             onChange={handleChangeUsername}
           />
           <input

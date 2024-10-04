@@ -53,6 +53,31 @@ namespace KDOS_Web_API.Controllers
             return Ok(accountDto);
         }
         [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+        {
+            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.UserName == loginDTO.UserNameOrEmail || x.Email == loginDTO.UserNameOrEmail); // Check account by email
+          
+            if(accountModel != null && accountModel.Password.Equals(loginDTO.Password))
+            {
+                AccountDTO accountDTO = new AccountDTO
+                {
+                    Email = accountModel.Email,
+                    Role = accountModel.Role,
+                    UserName = accountModel.UserName,
+                    Banned = accountModel.Banned,
+                    Password = accountModel.Password
+                };
+                return Ok(accountDTO);
+            }
+            else
+            {
+                return NotFound("Error! Wrong Email/UserName or Password");
+            }
+
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddNewAccount([FromBody]AddNewAccountDTO addNewAccountDTO)
         {
             // Turn Data to Model
