@@ -1,0 +1,84 @@
+﻿using System;
+using KDOS_Web_API.Datas;
+using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
+
+namespace KDOS_Web_API.Repositories
+{
+	public class SQLCustomerRepository : ICustomerRepository
+	{
+        private readonly KDOSDbContext customerContext;
+
+        public SQLCustomerRepository(KDOSDbContext customerContext)
+		{
+            this.customerContext = customerContext;
+        }
+
+        public async Task<Customer> AddNewCustomer(Customer customer)
+        {
+            await customerContext.Customer.AddAsync(customer);
+            await customerContext.SaveChangesAsync();
+            return customer;
+        }
+
+        public async Task<Customer?> DeleteCustomer(int id)
+        {
+            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
+            if(customerModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                customerContext.Customer.Remove(customerModel);
+                await customerContext.SaveChangesAsync();
+                return customerModel;
+            }
+            
+        }
+
+        public async Task<List<Customer>> GetAllCustomer()
+        {
+            List<Customer> customerList = await customerContext.Customer.ToListAsync();
+            return customerList;
+        }
+
+        public async Task<Customer?> GetCustomerById(int id)
+        {
+            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
+            return customerModel;
+        }
+
+        public async Task<Customer?> GetCustomerByName(string name)
+        {
+            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerName == name);
+            return customerModel;
+        }
+
+
+        public async Task<Customer?> UpdateCustomer(int id, Customer customer)
+        {
+            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
+            if (customerModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                customerModel.CustomerName = customer.CustomerName;
+                customerModel.Age = customer.Age;
+                customerModel.Address = customer.Address;
+                customerModel.Gender = customer.Gender;
+                customerModel.PhoneNumber = customer.PhoneNumber;
+                await customerContext.SaveChangesAsync();
+                return customer;
+
+
+            }
+        }
+
+ 
+    }
+}
+
