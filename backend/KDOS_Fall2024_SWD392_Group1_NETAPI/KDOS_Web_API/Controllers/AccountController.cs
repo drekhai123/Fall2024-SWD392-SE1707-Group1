@@ -89,8 +89,7 @@ namespace KDOS_Web_API.Controllers
                 Banned = addNewAccountDTO.Banned,
                 Role = addNewAccountDTO.Role
             };
-            await accountContext.Account.AddAsync(accountModel);
-            await accountContext.SaveChangesAsync();
+            accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
             var accountDto = new AccountDTO
             {
@@ -108,7 +107,7 @@ namespace KDOS_Web_API.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> GetAccountById([FromRoute] int accountId)
         {
-            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
+            var accountModel = await accountRepository.GetAccountById(accountId);
             if(accountModel == null)
             {
                 return NotFound();
@@ -131,21 +130,24 @@ namespace KDOS_Web_API.Controllers
         [HttpPut]
         [Route("{accountId}")]
         public async Task<IActionResult> UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
-        {
-            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
+            {
+            // Map DTO to AccountModel
+            var accountModel = new Account
+            {
+            UserName = updateAccountDTO.UserName,
+            Email = updateAccountDTO.Email,
+            Password = updateAccountDTO.Password,
+            Banned = updateAccountDTO.Banned,
+            Role = updateAccountDTO.Role,
+        };
+            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
             if (accountModel == null)
             {
                 return NotFound();
             }
             else
             {
-                  accountModel.UserName = updateAccountDTO.UserName;
-                  accountModel.Email = updateAccountDTO.Email;
-                  accountModel.Password = updateAccountDTO.Password;
-                  accountModel.Banned = updateAccountDTO.Banned;
-                  accountModel.Role = updateAccountDTO.Role;
-                await accountContext.SaveChangesAsync();
-                var accountDto = new AccountDTO
+                 var accountDto = new AccountDTO
                 {
                     AccountId = accountModel.AccountId,
                     UserName = accountModel.UserName,
@@ -161,15 +163,13 @@ namespace KDOS_Web_API.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> DeleteAccountById([FromRoute] int accountId)
         {
-            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
+            var accountModel = await accountRepository.DeleteAccount(accountId);
             if (accountModel == null)
             {
                 return NotFound();
             }
             else
             {
-                accountContext.Account.Remove(accountModel); // remove cannot be Async. No method
-                await accountContext.SaveChangesAsync();
                 var accountDto = new AccountDTO
                 {
                     AccountId = accountModel.AccountId,
