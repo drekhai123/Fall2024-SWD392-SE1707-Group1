@@ -1,5 +1,6 @@
-import axios from 'axios';
+// eslint-disable-next-line
 import { localhostUrl,baseUrl,headers } from './Url';
+import axios from 'axios';
 
 const loginUrl = baseUrl+"/Login";
 
