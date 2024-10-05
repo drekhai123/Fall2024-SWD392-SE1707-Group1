@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { GetAllCustomers } from '../api/CustomerApi';
 // MUI
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -31,13 +32,9 @@ import Paper from '@mui/material/Paper';
 export default function Customerdashboard() {
     const [customers, setCustomer] = useState([]);
     useEffect(() => {
-        async function getCustomerData(){
-        axios.get('http://localhost:2377/api/Customer')
-        .then(response => setCustomer(response.data))
-        .catch(error => {
-          console.error(error)
-          alert('Error fetching data')
-        })
+        const getCustomerData = async()=>{
+          var allCustomer = await GetAllCustomers();
+          setCustomer(allCustomer);
         };
         getCustomerData()
     }, []);
