@@ -1,17 +1,13 @@
 import axios from 'axios';
+import { localhostUrl,baseUrl,headers } from './Url';
 
-const URL = "http://localhost:2377/api/Account/Login";
-const headers = {
-    'Content-Type': 'application/json',
-    // Add headers such as Authorization if required
-    // 'Authorization': 'Bearer your-token',
-  };
+const loginUrl = baseUrl+"/Login";
 
   export async function LoginApi(value) 
 {
     var account = null
     console.log(value)
-    await axios.post(URL,value,headers)
+    await axios.post(loginUrl,value,headers)
     .then(response =>{ account=response.data;console.log(account)})
     .catch(error => {
       console.error(error)
