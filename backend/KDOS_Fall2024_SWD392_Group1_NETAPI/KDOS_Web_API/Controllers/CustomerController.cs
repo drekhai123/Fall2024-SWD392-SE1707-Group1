@@ -6,6 +6,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,16 +18,18 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class CustomerController : ControllerBase    {
         private readonly KDOSDbContext customerContext;
+        private readonly ICustomerRepository customerRepository;
 
-        public CustomerController(KDOSDbContext customerContext)
+        public CustomerController(KDOSDbContext customerContext, ICustomerRepository customerRepository)
         {
             this.customerContext = customerContext;
+            this.customerRepository = customerRepository;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCustomer()
         {
             // This method get data DIRECTLY from database -> not best practice
-            var customerList = await customerContext.Customer.ToListAsync();
+            var customerList = await customerRepository.GetAllCustomer();
             var customerDto = new List<CustomerDTO>();
             foreach (Customer customer in customerList)
             {
