@@ -21,6 +21,8 @@ namespace KDOS_Web_API.Models.DTOs
         required public String PhoneNumber { get; set; }
         [Required]
         required public String Address { get; set; }
+        [Required]
+        required public DateTime CreatedAt { get; set; }
         public CustomerViewAccountDTO Account { get; set; } = null!;
     }
 

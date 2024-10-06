@@ -15,11 +15,30 @@ namespace KDOS_Web_API.Repositories
             this.customerContext = customerContext;
         }
 
-        public async Task<Customer> AddNewCustomer(Customer customer)
+        public async Task<Customer?> AddNewCustomer(Customer customer)
         {
-            await customerContext.Customer.AddAsync(customer);
-            await customerContext.SaveChangesAsync();
-            return customer;
+            // add extra step to check customer status
+           var accountExist = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == customer.AccountId);
+            if (accountExist == null || !accountExist.Role.Equals("customer"))
+            {
+                return null;
+            }
+            else
+            {
+               var customerExist = await customerContext.Customer.FirstOrDefaultAsync(x => x.AccountId == customer.AccountId);
+                if (customerExist != null)
+                {
+                    return null;
+                }
+                else
+                {
+                    await customerContext.Customer.AddAsync(customer);
+                    await customerContext.SaveChangesAsync();
+                    return customer;
+                }
+               
+            }
+           
         }
 
         public async Task<Customer?> DeleteCustomer(int id)

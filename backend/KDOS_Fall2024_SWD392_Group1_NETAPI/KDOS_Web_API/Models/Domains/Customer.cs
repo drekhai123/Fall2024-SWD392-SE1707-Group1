@@ -17,7 +17,7 @@ namespace KDOS_Web_API.Models
         public required string  CustomerName { get; set; }
 
         [Required]
-        public int Age { get; set; }
+        public required int Age { get; set; }
 
         [Required]
         public required string Gender { get; set; }

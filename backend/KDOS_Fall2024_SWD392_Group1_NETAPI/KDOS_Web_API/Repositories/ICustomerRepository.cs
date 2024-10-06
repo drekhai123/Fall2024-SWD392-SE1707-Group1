@@ -7,7 +7,7 @@ namespace KDOS_Web_API.Repositories
 	{
 		Task<List<Customer>> GetAllCustomer();
 		Task<Customer?> GetCustomerById(int id);
-		Task<Customer> AddNewCustomer(Customer customer);
+		Task<Customer?> AddNewCustomer(Customer customer);
 		Task<Customer?> UpdateCustomer(int id, Customer customer);
 		Task<Customer?> DeleteCustomer(int id);
 		Task<Customer?> GetCustomerByName(String name);

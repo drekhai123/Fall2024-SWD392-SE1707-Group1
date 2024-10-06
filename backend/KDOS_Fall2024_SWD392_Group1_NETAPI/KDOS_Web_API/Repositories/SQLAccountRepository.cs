@@ -66,6 +66,11 @@ namespace KDOS_Web_API.Repositories
             }
             
         }
+
+       public async Task<Account?> Login(string userNameOrEmail)
+        {
+            return await accountContext.Account.FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
+        }
     }
 }
 
