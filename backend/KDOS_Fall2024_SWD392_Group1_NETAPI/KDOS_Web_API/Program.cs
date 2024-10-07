@@ -13,9 +13,12 @@ builder.Services.AddCors(c =>
 builder.Services.AddDbContext<KDOSDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 30))));
-// Inject the Account Repository
+// Inject the Repository
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
-//
+builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
+builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
+builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>();
+//End Respository
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
