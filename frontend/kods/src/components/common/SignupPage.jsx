@@ -10,34 +10,58 @@ const SignupPage = () => {
   const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  
+  // Trạng thái cho lỗi bỏ trống
+  const [emailError, setEmailError] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [genderError, setGenderError] = useState(false);
+  const [addressError, setAddressError] = useState(false);
+
   const navigate = useNavigate();
 
-  
-  const handleChangeEmail = (e) => {
-    setEmail(e.target.value);
+  const validatePassword = (password) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
   };
-  const handleChangeUsername = (e) => {
-    setUsername(e.target.value);
+
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^09\d-\d{7}$/;
+    return phoneRegex.test(phone);
   };
+
   const handleChangePassword = (e) => {
-    setPassword(e.target.value);
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    setPasswordError(!validatePassword(newPassword));
   };
-  const handleChangeConfirmPassword = (e) => {
-    setConfirmPassword(e.target.value);
-  };
-  const handleChangeGender = (e) => {
-    setGender(e.target.value);
-  };
+
   const handleChangePhoneNumber = (e) => {
-    setPhoneNumber(e.target.value);
-  };
-  const handleChangeAddress = (e) => {
-    setAddress(e.target.value);
+    const newPhoneNumber = e.target.value;
+    setPhoneNumber(newPhoneNumber);
+    setPhoneError(!validatePhoneNumber(newPhoneNumber));
   };
 
   const handleSignupClick = (e) => {
     e.preventDefault();
     
+    // Kiểm tra xem các field nào đang trống và đặt trạng thái lỗi tương ứng
+    setEmailError(!email);
+    setUsernameError(!username);
+    setConfirmPasswordError(!confirmPassword);
+    setGenderError(!gender);
+    setAddressError(!address);
+    
+    // Kiểm tra điều kiện khi có lỗi
+    if (passwordError || phoneError || !email || !username || !confirmPassword || !gender || !address) {
+      alert('Please fix the errors before signing up.');
+      return;
+    }
+
+    // Implement signup logic here
   };
 
   const handleLoginClick = () => {
@@ -47,7 +71,7 @@ const SignupPage = () => {
   return (
     <div className='signup-page-container'>
       <div className='brand-container'>
-      <img src='/images/coco.jpg' alt='Brand' className='brand-img' />
+        <img src='/images/coco.jpg' alt='Brand' className='brand-img' />
       </div>
       <div className='signup-container'>
         <form className='signup-form'>
@@ -56,68 +80,103 @@ const SignupPage = () => {
           </p>
 
           {/* Email field */}
-          <input
-            type='email'
-            className='email-input'
-            placeholder='Enter Your Email'
-            value={email}
-            onChange={handleChangeEmail}
-          />
+          <div className='input-wrapper'>
+            <input
+              type='email'
+              className='email-input'
+              placeholder='Enter Your Email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {emailError && <p className='error-text'>Email is required</p>}
+          </div>
 
           {/* Username field */}
-          <input
-            type='text'
-            className='username-input'
-            placeholder='Enter Your Username'
-            value={username}
-            onChange={handleChangeUsername}
-          />
+          <div className='input-wrapper'>
+            <input
+              type='text'
+              className='username-input'
+              placeholder='Enter Your Username'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            {usernameError && <p className='error-text'>Username is required</p>}
+          </div>
 
           {/* Password field */}
-          <input
-            type='password'
-            className='password-input'
-            placeholder='Enter Your Password'
-            value={password}
-            onChange={handleChangePassword}
-          />
+          <div className='input-wrapper'>
+            <input
+              type='password'
+              className='password-input'
+              placeholder='Enter Your Password'
+              value={password}
+              onChange={handleChangePassword}
+            />
+            <div className='icon-container'>
+              <span className='tooltip-icon'>?</span>
+              {passwordError && (
+                <span className='tooltip-text'>
+                  Password must be at least 8 characters long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.
+                </span>
+              )}
+            </div>
+          </div>
 
           {/* Confirm Password field */}
-          <input
-            type='password'
-            className='confirm-password-input'
-            placeholder='Confirm Your Password'
-            value={confirmPassword}
-            onChange={handleChangeConfirmPassword}
-          />
+          <div className='input-wrapper'>
+            <input
+              type='password'
+              className='confirm-password-input'
+              placeholder='Confirm Your Password'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            {confirmPasswordError && <p className='error-text'>Confirm Password is required</p>}
+          </div>
 
           {/* Gender field */}
-          <select className='gender-input' value={gender} onChange={handleChangeGender}>
-            <option value='' disabled>
-              Select Your Gender
-            </option>
-            <option value='male'>Male</option>
-            <option value='female'>Female</option>
-            <option value='other'>Other</option>
-          </select>
+          <div className='input-wrapper'>
+            <select className='gender-input' value={gender} onChange={(e) => setGender(e.target.value)}>
+              <option value='' disabled>
+                Select Your Gender
+              </option>
+              <option value='male'>Male</option>
+              <option value='female'>Female</option>
+              <option value='other'>Other</option>
+            </select>
+            {genderError && <p className='error-text'>Gender is required</p>}
+          </div>
 
           {/* Phone Number field */}
-          <input
-            type='tel'
-            className='phone-number-input'
-            placeholder='Enter Your Phone Number'
-            value={phoneNumber}
-            onChange={handleChangePhoneNumber}
-          />
+          <div className='input-wrapper'>
+            <input
+              type='tel'
+              className='phone-number-input'
+              placeholder='Enter Your Phone Number (09x-xxxxxxx)'
+              value={phoneNumber}
+              onChange={handleChangePhoneNumber}
+            />
+            <div className='icon-container'>
+              <span className='tooltip-icon'>?</span>
+              {phoneError && (
+                <span className='tooltip-text'>
+                  Phone number must be in format: 09x-xxxxxxx.
+                </span>
+              )}
+            </div>
+          </div>
 
           {/* Address field */}
-          <input
-            type='text'
-            className='address-input'
-            placeholder='Enter Your Address'
-            value={address}
-            onChange={handleChangeAddress}
-          />
+          <div className='input-wrapper'>
+            <input
+              type='text'
+              className='address-input'
+              placeholder='Enter Your Address'
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+            {addressError && <p className='error-text'>Address is required</p>}
+          </div>
 
           {/* Signup button */}
           <button className='signup-btn' onClick={handleSignupClick}>
