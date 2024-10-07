@@ -87,6 +87,7 @@ const LoginPage = () => {
           <div className='forgot-password-container'>
             <button className='forgot-password-btn' onClick={handleForgotPasswordClick}>
               Forgot password?
+              
             </button>
           </div>
           <div className='or-separator'>
