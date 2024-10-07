@@ -6,6 +6,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,16 +18,18 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class CustomerController : ControllerBase    {
         private readonly KDOSDbContext customerContext;
+        private readonly ICustomerRepository customerRepository;
 
-        public CustomerController(KDOSDbContext customerContext)
+        public CustomerController(KDOSDbContext customerContext, ICustomerRepository customerRepository)
         {
             this.customerContext = customerContext;
+            this.customerRepository = customerRepository;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCustomer()
         {
             // This method get data DIRECTLY from database -> not best practice
-            var customerList = await customerContext.Customer.ToListAsync();
+            var customerList = await customerRepository.GetAllCustomer();
             var customerDto = new List<CustomerDTO>();
             foreach (Customer customer in customerList)
             {
@@ -38,7 +41,8 @@ namespace KDOS_Web_API.Controllers
                     Address = customer.Address,
                     Age = customer.Age,
                     Gender = customer.Gender,
-                    PhoneNumber = customer.PhoneNumber
+                    PhoneNumber = customer.PhoneNumber,
+                    CreatedAt = customer.CreatedAt
                 });
             }
             // Following Best Practice
@@ -49,41 +53,33 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> AddNewCustomer([FromBody] AddNewCustomerDTO addNewCustomerDTO)
         {
             // using the DTO to convert Model
-            var accountModel = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == addNewCustomerDTO.AccountId);
-            if (accountModel == null || !accountModel.Role.Equals("customer"))
-            {
-                return NotFound("Error 404: Account Not Found");
-                // Custom a response 
-            }
-            var customerExist = customerContext.Customer.FirstOrDefault(x => x.AccountId == addNewCustomerDTO.AccountId);
-            if (customerExist != null)
-            {
-                return BadRequest("Error 400: Account Already Exist!!!");
-                // Custom a response 
-            }
             var customerModel = new Customer
             {
-                AccountId = addNewCustomerDTO.AccountId, //Foreign Key Identify
-                CustomerName = addNewCustomerDTO.CustomerName,
+                AccountId = addNewCustomerDTO.AccountId,
                 Address = addNewCustomerDTO.Address,
-                Age = addNewCustomerDTO.Age,
+                CustomerName = addNewCustomerDTO.CustomerName,
                 Gender = addNewCustomerDTO.Gender,
                 PhoneNumber = addNewCustomerDTO.PhoneNumber,
+                Age = addNewCustomerDTO.Age,
+                CreatedAt = new DateTime(),
+                UpdatedAt = new DateTime(),
             };
-            //using Model to create a Customer
-            await customerContext.Customer.AddAsync(customerModel);
-            //Save the Customer to the database. ID will auto increase by the EF
-            await customerContext.SaveChangesAsync();
+            var newCustomer = await customerRepository.AddNewCustomer(customerModel);
+            if (newCustomer == null)
+            {
+                return NotFound();
+            }
             //Map Model back to DTO
             var customerDto = new CustomerDTO
             {
-                AccountId = accountModel.AccountId,
-                CustomerId = customerModel.CustomerId,
-                CustomerName = customerModel.CustomerName,
-                Address = customerModel.Address,
-                Age = customerModel.Age,
-                Gender = customerModel.Gender,
-                PhoneNumber = customerModel.PhoneNumber
+                AccountId = newCustomer.AccountId,
+                CustomerId = newCustomer.CustomerId,
+                CustomerName = newCustomer.CustomerName,
+                Address = newCustomer.Address,
+                Age = newCustomer.Age,
+                Gender = newCustomer.Gender,
+                PhoneNumber = newCustomer.PhoneNumber,
+                CreatedAt = newCustomer.CreatedAt
             };
             // Follow best practice
             return CreatedAtAction(nameof(GetCustomerById), new { customerId = customerModel.CustomerId }, customerDto); // Respone with code 201 - Created Complete
@@ -111,7 +107,8 @@ namespace KDOS_Web_API.Controllers
                     Address = customerModel.Address,
                     Age = customerModel.Age,
                     Gender = customerModel.Gender,
-                    PhoneNumber = customerModel.PhoneNumber
+                    PhoneNumber = customerModel.PhoneNumber,
+                    CreatedAt = customerModel.CreatedAt
                 };
                 return Ok(customerDto);
             }
@@ -144,6 +141,7 @@ namespace KDOS_Web_API.Controllers
                     Age = customer.Age,
                     Gender = customer.Gender,
                     PhoneNumber = customer.PhoneNumber,
+                    CreatedAt = customer.CreatedAt,
                     Account = new CustomerViewAccountDTO
                     {
                         UserName = accountDto!.UserName,
@@ -185,7 +183,8 @@ namespace KDOS_Web_API.Controllers
                     Address = customerModel.Address,
                     Age = customerModel.Age,
                     Gender = customerModel.Gender,
-                    PhoneNumber = customerModel.PhoneNumber
+                    PhoneNumber = customerModel.PhoneNumber,
+                    CreatedAt = customerModel.CreatedAt
                 };
                 return Ok(customerDto);
             }
@@ -212,7 +211,7 @@ namespace KDOS_Web_API.Controllers
                     Address = deleteCustomer.Address,
                     Age = deleteCustomer.Age,
                     Gender = deleteCustomer.Gender,
-                    PhoneNumber = deleteCustomer.PhoneNumber
+                    PhoneNumber = deleteCustomer.PhoneNumber, CreatedAt = deleteCustomer.CreatedAt
                 };
                 return Ok(customerDto);
             }

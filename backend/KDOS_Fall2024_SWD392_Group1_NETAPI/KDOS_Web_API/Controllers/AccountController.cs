@@ -56,7 +56,7 @@ namespace KDOS_Web_API.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.UserName == loginDTO.UserNameOrEmail || x.Email == loginDTO.UserNameOrEmail); // Check account by email
+            var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
           
             if(accountModel != null && accountModel.Password.Equals(loginDTO.Password))
             {
@@ -86,7 +86,7 @@ namespace KDOS_Web_API.Controllers
                 UserName = addNewAccountDTO.UserName,
                 Email = addNewAccountDTO.Email,
                 Password = addNewAccountDTO.Password,
-                Banned = addNewAccountDTO.Banned,
+                Banned = false,
                 Role = addNewAccountDTO.Role
             };
             accountModel = await accountRepository.AddNewAccount(accountModel);
