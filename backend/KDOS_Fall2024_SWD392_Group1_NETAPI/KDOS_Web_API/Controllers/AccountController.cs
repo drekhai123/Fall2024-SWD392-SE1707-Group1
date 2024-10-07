@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using AutoMapper;
 using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
@@ -22,34 +23,26 @@ namespace KDOS_Web_API.Controllers
     {
         private readonly KDOSDbContext accountContext;
         private readonly IAccountRepository accountRepository;
+        private readonly IMapper mapper;
 
         // Adding in the Repository Inject
-        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository)
+        // Adding AutoMApper Service
+        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository, IMapper mapper)
         {
             this.accountContext = accountContext;
             this.accountRepository = accountRepository;
+            this.mapper = mapper;
         }
         [HttpGet]
         // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
         public async Task<IActionResult> GetALlAcount()
         {
-            // Now we don't call the DB directly but through the Depository
+            // Now we don't call the DB directly but through the Repository
             // var accountList = await accountContext.Account.ToListAsync();
             var accountList = await accountRepository.GetAllAccountAsync();
-            var accountDto = new List<AccountDTO>();
-            foreach(Account account in accountList)
-            {
-                accountDto.Add(new AccountDTO()
-                {
-                    AccountId = account.AccountId,
-                    UserName = account.UserName,
-                    Email = account.Email,
-                    Password = account.Password,
-                    Banned = account.Banned,
-                    Role = account.Role
-                    
-                }); 
-            }
+            
+            //Use AutoMapper Turn Model to DTO
+            var accountDto = mapper.Map<List<AccountDTO>>(accountList);
             return Ok(accountDto);
         }
         [HttpPost]
@@ -60,14 +53,7 @@ namespace KDOS_Web_API.Controllers
           
             if(accountModel != null && accountModel.Password.Equals(loginDTO.Password))
             {
-                AccountDTO accountDTO = new AccountDTO
-                {
-                    Email = accountModel.Email,
-                    Role = accountModel.Role,
-                    UserName = accountModel.UserName,
-                    Banned = accountModel.Banned,
-                    Password = accountModel.Password
-                };
+                AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDTO);
             }
             else
@@ -80,26 +66,11 @@ namespace KDOS_Web_API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewAccount([FromBody]AddNewAccountDTO addNewAccountDTO)
         {
-            // Turn Data to Model
-            var accountModel = new Account
-            {
-                UserName = addNewAccountDTO.UserName,
-                Email = addNewAccountDTO.Email,
-                Password = addNewAccountDTO.Password,
-                Banned = false,
-                Role = addNewAccountDTO.Role
-            };
+            // Turn Data to Model With AutoMApper.ReverseMap
+            var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
-            var accountDto = new AccountDTO
-            {
-                AccountId = accountModel.AccountId,
-                UserName = accountModel.UserName,
-                Email = accountModel.Email,
-                Password = accountModel.Password,
-                Banned = accountModel.Banned,
-                Role = accountModel.Role
-            };
+            var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
         }
 
@@ -114,15 +85,8 @@ namespace KDOS_Web_API.Controllers
             }
             else
             {
-                var accountDto = new AccountDTO
-                {
-                    AccountId = accountModel.AccountId,
-                    UserName = accountModel.UserName,
-                    Email = accountModel.Email,
-                    Password = accountModel.Password,
-                    Banned = accountModel.Banned,
-                    Role = accountModel.Role
-                };
+                // AutoMapper from Model to DTO
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
             
@@ -132,14 +96,7 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
             {
             // Map DTO to AccountModel
-            var accountModel = new Account
-            {
-            UserName = updateAccountDTO.UserName,
-            Email = updateAccountDTO.Email,
-            Password = updateAccountDTO.Password,
-            Banned = updateAccountDTO.Banned,
-            Role = updateAccountDTO.Role,
-        };
+            var accountModel = mapper.Map<Account>(updateAccountDTO);
             accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
             if (accountModel == null)
             {
@@ -147,15 +104,7 @@ namespace KDOS_Web_API.Controllers
             }
             else
             {
-                 var accountDto = new AccountDTO
-                {
-                    AccountId = accountModel.AccountId,
-                    UserName = accountModel.UserName,
-                    Email = accountModel.Email,
-                    Password = accountModel.Password,
-                    Banned = accountModel.Banned,
-                    Role = accountModel.Role
-                };
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
         }
@@ -170,15 +119,7 @@ namespace KDOS_Web_API.Controllers
             }
             else
             {
-                var accountDto = new AccountDTO
-                {
-                    AccountId = accountModel.AccountId,
-                    UserName = accountModel.UserName,
-                    Email = accountModel.Email,
-                    Password = accountModel.Password,
-                    Banned = accountModel.Banned,
-                    Role = accountModel.Role
-                };
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
         }

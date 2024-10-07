@@ -18,11 +18,13 @@
     <PackageReference Include="MySql.Data" Version="9.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Repositories\" />
+    <Folder Include="Mappings\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,5 +32,6 @@
     <None Remove="Models\DTOs\" />
     <None Remove="Models\Domains\" />
     <None Remove="Repositories\" />
+    <None Remove="Mappings\" />
   </ItemGroup>
 </Project>

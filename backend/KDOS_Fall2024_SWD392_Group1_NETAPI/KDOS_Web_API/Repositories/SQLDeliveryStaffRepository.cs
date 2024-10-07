@@ -1,6 +1,6 @@
 ﻿using System;
 using KDOS_Web_API.Datas;
-using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.Domains;
 
 namespace KDOS_Web_API.Repositories
 {

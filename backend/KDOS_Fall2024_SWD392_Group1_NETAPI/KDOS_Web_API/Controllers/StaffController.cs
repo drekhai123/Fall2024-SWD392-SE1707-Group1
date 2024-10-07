@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using KDOS_Web_API.Datas;
-using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,5 @@
 using KDOS_Web_API.Datas;
+using KDOS_Web_API.Mappings;
 using KDOS_Web_API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,9 @@ builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
 builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>();
 //End Respository
+//AutoMapper Service Inject
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+//End AutoMapping
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
