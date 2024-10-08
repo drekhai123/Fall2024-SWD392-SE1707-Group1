@@ -6,10 +6,11 @@ namespace KDOS_Web_API.Repositories
     public interface IStaffRepository
 	{
         Task<List<Staff>> GetAllStaff();
-        Task<Staff> GetStaffById(int id);
-        Task<Staff> AddNewStaff(Staff staff);
-        Task<Staff> UpdateStaff(int id, Staff staff);
-        Task<Staff> DeleteStaff(int id);
+        Task<Staff?> GetStaffById(int id);
+        Task<Staff?> AddNewStaff(Staff staff);
+        Task<Staff?> UpdateStaff(int id, Staff staff);
+        Task<Staff?> DeleteStaff(int id);
+        Task<Staff?> GetStaffByName(String name);
     }
 }
 

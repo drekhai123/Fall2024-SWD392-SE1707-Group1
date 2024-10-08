@@ -36,9 +36,7 @@ namespace KDOS_Web_API.Repositories
                     await customerContext.SaveChangesAsync();
                     return customer;
                 }
-               
             }
-           
         }
 
         public async Task<Customer?> DeleteCustomer(int id)
@@ -96,7 +94,7 @@ namespace KDOS_Web_API.Repositories
                 customerModel.Gender = customer.Gender;
                 customerModel.PhoneNumber = customer.PhoneNumber;
                 await customerContext.SaveChangesAsync();
-                return customer;
+                return customerModel;
 
 
             }

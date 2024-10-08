@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using KDOS_Web_API.Datas;
-using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;

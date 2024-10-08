@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,76 +19,45 @@ namespace KDOS_Web_API.Controllers
     public class StaffController : ControllerBase
     {
         private readonly KDOSDbContext staffContext;
+        private readonly IStaffRepository staffRepository;
+        private readonly IMapper mapper;
 
-        public StaffController(KDOSDbContext staffContext)
+        public StaffController(KDOSDbContext staffContext, IStaffRepository staffRepository, IMapper mapper)
         {
             this.staffContext = staffContext;
+            this.staffRepository = staffRepository;
+            this.mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllStaff()
         {
             // Get Model Data from DB
-            var staffList = await staffContext.Staff.ToListAsync<Staff>();
-            var staffDto = new List<StaffDTO>();
-            foreach(Staff staff in staffList)
-            {
-                staffDto.Add(new StaffDTO
-                {
-                    AccountId = staff.AccountId,
-                    StaffId = staff.StaffId,
-                    StaffName = staff.StaffName,
-                    Age = staff.Age,
-                    Gender = staff.Gender,
-                    PhoneNumber = staff.PhoneNumber
-                }) ;
-            }
+            var staffList = await staffRepository.GetAllStaff();
+            var staffDto = mapper.Map<List<StaffDTO>>(staffList);
             return Ok(staffDto);
         }
         [HttpPost]
         public async Task<IActionResult> AddNewStaff( AddNewStaffDTO addNewStaffDTO)
         {
-            var accountModel = await staffContext.Account.FirstOrDefaultAsync(x => x.AccountId == addNewStaffDTO.AccountId);
-            if (accountModel == null || !accountModel.Role.Equals("staff"))
+
+            var staffModel = mapper.Map<Staff>(addNewStaffDTO);
+            var newStaff = await staffRepository.AddNewStaff(staffModel);
+            if(newStaff == null)
             {
-                return NotFound("Error 404: Account Not Found");
+                return NotFound();
             }
-            var staffExist = staffContext.Staff.FirstOrDefault(x => x.AccountId == addNewStaffDTO.AccountId);
-            if (staffExist != null)
-            {
-                return BadRequest("Error 400: Account Already Exist!!!");
-            }
-            // turn DTO to Model
-            var staffModel = new Staff
-            {
-                AccountId = accountModel.AccountId,
-                StaffName = addNewStaffDTO.StaffName,
-                Age = addNewStaffDTO.Age,
-                Gender = addNewStaffDTO.Gender,
-                PhoneNumber = addNewStaffDTO.PhoneNumber,
-            };
-            await staffContext.Staff.AddAsync(staffModel);
-            await staffContext.SaveChangesAsync();
             // Map model back to DTO and send to Client
-            var staffDto = new StaffDTO()
-            {
-                AccountId = accountModel.AccountId,
-                StaffId = staffModel.StaffId,
-                StaffName = staffModel.StaffName,
-                Age = staffModel.Age,
-                Gender = staffModel.Gender,
-                PhoneNumber = staffModel.PhoneNumber
-            };
+            var staffDto = mapper.Map<StaffDTO>(staffModel);
             // Best Practice
             return CreatedAtAction(nameof(GetStaffById),new { staffId = staffModel.StaffId }, staffDto);
             // nameof() run the fucntion inside (GetStaffById) => return the new staff id, and return the properties of the staff we added
         }
-
         [HttpPost]
         [Route("searchbyname")]
-        public async Task<IActionResult> FindStaffByName([FromBody] String customerName)
+        public async Task<IActionResult> FindStaffByName([FromBody] String staffName)
         {
             //Find by name
-            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffName == customerName); // enforce ! to make sure name is not null
+            var staffModel = await staffRepository.GetStaffByName(staffName);
             if (staffModel == null)
             {
                 return NotFound();
@@ -94,15 +65,7 @@ namespace KDOS_Web_API.Controllers
             else
             {
                 //Turn Model to DTO
-                var staffDto = new StaffDTO
-                {
-                    AccountId = staffModel.AccountId,
-                    StaffId = staffModel.StaffId,
-                    StaffName = staffModel.StaffName,
-                    Age = staffModel.Age,
-                    Gender = staffModel.Gender,
-                    PhoneNumber = staffModel.PhoneNumber
-                };
+                var staffDto = mapper.Map<StaffDTO>(staffModel);
                 return Ok(staffDto);
             }
         }
@@ -112,7 +75,7 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> GetStaffById([FromRoute] int staffId)
         {
             //Find StaffModel in db
-            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffId == staffId);
+            var staffModel = await staffRepository.GetStaffById(staffId);
             if(staffModel == null)
             {
                 return NotFound();
@@ -120,15 +83,7 @@ namespace KDOS_Web_API.Controllers
             else
             {
                 //Convert Model to DTO
-                var staffDto = new StaffDTO
-                {
-                    AccountId = staffModel.AccountId,
-                    StaffId = staffModel.StaffId,
-                    StaffName = staffModel.StaffName,
-                    Age = staffModel.Age,
-                    Gender = staffModel.Gender,
-                    PhoneNumber = staffModel.PhoneNumber,
-                };
+                var staffDto = mapper.Map<StaffDTO>(staffModel);
                 return Ok(staffDto);
             }
         }
@@ -137,29 +92,16 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> UpdateStaffById([FromRoute] int staffId, [FromBody] UpdateStaffDTO updateStaffDTO)
         {
             //Find StaffModel in db
-            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffId == staffId);
+            var staffModel = mapper.Map<Staff>(updateStaffDTO);
+            staffModel = await staffRepository.UpdateStaff(staffId, staffModel);
             if (staffModel == null)
             {
                 return NotFound();
             }
             else
             {
-                //Convert Client Data (DTO) to Model
-                staffModel.StaffName = updateStaffDTO.StaffName;
-                staffModel.Age = updateStaffDTO.Age;
-                staffModel.Gender = updateStaffDTO.Gender;
-                staffModel.PhoneNumber = updateStaffDTO.PhoneNumber;
-                await staffContext.SaveChangesAsync();
                 //Turn Model back to DTO to send to Client
-                var staffDto = new StaffDTO
-                {
-                    AccountId = staffModel.AccountId,
-                    StaffId = staffModel.StaffId,
-                    StaffName = staffModel.StaffName,
-                    Age = staffModel.Age,
-                    Gender = staffModel.Gender,
-                    PhoneNumber = staffModel.PhoneNumber
-                };
+                var staffDto = mapper.Map<StaffDTO>(staffModel);
                 return Ok(staffDto);
             }
         }
@@ -169,25 +111,15 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> DeleteStaffById([FromRoute] int staffId)
         {
             //Find StaffModel in db
-            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffId == staffId);
+            var staffModel = await staffRepository.DeleteStaff(staffId);
             if (staffModel == null)
             {
                 return NotFound();
             }
             else
             {
-                staffContext.Staff.Remove(staffModel); // No Async Remove
-                await staffContext.SaveChangesAsync();
                 //Convert Model to DTO
-                var deletedstaffDto = new StaffDTO
-                {
-                    AccountId = staffModel.AccountId,
-                    StaffId = staffModel.StaffId,
-                    StaffName = staffModel.StaffName,
-                    Age = staffModel.Age,
-                    Gender = staffModel.Gender,
-                    PhoneNumber = staffModel.PhoneNumber
-                };
+                var deletedstaffDto = mapper.Map<StaffDTO>(staffModel);
                 return Ok(deletedstaffDto);
             }
         }
