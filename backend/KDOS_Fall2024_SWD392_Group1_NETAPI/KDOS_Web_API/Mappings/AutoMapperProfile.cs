@@ -12,14 +12,23 @@ namespace KDOS_Web_API.Mappings
 		public AutoMapperProfile()
 		{
 			// Maping AccountModel to DTO -> and vise versa
+			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
 			CreateMap<AddNewAccountDTO, Account>().ReverseMap();
 			CreateMap<UpdateAccountDTO, Account>().ReverseMap();
-			CreateMap<Account, AddNewAccountDTO>();
-			CreateMap<Account, CustomerViewAccountDTO>();
-			CreateMap<Staff, StaffDTO>().ReverseMap();
-			CreateMap<Customer, CustomerDTO>();
-		}
+            // Customer Mapping
+            CreateMap<Customer, CustomerDTO>();
+			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap();
+			CreateMap<AddNewCustomerDTO, Customer>().ReverseMap();
+            CreateMap<Account, CustomerViewAccountDTO>().ReverseMap();
+            // Staff Mapping
+            CreateMap<Staff, StaffDTO>().ReverseMap();
+			CreateMap<AddNewStaffDTO, Staff>().ReverseMap();
+			CreateMap<UpdateStaffDTO, Staff>().ReverseMap();
+            // Delivery Staff Mapping
+
+
+        }
 	}
 }
 

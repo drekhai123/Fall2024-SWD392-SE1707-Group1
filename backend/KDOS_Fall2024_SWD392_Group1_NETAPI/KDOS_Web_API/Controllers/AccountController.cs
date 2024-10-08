@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Principal;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using KDOS_Web_API.Datas;
-using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,8 +31,7 @@ namespace KDOS_Web_API.Controllers
         {
             // Now we don't call the DB directly but through the Repository
             // var accountList = await accountContext.Account.ToListAsync();
-            var accountList = await accountRepository.GetAllAccountAsync();
-            
+            var accountList = await accountRepository.GetAllAccountAsync();            
             //Use AutoMapper Turn Model to DTO
             var accountDto = mapper.Map<List<AccountDTO>>(accountList);
             return Ok(accountDto);

@@ -68,6 +68,11 @@ namespace KDOS_Web_API.Repositories
             var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
             return customerModel;
         }
+        public async Task<Account?> GetAccountByCustomer(int id)
+        {
+            var accountModel = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            return accountModel;
+        }
 
         public async Task<Customer?> GetCustomerByName(string name)
         {
