@@ -15,17 +15,18 @@ namespace KDOS_Web_API.Mappings
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
 			CreateMap<AddNewAccountDTO, Account>().ReverseMap()
-				.ForMember(x=>x.Password,option=>option.Ignore());
+				.ForMember(x=>x.Password,option=>option.Ignore())
+				.ForMember(x=>x.Banned,option=>option.Ignore());// Manually set the ban as false
+				
 			CreateMap<UpdateAccountDTO, Account>().ReverseMap()
 				.ForMember(x=>x.Password,option=>option.Ignore());
-            // Customer Mapping
-            CreateMap<Customer, CustomerDTO>();
+			// Customer Mapping
+			CreateMap<Customer, CustomerDTO>();
 			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap()
                 .ForMember(x => x.UpdatedAt,option=>option.Ignore()); // Ignore the Create/Update date when mapping so we can do it manually
 			CreateMap<AddNewCustomerDTO, Customer>().ReverseMap()
                 .ForMember(x => x.CreatedAt,option=>option.Ignore())
                 .ForMember(x => x.CreatedAt, option => option.Ignore());
-            CreateMap<Account, CustomerViewAccountDTO>().ReverseMap();
             // Staff Mapping
             CreateMap<Staff, StaffDTO>().ReverseMap();
 			CreateMap<AddNewStaffDTO, Staff>().ReverseMap();

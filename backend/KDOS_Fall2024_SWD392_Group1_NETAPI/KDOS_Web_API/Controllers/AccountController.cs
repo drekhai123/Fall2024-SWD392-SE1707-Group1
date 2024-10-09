@@ -70,6 +70,7 @@ namespace KDOS_Web_API.Controllers
         {
             // Turn Data to Model With AutoMApper.ReverseMap
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
+            accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response

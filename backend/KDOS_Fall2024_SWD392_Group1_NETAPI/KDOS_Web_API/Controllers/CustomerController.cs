@@ -88,7 +88,7 @@ namespace KDOS_Web_API.Controllers
                 //Get Customer Account info
                 var accountModel = await customerRepository.GetAccountByCustomer(customerModel.AccountId);
                 var customerDto = mapper.Map<CustomerDTO>(customerModel);
-                var accountDto = mapper.Map<CustomerViewAccountDTO>(accountModel);
+                //var accountDto = mapper.Map<CustomerViewAccountDTO>(accountModel);
                 // TODO
                 return Ok(customerDto); //return 200 ok
             }

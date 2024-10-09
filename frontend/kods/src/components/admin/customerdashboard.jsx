@@ -49,7 +49,6 @@ export default function Customerdashboard() {
           <TableCell align="right">Age</TableCell>
           <TableCell align="right">Gender</TableCell>
           <TableCell align="right">Phone Number</TableCell>
-          <TableCell align="right">Email</TableCell>
           <TableCell align="right">Address</TableCell>
         </TableRow>
       </TableHead>
@@ -67,7 +66,6 @@ export default function Customerdashboard() {
             <TableCell align="right">{customers.age}</TableCell>
             <TableCell align="right">{customers.gender}</TableCell>
             <TableCell align="right">{customers.phoneNumber}</TableCell>
-            <TableCell align="right">{customers.email}</TableCell>
             <TableCell align="right">{customers.address}</TableCell>
           </TableRow>
         ))}

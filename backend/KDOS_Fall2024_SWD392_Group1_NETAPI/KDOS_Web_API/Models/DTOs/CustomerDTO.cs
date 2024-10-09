@@ -24,7 +24,6 @@ namespace KDOS_Web_API.Models.DTOs
         [Required]
         public DateTime CreatedAt { get; set; } // Include CreatedAt
         public DateTime UpdatedAt { get; set; } // Include UpdatedAt
-        public CustomerViewAccountDTO Account { get; set; } = null!;
     }
 
 }
