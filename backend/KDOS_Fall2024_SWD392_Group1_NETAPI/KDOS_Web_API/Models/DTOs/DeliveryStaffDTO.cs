@@ -17,10 +17,6 @@ namespace KDOS_Web_API.Models.DTOs
         required public String Gender { get; set; }
         [Required]
         required public String PhoneNumber { get; set; }
-        // Link between Account and Staff
-        [Required]
-        public Account? Account { get; set; } // 1-1 Relation
-        public Transport? Transport { get; set; } //1-1 Relation
     }
 }
 
