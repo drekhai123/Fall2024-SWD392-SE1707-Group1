@@ -3,9 +3,10 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
+using Microsoft.AspNetCore.Identity; // PasswordHasher<Account>
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+//Implimenting Password Hashing
 
 namespace KDOS_Web_API.Controllers
 {
@@ -16,14 +17,16 @@ namespace KDOS_Web_API.Controllers
         private readonly KDOSDbContext accountContext;
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
+        private readonly IPasswordHasher<Account> passwordHasher;
 
         // Adding in the Repository Inject
         // Adding AutoMApper Service
-        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository, IMapper mapper)
+        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher)
         {
             this.accountContext = accountContext;
             this.accountRepository = accountRepository;
             this.mapper = mapper;
+            this.passwordHasher = passwordHasher;
         }
         [HttpGet]
         // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
@@ -41,11 +44,19 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
-          
-            if(accountModel != null && accountModel.Password.Equals(loginDTO.Password))
+           
+            if(accountModel != null)
             {
-                AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
-                return Ok(accountDTO);
+                var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel,accountModel.Password, loginDTO.Password); //Validate the hased password vs the password from FE, Return 1 if correct, 0 if failed
+                if (verifyPassword == PasswordVerificationResult.Success) // =1 meaning success
+                {
+                    AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
+                    return Ok(accountDTO);
+                }
+                else
+                {
+                    return Unauthorized("Error! Wrong Email/UserName or Password");
+                }
             }
             else
             {
@@ -55,10 +66,11 @@ namespace KDOS_Web_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewAccount([FromBody]AddNewAccountDTO addNewAccountDTO)
+        public async Task<IActionResult> AddNewAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
         {
             // Turn Data to Model With AutoMApper.ReverseMap
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
+            accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);

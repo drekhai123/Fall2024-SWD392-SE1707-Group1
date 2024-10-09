@@ -1,6 +1,8 @@
 using KDOS_Web_API.Datas;
 using KDOS_Web_API.Mappings;
+using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,9 @@ builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>
 //AutoMapper Service Inject
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 //End AutoMapping
+// Password Hashing Inject
+builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
+//End Hashing
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

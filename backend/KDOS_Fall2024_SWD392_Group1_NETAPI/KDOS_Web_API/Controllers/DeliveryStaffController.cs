@@ -37,7 +37,7 @@ namespace KDOS_Web_API.Controllers
             return Ok(deliveryStaffDTO);
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewDeliveryStaff([FromBody]AddNewDeliveryStaffDTO addNewDeliveryStaffDTO)
+        public async Task<IActionResult> AddNewDeliveryStaff([FromBody] AddNewDeliveryStaffDTO addNewDeliveryStaffDTO)
         {
             var deliveryStaffModel = mapper.Map<DeliveryStaff>(addNewDeliveryStaffDTO);
             deliveryStaffModel = await deliveryStaffRepository.AddNewDeliveryStaff(deliveryStaffModel);
@@ -53,10 +53,10 @@ namespace KDOS_Web_API.Controllers
             }
         }
         [HttpDelete]
-        [Route("{id}")]
-        public async Task<IActionResult?> DeleteDeliveryStaff([FromHeader]int id)
+        [Route("{staffId}")]
+        public async Task<IActionResult?> DeleteDeliveryStaff([FromRoute] int staffId)
         {
-            var deliveryStaffModel = await deliveryStaffRepository.DeleteDeliveryStaff(id);
+            var deliveryStaffModel = await deliveryStaffRepository.DeleteDeliveryStaff(staffId);
             if (deliveryStaffModel == null)
             {
                 return null;
@@ -69,19 +69,19 @@ namespace KDOS_Web_API.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult?> GetDeliveryStaffById([FromHeader] int id)
+        [Route("{staffId}")]
+        public async Task<IActionResult?> GetDeliveryStaffById([FromRoute] int staffId)
         {
-            var deliveryStaff = await deliveryStaffRepository.GetDeliveryStaffById(id);
+            var deliveryStaff = await deliveryStaffRepository.GetDeliveryStaffById(staffId);
             var deliveryStaffDto = mapper.Map<DeliveryStaffDTO>(deliveryStaff);
             return Ok(deliveryStaffDto);
         }
         [HttpPut]
-        [Route("{id}")]
-        public async Task<IActionResult> UpdateDeliveryStaff([FromHeader]int id, [FromBody]UpdateDeliveryStaffDTO updateDeliveryStaffDTO)
+        [Route("{staffId}")]
+        public async Task<IActionResult> UpdateDeliveryStaff([FromRoute] int staffId, [FromBody] UpdateDeliveryStaffDTO updateDeliveryStaffDTO)
         {
             var deliveryStaffModel = mapper.Map<DeliveryStaff>(updateDeliveryStaffDTO);
-            deliveryStaffModel = await deliveryStaffRepository.UpdateDeliveryStaff(id, deliveryStaffModel);
+            deliveryStaffModel = await deliveryStaffRepository.UpdateDeliveryStaff(staffId, deliveryStaffModel);
             if (deliveryStaffModel == null)
             {
                 return NotFound();

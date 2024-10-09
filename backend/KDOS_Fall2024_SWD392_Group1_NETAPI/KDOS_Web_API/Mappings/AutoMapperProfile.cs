@@ -14,8 +14,10 @@ namespace KDOS_Web_API.Mappings
 			// Maping AccountModel to DTO -> and vise versa
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
-			CreateMap<AddNewAccountDTO, Account>().ReverseMap();
-			CreateMap<UpdateAccountDTO, Account>().ReverseMap();
+			CreateMap<AddNewAccountDTO, Account>().ReverseMap()
+				.ForMember(x=>x.Password,option=>option.Ignore());
+			CreateMap<UpdateAccountDTO, Account>().ReverseMap()
+				.ForMember(x=>x.Password,option=>option.Ignore());
             // Customer Mapping
             CreateMap<Customer, CustomerDTO>();
 			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap()
