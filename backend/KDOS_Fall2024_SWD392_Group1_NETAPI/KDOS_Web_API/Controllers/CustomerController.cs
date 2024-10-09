@@ -39,6 +39,8 @@ namespace KDOS_Web_API.Controllers
         {
             // using the DTO to convert Model
             var customerModel =  mapper.Map<Customer>(addNewCustomerDTO);
+            customerModel.CreatedAt = DateTime.Now; //Manually set the current time, ignore automapper
+            customerModel.UpdatedAt = DateTime.Now;
             var newCustomer = await customerRepository.AddNewCustomer(customerModel);
             if (newCustomer == null)
             {
@@ -99,6 +101,7 @@ namespace KDOS_Web_API.Controllers
         {
             //Find the customer with the Id
             var customerModel = mapper.Map<Customer>(updateCustomerDto);
+            customerModel.UpdatedAt = DateTime.Now;
             customerModel = await customerRepository.UpdateCustomer(customerId, customerModel);
             if(customerModel == null)
             {

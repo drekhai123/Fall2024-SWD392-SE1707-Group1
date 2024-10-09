@@ -18,8 +18,11 @@ namespace KDOS_Web_API.Mappings
 			CreateMap<UpdateAccountDTO, Account>().ReverseMap();
             // Customer Mapping
             CreateMap<Customer, CustomerDTO>();
-			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap();
-			CreateMap<AddNewCustomerDTO, Customer>().ReverseMap();
+			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap()
+                .ForMember(x => x.UpdatedAt,option=>option.Ignore()); // Ignore the Create/Update date when mapping so we can do it manually
+			CreateMap<AddNewCustomerDTO, Customer>().ReverseMap()
+                .ForMember(x => x.CreatedAt,option=>option.Ignore())
+                .ForMember(x => x.CreatedAt, option => option.Ignore());
             CreateMap<Account, CustomerViewAccountDTO>().ReverseMap();
             // Staff Mapping
             CreateMap<Staff, StaffDTO>().ReverseMap();
