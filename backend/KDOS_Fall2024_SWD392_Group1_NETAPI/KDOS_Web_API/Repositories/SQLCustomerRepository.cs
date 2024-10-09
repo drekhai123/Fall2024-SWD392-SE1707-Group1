@@ -72,10 +72,11 @@ namespace KDOS_Web_API.Repositories
             return accountModel;
         }
 
-        public async Task<Customer?> GetCustomerByName(string name)
+        public async Task<List<Customer>> GetCustomerByName(string name)
         {
-            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerName == name);
-            return customerModel;
+            // Where query can return a list of data, unlike 1 data
+            var customerModelList = await customerContext.Customer.Where(x => x.CustomerName.Contains(name)).ToListAsync();
+            return customerModelList;
         }
 
 

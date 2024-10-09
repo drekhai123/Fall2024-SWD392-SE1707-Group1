@@ -56,15 +56,15 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> FindCustomerByName([FromBody] String customerName)
         {
             //Find by name
-            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x=>x.CustomerName==customerName); // enforce ! to make sure name is not null
-            if (customerModel == null)
+            var customerModel = await customerRepository.GetCustomerByName(customerName);
+            if (!customerModel.Any()) // IsEmptyOrNull for List
             {
                 return NotFound();
             }
             else
             {
                 //Turn Model to DTO
-                var customerDto = mapper.Map<CustomerDTO>(customerModel);
+                var customerDto = mapper.Map<List<CustomerDTO>>(customerModel);
                 return Ok(customerDto);
             }
         }

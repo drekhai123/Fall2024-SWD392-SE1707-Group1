@@ -10,7 +10,7 @@ namespace KDOS_Web_API.Repositories
         Task<Staff?> AddNewStaff(Staff staff);
         Task<Staff?> UpdateStaff(int id, Staff staff);
         Task<Staff?> DeleteStaff(int id);
-        Task<Staff?> GetStaffByName(String name);
+        Task<List<Staff>> GetStaffByName(String name);
     }
 }
 

@@ -58,14 +58,14 @@ namespace KDOS_Web_API.Controllers
         {
             //Find by name
             var staffModel = await staffRepository.GetStaffByName(staffName);
-            if (staffModel == null)
+            if (!staffModel.Any())
             {
                 return NotFound();
             }
             else
             {
                 //Turn Model to DTO
-                var staffDto = mapper.Map<StaffDTO>(staffModel);
+                var staffDto = mapper.Map<List<StaffDTO>>(staffModel);
                 return Ok(staffDto);
             }
         }

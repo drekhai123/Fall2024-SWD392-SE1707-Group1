@@ -84,14 +84,10 @@ namespace KDOS_Web_API.Repositories
            
         }
 
-        public async Task<Staff?> GetStaffByName(string name)
+        public async Task<List<Staff>> GetStaffByName(string name)
         {
-            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffName.Equals(name));
-            if (staffModel == null)
-            {
-                return null;
-            }
-            return staffModel;
+            var staffModelList = await staffContext.Staff.Where(x => x.StaffName.Contains(name)).ToListAsync();
+            return staffModelList;
         }
     }
 }
