@@ -23,7 +23,7 @@ const LoginPage = () => {
       usernameoremail: usernameoremail,
       password: password,
     };
-    const account = LoginApi(login);
+    const account = await LoginApi(login);
     if (account !== null) {
       navigate('/');
     } else {

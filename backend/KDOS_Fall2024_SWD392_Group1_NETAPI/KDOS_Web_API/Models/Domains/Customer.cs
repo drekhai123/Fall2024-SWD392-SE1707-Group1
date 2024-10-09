@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace KDOS_Web_API.Models
+namespace KDOS_Web_API.Models.Domains
 {
     public class Customer
     {
