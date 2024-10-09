@@ -13,27 +13,27 @@ namespace KDOS_Web_API.Repositories
             this.deliveryStaffContext = deliveryStaffContext;
         }
 
-        Task<Staff> IDeliveryStaffRepository.AddNewDeliveryStaff(Staff staff)
+       public async Task<DeliveryStaff?> AddNewDeliveryStaff(DeliveryStaff staff)
         {
             throw new NotImplementedException();
         }
 
-        Task<Staff> IDeliveryStaffRepository.DeleteDeliveryStaff(int id)
+        public async Task<DeliveryStaff?> DeleteDeliveryStaff(int id)
         {
             throw new NotImplementedException();
         }
 
-        Task<List<Staff>> IDeliveryStaffRepository.GetAllDeliveryStaff()
+        public async Task<List<DeliveryStaff>> GetAllDeliveryStaff()
         {
             throw new NotImplementedException();
         }
 
-        Task<Staff> IDeliveryStaffRepository.GetDeliveryStaffById(int id)
+        public async Task<DeliveryStaff?> GetDeliveryStaffById(int id)
         {
             throw new NotImplementedException();
         }
 
-        Task<Staff> IDeliveryStaffRepository.UpdateDeliveryStaff(int id, Staff staff)
+        public async Task<DeliveryStaff?> UpdateDeliveryStaff(int id, DeliveryStaff staff)
         {
             throw new NotImplementedException();
         }

@@ -25,9 +25,14 @@ namespace KDOS_Web_API.Mappings
             CreateMap<Staff, StaffDTO>().ReverseMap();
 			CreateMap<AddNewStaffDTO, Staff>().ReverseMap();
 			CreateMap<UpdateStaffDTO, Staff>().ReverseMap();
-            // Delivery Staff Mapping
-
-
+			// Delivery Staff Mapping
+			CreateMap<DeliveryStaff, DeliveryStaffDTO>().ReverseMap();
+            CreateMap<DeliveryStaff, AddNewDeliveryStaffDTO>().ReverseMap();
+            CreateMap<DeliveryStaff, UpdateDeliveryStaffDTO>().ReverseMap();
+			// Transport
+			// Order
+			// HealthUpdate
+			// BLog
         }
 	}
 }
