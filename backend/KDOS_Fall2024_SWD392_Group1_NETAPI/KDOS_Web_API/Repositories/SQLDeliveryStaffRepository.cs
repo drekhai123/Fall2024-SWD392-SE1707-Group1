@@ -1,6 +1,7 @@
 ﻿using System;
 using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
+using Microsoft.EntityFrameworkCore;
 
 namespace KDOS_Web_API.Repositories
 {
@@ -13,29 +14,71 @@ namespace KDOS_Web_API.Repositories
             this.deliveryStaffContext = deliveryStaffContext;
         }
 
-       public async Task<DeliveryStaff?> AddNewDeliveryStaff(DeliveryStaff staff)
+       public async Task<DeliveryStaff?> AddNewDeliveryStaff(DeliveryStaff  deliveryStaff)
         {
-            throw new NotImplementedException();
+            var accountExist = await deliveryStaffContext.Account.FirstOrDefaultAsync(x => x.AccountId == deliveryStaff.AccountId);
+            if (accountExist == null || !accountExist.Role.Equals("delivery"))
+            {
+                return null;
+            }
+            else
+            {
+                var deliveryStaffExist = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.AccountId == deliveryStaff.AccountId);
+                if(deliveryStaffExist != null)
+                {
+                    return null;
+                }
+                else
+                {
+                    await deliveryStaffContext.DeliveryStaff.AddAsync(deliveryStaff);
+                    await deliveryStaffContext.SaveChangesAsync();
+                    return deliveryStaff;
+                }
+            }
         }
 
         public async Task<DeliveryStaff?> DeleteDeliveryStaff(int id)
         {
-            throw new NotImplementedException();
+            var deliveryStaff = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.StaffId == id);
+            if(deliveryStaff == null)
+            {
+                return null;
+            }
+            else
+            {
+                deliveryStaffContext.DeliveryStaff.Remove(deliveryStaff);
+                await deliveryStaffContext.SaveChangesAsync();
+                return deliveryStaff;
+            }
         }
 
         public async Task<List<DeliveryStaff>> GetAllDeliveryStaff()
         {
-            throw new NotImplementedException();
+            return await deliveryStaffContext.DeliveryStaff.ToListAsync();
         }
 
         public async Task<DeliveryStaff?> GetDeliveryStaffById(int id)
         {
-            throw new NotImplementedException();
+            var deliveryStaff = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.StaffId == id);
+            return deliveryStaff;
         }
 
-        public async Task<DeliveryStaff?> UpdateDeliveryStaff(int id, DeliveryStaff staff)
+        public async Task<DeliveryStaff?> UpdateDeliveryStaff(int id, DeliveryStaff deliveryStaff)
         {
-            throw new NotImplementedException();
+            var deliveryStaffModel = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.StaffId == id);
+            if (deliveryStaffModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                deliveryStaffModel.StaffName = deliveryStaff.StaffName;
+                deliveryStaffModel.Age = deliveryStaff.Age;
+                deliveryStaffModel.Gender = deliveryStaff.Gender;
+                deliveryStaffModel.PhoneNumber = deliveryStaff.PhoneNumber;
+                await deliveryStaffContext.SaveChangesAsync();
+                return deliveryStaffModel;
+            }
         }
     }
 }
