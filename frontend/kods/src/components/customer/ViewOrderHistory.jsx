@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'; // Thêm useEffect và useState
+import axios from 'axios'; // Thêm import axios
 import {
   Container,
   Typography,
@@ -13,14 +14,23 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-// Mock data for orders
-const orders = [
-  { id: 1, code: 'ORD001', date: '2023-05-01', total: 150.99, status: 'Delivered', quantity: 2 },
-  { id: 2, code: 'ORD002', date: '2023-05-15', total: 89.99, status: 'Processing', quantity: 1 },
-  { id: 3, code: 'ORD003', date: '2023-06-02', total: 200.50, status: 'Shipped', quantity: 3 },
-];
 
 export default function ViewOrderHistory() {
+  const [orders, setOrders] = useState([]);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get('/api/orders');
+        setOrders(response.data);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    };
+
+    fetchOrders(); // Gọi hàm fetchOrders
+  }, []); // Chạy một lần khi component mount
+
+
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>
