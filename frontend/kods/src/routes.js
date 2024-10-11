@@ -10,6 +10,13 @@ import FeedbackList from './components/customer/FeedbackList';
 import OrderForm from './components/customer/OrderForm';
 import OrderStatusTracking from './components/customer/OrderStatusTracking';
 import TrackingStaff from './components/admin/TrackingStaff';
+<<<<<<< Updated upstream
+=======
+import OrdersDashBoard from './components/admin/OrdersDashBoard';
+import ViewOrderHistory from './components/customer/ViewOrderHistory';
+import ViewOrderDetail from './components/customer/ViewOrderDetail';
+
+>>>>>>> Stashed changes
 
 
 export const router = createBrowserRouter([
@@ -45,7 +52,6 @@ export const router = createBrowserRouter([
     path: '/feedback-list',
     element: <FeedbackList />,
   },
-
   {
     path: '/ordertracking',
     element: <OrderStatusTracking />,
@@ -53,6 +59,18 @@ export const router = createBrowserRouter([
   {
     path: '/trackingstaff',
     element: <TrackingStaff />,
+  },
+  {
+    path: '/orders',
+    element: <ViewOrderHistory />,
+  },
+  {
+    path: '/order/:id',
+    element: <ViewOrderDetail />,
+  },
+  {
+    path: '/',
+    element: <ViewOrderHistory />,
   },
 
 ]);
