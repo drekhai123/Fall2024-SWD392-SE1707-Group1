@@ -1,8 +1,9 @@
 .order-form {
-  width: 100vw;
+  width: 40%; 
+  min-width: 40%;
   height: auto;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-y: scroll;
   background-position: center;
   background-size: cover !important;
   object-fit: cover;
@@ -11,21 +12,34 @@
   flex-direction: column;
 }
 
-.container {
-  border-radius: 8px;
-  width: 80%;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  background: white;
+.order-form::-webkit-scrollbar {
+  width: 0; /* Hide scrollbar */
+  background: transparent; /* Ensure background is transparent */
 }
+
+
+.order-form {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.con {
+  width: auto;
+  min-height: 100vh;
+  height: auto;
+  background: rgba(226, 230, 255, 0.7);
+  overflow-y: auto;
+  padding-bottom: 4%;
+}
+
+
 
 .content {
   padding: 10px;
 }
 
 .fixed-table {
-  width: 100%;
+  width: auto;
   border-collapse: collapse;
 }
 

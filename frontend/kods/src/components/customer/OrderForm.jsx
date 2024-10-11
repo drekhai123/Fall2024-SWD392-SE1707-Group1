@@ -178,7 +178,7 @@ export default function OrderForm() {
 
   return (
     <div className="order-form">
-      <div className="container">
+      <div className="con">
         <div className="content">
           <h2 className="title">Order Form</h2>
           <table className="fixed-table">
@@ -188,7 +188,7 @@ export default function OrderForm() {
                 <th className="label-table">Name</th>
                 <th className="label-table">Weight (kg)</th>
                 <th className="label-table">Price (VND/Kg)</th>
-                <th className="label-table">Health Status</th>
+                {/* <th className="label-table">Health Status</th> */}
                 <th className="label-table">Action</th>
               </tr>
             </thead>
@@ -236,7 +236,7 @@ export default function OrderForm() {
                       className="custom-dropdown"
                     />
                   </td>
-                  <td>
+                  {/* <td>
                     <select
                       className="custom-dropdown"
                       value={fishData[index]?.status}
@@ -247,7 +247,7 @@ export default function OrderForm() {
                       <option value="1">Healthy</option>
                       <option value="2">Healthy Check</option>
                     </select>
-                  </td>
+                  </td> */}
                   <td>
                     <button
                       onClick={() => deleteRow(index)}
