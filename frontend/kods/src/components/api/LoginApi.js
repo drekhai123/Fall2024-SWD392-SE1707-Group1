@@ -2,7 +2,7 @@
 import { localhostUrl,baseUrl,headers } from './Url';
 import axios from 'axios';
 
-const loginUrl = localhostUrl+"/Account/Login";
+const loginUrl = baseUrl+"/Account/Login";
 
   export async function LoginApi(value) 
 {
