@@ -46,7 +46,7 @@ namespace KDOS_Web_API.Repositories
 
         public Task<Orders> UpdateOrder(int id, Orders order)
         {
-            throw new NotImplementedException();
+            
         }
 
         public Task<Orders> DeleteOrder(int id)
