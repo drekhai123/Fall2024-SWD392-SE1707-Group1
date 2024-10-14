@@ -20,7 +20,7 @@ namespace KDOS_Web_API.Models.Domains
         required public PaymentMethod PaymentMethod { get; set; }
         required public PaymentStatus PaymentStatus { get; set; }
         required public OrderStatus DeliveryStatus { get; set; }
-        required public string? DeliveryNote { get; set;}
+        required public String DeliveryNote { get; set;}
         required public int Quantity { get; set; }
         required public double TotalWeight { get; set; }
         required public double TotalCost { get; set; }

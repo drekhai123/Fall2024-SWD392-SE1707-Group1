@@ -15,7 +15,7 @@ namespace KDOS_Web_API.Models.Domains
         // Relationships
         public int OrderId { get; set; } // Foreign key
         public Orders Order { get; set; } = null!; // Many-to-one relationship with Order
-        public ICollection<KoiFish> KoiFish { get; set; } = new List<KoiFish>(); // Many-to-one relationship with KoiFish
+        
     }
 }
 
