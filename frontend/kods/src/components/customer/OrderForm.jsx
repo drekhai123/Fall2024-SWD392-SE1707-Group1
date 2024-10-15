@@ -345,6 +345,7 @@ export default function OrderForm() {
                     <QRCodeSVG
                       value="https://your-payment-url-1.com"
                       size={256}
+                      className="qr-code"
                     />
                   </div>
                   <div className="layout-qrcode">
@@ -352,6 +353,7 @@ export default function OrderForm() {
                     <QRCodeSVG
                       value="https://your-payment-url-2.com"
                       size={256}
+                      className="qr-code"
                     />
                   </div>
                 </div>

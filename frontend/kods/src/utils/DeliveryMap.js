@@ -6,7 +6,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 const copyRight = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
 const mapURL = "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-const defaultCoor = [10.8231,106.6297]
+const defaultCoor = [10.8751292,106.8006254]
 export default function DeliveryMap() {
   const customIcon = new L.Icon({
     iconUrl: markerIcon,
