@@ -15,10 +15,11 @@ namespace KDOS_Web_API.Mappings
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
 			CreateMap<AddNewAccountDTO, Account>().ReverseMap()
-				.ForMember(x=>x.Password,option=>option.Ignore())
-				.ForMember(x=>x.Banned,option=>option.Ignore());// Manually set the ban as false
-				
-			CreateMap<UpdateAccountDTO, Account>().ReverseMap()
+				.ForMember(x => x.Password, option => option.Ignore())
+				.ForMember(x => x.Banned, option => option.Ignore())// Manually set the ban as false
+				.ForMember(x=>x.Role, option => option.Ignore());// Manually set the role dependent on the need
+
+            CreateMap<UpdateAccountDTO, Account>().ReverseMap()
 				.ForMember(x=>x.Password,option=>option.Ignore());
 			// Customer Mapping
 			CreateMap<Customer, CustomerDTO>();
@@ -38,8 +39,11 @@ namespace KDOS_Web_API.Mappings
 			// Transport
 			// Order
 			// HealthUpdate
-			// BLog
+			// KoiFish
+			CreateMap<KoiFish, KoiFishDTO>().ReverseMap();
+            CreateMap<KoiFish, AddNewKoiFishDTO>().ReverseMap();
+            // BLog
         }
-	}
+    }
 }
 
