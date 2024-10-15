@@ -7,7 +7,8 @@
   background-position: center;
   background-size: cover !important;
   object-fit: cover;
-  background: url("../../public/images/homepage2.png");
+  background: url("../../public/images/background.jpg"); 
+  
   display: flex;
   flex-direction: column;
 }
@@ -89,17 +90,15 @@
 .checkout-button {
   background-color: rgb(35, 191, 56);
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 20px;
   outline: none;
   border: none;
   border-radius: 8px;
-
-  width: 80%;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    background: white;
-  }
+  width: 80%; 
+  margin: 0 auto; 
+  display: block; 
+  text-align: center; 
+}
 
   .content {
     padding: 10px;
@@ -169,11 +168,15 @@
   }
 
   .sender-info {
+    display: flex;
+    flex-direction: column;
     width: 100%;
   }
 
   .customer-info {
     width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .title {
@@ -187,25 +190,31 @@
   }
 
   .label-customer {
-    margin-bottom: 10px;
+    margin: 0 auto;
     font-size: 20px;
   }
 
   .input-customer {
     margin-bottom: 10px;
-    width: 100%;
+    width: 80%;
     padding: 8px;
-    margin: 5px 0;
+    margin: 5px auto;
     border-radius: 6px;
     border: #007bff 1px solid;
+    display: flex;
+    flex : 1;
   }
 
   .layout-customer {
     margin-top: 40px;
     display: flex;
+    flex-direction: column;
+    display: flex;
     align-items: start;
     justify-content: space-between;
+    display: flex;
     gap: 20px;
+    flex : 2;
   }
 
   .total-amount{
@@ -220,8 +229,9 @@
     font-weight: 600;
   }
 
-  .layout-total{
-    margin-top: 32px;
+  .layout-total {
+    margin: 32px auto 0 auto; /* Căn giữa theo chiều ngang */
+    width: 50%; /* Đảm bảo phần tử có một độ rộng cụ thể */
   }
 
   .popup {
