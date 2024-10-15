@@ -235,6 +235,7 @@
   }
 
   .popup {
+    z-index: 1000 !important;
     position: fixed;
     top: 0;
     left: 0;
@@ -314,3 +315,4 @@
 .cancel-btn:hover {
   background-color: #dc2626;
 }
+
