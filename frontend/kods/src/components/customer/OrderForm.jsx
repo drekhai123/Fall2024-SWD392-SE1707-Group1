@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
-import { QRCodeSVG } from "qrcode.react";
-import "../../css/OrderForm.css";
 
+import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import { QRCodeSVG } from 'qrcode.react';
+import '../../css/OrderForm.css';
 export default function OrderForm() {
   const [showQRCode, setShowQRCode] = useState(false);
 
@@ -334,6 +334,7 @@ export default function OrderForm() {
               />
             </div>
           </div>
+        </div>
 
           <div className="layout-total">
             <p className="label-total">
@@ -348,7 +349,6 @@ export default function OrderForm() {
               VND
             </h3>
           </div>
-
           <button onClick={handleCheckout} className="checkout-button">
             Checkout
           </button>
@@ -389,6 +389,7 @@ export default function OrderForm() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

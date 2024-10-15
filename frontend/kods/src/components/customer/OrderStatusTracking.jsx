@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Stepper, Step, StepLabel, TextField } from '@mui/material';
 
 const orders = [
-  { id: 1001, date: '2024-09-20', status: 'Delivered', items: 3 },
-  { id: 1002, date: '2024-09-22', status: 'In Transit', items: 1 },
-  { id: 1003, date: '2024-09-23', status: 'Processing', items: 2 },
-  { id: 1004, date: '2024-09-25', status: 'Shipped', items: 4 },
+  { id: 'ORD001', date: '2024-09-20', status: 'Delivered', items: 3 },
+  { id: 'ORD002', date: '2024-09-22', status: 'In Transit', items: 1 },
+  { id: 'ORD003', date: '2024-09-23', status: 'Processing', items: 2 },
+  { id: 'ORD004', date: '2024-09-25', status: 'Shipped', items: 4 },
 ];
 
 const steps = ['Order Placed', 'Processing', 'Shipped', 'In Transit', 'Delivered'];
@@ -48,11 +48,10 @@ const OrderStatusTracking = () => {
   };
 
   const filteredOrders = orders.filter(order =>
-    order.id.toString().includes(searchTerm) ||
+    order.id.includes(searchTerm) ||
     order.date.includes(searchTerm) ||
     order.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
