@@ -46,7 +46,12 @@ namespace KDOS_Web_API.Repositories
 
         public Task<Orders> UpdateOrder(int id, Orders order)
         {
-            
+            var orderModel = orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
+            if (orderModel == null)
+            {
+                return null;
+            }
+            return orderModel;
         }
 
         public Task<Orders> DeleteOrder(int id)

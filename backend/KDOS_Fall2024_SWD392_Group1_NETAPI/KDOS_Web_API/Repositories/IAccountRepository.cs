@@ -7,7 +7,7 @@ namespace KDOS_Web_API.Repositories
 	public interface IAccountRepository
 	{
 		Task<List<Account>> GetAllAccountAsync();
-		Task<Account?>GetAccountById(int Id);
+		Task<Account?>GetAccountById(int id);
 		Task<Account> AddNewAccount(Account account);
 		Task<Account?> DeleteAccount(int id);
 		Task<Account?> UpdateAccount(int id, Account account);

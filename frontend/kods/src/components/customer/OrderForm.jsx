@@ -3,35 +3,17 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { QRCodeSVG } from 'qrcode.react';
 import '../../css/OrderForm.css';
+import { GetAllKoiFishes } from '../api/KoiFishApi';
 export default function OrderForm() {
   const [showQRCode, setShowQRCode] = useState(false);
-
-  const fishNames = [
-    "Tancho",
-    "Koromo",
-    "Aka Matsuba",
-    "Kikkokuryu",
-    "Hariwake",
-    "Platinum",
-    "Shusui",
-    "Chagoi",
-    "Ginrin Kohaku",
-    "Doitsu Kohaku",
-    "Taisho Sanshoku",
-    "Showa Sanshoku",
-    "Hi Utsuri",
-    "Kin Showa",
-    "Ogon",
-    "Kujyaku",
-    "Kumonryu",
-    "Asagi",
-    "Ochibashigure",
-    "Goshiki",
-    "Shiro Utsuri",
-    "Kin Kikkokuryu",
-    "Yamato Nishiki",
-    "Bekko",
-  ];
+  const [koifish,setKoiFish] = useState([]);
+  useEffect (()=>{
+    const getKoiFishList = async() =>{
+      var koifishData = await GetAllKoiFishes()
+      setKoiFish(koifishData)
+    }
+    getKoiFishList();
+  },[])
 
   const [fishOrders, setFishOrders] = useState(() => {
     const savedOrders = localStorage.getItem("fishOrders");
@@ -203,9 +185,9 @@ export default function OrderForm() {
                       className="custom-dropdown"
                     >
                       <option value="">Choose fish type</option>
-                      {fishNames.map((fishName, idx) => (
-                        <option key={idx} value={fishName}>
-                          {fishName}
+                      {koifish.map((koifish) => (
+                        <option key={koifish.koiFishId} value={koifish.fishType}>
+                          {koifish.fishType}
                         </option>
                       ))}
                     </select>
@@ -389,7 +371,5 @@ export default function OrderForm() {
           )}
         </div>
       </div>
-    </div>
-    </div>
   );
 }

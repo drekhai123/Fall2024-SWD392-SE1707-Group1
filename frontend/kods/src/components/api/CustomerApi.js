@@ -6,8 +6,7 @@ const getAllCustomerURL = baseUrl+'/Customer'
 export async function GetAllCustomers() {
     var allCustomers = null
     await axios.get(getAllCustomerURL,headers)
-    .then(response =>{allCustomers = response.data;
-    console.log(allCustomers)})
+    .then(response =>{allCustomers = response.data;})
     .catch(error => {
       console.error(error)
       alert('Error fetching Customer data')

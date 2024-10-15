@@ -9,7 +9,9 @@ const loginUrl = baseUrl+"/Account/Login";
     var account = null
     console.log(value)
     await axios.post(loginUrl,value,headers)
-    .then(response =>{ account=response.data;console.log(account)})
+    .then(response =>{ account=response.data;//console.log(account)
+
+    })
     .catch(error => {
       console.error(error)
       alert('Error fetching Account data')
