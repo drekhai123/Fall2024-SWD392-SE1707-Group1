@@ -1,5 +1,5 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { GetAllCustomers } from '../api/CustomerApi';
 // MUI
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -31,13 +31,9 @@ import Paper from '@mui/material/Paper';
 export default function Customerdashboard() {
     const [customers, setCustomer] = useState([]);
     useEffect(() => {
-        async function getCustomerData(){
-        axios.get('http://localhost:2377/api/Customer')
-        .then(response => setCustomer(response.data))
-        .catch(error => {
-          console.error(error)
-          alert('Error fetching data')
-        })
+        const getCustomerData = async()=>{
+          var allCustomer = await GetAllCustomers();
+          setCustomer(allCustomer);
         };
         getCustomerData()
     }, []);
@@ -53,7 +49,6 @@ export default function Customerdashboard() {
           <TableCell align="right">Age</TableCell>
           <TableCell align="right">Gender</TableCell>
           <TableCell align="right">Phone Number</TableCell>
-          <TableCell align="right">Email</TableCell>
           <TableCell align="right">Address</TableCell>
         </TableRow>
       </TableHead>
@@ -71,7 +66,6 @@ export default function Customerdashboard() {
             <TableCell align="right">{customers.age}</TableCell>
             <TableCell align="right">{customers.gender}</TableCell>
             <TableCell align="right">{customers.phoneNumber}</TableCell>
-            <TableCell align="right">{customers.email}</TableCell>
             <TableCell align="right">{customers.address}</TableCell>
           </TableRow>
         ))}

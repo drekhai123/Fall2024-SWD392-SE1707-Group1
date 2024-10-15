@@ -10,9 +10,11 @@ import FeedbackList from './components/customer/FeedbackList';
 import OrderForm from './components/customer/OrderForm';
 import OrderStatusTracking from './components/customer/OrderStatusTracking';
 import TrackingStaff from './components/admin/TrackingStaff';
+
 import ViewOrderHistory from './components/customer/ViewOrderHistory';
 import ViewOrderDetail from './components/customer/ViewOrderDetail';
-
+import OrdersDashBoard from './components/admin/OrdersDashBoard';
+import PlaceOrder from './components/customer/PlaceOrder';
 
 
 export const router = createBrowserRouter([
@@ -42,7 +44,11 @@ export const router = createBrowserRouter([
   },
   {
     path: '/orderform',
-    element: <OrderForm />,
+    element: <PlaceOrder />,
+  },
+  {
+    path: '/OrdersDashBoard',
+    element: <OrdersDashBoard />,
   },
   {
     path: '/feedback-list',

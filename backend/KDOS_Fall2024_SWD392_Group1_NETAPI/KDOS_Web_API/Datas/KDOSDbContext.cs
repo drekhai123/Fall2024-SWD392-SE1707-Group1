@@ -13,6 +13,7 @@ namespace KDOS_Web_API.Datas
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<Orders> Orders { get; set; }
+        public DbSet<DeliveryStaff> DeliveryStaff { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configuring one-to-one relationship between Customer and Account

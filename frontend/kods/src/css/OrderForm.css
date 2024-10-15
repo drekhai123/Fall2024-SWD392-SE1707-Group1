@@ -1,17 +1,97 @@
-.order-form{
-  width: 100vw;
+.order-form {
+  width: 40%; 
+  min-width: 40%;
   height: auto;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-y: scroll;
   background-position: center;
   background-size: cover !important;
   object-fit: cover;
-  background: url('../../public/images/homepage2.png');
+  background: url("../../public/images/homepage2.png");
   display: flex;
   flex-direction: column;
 }
 
-.container {
+.order-form::-webkit-scrollbar {
+  width: 0; /* Hide scrollbar */
+  background: transparent; /* Ensure background is transparent */
+}
+
+
+.order-form {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.con {
+  width: auto;
+  min-height: 100vh;
+  height: auto;
+  background: rgba(226, 230, 255, 0.7);
+  overflow-y: auto;
+  padding-bottom: 4%;
+}
+
+
+
+.content {
+  padding: 10px;
+}
+
+.fixed-table {
+  width: auto;
+  border-collapse: collapse;
+}
+
+.fixed-table th,
+.fixed-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.custom-dropdown {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border: #007bff 1px solid;
+}
+
+.add-button,
+.checkout-button,
+.confirm-button {
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.delete-button {
+  cursor: pointer;
+  padding: 8px 12px;
+  background-color: red;
+  outline: none;
+  border: none;
+  border-radius: 8px;
+  color: white;
+}
+
+.add-button {
+  background-color: rgb(75, 75, 205);
+  cursor: pointer;
+  padding: 8px 12px;
+  outline: none;
+  border: none;
+  border-radius: 8px;
+  color: white;
+}
+
+.checkout-button {
+  background-color: rgb(35, 191, 56);
+  cursor: pointer;
+  padding: 8px 12px;
+  outline: none;
+  border: none;
   border-radius: 8px;
 
   width: 80%;
@@ -222,5 +302,5 @@
 }
 
 .cancel-btn:hover {
-    background-color: #dc2626;
+  background-color: #dc2626;
 }

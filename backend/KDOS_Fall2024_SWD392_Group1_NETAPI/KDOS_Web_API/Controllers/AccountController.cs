@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Principal;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using KDOS_Web_API.Datas;
-using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
+using Microsoft.AspNetCore.Identity; // PasswordHasher<Account>
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+//Implimenting Password Hashing
 
 namespace KDOS_Web_API.Controllers
 {
@@ -22,60 +16,65 @@ namespace KDOS_Web_API.Controllers
     {
         private readonly KDOSDbContext accountContext;
         private readonly IAccountRepository accountRepository;
+        private readonly IMapper mapper;
+        private readonly IPasswordHasher<Account> passwordHasher;
 
         // Adding in the Repository Inject
-        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository)
+        // Adding AutoMApper Service
+        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher)
         {
             this.accountContext = accountContext;
             this.accountRepository = accountRepository;
+            this.mapper = mapper;
+            this.passwordHasher = passwordHasher;
         }
         [HttpGet]
         // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
         public async Task<IActionResult> GetALlAcount()
         {
-            // Now we don't call the DB directly but through the Depository
+            // Now we don't call the DB directly but through the Repository
             // var accountList = await accountContext.Account.ToListAsync();
-            var accountList = await accountRepository.GetAllAccountAsync();
-            var accountDto = new List<AccountDTO>();
-            foreach(Account account in accountList)
-            {
-                accountDto.Add(new AccountDTO()
-                {
-                    AccountId = account.AccountId,
-                    UserName = account.UserName,
-                    Email = account.Email,
-                    Password = account.Password,
-                    Banned = account.Banned,
-                    Role = account.Role
-                    
-                }); 
-            }
+            var accountList = await accountRepository.GetAllAccountAsync();            
+            //Use AutoMapper Turn Model to DTO
+            var accountDto = mapper.Map<List<AccountDTO>>(accountList);
             return Ok(accountDto);
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewAccount([FromBody]AddNewAccountDTO addNewAccountDTO)
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            // Turn Data to Model
-            var accountModel = new Account
+            var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
+           
+            if(accountModel != null)
             {
-                UserName = addNewAccountDTO.UserName,
-                Email = addNewAccountDTO.Email,
-                Password = addNewAccountDTO.Password,
-                Banned = addNewAccountDTO.Banned,
-                Role = addNewAccountDTO.Role
-            };
-            await accountContext.Account.AddAsync(accountModel);
-            await accountContext.SaveChangesAsync();
+                var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel,accountModel.Password, loginDTO.Password); //Validate the hased password vs the password from FE, Return 1 if correct, 0 if failed
+                if (verifyPassword == PasswordVerificationResult.Success) // =1 meaning success
+                {
+                    AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
+                    return Ok(accountDTO);
+                }
+                else
+                {
+                    return Unauthorized("Error! Wrong Email/UserName or Password");
+                }
+            }
+            else
+            {
+                return NotFound("Error! Wrong Email/UserName or Password");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddNewAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
+        {
+            // Turn Data to Model With AutoMApper.ReverseMap
+            var accountModel = mapper.Map<Account>(addNewAccountDTO);
+            accountModel.Banned = false; // Default Not Banned... duh
+            accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
+            accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
-            var accountDto = new AccountDTO
-            {
-                AccountId = accountModel.AccountId,
-                UserName = accountModel.UserName,
-                Email = accountModel.Email,
-                Password = accountModel.Password,
-                Banned = accountModel.Banned,
-                Role = accountModel.Role
-            };
+            var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
         }
 
@@ -83,22 +82,15 @@ namespace KDOS_Web_API.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> GetAccountById([FromRoute] int accountId)
         {
-            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
+            var accountModel = await accountRepository.GetAccountById(accountId);
             if(accountModel == null)
             {
                 return NotFound();
             }
             else
             {
-                var accountDto = new AccountDTO
-                {
-                    AccountId = accountModel.AccountId,
-                    UserName = accountModel.UserName,
-                    Email = accountModel.Email,
-                    Password = accountModel.Password,
-                    Banned = accountModel.Banned,
-                    Role = accountModel.Role
-                };
+                // AutoMapper from Model to DTO
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
             
@@ -106,29 +98,17 @@ namespace KDOS_Web_API.Controllers
         [HttpPut]
         [Route("{accountId}")]
         public async Task<IActionResult> UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
-        {
-            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
+            {
+            // Map DTO to AccountModel
+            var accountModel = mapper.Map<Account>(updateAccountDTO);
+            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
             if (accountModel == null)
             {
                 return NotFound();
             }
             else
             {
-                  accountModel.UserName = updateAccountDTO.UserName;
-                  accountModel.Email = updateAccountDTO.Email;
-                  accountModel.Password = updateAccountDTO.Password;
-                  accountModel.Banned = updateAccountDTO.Banned;
-                  accountModel.Role = updateAccountDTO.Role;
-                await accountContext.SaveChangesAsync();
-                var accountDto = new AccountDTO
-                {
-                    AccountId = accountModel.AccountId,
-                    UserName = accountModel.UserName,
-                    Email = accountModel.Email,
-                    Password = accountModel.Password,
-                    Banned = accountModel.Banned,
-                    Role = accountModel.Role
-                };
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
         }
@@ -136,24 +116,14 @@ namespace KDOS_Web_API.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> DeleteAccountById([FromRoute] int accountId)
         {
-            var accountModel = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == accountId);
+            var accountModel = await accountRepository.DeleteAccount(accountId);
             if (accountModel == null)
             {
                 return NotFound();
             }
             else
             {
-                accountContext.Account.Remove(accountModel); // remove cannot be Async. No method
-                await accountContext.SaveChangesAsync();
-                var accountDto = new AccountDTO
-                {
-                    AccountId = accountModel.AccountId,
-                    UserName = accountModel.UserName,
-                    Email = accountModel.Email,
-                    Password = accountModel.Password,
-                    Banned = accountModel.Banned,
-                    Role = accountModel.Role
-                };
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
         }

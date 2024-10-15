@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using KDOS_Web_API.Models.Domains;
 
-namespace KDOS_Web_API.Models
+namespace KDOS_Web_API.Models.Domains
 {
 	public class Staff
 	{
