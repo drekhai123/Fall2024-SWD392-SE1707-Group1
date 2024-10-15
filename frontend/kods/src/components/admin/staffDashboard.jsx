@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { GetAllCustomers } from '../api/CustomerApi';
+import { GetAllStaffs } from '../api/StaffApi';
 // MUI
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -29,48 +29,48 @@ import Paper from '@mui/material/Paper';
 //     },
 // }
 export default function Customerdashboard() {
-    const [customers, setCustomer] = useState([]);
+    const [staff, setStaff] = useState([]);
     useEffect(() => {
-        const getCustomerData = async()=>{
-          var allCustomer = await GetAllCustomers();
-          setCustomer(allCustomer);
+        const getAllStaffs = async()=>{
+          var allStaff = await GetAllStaffs();
+          setStaff(allStaff);
         };
-        getCustomerData()
+        getAllStaffs()
     }, []);
 
   return (
+    <div className='container'>
     <TableContainer component={Paper}>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
-          <TableCell>Customer Info</TableCell>
+          <TableCell>Staff Info</TableCell>
           <TableCell align="right">ID</TableCell>
           <TableCell align="right">Name</TableCell>
           <TableCell align="right">Age</TableCell>
           <TableCell align="right">Gender</TableCell>
           <TableCell align="right">Phone Number</TableCell>
-          <TableCell align="right">Address</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {customers.map((customers) => (
+        {staff.map((staff) => (
           <TableRow
-            key={customers.customerId}
+            key={staff.customerId}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
           >
             <TableCell component="th" scope="row">
-              {customers.customerName}
+              {staff.customerName}
             </TableCell>
-            <TableCell align="right">{customers.customerId}</TableCell>
-            <TableCell align="right">{customers.customerName}</TableCell>
-            <TableCell align="right">{customers.age}</TableCell>
-            <TableCell align="right">{customers.gender}</TableCell>
-            <TableCell align="right">{customers.phoneNumber}</TableCell>
-            <TableCell align="right">{customers.address}</TableCell>
+            <TableCell align="right">{staff.staffId}</TableCell>
+            <TableCell align="right">{staff.staffName}</TableCell>
+            <TableCell align="right">{staff.age}</TableCell>
+            <TableCell align="right">{staff.gender}</TableCell>
+            <TableCell align="right">{staff.phoneNumber}</TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
   </TableContainer>
+  </div>
   )
 }

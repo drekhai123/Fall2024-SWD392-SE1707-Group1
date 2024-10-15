@@ -22,8 +22,8 @@ namespace KDOS_Web_API.Models.DTOs
         [Required]
         required public String Address { get; set; }
         [Required]
-        required public DateTime CreatedAt { get; set; }
-        public CustomerViewAccountDTO Account { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } // Include CreatedAt
+        public DateTime UpdatedAt { get; set; } // Include UpdatedAt
     }
 
 }

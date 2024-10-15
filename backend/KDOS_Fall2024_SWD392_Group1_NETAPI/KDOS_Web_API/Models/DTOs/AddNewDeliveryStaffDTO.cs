@@ -1,14 +1,12 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using KDOS_Web_API.Models.Domains;
+using System.ComponentModel.DataAnnotations;
 
-namespace KDOS_Web_API.Models.Domains
+namespace KDOS_Web_API.Models.DTOs
 {
-	public class Staff
+	public class AddNewDeliveryStaffDTO
 	{
         [Key]
-        public int StaffId { get; set; }
         public int AccountId { get; set; }
         [Required]
         required public String StaffName { get; set; }
@@ -18,10 +16,6 @@ namespace KDOS_Web_API.Models.Domains
         required public String Gender { get; set; }
         [Required]
         required public String PhoneNumber { get; set; }
-        // Link between Account and Staff
-        [Required]
-        public Account? Account { get; set; }
-
     }
 }
 

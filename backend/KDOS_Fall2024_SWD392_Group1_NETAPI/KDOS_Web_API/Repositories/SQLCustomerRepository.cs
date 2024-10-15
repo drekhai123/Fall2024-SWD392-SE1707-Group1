@@ -1,6 +1,6 @@
 ﻿using System;
 using KDOS_Web_API.Datas;
-using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,9 +36,7 @@ namespace KDOS_Web_API.Repositories
                     await customerContext.SaveChangesAsync();
                     return customer;
                 }
-               
             }
-           
         }
 
         public async Task<Customer?> DeleteCustomer(int id)
@@ -68,11 +66,17 @@ namespace KDOS_Web_API.Repositories
             var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
             return customerModel;
         }
-
-        public async Task<Customer?> GetCustomerByName(string name)
+        public async Task<Account?> GetAccountByCustomer(int id)
         {
-            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerName == name);
-            return customerModel;
+            var accountModel = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            return accountModel;
+        }
+
+        public async Task<List<Customer>> GetCustomerByName(string name)
+        {
+            // Where query can return a list of data, unlike 1 data
+            var customerModelList = await customerContext.Customer.Where(x => x.CustomerName.Contains(name)).ToListAsync();
+            return customerModelList;
         }
 
 
@@ -91,7 +95,7 @@ namespace KDOS_Web_API.Repositories
                 customerModel.Gender = customer.Gender;
                 customerModel.PhoneNumber = customer.PhoneNumber;
                 await customerContext.SaveChangesAsync();
-                return customer;
+                return customerModel;
 
 
             }

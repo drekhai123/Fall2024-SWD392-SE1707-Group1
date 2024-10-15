@@ -1,5 +1,6 @@
 ﻿using System;
-using KDOS_Web_API.Models;
+using KDOS_Web_API.Models.Domains;
+
 namespace KDOS_Web_API.Repositories
 {
     // The interface is for all the action to work with in a API
@@ -10,7 +11,9 @@ namespace KDOS_Web_API.Repositories
 		Task<Customer?> AddNewCustomer(Customer customer);
 		Task<Customer?> UpdateCustomer(int id, Customer customer);
 		Task<Customer?> DeleteCustomer(int id);
-		Task<Customer?> GetCustomerByName(String name);
-	}
+        Task<List<Customer>> GetCustomerByName(String name);
+		Task<Account?> GetAccountByCustomer(int id);
+
+    }
 }
 

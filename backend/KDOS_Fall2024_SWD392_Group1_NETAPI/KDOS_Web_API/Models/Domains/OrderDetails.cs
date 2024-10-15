@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using KDOS_Web_API.Models.Domains;
 
-namespace KDOS_Web_API.Models
+namespace KDOS_Web_API.Models.Domains
 {
     public class OrderDetails
     {
@@ -15,7 +15,7 @@ namespace KDOS_Web_API.Models
         // Relationships
         public int OrderId { get; set; } // Foreign key
         public Orders Order { get; set; } = null!; // Many-to-one relationship with Order
-        public ICollection<KoiFish> KoiFish { get; set; } = new List<KoiFish>(); // Many-to-one relationship with KoiFish
+        
     }
 }
 
