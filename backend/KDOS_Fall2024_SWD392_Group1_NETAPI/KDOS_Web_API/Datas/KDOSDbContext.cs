@@ -8,6 +8,7 @@ namespace KDOS_Web_API.Datas
     public class KDOSDbContext : DbContext
     {
         public DbSet<OrderDetails> OrderDetails { get; set; } // mockup for mirgration Table creator
+        public DbSet<HealthStatus> HealthStatus { get; set; }
         public DbSet<KoiFish> KoiFish { get; set; }
         public DbSet<Account> Account { get; set; }
         public DbSet<Staff> Staff { get; set; }
@@ -42,10 +43,15 @@ namespace KDOS_Web_API.Datas
                 .WithMany(o => o.OrderDetails) // An Order can have many OrderDetails
                 .HasForeignKey(od => od.OrderId)
                 .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete if needed
-            modelBuilder.Entity<KoiFish>()
+            modelBuilder.Entity<OrderDetails>()
+                .HasOne(k => k.KoiFish) // Each OrderDetails references one KoiFish
+                .WithOne(od => od.OrderDetails)
+                .HasForeignKey<OrderDetails>(od => od.KoiFishId)
+                .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete if needed
+            modelBuilder.Entity<HealthStatus>()
                 .HasOne(od => od.OrderDetails) // Each OrderDetails references one KoiFish
-                .WithMany(k => k.KoiFish) // Assuming KoiFish has no navigation property back to OrderDetails
-                .HasForeignKey(od => od.OrderDetailsId)
+                .WithMany(st => st.HealthStatus)
+                .HasForeignKey(st => st.OrderDetailsId)
                 .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete if needed
 
         }

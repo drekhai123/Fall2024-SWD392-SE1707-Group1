@@ -64,18 +64,47 @@ namespace KDOS_Web_API.Controllers
             }
 
         }
-
         [HttpPost]
-        public async Task<IActionResult> AddNewAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
+        [Route("AddCustomer")]
+        public async Task<IActionResult> AddNewCustomerAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
         {
             // Turn Data to Model With AutoMApper.ReverseMap
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
+            accountModel.Role = "customer"; //Set Role fixed as Customer
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
+        }
+        [HttpPost]
+        [Route("AddStaff")]
+        public async Task<IActionResult> AddNewStaffAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
+        {
+            // Turn Data to Model With AutoMApper.ReverseMap
+            var accountModel = mapper.Map<Account>(addNewAccountDTO);
+            accountModel.Banned = false; // Default Not Banned... duh
+            accountModel.Role = "staff"; //Set Role fixed as staff
+            accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
+            accountModel = await accountRepository.AddNewAccount(accountModel);
+            // Turn Model to DTO for returning a response
+            var accountDto = mapper.Map<AccountDTO>(accountModel);
+            return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
+        }
+        [HttpPost]
+        [Route("AddDeliveryStaff")]
+        public async Task<IActionResult> AddNewDeliverySatffAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
+        {
+            // Turn Data to Model With AutoMApper.ReverseMap
+            var accountModel = mapper.Map<Account>(addNewAccountDTO);
+            accountModel.Banned = false; // Default Not Banned... duh
+            accountModel.Role = "delivery"; //Set Role fixed as deliverystaff
+            accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
+            accountModel = await accountRepository.AddNewAccount(accountModel);
+            // Turn Model to DTO for returning a response
+            var accountDto = mapper.Map<AccountDTO>(accountModel);
+            return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
         }
 
         [HttpGet]
