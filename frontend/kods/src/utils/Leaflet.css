@@ -1,0 +1,36 @@
+.search-input {
+    width: 500px;
+    padding: 15px; 
+    margin: 20px auto; 
+    display: block; 
+    position: absolute; 
+    top: 20px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 1000; 
+    font-size: 16px; 
+    border: 2px solid #ccc; 
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.suggestions {
+    
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    width: calc(100% - 20px); /* Để nó khớp với chiều rộng của ô tìm kiếm */
+    max-height: 200px; /* Để kiểm soát chiều cao của dropdown */
+    overflow-y: auto; /* Thêm cuộn nếu có quá nhiều suggestion */
+    margin-top: 5px; /* Khoảng cách giữa ô tìm kiếm và dropdown */
+    border-radius: 4px; /* Bo tròn các góc */
+}
+
+.suggestion-item {
+    padding: 10px; /* Khoảng cách bên trong từng mục suggestion */
+    cursor: pointer; /* Con trỏ đổi thành hình bàn tay khi hover */
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0; /* Hiệu ứng hover cho mục suggestion */
+}
