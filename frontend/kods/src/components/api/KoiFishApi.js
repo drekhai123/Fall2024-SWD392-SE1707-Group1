@@ -6,8 +6,7 @@ const getAllFishURL = baseUrl+'/KoiFish'
 export async function GetAllKoiFishes() {
     var allFishes = null
     await axios.get(getAllFishURL,headers)
-    .then(response =>{allFishes = response.data;
-    console.log(allFishes)})
+    .then(response =>{allFishes = response.data;})
     .catch(error => {
       console.error(error)
       alert('Error fetching Fish data')

@@ -53,7 +53,7 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> GetAllKoiFish()
         {
             var koiFishModel = await koiFishRepository.GetAllKoiFish();
-            var koiFishDto = mapper.Map<KoiFishDTO>(koiFishModel);
+            var koiFishDto = mapper.Map<List<KoiFishDTO>>(koiFishModel);
             return Ok(koiFishDto);
         }
         

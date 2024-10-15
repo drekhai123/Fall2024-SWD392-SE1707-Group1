@@ -7,7 +7,7 @@ import { GetAllKoiFishes } from '../api/KoiFishApi';
 export default function OrderForm() {
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish,setKoiFish] = useState([]);
-  useEffect (async ()=>{
+  useEffect (()=>{
     const getKoiFishList = async() =>{
       var koifishData = await GetAllKoiFishes()
       setKoiFish(koifishData)
