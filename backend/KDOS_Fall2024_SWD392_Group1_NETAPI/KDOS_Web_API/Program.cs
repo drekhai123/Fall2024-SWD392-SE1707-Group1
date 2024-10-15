@@ -21,6 +21,7 @@ builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
 builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>();
+builder.Services.AddScoped<IKoiFishRepository, SQLKoiFishRepository>();
 //End Respository
 //AutoMapper Service Inject
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

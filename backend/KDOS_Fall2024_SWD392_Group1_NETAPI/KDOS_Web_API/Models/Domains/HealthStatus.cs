@@ -3,13 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KDOS_Web_API.Models.Domains
 {
-    public class KoiFish
-    {
+	public class HealthStatus
+	{
         [Key]
-        public int KoiFishId { get; set; }
-        required public String FishType { get; set; }
+        public int HealthStatusId { get; set; }
+        required public DateTime Date { get; set; }
+        required public String Status { get; set; }
         required public String Description { get; set; }
+        // Relationship
+        public int OrderDetailsId { get; set; }
         public OrderDetails OrderDetails { get; set; } = null!; // REQUIRED relationship
     }
 }
-
