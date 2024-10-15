@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { DeliveryMap } from "../../utils/DeliveryMap";
 import { QRCodeSVG } from 'qrcode.react';
 import '../../css/OrderForm.css';
 import { GetAllKoiFishes } from '../api/KoiFishApi';
@@ -345,7 +346,6 @@ export default function OrderForm() {
                     <QRCodeSVG
                       value="https://your-payment-url-1.com"
                       size={256}
-                      className="qr-code"
                     />
                   </div>
                   <div className="layout-qrcode">
@@ -353,7 +353,6 @@ export default function OrderForm() {
                     <QRCodeSVG
                       value="https://your-payment-url-2.com"
                       size={256}
-                      className="qr-code"
                     />
                   </div>
                 </div>
