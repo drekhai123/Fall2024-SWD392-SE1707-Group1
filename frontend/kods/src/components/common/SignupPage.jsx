@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/SignupPage.css';
+import { regCus, signUp } from '../api/Auth.api';
+import { toast } from 'react-toastify';
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
@@ -45,7 +47,7 @@ const SignupPage = () => {
     setPhoneError(!validatePhoneNumber(newPhoneNumber));
   };
 
-  const handleSignupClick = (e) => {
+  const handleSignupClick =async (e) => {
     e.preventDefault();
     
     // Kiểm tra xem các field nào đang trống và đặt trạng thái lỗi tương ứng
@@ -56,12 +58,45 @@ const SignupPage = () => {
     setAddressError(!address);
     
     // Kiểm tra điều kiện khi có lỗi
-    if (passwordError || phoneError || !email || !username || !confirmPassword || !gender || !address) {
-      alert('Please fix the errors before signing up.');
-      return;
+    // if (passwordError || phoneError || !email || !username || !confirmPassword || !gender || !address) {
+      // alert('Please fix the errors before signing up.');
+      // return;
+    // }
+
+    const data = {
+      banned:false,
+      email:email,
+      userName:username,
+      password:password,
+      role:"customer"
+    }
+    // Implement signup logic here
+    const res = await signUp(data);
+    if ( res){
+      console.log(res)
+      const data = {
+        customerName: "bilong",
+        age: 35,
+        accountId: res.data.accountId,
+       gender: gender,
+        phoneNumber: phoneNumber,
+        address: address,
+        createdAt: "2024-10-16T16:20:36.482Z",
+        updatedAt: "2024-10-16T16:20:36.482Z"
+      }
+      const response = await regCus(data)
+      if (response){
+        toast.success("Success")
+      }
+      else {
+        toast.error("fail")
+      }
+    }
+    else{
+      toast.error("Error")
     }
 
-    // Implement signup logic here
+
   };
 
   const handleLoginClick = () => {

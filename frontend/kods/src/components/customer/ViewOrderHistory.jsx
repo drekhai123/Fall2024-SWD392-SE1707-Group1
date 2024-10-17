@@ -16,19 +16,92 @@ import { Link } from 'react-router-dom';
 
 
 export default function ViewOrderHistory() {
-  const [orders, setOrders] = useState([]);
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get('/api/orders');
-        setOrders(response.data);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      }
-    };
+  const orders = [
+    {
+      id: 1,
+      date: '2023-05-01',
+      total: 150.99,
+      status: 'Delivered',
+      items: [
+        {
+          id: 1,
+          name: 'Fish 1',
+          quantity: 2,
+          price: 49.99,
+          fishStatus: [
+            { time: '2024-10-01', status: 'OK' },
+            { time: '2024-10-02', status: 'OK' }
+          ]
+        },
+        {
+          id: 2,
+          name: 'Fish 2',
+          quantity: 1,
+          price: 51.01,
+          fishStatus: [
+            { time: '2024-10-01', status: 'Not OK' },
+            { time: '2024-10-02', status: 'OK' }
+          ]
+        },
+      ],
+      shippingAddress: '123 Main St, City, Country, 12345',
+      review: ''
+    },
+    {
+      id: 2,
+      date: '2023-05-15',
+      total: 89.99,
+      status: 'Processing',
+      items: [
+        {
+          id: 3,
+          name: 'Fish 3',
+          quantity: 1,
+          price: 89.99,
+          fishStatus: [
+            { time: '2024-10-01', status: 'Not OK' },
+            { time: '2024-10-02', status: 'OK' }
+          ]
+        },
+      ],
+      shippingAddress: '456 Elm St, City, Country, 67890',
+      review: ''
+    },
+    {
+      id: 3,
+      date: '2023-06-02',
+      total: 200.50,
+      status: 'Shipped',
+      items: [
+        {
+          id: 4,
+          name: 'Fish 4',
+          quantity: 2,
+          price: 100.25,
+          fishStatus: [
+            { time: '2024-10-01', status: 'OK' },
+            { time: '2024-10-02', status: 'Not OK' }
+          ]
+        },
+      ],
+      shippingAddress: '789 Oak St, City, Country, 11223',
+      review: ''
+    },
+  ];
 
-    fetchOrders(); // Gọi hàm fetchOrders
-  }, []); // Chạy một lần khi component mount
+  // const [orders, setOrders] = useState([]);
+  // useEffect(() => {
+  //   const fetchOrders = async () => {
+  //     try {
+  //       const response = await axios.get('/api/orders');
+  //       setOrders(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching orders:', error);
+  //     }
+  //   };
+
+  //   fetchOrders(); // Gọi hàm fetchOrders
+  // }, []); // Chạy một lần khi component mount
 
 
   return (
@@ -64,7 +137,7 @@ export default function ViewOrderHistory() {
                 <TableCell>
                   <Button
                     component={Link}
-                    to={`/order/${order.id}`}
+                    to={`/orders/${order.id}`}
                     variant="contained"
                     color="primary"
                     size="small"
