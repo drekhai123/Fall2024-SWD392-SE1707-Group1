@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { DeliveryMap } from "../../utils/DeliveryMap";
 import { QRCodeSVG } from 'qrcode.react';
 import '../../css/OrderForm.css';
 import { GetAllKoiFishes } from '../api/KoiFishApi';
