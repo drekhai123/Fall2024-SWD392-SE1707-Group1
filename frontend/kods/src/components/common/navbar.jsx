@@ -1,9 +1,16 @@
-
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "../../css/navbar.css";
 
 export default function Navbar() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+  const logout = () => {
+    localStorage.removeItem("user");
+    navigate('/');
+    window.location.reload();
+  };
+
   return (
     <header className="header-container">
       <nav className="navbar">
@@ -22,9 +29,22 @@ export default function Navbar() {
             <li className="nav-item">CONTACT</li>
           </ul>
         </div>
-        <div className="nav-right">
-          <div className="nav-item-login"> <Link to="/login">LOGIN</Link></div>
-        </div>
+
+        {user ? (
+          <div className="nav-right">
+            <div className="nav-item">
+              Hello {user.userName} {}
+              <button className="btn-Logout" onClick={logout}>LOGOUT</button> {}
+            </div>
+          </div>
+        ) : ( // chưa đăng nhập, hiển thị LOGIN
+          <div className="nav-right">
+            <div className="nav-item-login">
+              <Link className="btn-login" to="/login">LOGIN</Link> {}
+            </div>
+          </div>
+        )}
+
       </nav>
 
       <div className="header-content">

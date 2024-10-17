@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const loginUrl = baseUrl+"/Account/Login";
 
-  export async function LoginApi(value) 
+  export async function LoginApi(value)
 {
     var account = null
     console.log(value)

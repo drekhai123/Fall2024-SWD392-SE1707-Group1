@@ -43,7 +43,12 @@ const Feedback = ({ setFeedbacks }) => {
 
         // Ensure setFeedbacks is a function before calling it
         if (typeof setFeedbacks === 'function') {
-            setFeedbacks(prevFeedbacks => [...prevFeedbacks, newFeedback]);
+            setFeedbacks(prevFeedbacks => {
+                const updatedFeedbacks = [...prevFeedbacks, newFeedback];
+                // Save to local storage
+                localStorage.setItem('feedbacks', JSON.stringify(updatedFeedbacks));
+                return updatedFeedbacks;
+            });
         } else {
             console.error("setFeedbacks is not a function");
         }
