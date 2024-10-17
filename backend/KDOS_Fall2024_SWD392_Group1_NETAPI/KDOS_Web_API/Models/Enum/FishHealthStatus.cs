@@ -1,11 +1,13 @@
-﻿using System;
+﻿
+using System;
 namespace KDOS_Web_API.Models.Enum
 {
-	public class FishHealthStatus
+	public enum FishHealthStatus
 	{
-		public FishHealthStatus()
-		{
-		}
+		Healthy,
+		Unhealthy,
+		Sick,
+		Deceased
 	}
 }
 

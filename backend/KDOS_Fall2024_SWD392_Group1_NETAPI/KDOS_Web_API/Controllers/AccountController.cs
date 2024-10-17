@@ -127,9 +127,26 @@ namespace KDOS_Web_API.Controllers
         [HttpPut]
         [Route("{accountId}")]
         public async Task<IActionResult> UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
-            {
+        {
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountDTO);
+            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
+            if (accountModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
+                return Ok(accountDto);
+            }
+        }
+        [HttpPut]
+        [Route("ban/{accountId}")]
+        public async Task<IActionResult> BanAccount([FromRoute] int accountId, [FromBody] BanAccountDTO banAccountDTO)
+        {
+            // Map DTO to AccountModel
+            var accountModel = mapper.Map<Account>(banAccountDTO);
             accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
             if (accountModel == null)
             {

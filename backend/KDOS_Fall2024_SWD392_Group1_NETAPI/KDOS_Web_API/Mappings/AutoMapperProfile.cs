@@ -18,9 +18,8 @@ namespace KDOS_Web_API.Mappings
 				.ForMember(x => x.Password, option => option.Ignore())
 				.ForMember(x => x.Banned, option => option.Ignore())// Manually set the ban as false
 				.ForMember(x=>x.Role, option => option.Ignore());// Manually set the role dependent on the need
-
-            CreateMap<UpdateAccountDTO, Account>().ReverseMap()
-				.ForMember(x=>x.Password,option=>option.Ignore());
+			CreateMap<Account, BanAccountDTO>().ReverseMap();
+			CreateMap<UpdateAccountDTO, Account>().ReverseMap();
 			// Customer Mapping
 			CreateMap<Customer, CustomerDTO>();
 			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap()

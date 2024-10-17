@@ -58,18 +58,29 @@ namespace KDOS_Web_API.Repositories
             {
                 accountExist.UserName = account.UserName;
                 accountExist.Email = account.Email;
-                accountExist.Password = account.Password;
-                accountExist.Banned = account.Banned;
-                accountExist.Role = account.Role;
                 await accountContext.SaveChangesAsync();
                 return account;
             }
-            
         }
 
        public async Task<Account?> Login(string userNameOrEmail)
         {
             return await accountContext.Account.FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
+        }
+
+        public async Task<Account?> BanAccount(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null || !accountExist.Role.Equals("customer"))
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Banned = account.Banned;
+                await accountContext.SaveChangesAsync();
+                return account;
+            }
         }
     }
 }
