@@ -59,7 +59,7 @@ namespace KDOS_Web_API.Repositories
                 accountExist.UserName = account.UserName;
                 accountExist.Email = account.Email;
                 await accountContext.SaveChangesAsync();
-                return account;
+                return accountExist;
             }
         }
 
