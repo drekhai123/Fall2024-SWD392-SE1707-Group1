@@ -4,10 +4,10 @@
   height: auto;
   min-height: 100vh;
   overflow-y: scroll;
-  background-position: center;
-  background-size: cover !important;
+  background-position: auto center;
+  background-size: cover ;
   object-fit: cover;
-  background: url("../../public/images/background.jpg"); 
+  background: url("../../public/images/koifish.png"); 
   
   display: flex;
   flex-direction: column;
@@ -187,6 +187,13 @@
 
   .label-table {
     font-size: 18px;
+    margin: 20px auto; /* Căn giữa */
+    padding: 20px; /* Padding xung quanh form */
+    border-radius: 2px; /* Bo góc nhẹ */
+    background-color: #f9f9f9; /* Màu nền nhẹ */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    max-width: 600px; /* Đặt chiều rộng tối đa cho form */
+    
   }
 
   .label-customer {
