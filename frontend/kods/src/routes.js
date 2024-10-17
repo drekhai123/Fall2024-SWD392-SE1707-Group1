@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
     element: <ProfilePage />,
   },
   {
-    path: '/order-history',
+    path: '/orderhistory',
     element: <OrderHistoryPage />,
   },
   {
@@ -47,11 +47,11 @@ export const router = createBrowserRouter([
     element: <PlaceOrder />,
   },
   {
-    path: '/OrdersDashBoard',
+    path: '/ordersDashBoard',
     element: <OrdersDashBoard />,
   },
   {
-    path: '/feedback-list',
+    path: '/feedbacklist',
     element: <FeedbackList />,
   },
   {
@@ -63,15 +63,11 @@ export const router = createBrowserRouter([
     element: <TrackingStaff />,
   },
   {
-    path: '/orders',
-    element: <ViewOrderHistory />,
-  },
-  {
-    path: '/order/:id',
+    path: '/orders/:id',
     element: <ViewOrderDetail />,
   },
   {
-    path: '/',
+    path: '/orders',
     element: <ViewOrderHistory />,
   },
 
