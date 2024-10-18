@@ -77,7 +77,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
-
+  // phí shipping
   const calculateShippingFee = () => {
     const { distance } = customerInfo;
     if (distance <= 5) return 0;
