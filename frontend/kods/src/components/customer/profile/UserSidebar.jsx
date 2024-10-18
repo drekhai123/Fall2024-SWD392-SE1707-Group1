@@ -8,10 +8,9 @@ const Sidebar = ({ items, userData }) => {
 
   // Custom function to check if the current path matches the item link
   const isActiveLink = (link) => {
-    return currentPath === link || currentPath.startsWith(link + "/");
+    return currentPath === link;
   };
 
-  console.log("userData: ", userData);
   return (
     <aside className="group/sidebar flex flex-col h-full shrink-0 lg:w-[350px] w-[300px] transition-all duration-300 ease-in-out m-0 relative bg-white border-r border-r-dashed border-r-neutral-200">
       <div className="flex items-center justify-between px-8 py-5">

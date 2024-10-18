@@ -23,6 +23,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
               label="User Name"
               isHidden
               fullWidth
+              
               rules={{ required: "User name is required" }}
               placeholder="Enter your user name"
             />
@@ -37,6 +38,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
               fullWidth
               type="email"
               isHidden
+              
               rules={{
                 required: "Email is required",
                 pattern: {
@@ -57,6 +59,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
               fullWidth
               type="password"
               isHidden
+              
               rules={{
                 required: "Password is required",
                 minLength: {

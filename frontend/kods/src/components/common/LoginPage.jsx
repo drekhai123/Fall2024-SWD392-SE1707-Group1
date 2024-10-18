@@ -25,6 +25,7 @@ const LoginPage = () => {
     };
     const account = await LoginApi(login);
     if (account !== null) {
+      localStorage.setItem("account", JSON.stringify(account))
       navigate('/');
     } else {
       alert('Invalid credentials');
