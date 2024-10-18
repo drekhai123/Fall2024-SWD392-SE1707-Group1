@@ -5,6 +5,7 @@
         PENDING,
         PROCESSING,
         DELIVERED,
+        COMPLETED,
         CANCELLED
     }
 }

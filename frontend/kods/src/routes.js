@@ -17,6 +17,7 @@ import OrdersDashBoard from './components/admin/OrdersDashBoard';
 import PlaceOrder from './components/customer/PlaceOrder';
 import ProfilePage from "./components/customer/ProfilePage";
 import PrivateRoute from './components/PrivateRoute';
+import UserProfilePage from "./components/customer/profile";
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -31,8 +32,14 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    path: '/profile',
-    element: <ProfilePage />,
+    path: "/profile",
+    element: <UserProfilePage />,
+    children: [
+      {
+        path: "customer",
+        element: <UserProfilePage />,
+      },
+    ],
   },
   {
     path: '/orderhistory',

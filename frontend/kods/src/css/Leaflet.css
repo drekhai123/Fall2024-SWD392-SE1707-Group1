@@ -1,0 +1,69 @@
+.search-input {
+  width: 500px;
+  padding: 15px;
+  margin: 20px auto;
+  display: block;
+  position: absolute;
+  top: 20px;
+  left: 30%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-input-2 {
+  width: 500px;
+  padding: 15px;
+  margin: 20px auto;
+  display: block;
+  position: absolute;
+  top: 20px;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.layout-suggestions {
+  position: relative;
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 1000;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f7f7f7;
+  border-radius: 0 0 8px 8px;
+  width: 80%;
+  margin-top: -4px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.suggestion-item {
+  font-size: 12px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #a9b4d8;
+}
+
+.leaflet-top.leaflet-right {
+  display: none;
+  transition: opacity 0.5s ease;
+}
+
+.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive{
+    opacity: 1;
+}

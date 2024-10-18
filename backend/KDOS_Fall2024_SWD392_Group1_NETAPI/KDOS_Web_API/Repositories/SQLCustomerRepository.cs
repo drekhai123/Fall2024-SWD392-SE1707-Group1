@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KDOS_Web_API.Repositories
 {
-	public class SQLCustomerRepository : ICustomerRepository
-	{
+    public class SQLCustomerRepository : ICustomerRepository
+    {
         private readonly KDOSDbContext customerContext;
 
         public SQLCustomerRepository(KDOSDbContext customerContext)
-		{
+        {
             this.customerContext = customerContext;
         }
 
         public async Task<Customer?> AddNewCustomer(Customer customer)
         {
             // add extra step to check customer status
-           var accountExist = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == customer.AccountId);
+            var accountExist = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == customer.AccountId);
             if (accountExist == null || !accountExist.Role.Equals("customer"))
             {
                 return null;
             }
             else
             {
-               var customerExist = await customerContext.Customer.FirstOrDefaultAsync(x => x.AccountId == customer.AccountId);
+                var customerExist = await customerContext.Customer.FirstOrDefaultAsync(x => x.AccountId == customer.AccountId);
                 if (customerExist != null)
                 {
                     return null;
@@ -42,7 +42,7 @@ namespace KDOS_Web_API.Repositories
         public async Task<Customer?> DeleteCustomer(int id)
         {
             var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
-            if(customerModel == null)
+            if (customerModel == null)
             {
                 return null;
             }
@@ -52,7 +52,7 @@ namespace KDOS_Web_API.Repositories
                 await customerContext.SaveChangesAsync();
                 return customerModel;
             }
-            
+
         }
 
         public async Task<List<Customer>> GetAllCustomer()
@@ -64,7 +64,16 @@ namespace KDOS_Web_API.Repositories
         public async Task<Customer?> GetCustomerById(int id)
         {
             var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
-            return customerModel;
+            if(customerModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                var accountModel = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == customerModel.AccountId);
+                return customerModel;
+            }
+
         }
         public async Task<Account?> GetAccountByCustomer(int id)
         {
@@ -101,7 +110,7 @@ namespace KDOS_Web_API.Repositories
             }
         }
 
- 
+
     }
 }
 

@@ -9,7 +9,6 @@ namespace KDOS_Web_API.Models.Domains
         [Key]
         public int OrderDetailsId { get; set; }
         public int KoiFishId { get; set; }
-        public int FishAge { get; set; }
         public float FishWeight { get; set; }
         // Relationships
         public int OrderId { get; set; } // Foreign key

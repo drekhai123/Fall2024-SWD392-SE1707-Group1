@@ -65,7 +65,7 @@ const OrderStatusTracking = () => {
         value={searchTerm}
         onChange={handleSearchChange}
       />
-      {searchTerm && filteredOrders.length > 0 ? (
+      {filteredOrders.length > 0 ? (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
