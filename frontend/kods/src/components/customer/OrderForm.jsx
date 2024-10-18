@@ -63,12 +63,12 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     const updatedOrders = fishOrders.map((order, i) =>
       i === index
         ? {
-            ...order,
-            [field]: value,
-            total:
-              (field === "quantity" ? value : order.quantity) *
-              (field === "price" ? value : order.price),
-          }
+          ...order,
+          [field]: value,
+          total:
+            (field === "quantity" ? value : order.quantity) *
+            (field === "price" ? value : order.price),
+        }
         : order
     );
     setFishOrders(updatedOrders);
@@ -115,10 +115,9 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         <p>Name customer: ${customerInfo.nameCustomer}</p>
         <p>Phone customer: ${customerInfo.phoneCustomer}</p>
         <p>Address customer: ${customerInfo.addressCustomer}</p>
-        <p>Total amount: ${
-          getTotalAmount() +
-          parseInt(calculateVAT()) +
-          parseFloat(calculateShippingFee().toFixed(0))
+        <p>Total amount: ${getTotalAmount() +
+        parseInt(calculateVAT()) +
+        parseFloat(calculateShippingFee().toFixed(0))
         } VND</p>
       `,
       icon: "info",
@@ -181,8 +180,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 value
               )}&countrycodes=VN&format=json`
             );
-            // có chỗ country codes này thì lên wikimedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
-           
+            // có chỗ country codes này thì lên wikipedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
+
 
             if (field === "addressSender") {
               setFromSuggestions(response.data);
@@ -227,8 +226,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   useEffect(() => {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
-  
-  
+
+
   return (
     <div className="order-form">
       <div className="con">
@@ -418,26 +417,45 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 </div>
               </div>
 
-              <div style={{marginTop: 10}} className="customer-info">
-              <h3 className="label-customer">Distance (km)</h3>
-              <input
-                className="input-customer"
-                type="number"
-                disabled={distance}
-                value={customerInfo?.distance}
-                placeholder="Distance (km)"
-                min="0"
-                onChange={(e) =>
-                  handleCustomerChange(
-                    "distance",
-                    parseInt(e.target.value) || 0
-                  )
-                }
-              />
+              <div style={{ marginTop: 10 }} className="customer-info">
+                <h3 className="label-customer">Distance (km)</h3>
+                <input
+                  className="input-customer"
+                  type="number"
+                  disabled={distance}
+                  value={customerInfo?.distance}
+                  placeholder="Distance (km)"
+                  min="0"
+                  onChange={(e) =>
+                    handleCustomerChange(
+                      "distance",
+                      parseInt(e.target.value) || 0
+                    )
+                  }
+                />
+
+                {/* Thêm checkbox */}
+                <div className="checkbox-container">
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={customerInfo?.wantToFeedFish || false}
+                      onChange={(e) =>
+                        handleCustomerChange(
+                          "wantToFeedFish",
+                          e.target.checked
+                        )
+                      }
+                    />
+                    If you want to feed the fish
+                  </label>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+
 
         <div className="layout-total">
           <p className="label-total">
