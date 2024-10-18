@@ -24,7 +24,6 @@ namespace KDOS_Web_API.Models.Domains
         required public int Quantity { get; set; }
         required public double TotalWeight { get; set; }
         required public double TotalCost { get; set; }
-        required public int OrderStatus { get; set; }
         required public DateTime CreatedAt { get; set; }
         required public DateTime UpdatedAt { get; set; }
 
