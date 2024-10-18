@@ -25,8 +25,12 @@ const LoginPage = () => {
     };
     const account = await LoginApi(login);
     if (account !== null) {
-      localStorage.setItem("account", JSON.stringify(account));
-      navigate("/");
+      localStorage.setItem('user', JSON.stringify(account));
+      // Lấy access token từ account và lưu vào localStorage
+      if (account.accessToken) {
+        localStorage.setItem('accessToken', account.accessToken);
+      }
+      navigate('/');
     } else {
       alert("Invalid credentials");
     }
