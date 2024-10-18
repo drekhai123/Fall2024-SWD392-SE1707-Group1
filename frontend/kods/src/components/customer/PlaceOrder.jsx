@@ -1,8 +1,18 @@
-import React from 'react'
-import DeliveryMap from '../../utils/DeliveryMap'
+import React, {useState} from 'react'
 import OrderForm from './OrderForm'
+import DeliveryMap from './DeliveryMap';
 
 export default function PlaceOrder() {
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+  const [distance, setDistance] = useState(null);
+
+  const handleSuggestionClick = (suggestion) => {
+    setSelectedSuggestion(suggestion); 
+  };
+
+  const handleDistanceAuto = (distance) => {
+    setDistance(distance); 
+  };
   return (
     <div className=''
         style={{
@@ -10,8 +20,8 @@ export default function PlaceOrder() {
             height: '100vh',
         }}
     >
-    <OrderForm/>
-    <DeliveryMap/>
+     <OrderForm onSuggestionClick={handleSuggestionClick} distance={distance}/>
+     <DeliveryMap suggestion={selectedSuggestion} autoSetDistance={handleDistanceAuto}/>
     </div>
   )
 }

@@ -7,7 +7,6 @@ import OrderHistoryPage from './components/customer/OrderHistoryPage';
 import Homepage from './components/common/Homepages';
 import Feedback from './components/customer/Feedback';
 import FeedbackList from './components/customer/FeedbackList';
-import OrderForm from './components/customer/OrderForm';
 import OrderStatusTracking from './components/customer/OrderStatusTracking';
 import TrackingStaff from './components/admin/TrackingStaff';
 
@@ -31,8 +30,14 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    path: '/profile',
+    path: "/profile",
     element: <UserProfilePage />,
+    children: [
+      {
+        path: "customer",
+        element: <UserProfilePage />,
+      },
+    ],
   },
   {
     path: '/orderhistory',
