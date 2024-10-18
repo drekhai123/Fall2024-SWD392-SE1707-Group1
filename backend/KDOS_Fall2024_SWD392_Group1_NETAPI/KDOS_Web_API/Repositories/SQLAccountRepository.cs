@@ -24,8 +24,16 @@ namespace KDOS_Web_API.Repositories
             return await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
         }
 
-        public async Task<Account> AddNewAccount(Account account)
+        public async Task<Account?> AddNewAccount(Account account)
         {
+            var accountList = await accountContext.Account.ToListAsync();
+            foreach (Account accountModel in accountList)
+            {
+                if (accountModel.Email.Equals(account.Email) || accountModel.UserName.Equals(account.UserName))
+                {
+                    return null;
+                }
+            }
             await accountContext.Account.AddAsync(account);
             await accountContext.SaveChangesAsync();
             return account;

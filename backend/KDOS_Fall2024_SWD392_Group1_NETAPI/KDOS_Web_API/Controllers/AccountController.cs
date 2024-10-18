@@ -76,6 +76,10 @@ namespace KDOS_Web_API.Controllers
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);
+            if (accountDto == null)
+            {
+                return NotFound();
+            }
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
         }
         [HttpPost]
