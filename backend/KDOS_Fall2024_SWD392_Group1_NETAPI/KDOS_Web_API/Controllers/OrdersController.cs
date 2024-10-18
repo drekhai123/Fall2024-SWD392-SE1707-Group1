@@ -31,12 +31,28 @@ namespace KDOS_Web_API.Controllers
             // Following Best Practice
             return Ok(orderDto);
         }
-
         [HttpPost]
         public async Task<IActionResult> AddNewOrder([FromBody] AddNewOrderDTO ordersDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var ordersModel = mapper.Map<Orders>(ordersDto);
-            ordersModel = await orderRepository.AddNewOrder(ordersModel);
+            ordersModel.CreatedAt = DateTime.UtcNow;
+            ordersModel.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                ordersModel = await orderRepository.AddNewOrder(ordersModel);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "Internal server error");
+            }
+
             // Map the newly created order back to a DTO for the response
             var newOrderDto = mapper.Map<AddNewOrderDTO>(ordersModel);
 
