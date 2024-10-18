@@ -27,6 +27,8 @@
     <Folder Include="Migrations\" />
     <Folder Include="Repositories\" />
     <Folder Include="Mappings\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\MailingService\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,5 +37,7 @@
     <None Remove="Models\Domains\" />
     <None Remove="Repositories\" />
     <None Remove="Mappings\" />
+    <None Remove="Services\" />
+    <None Remove="Services\MailingService\" />
   </ItemGroup>
 </Project>
