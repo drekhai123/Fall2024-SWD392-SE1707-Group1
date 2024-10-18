@@ -30,8 +30,14 @@ export const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    path: '/profile',
+    path: "/profile",
     element: <UserProfilePage />,
+    children: [
+      {
+        path: "customer",
+        element: <UserProfilePage />,
+      },
+    ],
   },
   {
     path: '/orderhistory',

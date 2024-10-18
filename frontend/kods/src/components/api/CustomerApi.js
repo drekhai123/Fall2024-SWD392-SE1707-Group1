@@ -13,3 +13,26 @@ export async function GetAllCustomers() {
     })
   return allCustomers
 }
+export async function GetCustomerById(id) {
+  try {
+    const response = await axios.get(`${getAllCustomerURL}/${id}`, headers);
+    return response;
+  } catch (error) {
+    console.error("Error fetching Customer:", error);
+    throw error;
+  }
+}
+
+export async function UpdateCustomer(id, Customer) {
+  try {
+    const response = await axios.put(
+      `${getAllCustomerURL}/${id}`,
+      Customer,
+      headers
+    );
+    return response;
+  } catch (error) {
+    console.error("Error updating Customer:", error);
+    throw error;
+  }
+}
