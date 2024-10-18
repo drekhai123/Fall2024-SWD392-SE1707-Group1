@@ -323,3 +323,19 @@
   background-color: #dc2626;
 }
 
+.checkbox-container {
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center;     /* Căn giữa theo chiều dọc */
+  margin-top: 10px;        /* Tạo khoảng cách với phần trên */
+}
+
+.checkbox-container label {
+  display: flex;
+  align-items: center;     /* Giữ checkbox và nhãn trên cùng một dòng */
+  font-size: 16px;         /* Có thể điều chỉnh kích thước chữ nếu muốn */
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px;      /* Tạo khoảng cách giữa checkbox và nhãn */
+}
