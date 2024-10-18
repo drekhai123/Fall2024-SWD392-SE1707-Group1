@@ -8,6 +8,13 @@ namespace KDOS_Web_API.Models.DTOs
         public int OrderId { get; set; }
 
         [Required]
+        public required string SenderName { get; set; }
+        [Required]
+        public required string SenderAddress { get; set; }
+        [Required]
+        public required string SenderPhoneNumber { get; set; }
+
+        [Required]
         public required string RecipientAddress { get; set; }
 
         [Required]
@@ -34,10 +41,6 @@ namespace KDOS_Web_API.Models.DTOs
         public double TotalCost { get; set; }
 
         public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
 
-        // Keep only IDs for relationships
-        public int CustomerId { get; set; }
-        public int SenderId { get; set; }
     }
 }
