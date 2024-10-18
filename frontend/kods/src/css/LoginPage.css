@@ -152,3 +152,18 @@
 .login-page-container .login-container .login-form .forgot-password-btn:hover {
   color: #c50b10; 
 }
+
+.back-to-home-link {
+  font-size: 16px;
+  color: #e50914; /* Màu đỏ nhấn */
+  text-decoration: none; /* Bỏ gạch chân mặc định */
+  font-weight: bold;
+  transition: color 0.3s; /* Hiệu ứng chuyển đổi màu khi hover */
+}
+
+.back-to-home-link:hover {
+  color: #c50b10; /* Đậm hơn khi hover */
+  text-decoration: underline; /* Hiển thị gạch chân khi hover */
+}
+
+
