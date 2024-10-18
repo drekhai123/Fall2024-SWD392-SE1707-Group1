@@ -51,7 +51,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
           </div>
 
           {/* Password Field */}
-          <div>
+          {/* <div>
             <label className="block mb-2">Change your password here</label>
             <InputField
               name="password"
@@ -69,7 +69,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
               }}
               placeholder="Enter your password"
             />
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <div>

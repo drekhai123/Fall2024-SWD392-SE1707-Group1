@@ -20,9 +20,9 @@ const UserProfilePage = () => {
   const currentPath = location.pathname;
   const [userData, setUserData] = useState(null); // Dữ liệu tài khoản
   const [customerData, setCustomerData] = useState(null); // Dữ liệu khách hàng
-  const userId = 4; // Lấy ID của tài khoản
-  // const user = JSON.pase(localStorage.getItem("account"));
-  // const userId = user.accountId;
+  // const userId = 4; // Lấy ID của tài khoản
+  const user = JSON.parse(localStorage.getItem("account"));
+  const userId = user.accountId;
   const methodsProfile = useForm(); // useForm cho ProfileForm
   const methodsCustomer = useForm(); // useForm cho CustomerForm
   const { enqueueSnackbar } = useSnackbar();
