@@ -2,6 +2,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Mappings;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Repositories;
+using KDOS_Web_API.Services.MailingService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,8 @@ builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
 builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>();
 builder.Services.AddScoped<IKoiFishRepository, SQLKoiFishRepository>();
+//Inject Mailign service
+builder.Services.AddScoped<IMailingService, MailingService>();
 //End Respository
 //AutoMapper Service Inject
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

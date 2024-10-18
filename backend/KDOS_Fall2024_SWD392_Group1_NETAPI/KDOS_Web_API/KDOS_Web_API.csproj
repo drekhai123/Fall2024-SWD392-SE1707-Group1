@@ -29,6 +29,7 @@
     <Folder Include="Mappings\" />
     <Folder Include="Services\" />
     <Folder Include="Services\MailingService\" />
+    <Folder Include="Services\MailingService\MailModels\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,5 +40,6 @@
     <None Remove="Mappings\" />
     <None Remove="Services\" />
     <None Remove="Services\MailingService\" />
+    <None Remove="Services\MailingService\MailModels\" />
   </ItemGroup>
 </Project>
