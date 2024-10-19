@@ -14,13 +14,13 @@
 }
 
 .order-form::-webkit-scrollbar {
-  width: 0; /* Hide scrollbar */
-  background: transparent; /* Ensure background is transparent */
+  width: 0; 
+  background: transparent; 
 }
 
 
 .order-form {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none; 
   -ms-overflow-style: none; /* IE and Edge */
 }
 
@@ -94,7 +94,7 @@
   outline: none;
   border: none;
   border-radius: 8px;
-  width: 80%; 
+  width: 90%; 
   margin: 0 auto; 
   display: block; 
   text-align: center; 
@@ -187,12 +187,12 @@
 
   .label-table {
     font-size: 18px;
-    margin: 20px auto; /* Căn giữa */
-    padding: 20px; /* Padding xung quanh form */
-    border-radius: 2px; /* Bo góc nhẹ */
-    background-color: #f9f9f9; /* Màu nền nhẹ */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
-    max-width: 600px; /* Đặt chiều rộng tối đa cho form */
+    margin: 20px auto; 
+    padding: 20px; 
+    border-radius: 2px; 
+    background-color: #f9f9f9; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+    max-width: 600px; 
     
   }
 
@@ -203,7 +203,7 @@
 
   .input-customer {
     margin-bottom: 10px;
-    width: 80%;
+    width: 90%;
     padding: 8px;
     margin: 5px auto;
     border-radius: 6px;
@@ -237,8 +237,8 @@
   }
 
   .layout-total {
-    margin: 32px auto 0 auto; /* Căn giữa theo chiều ngang */
-    width: 50%; /* Đảm bảo phần tử có một độ rộng cụ thể */
+    margin: 32px auto 0 auto; 
+    width: 50%; 
   }
 
   .popup {
@@ -325,17 +325,25 @@
 
 .checkbox-container {
   display: flex;
-  justify-content: center; /* Căn giữa theo chiều ngang */
-  align-items: center;     /* Căn giữa theo chiều dọc */
-  margin-top: 10px;        /* Tạo khoảng cách với phần trên */
+  justify-content: center; 
+  align-items: center;     
 }
 
 .checkbox-container label {
   display: flex;
-  align-items: center;     /* Giữ checkbox và nhãn trên cùng một dòng */
-  font-size: 16px;         /* Có thể điều chỉnh kích thước chữ nếu muốn */
+  align-items: center;     
+  font-size: 16px;         
 }
 
 .checkbox-container input[type="checkbox"] {
-  margin-right: 10px;      /* Tạo khoảng cách giữa checkbox và nhãn */
+  margin-right: 10px;      
+}
+
+.layout-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  margin: 0 auto;
+  font-size: 20px;
 }
