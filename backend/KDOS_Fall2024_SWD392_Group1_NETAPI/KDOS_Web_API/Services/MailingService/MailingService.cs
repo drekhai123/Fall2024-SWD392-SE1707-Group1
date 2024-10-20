@@ -52,7 +52,7 @@ namespace KDOS_Web_API.Services.MailingService
         {
             throw new NotImplementedException();
         }
-
+        // Example Codes below
         private async Task SendMail()
         {
             var apiKey = Environment.GetEnvironmentVariable("kdosmailingsystem");

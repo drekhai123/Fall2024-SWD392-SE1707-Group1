@@ -9,7 +9,7 @@ namespace KDOS_Web_API.Repositories
         Task<HealthStatus?> GetHealthStatusById(int id);
         Task<HealthStatus> AddNewHealthStatus(HealthStatus healthStatus);
         Task<HealthStatus?> DeleteHealthStatus(int id);
-        Task<HealthStatus?> UpdateHealthStatu(int id, HealthStatus healthStatus);
+        Task<HealthStatus?> UpdateHealthStatus(int id, HealthStatus healthStatus);
         Task<List<HealthStatus>> GetStatusOrderDetailId(int id);
     }
 }
