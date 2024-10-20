@@ -33,7 +33,7 @@ export default function Navbar() {
         {user ? (
           <div className="nav-right">
             <div className="nav-item">
-              Hello {user.userName} {}
+              <Link to="/profile">Hello {user.userName}!   </Link> {}
               <button className="btn-Logout" onClick={logout}>LOGOUT</button> {}
             </div>
           </div>

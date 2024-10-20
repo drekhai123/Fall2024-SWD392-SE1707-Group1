@@ -24,8 +24,16 @@ namespace KDOS_Web_API.Repositories
             return await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
         }
 
-        public async Task<Account> AddNewAccount(Account account)
+        public async Task<Account?> AddNewAccount(Account account)
         {
+            var accountList = await accountContext.Account.ToListAsync();
+            foreach (Account accountModel in accountList)
+            {
+                if (accountModel.Email.Equals(account.Email) || accountModel.UserName.Equals(account.UserName))
+                {
+                    return null;
+                }
+            }
             await accountContext.Account.AddAsync(account);
             await accountContext.SaveChangesAsync();
             return account;
@@ -58,18 +66,29 @@ namespace KDOS_Web_API.Repositories
             {
                 accountExist.UserName = account.UserName;
                 accountExist.Email = account.Email;
-                accountExist.Password = account.Password;
-                accountExist.Banned = account.Banned;
-                accountExist.Role = account.Role;
                 await accountContext.SaveChangesAsync();
-                return account;
+                return accountExist;
             }
-            
         }
 
        public async Task<Account?> Login(string userNameOrEmail)
         {
             return await accountContext.Account.FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
+        }
+
+        public async Task<Account?> BanAccount(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null || !accountExist.Role.Equals("customer"))
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Banned = account.Banned;
+                await accountContext.SaveChangesAsync();
+                return account;
+            }
         }
     }
 }

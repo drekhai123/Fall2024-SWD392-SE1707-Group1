@@ -21,11 +21,10 @@ const UserProfileForm = ({ onSubmit, methods }) => {
             <InputField
               name="userName"
               label="User Name"
-              isHidden
               fullWidth
-              
               rules={{ required: "User name is required" }}
               placeholder="Enter your user name"
+              style={{ boxSizing: 'border-box' }}
             />
           </div>
 
@@ -37,8 +36,6 @@ const UserProfileForm = ({ onSubmit, methods }) => {
               label="Email"
               fullWidth
               type="email"
-              isHidden
-              
               rules={{
                 required: "Email is required",
                 pattern: {
@@ -47,29 +44,9 @@ const UserProfileForm = ({ onSubmit, methods }) => {
                 },
               }}
               placeholder="Enter your email"
+              style={{ boxSizing: 'border-box' }}
             />
           </div>
-
-          {/* Password Field */}
-          {/* <div>
-            <label className="block mb-2">Change your password here</label>
-            <InputField
-              name="password"
-              label="Password"
-              fullWidth
-              type="password"
-              isHidden
-              
-              rules={{
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters long",
-                },
-              }}
-              placeholder="Enter your password"
-            />
-          </div> */}
 
           {/* Submit Button */}
           <div>

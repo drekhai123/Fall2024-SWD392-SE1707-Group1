@@ -9,10 +9,12 @@ import { GetAccountById, UpdateAccount } from "../../api/AccountApi";
 import { GetCustomerById, UpdateCustomer } from "../../api/CustomerApi"; // API khách hàng
 import { useSnackbar } from "notistack";
 import { useLocation } from "react-router-dom"; // Import useLocation để lấy đường dẫn
+import AddFishForm from "./AddFishForm"; // Import AddFishForm
 
 const menuItems = [
   { label: "Profile", link: "/profile" },
   { label: "Information", link: "/profile/customer" },
+  { label: "Add Fish", link: "/profile/addfish" }, // Thêm mục Add Fish
 ];
 
 const UserProfilePage = () => {
@@ -56,13 +58,13 @@ const UserProfilePage = () => {
     try {
       // Create a copy of the data and remove the password field
       const { password, ...updatedData } = data;
-  
+
       // Call UpdateAccount with the updatedData that doesn't include the password
       const response = await UpdateAccount(userId, updatedData);
-      
+
       setUserData(response.data);
       methodsProfile.reset(response.data);
-  
+
       enqueueSnackbar("Profile updated successfully!", { variant: "success" });
     } catch (error) {
       console.error("Error submitting profile form: ", error);
@@ -71,7 +73,7 @@ const UserProfilePage = () => {
       });
     }
   };
-  
+
 
   const onSubmitCustomer = async (data) => {
     try {
@@ -114,7 +116,7 @@ const UserProfilePage = () => {
                   <UserProfileForm
                     userData={userData}
                     onSubmit={onSubmitProfile}
-                    methods={methodsProfile} // Chuyền methodsProfile
+                    methods={methodsProfile}
                   />
                 </div>
               </FormProvider>
@@ -127,10 +129,17 @@ const UserProfilePage = () => {
                   <CustomerForm
                     customerData={customerData}
                     onSubmit={onSubmitCustomer}
-                    methods={methodsCustomer} // Chuyền methodsCustomer
+                    methods={methodsCustomer}
                   />
                 </div>
               </FormProvider>
+            )}
+
+            {/* Form Add Fish */}
+            {currentPath === "/profile/addfish" && (
+              <div className="flex-1 p-8">
+                <AddFishForm />
+              </div>
             )}
           </div>
         </div>

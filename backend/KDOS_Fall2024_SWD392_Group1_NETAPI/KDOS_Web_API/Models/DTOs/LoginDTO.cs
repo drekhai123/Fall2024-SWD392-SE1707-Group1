@@ -3,8 +3,8 @@ namespace KDOS_Web_API.Models.DTOs
 {
 	public class LoginDTO
 	{
-        public required String UserNameOrEmail { get; set; }
-        public required String Password { get; set; }
+        public required string UserNameOrEmail { get; set; }
+        public required string Password { get; set; }
 	}
 }
 
