@@ -44,6 +44,9 @@ namespace KDOS_Web_API.Mappings
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) // Ignore if you're setting it manually
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
             // HealthUpdate
+            CreateMap<HealthStatus, HealthStatusDTO>().ReverseMap();
+            CreateMap<HealthStatus, UpdateHealthStatusDTO>().ReverseMap();
+            CreateMap<HealthStatus, AddNewHealthStatusDTO>().ReverseMap();
             // KoiFish
             CreateMap<KoiFish, KoiFishDTO>().ReverseMap();
             CreateMap<KoiFish, AddNewKoiFishDTO>().ReverseMap();
