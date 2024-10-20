@@ -24,12 +24,9 @@ builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
 builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>();
 builder.Services.AddScoped<IKoiFishRepository, SQLKoiFishRepository>();
-<<<<<<< Updated upstream
 //Inject Mailign service
 builder.Services.AddScoped<IMailingService, MailingService>();
-=======
 builder.Services.AddScoped<IHealthStatusRepository, SQLHealthStatusRepository>();
->>>>>>> Stashed changes
 //End Respository
 //AutoMapper Service Inject
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
