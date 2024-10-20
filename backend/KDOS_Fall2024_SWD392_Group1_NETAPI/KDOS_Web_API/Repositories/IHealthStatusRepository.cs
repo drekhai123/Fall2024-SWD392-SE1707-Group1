@@ -7,7 +7,7 @@ namespace KDOS_Web_API.Repositories
     {
         Task<List<HealthStatus>> GetAllHealthStatusAsync();
         Task<HealthStatus?> GetHealthStatusById(int id);
-        Task<HealthStatus> AddNewHealthStatus(HealthStatus healthStatus);
+        Task<HealthStatus?> AddNewHealthStatus(HealthStatus healthStatus);
         Task<HealthStatus?> DeleteHealthStatus(int id);
         Task<HealthStatus?> UpdateHealthStatus(int id, HealthStatus healthStatus);
         Task<List<HealthStatus>> GetStatusOrderDetailId(int id);

@@ -14,14 +14,12 @@ namespace KDOS_Web_API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase    {
-        private readonly KDOSDbContext customerContext;
         private readonly ICustomerRepository customerRepository;
         private readonly IMapper mapper;
         private readonly IMailingService mailingService;
 
-        public CustomerController(KDOSDbContext customerContext, ICustomerRepository customerRepository, IMapper mapper,  IMailingService mailingService)
+        public CustomerController(ICustomerRepository customerRepository, IMapper mapper,  IMailingService mailingService)
         {
-            this.customerContext = customerContext;
             this.customerRepository = customerRepository;
             this.mapper = mapper;
             this.mailingService = mailingService;

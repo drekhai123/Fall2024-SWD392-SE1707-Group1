@@ -1,42 +1,93 @@
 ﻿using System;
+using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
+using Microsoft.EntityFrameworkCore;
 
 namespace KDOS_Web_API.Repositories
 {
 	public class SQLHealthStatusRepository : IHealthStatusRepository
 	{
-		public SQLHealthStatusRepository()
+        private readonly KDOSDbContext healthStatusContext;
+
+        public SQLHealthStatusRepository(KDOSDbContext healthStatusContext)
 		{
-		}
-
-        public Task<HealthStatus> AddNewHealthStatus(HealthStatus healthStatus)
-        {
-            throw new NotImplementedException();
+            this.healthStatusContext = healthStatusContext;
         }
 
-        public Task<HealthStatus?> DeleteHealthStatus(int id)
+        public async Task<HealthStatus?> AddNewHealthStatus(HealthStatus healthStatus)
         {
-            throw new NotImplementedException();
+                // add extra step to check customer status
+                var orderExist = await healthStatusContext.OrderDetails.FirstOrDefaultAsync(x => x.OrderDetailsId == healthStatus.OrderDetailsId);
+            var healthStatusExist = await healthStatusContext.HealthStatus.FirstOrDefaultAsync(x => x.Date.Equals(healthStatus.Date));
+                if (orderExist == null && healthStatusExist!=null)
+                {
+                    // If there is no order with this detail or the health check is already exist, do not create new one
+                    return null;
+                }
+                else
+                {
+                        await healthStatusContext.HealthStatus.AddAsync(healthStatus);
+                        await healthStatusContext.SaveChangesAsync();
+                        return healthStatus;
+                }
         }
 
-        public Task<List<HealthStatus>> GetAllHealthStatusAsync()
+        public async Task<HealthStatus?> DeleteHealthStatus(int id)
         {
-            throw new NotImplementedException();
+            var healthModel = await healthStatusContext.HealthStatus.FirstOrDefaultAsync(x => x.HealthStatusId == id);
+            if(healthModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                healthStatusContext.HealthStatus.Remove(healthModel);
+                await healthStatusContext.SaveChangesAsync();
+                return healthModel;
+            }
         }
 
-        public Task<HealthStatus?> GetHealthStatusById(int id)
+        public async Task<List<HealthStatus>> GetAllHealthStatusAsync()
         {
-            throw new NotImplementedException();
+            return await healthStatusContext.HealthStatus.ToListAsync();
         }
 
-        public Task<List<HealthStatus>> GetStatusOrderDetailId(int id)
+        public async Task<HealthStatus?> GetHealthStatusById(int id)
         {
-            throw new NotImplementedException();
+            var healthModel = await healthStatusContext.HealthStatus.FirstOrDefaultAsync(x => x.HealthStatusId == id);
+            if (healthModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                return healthModel;
+            }
         }
 
-        public Task<HealthStatus?> UpdateHealthStatus(int id, HealthStatus healthStatus)
+        public async Task<List<HealthStatus>> GetStatusOrderDetailId(int id)
         {
-            throw new NotImplementedException();
+            var healthStatuslList = await healthStatusContext.HealthStatus.Where(x => x.OrderDetailsId == id).ToListAsync();
+                return healthStatuslList;
+        }
+
+        public async Task<HealthStatus?> UpdateHealthStatus(int id, HealthStatus healthStatus)
+        {
+            var healthModel = await healthStatusContext.HealthStatus.FirstOrDefaultAsync(x => x.HealthStatusId == id);
+            if (healthModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                healthModel.OxygenLevel = healthStatus.OxygenLevel;
+                healthModel.PHLevel = healthStatus.PHLevel;
+                healthModel.Status = healthStatus.Status;
+                healthModel.Temperature = healthStatus.Temperature;
+                healthModel.Notes = healthStatus.Notes;
+                await healthStatusContext.SaveChangesAsync();
+                return healthModel;
+            }
         }
     }
 }
