@@ -76,6 +76,10 @@ namespace KDOS_Web_API.Controllers
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);
+            if (accountDto == null)
+            {
+                return NotFound();
+            }
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
         }
         [HttpPost]
@@ -127,9 +131,26 @@ namespace KDOS_Web_API.Controllers
         [HttpPut]
         [Route("{accountId}")]
         public async Task<IActionResult> UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
-            {
+        {
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountDTO);
+            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
+            if (accountModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
+                return Ok(accountDto);
+            }
+        }
+        [HttpPut]
+        [Route("ban/{accountId}")]
+        public async Task<IActionResult> BanAccount([FromRoute] int accountId, [FromBody] BanAccountDTO banAccountDTO)
+        {
+            // Map DTO to AccountModel
+            var accountModel = mapper.Map<Account>(banAccountDTO);
             accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
             if (accountModel == null)
             {
