@@ -9,13 +9,13 @@ namespace KDOS_Web_API.Models.Domains
         public int StaffId { get; set; }
         public int AccountId { get; set; }
         [Required]
-        required public String StaffName { get; set; }
+        required public string StaffName { get; set; }
         [Required]
         required public int Age { get; set; }
         [Required]
-        required public String Gender { get; set; }
+        required public string Gender { get; set; }
         [Required]
-        required public String PhoneNumber { get; set; }
+        required public string PhoneNumber { get; set; }
         // Link between Account and Staff
         [Required]
         public Account? Account { get; set; } // 1-1 Relation

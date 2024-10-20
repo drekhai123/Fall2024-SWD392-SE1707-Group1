@@ -6,8 +6,8 @@ namespace KDOS_Web_API.Models.DTOs
 {
 	public class AddNewKoiFishDTO
 	{
-        required public String FishType { get; set; }
-        required public String Description { get; set; }
+        required public string FishType { get; set; }
+        required public string Description { get; set; }
     }
 }
 

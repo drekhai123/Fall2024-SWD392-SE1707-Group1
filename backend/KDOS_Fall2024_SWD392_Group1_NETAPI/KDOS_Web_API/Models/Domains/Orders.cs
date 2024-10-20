@@ -10,17 +10,17 @@ namespace KDOS_Web_API.Models.Domains
         [Key]
         public int OrderId { get; set; }
 
-        required public String SenderName { get; set; }
-        required public String SenderAddress { get; set; }
-        required public String SenderPhoneNumber { get; set; }
-        required public String RecipientAddress { get; set; }
-        required public String RecipientName { get; set; }
-        required public String RecipientPhoneNumber { get; set; }
-        required public String RecipientEmail { get; set; }
+        required public string SenderName { get; set; }
+        required public string SenderAddress { get; set; }
+        required public string SenderPhoneNumber { get; set; }
+        required public string RecipientAddress { get; set; }
+        required public string RecipientName { get; set; }
+        required public string RecipientPhoneNumber { get; set; }
+        required public string RecipientEmail { get; set; }
         required public PaymentMethod PaymentMethod { get; set; }
         required public PaymentStatus PaymentStatus { get; set; }
         required public OrderStatus DeliveryStatus { get; set; }
-        required public String DeliveryNote { get; set;}
+        required public string DeliveryNote { get; set;}
         required public int Quantity { get; set; }
         required public double TotalWeight { get; set; }
         required public double TotalCost { get; set; }
