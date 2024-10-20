@@ -21,7 +21,6 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               name="customerName"
               label="Customer Name"
               fullWidth
-              isHidden
               rules={{ required: "Customer name is required" }}
               placeholder="Enter your customer name"
             />
@@ -34,7 +33,6 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               name="age"
               label="Age"
               type="number"
-              isHidden
               fullWidth
               rules={{
                 required: "Age is required",
@@ -50,7 +48,6 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               name="gender"
               label="Gender"
               fullWidth
-              isHidden
               rules={{ required: "Gender is required" }}
               options={[
                 { value: "male", label: "Male" },
@@ -67,7 +64,6 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               name="phoneNumber"
               label="Phone Number"
               fullWidth
-              isHidden
               rules={{
                 required: "Phone number is required",
                 pattern: {
@@ -86,7 +82,6 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               name="address"
               label="Address"
               fullWidth
-              isHidden
               rules={{ required: "Address is required" }}
               placeholder="Enter your address"
             />
@@ -100,7 +95,6 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               label="Created At"
               fullWidth
               readOnly
-              isHidden
             />
           </div>
 
@@ -112,7 +106,6 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               label="Updated At"
               fullWidth
               readOnly
-              isHidden
             />
           </div>
 
