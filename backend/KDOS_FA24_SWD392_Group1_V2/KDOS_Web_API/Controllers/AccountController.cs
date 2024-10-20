@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using KDOS_Web_API.Datas;
+using KDOS_Web_API.Models.Domains;
+using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Repositories;
+using Microsoft.AspNetCore.Identity; // PasswordHasher<Account>
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Principal;
+
+//Implimenting Password Hashing
 
 namespace KDOS_Web_API.Controllers
 {
@@ -29,7 +34,7 @@ namespace KDOS_Web_API.Controllers
         {
             // Now we don't call the DB directly but through the Repository
             // var accountList = await accountContext.Account.ToListAsync();
-            var accountList = await accountRepository.GetAllAccountAsync();
+            var accountList = await accountRepository.GetAllAccountAsync();            
             //Use AutoMapper Turn Model to DTO
             var accountDto = mapper.Map<List<AccountDTO>>(accountList);
             return Ok(accountDto);
@@ -39,10 +44,10 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
-
-            if (accountModel != null)
+           
+            if(accountModel != null)
             {
-                var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel, accountModel.Password, loginDTO.Password); //Validate the hased password vs the password from FE, Return 1 if correct, 0 if failed
+                var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel,accountModel.Password, loginDTO.Password); //Validate the hased password vs the password from FE, Return 1 if correct, 0 if failed
                 if (verifyPassword == PasswordVerificationResult.Success) // =1 meaning success
                 {
                     AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
@@ -71,7 +76,11 @@ namespace KDOS_Web_API.Controllers
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);
-            return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
+            if (accountDto == null)
+            {
+                return NotFound();
+            }
+            return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
         }
         [HttpPost]
         [Route("AddStaff")]
@@ -107,7 +116,7 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> GetAccountById([FromRoute] int accountId)
         {
             var accountModel = await accountRepository.GetAccountById(accountId);
-            if (accountModel == null)
+            if(accountModel == null)
             {
                 return NotFound();
             }
@@ -117,7 +126,7 @@ namespace KDOS_Web_API.Controllers
                 var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
-
+            
         }
         [HttpPut]
         [Route("{accountId}")]
@@ -125,6 +134,23 @@ namespace KDOS_Web_API.Controllers
         {
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountDTO);
+            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
+            if (accountModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
+                return Ok(accountDto);
+            }
+        }
+        [HttpPut]
+        [Route("ban/{accountId}")]
+        public async Task<IActionResult> BanAccount([FromRoute] int accountId, [FromBody] BanAccountDTO banAccountDTO)
+        {
+            // Map DTO to AccountModel
+            var accountModel = mapper.Map<Account>(banAccountDTO);
             accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
             if (accountModel == null)
             {
@@ -152,4 +178,6 @@ namespace KDOS_Web_API.Controllers
             }
         }
     }
+    
 }
+
