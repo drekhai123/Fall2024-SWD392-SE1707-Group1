@@ -5,8 +5,11 @@ namespace KDOS_Web_API.Models.DTOs
 {
 	public class UpdateAccountDTO
 	{
-         public String? Email { get; set; }
-         public String? UserName { get; set; }
+        required public bool Banned { get; set; }
+        required public string Email { get; set; }
+        required public string UserName { get; set; }
+        required public string Password { get; set; }
+        required public string Role { get; set; }
     }
 }
 

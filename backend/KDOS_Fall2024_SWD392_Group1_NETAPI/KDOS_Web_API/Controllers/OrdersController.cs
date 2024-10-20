@@ -40,8 +40,8 @@ namespace KDOS_Web_API.Controllers
             }
 
             var ordersModel = mapper.Map<Orders>(ordersDto);
-            ordersModel.CreatedAt = DateTime.UtcNow;
-            ordersModel.UpdatedAt = DateTime.UtcNow;
+            ordersModel.CreatedAt = DateTime.Now;
+            ordersModel.UpdatedAt = DateTime.Now;
 
             try
             {

@@ -9,25 +9,13 @@ import { GetAllKoiFishes } from "../api/KoiFishApi";
 export default function OrderForm({ onSuggestionClick, distance }) {
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
-
+  const [check, setCheck] = useState(false)
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
   const [markerPositionFrom, setMarkerPositionFrom] = useState(null);
   const [markerPositionTo, setMarkerPositionTo] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
-
-  useEffect(() => {
-    const getKoiFishList = async () => {
-      var koifishData = await GetAllKoiFishes();
-      setKoiFish(koifishData);
-    };
-    getKoiFishList();
-  }, []);
-
-  const [fishOrders, setFishOrders] = useState(() => {
-    const savedOrders = localStorage.getItem("fishOrders");
-    return savedOrders ? JSON.parse(savedOrders) : [];
-  });
+  const [days, setDays] = useState(null);
 
   const [customerInfo, setCustomerInfo] = useState({
     nameCustomer: "",
@@ -40,6 +28,25 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     { name: "Fish A", weight: 2, price: 10000, status: "1" },
     { name: "Fish B", weight: 3, price: 15000, status: "1" },
   ]);
+
+  useEffect(() => {
+    const getKoiFishList = async () => {
+      var koifishData = await GetAllKoiFishes();
+      setKoiFish(koifishData);
+    };
+    getKoiFishList();
+  }, []);
+
+  useEffect(() => {
+    setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
+  }, [customerInfo?.distance]);
+
+  const [fishOrders, setFishOrders] = useState(() => {
+    const savedOrders = localStorage.getItem("fishOrders");
+    return savedOrders ? JSON.parse(savedOrders) : [];
+  });
+
+
 
   const handleStatusChange = (index, newStatus) => {
     const updatedFishData = [...fishData];
@@ -63,26 +70,62 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     const updatedOrders = fishOrders.map((order, i) =>
       i === index
         ? {
-            ...order,
-            [field]: value,
-            total:
-              (field === "quantity" ? value : order.quantity) *
-              (field === "price" ? value : order.price),
-          }
+          ...order,
+          [field]: value,
+          total:
+            (field === "quantity" ? value : order.quantity) *
+            (field === "price" ? value : order.price),
+        }
         : order
     );
     setFishOrders(updatedOrders);
   };
 
+  function calculateEstimatedDeliveryDays(distance) {
+    if (distance === 0) {
+      return 0;
+    } else if (distance < 50) {
+      return 1;
+    } else if (distance >= 50 && distance < 100) {
+      return 2;
+    } else if (distance >= 100 && distance <= 500) {
+      return 4;
+    } else if (distance > 500 && distance <= 1000) {
+      return 7;
+    } else {
+      return 10;
+    }
+  }
+
+
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
-
+  // phí shipping
   const calculateShippingFee = () => {
     const { distance } = customerInfo;
-    if (distance <= 5) return 0;
-    return Math.ceil((distance - 5) / 5) * 12000;
+    const estimatedDays = calculateEstimatedDeliveryDays(distance);
+
+    if (distance <= 5) {
+      return check ? 25000 : 0;
+    }
+
+    const baseFee = Math.ceil((distance - 5) / 5) * 12000;
+
+    if (check && estimatedDays === 1) {
+      return baseFee + 25000;
+    } else if (!check && estimatedDays === 1) {
+      return baseFee
+    } else {
+      return baseFee + 20000 * estimatedDays;
+    }
   };
+
+  // const handleCheckboxChange = (e) => {
+  //   const value = e.target.checked;
+  //   setCheck(value);
+  //   localStorage.setItem('feedFish', JSON.stringify(value)); // Lưu giá trị vào localStorage
+  // };
 
   const calculateVAT = () => {
     return (getTotalAmount() * 0.03).toFixed(0);
@@ -115,10 +158,10 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         <p>Name customer: ${customerInfo.nameCustomer}</p>
         <p>Phone customer: ${customerInfo.phoneCustomer}</p>
         <p>Address customer: ${customerInfo.addressCustomer}</p>
-        <p>Total amount: ${
-          getTotalAmount() +
-          parseInt(calculateVAT()) +
-          parseFloat(calculateShippingFee().toFixed(0))
+        <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
+        <p>Total amount: ${getTotalAmount() +
+        parseInt(calculateVAT()) +
+        parseFloat(calculateShippingFee().toFixed(0))
         } VND</p>
       `,
       icon: "info",
@@ -166,6 +209,20 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setShowQRCode(false);
   };
 
+  const calculateDeliveryDate = (days) => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + days);
+    return currentDate.toLocaleDateString();
+  };
+
+  const estimatedDays = customerInfo?.distance
+    ? calculateEstimatedDeliveryDays(customerInfo?.distance)
+    : 0;
+
+  const deliveryDate = customerInfo?.distance
+    ? calculateDeliveryDate(estimatedDays)
+    : '--';
+
   const handleCustomerChange = async (field, value) => {
     if (typingTimeout) {
       clearTimeout(typingTimeout);
@@ -181,8 +238,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 value
               )}&countrycodes=VN&format=json`
             );
-            // có chỗ country codes này thì lên wikimedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
-           
+            // có chỗ country codes này thì lên wikipedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
+
 
             if (field === "addressSender") {
               setFromSuggestions(response.data);
@@ -203,6 +260,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     );
     setCustomerInfo({ ...customerInfo, [field]: value });
   };
+
+
 
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
@@ -227,8 +286,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   useEffect(() => {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
-  
-  
+
+
   return (
     <div className="order-form">
       <div className="con">
@@ -269,8 +328,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   <td>
                     <input
                       type="number"
-                      value={order.quantity}
-                      min="0"
+                      value={order.quantity === 1 ? "" : order.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
+                      min=""
                       onChange={(e) =>
                         updateRow(
                           index,
@@ -279,17 +338,19 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                         )
                       }
                       className="custom-dropdown"
+                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
                     />
                   </td>
                   <td>
                     <input
                       type="number"
                       min="0"
-                      value={order.price}
+                      value={order.price === 0 ? "" : order.price} // Nếu giá trị là 0, thì để trống
                       onChange={(e) =>
                         updateRow(index, "price", parseInt(e.target.value) || 0)
                       }
                       className="custom-dropdown"
+                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
                     />
                   </td>
                   {/* <td>
@@ -418,26 +479,52 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 </div>
               </div>
 
-              <div style={{marginTop: 10}} className="customer-info">
-              <h3 className="label-customer">Distance (km)</h3>
-              <input
-                className="input-customer"
-                type="number"
-                disabled={distance}
-                value={customerInfo?.distance}
-                placeholder="Distance (km)"
-                min="0"
-                onChange={(e) =>
-                  handleCustomerChange(
-                    "distance",
-                    parseInt(e.target.value) || 0
-                  )
-                }
-              />
+              <div style={{ marginTop: 10 }} className="customer-info">
+                <h3 className="label-customer">Distance (km)</h3>
+                <input
+                  className="input-customer"
+                  type="number"
+                  disabled={distance}
+                  value={customerInfo?.distance}
+                  placeholder="Distance (km)"
+                  min="0"
+                  onChange={(e) =>
+                    handleCustomerChange(
+                      "distance",
+                      parseInt(e.target.value) || 0
+                    )
+                  }
+                />
+
+
+                <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day" 
+                className="layout-checkbox" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px' }} >  {/* lười css làm z cho lẹ */}
+                  <p>
+                    <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
+                  </p>
+
+                  <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND" className="checkbox-container">
+                    {customerInfo?.distance <= 50 && ( // Nếu distance lớn hơn 50 thì checkbox biến mất
+                      <label>
+                        <input
+                          style={{ cursor: 'pointer' }} 
+                          type="checkbox"
+                          checked={check}
+                          onChange={(e) => setCheck(e.target.checked)}
+                          
+                        />
+                        If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
+                      </label>
+                    )}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
         </div>
+
+
 
         <div className="layout-total">
           <p className="label-total">
