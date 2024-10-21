@@ -32,14 +32,14 @@ namespace KDOS_Web_API.Controllers
             return Ok(orderDto);
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewOrder([FromBody] AddNewOrderDTO ordersDto)
+        public async Task<IActionResult> AddNewOrder([FromBody] AddNewOrderDTO addNewOrderDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var ordersModel = mapper.Map<Orders>(ordersDto);
+            var ordersModel = mapper.Map<Orders>(addNewOrderDTO);
             ordersModel.CreatedAt = DateTime.Now;
             ordersModel.UpdatedAt = DateTime.Now;
 
@@ -50,7 +50,7 @@ namespace KDOS_Web_API.Controllers
             catch (Exception ex)
             {
                 // Log the exception
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Internal server error" + ex);
             }
 
             // Map the newly created order back to a DTO for the response
