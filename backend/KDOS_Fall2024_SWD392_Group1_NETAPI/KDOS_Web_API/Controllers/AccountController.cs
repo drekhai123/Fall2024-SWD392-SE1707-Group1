@@ -14,16 +14,14 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly KDOSDbContext accountContext;
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
         private readonly IPasswordHasher<Account> passwordHasher;
 
         // Adding in the Repository Inject
         // Adding AutoMApper Service
-        public AccountController(KDOSDbContext accountContext, IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher)
         {
-            this.accountContext = accountContext;
             this.accountRepository = accountRepository;
             this.mapper = mapper;
             this.passwordHasher = passwordHasher;
@@ -68,6 +66,10 @@ namespace KDOS_Web_API.Controllers
         [Route("AddCustomer")]
         public async Task<IActionResult> AddNewCustomerAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             // Turn Data to Model With AutoMApper.ReverseMap
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
@@ -75,23 +77,31 @@ namespace KDOS_Web_API.Controllers
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
-            var accountDto = mapper.Map<AccountDTO>(accountModel);
-            if (accountDto == null)
+            if (accountModel == null)
             {
-                return NotFound();
+                return BadRequest();
             }
+            var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
         }
         [HttpPost]
         [Route("AddStaff")]
         public async Task<IActionResult> AddNewStaffAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             // Turn Data to Model With AutoMApper.ReverseMap
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Role = "staff"; //Set Role fixed as staff
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
+            if (accountModel == null)
+            {
+                return BadRequest();
+            }
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
@@ -100,12 +110,20 @@ namespace KDOS_Web_API.Controllers
         [Route("AddDeliveryStaff")]
         public async Task<IActionResult> AddNewDeliverySatffAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             // Turn Data to Model With AutoMApper.ReverseMap
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Role = "delivery"; //Set Role fixed as deliverystaff
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
+            if (accountModel == null)
+            {
+                return BadRequest();
+            }
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
@@ -132,6 +150,10 @@ namespace KDOS_Web_API.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> UpdateAccountById([FromRoute] int accountId, [FromBody] UpdateAccountDTO updateAccountDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountDTO);
             accountModel = await accountRepository.UpdateAccount(accountId, accountModel);

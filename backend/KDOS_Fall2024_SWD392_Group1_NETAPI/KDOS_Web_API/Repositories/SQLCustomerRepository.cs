@@ -57,20 +57,20 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<List<Customer>> GetAllCustomer()
         {
-            List<Customer> customerList = await customerContext.Customer.ToListAsync();
+            List<Customer> customerList = await customerContext.Customer.Include("Account").ToListAsync();
             return customerList;
         }
 
         public async Task<Customer?> GetCustomerById(int id)
         {
-            var customerModel = await customerContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == id);
+            // .Include will join the classess that have relationship, besure to check the attribute of the Classess that they are connected. Customer{Account}
+            var customerModel = await customerContext.Customer.Include("Account"). FirstOrDefaultAsync(x => x.CustomerId == id);
             if(customerModel == null)
             {
                 return null;
             }
             else
             {
-                var accountModel = await customerContext.Account.FirstOrDefaultAsync(x => x.AccountId == customerModel.AccountId);
                 return customerModel;
             }
 
@@ -84,7 +84,7 @@ namespace KDOS_Web_API.Repositories
         public async Task<List<Customer>> GetCustomerByName(string name)
         {
             // Where query can return a list of data, unlike 1 data
-            var customerModelList = await customerContext.Customer.Where(x => x.CustomerName.Contains(name)).ToListAsync();
+            var customerModelList = await customerContext.Customer.Include("Account").Where(x => x.CustomerName.Contains(name)).ToListAsync();
             return customerModelList;
         }
 
@@ -105,8 +105,6 @@ namespace KDOS_Web_API.Repositories
                 customerModel.PhoneNumber = customer.PhoneNumber;
                 await customerContext.SaveChangesAsync();
                 return customerModel;
-
-
             }
         }
 

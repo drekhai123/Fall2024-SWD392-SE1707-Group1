@@ -30,7 +30,7 @@ namespace KDOS_Web_API.Controllers
             // This method get data DIRECTLY from database -> not best practice
             var customerList = await customerRepository.GetAllCustomer();
            // Auto mapper
-            var customerDto = mapper.Map<List<CustomerDTO>>(customerList);
+            var customerDto = mapper.Map<List<CustomerAccountDTO>>(customerList);
             // Following Best Practice
             return Ok(customerDto);
         }
@@ -53,11 +53,6 @@ namespace KDOS_Web_API.Controllers
             if (accountModel != null)
             {
                 var customerDto = mapper.Map<CustomerAccountDTO>(customerModel);
-                customerDto.Account = new AccountCustomerViewDTO
-                {
-                    Email = accountModel.Email,
-                    UserName = accountModel.UserName
-                };
                 await mailingService.SendRegisterMail(accountModel);
                 // Follow best practice
                 return CreatedAtAction(nameof(GetCustomerById), new { customerId = customerModel.CustomerId }, customerDto); // Respone with code 201 - Created Complete                                                                                                                       //CreatedAtAction will trigger the action GetCustomerById to search for the created customer in the db using the id generate by the EF. Then convert the data to a DTO and respone that bakc to client. So we can know what dot created 
@@ -101,12 +96,6 @@ namespace KDOS_Web_API.Controllers
                 if (accountModel != null)
                 {
                     var customerDto = mapper.Map<CustomerAccountDTO>(customerModel);
-                    customerDto.Account = new AccountCustomerViewDTO
-                    {
-                        Email = accountModel.Email,
-                        UserName = accountModel.UserName
-                    };
-
                     return Ok(customerDto); //return 200 ok
                 }
                 return NotFound(); //return 404
