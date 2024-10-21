@@ -13,19 +13,13 @@ namespace KDOS_Web_API.Repositories
             this.orderContext = orderContext;
         }
 
-        public async Task<Orders> AddNewOrder(Orders order)
+        public async Task<Orders?> AddNewOrder(Orders order)
         {
-            var customerExist = await orderContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == order.CustomerId);
-            if (customerExist == null)
-            {
-                return null;
-            }
-            else
-            {
+          
                 await orderContext.Orders.AddAsync(order);
                 await orderContext.SaveChangesAsync();
                 return order;
-            }
+
         }
 
         public async Task<List<Orders>> GetAllOrders()
@@ -34,7 +28,7 @@ namespace KDOS_Web_API.Repositories
             return orderList;
         }
 
-        public Task<Orders> GetOrderById(int id)
+        public Task<Orders?> GetOrderById(int id)
         {
             var order = orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);  
             if(order == null)
@@ -44,7 +38,7 @@ namespace KDOS_Web_API.Repositories
             return order;
         }
 
-        public Task<Orders> UpdateOrder(int id, Orders order)
+        public Task<Orders?> UpdateOrder(int id, Orders order)
         {
             var orderModel = orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
             if (orderModel == null)
@@ -54,12 +48,12 @@ namespace KDOS_Web_API.Repositories
             return orderModel;
         }
 
-        public Task<Orders> DeleteOrder(int id)
+        public Task<Orders?> DeleteOrder(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Orders>> GetOrderByDate(DateTime date)
+        public Task<List<Orders?>> GetOrderByDate(DateTime date)
         {
             throw new NotImplementedException();
         }

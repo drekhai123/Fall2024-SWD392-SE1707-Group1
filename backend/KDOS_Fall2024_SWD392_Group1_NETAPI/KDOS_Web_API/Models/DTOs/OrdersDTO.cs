@@ -41,6 +41,7 @@ namespace KDOS_Web_API.Models.DTOs
         public double TotalCost { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
     }
 }
