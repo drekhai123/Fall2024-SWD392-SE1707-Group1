@@ -50,6 +50,10 @@ namespace KDOS_Web_API.Mappings
             // KoiFish
             CreateMap<KoiFish, KoiFishDTO>().ReverseMap();
             CreateMap<KoiFish, AddNewKoiFishDTO>().ReverseMap();
+            // FishProfile
+            CreateMap<FishProfile, FishProfileDTO>().ReverseMap();
+            CreateMap<FishProfile, UpdateFishProfileDTO>().ReverseMap();
+            CreateMap<FishProfile, AddNewFishProfileDTO>().ReverseMap();
             // BLog
         }
     }
