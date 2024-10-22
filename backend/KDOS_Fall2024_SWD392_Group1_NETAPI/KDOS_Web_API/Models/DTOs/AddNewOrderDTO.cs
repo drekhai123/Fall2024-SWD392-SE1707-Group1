@@ -20,5 +20,6 @@ namespace KDOS_Web_API.Models.DTOs
         public required double TotalCost { get; set; }
         public required DateTime CreatedAt { get; set; }
         public required DateTime UpdatedAt { get; set; }
+        public int TransportId { get; set; }
     }
 }

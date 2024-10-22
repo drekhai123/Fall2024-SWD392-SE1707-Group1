@@ -27,7 +27,7 @@ namespace KDOS_Web_API.Mappings
                 .ForMember(x => x.UpdatedAt,option=>option.Ignore()); // Ignore the Create/Update date when mapping so we can do it manually
 			CreateMap<AddNewCustomerDTO, Customer>().ReverseMap()
                 .ForMember(x => x.CreatedAt,option=>option.Ignore())
-                .ForMember(x => x.CreatedAt, option => option.Ignore());
+                .ForMember(x => x.UpdatedAt, option => option.Ignore());
             CreateMap<CustomerAccountDTO, Customer>().ReverseMap();
             // Staff Mapping
             CreateMap<Staff, StaffDTO>().ReverseMap();
@@ -57,6 +57,13 @@ namespace KDOS_Web_API.Mappings
             CreateMap<FishProfile, FishProfileDTO>().ReverseMap();
             CreateMap<FishProfile, UpdateFishProfileDTO>().ReverseMap();
             CreateMap<FishProfile, AddNewFishProfileDTO>().ReverseMap();
+            // Feedback
+            CreateMap<Feedback, FeedbackDTO>().ReverseMap();
+            CreateMap<Feedback, AddNewFeedBackDTO>().ReverseMap()
+                .ForMember(dest=>dest.CreatedAt,opt=>opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            CreateMap<Feedback, UpdateFeedBackDTO>().ReverseMap()
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
             // BLog
         }
     }
