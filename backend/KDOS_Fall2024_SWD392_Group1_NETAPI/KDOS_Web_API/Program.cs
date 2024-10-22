@@ -19,6 +19,7 @@ builder.Services.AddDbContext<KDOSDbContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 30))));
 // Inject the Repository
 builder.Services.AddScoped<IOrderRepository, SQLOrderRepository>();
+builder.Services.AddScoped<IOrderDetailsRepository, SQLOrderDetailsRepository>();
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
