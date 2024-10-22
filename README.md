@@ -1,5 +1,5 @@
 - # **Fall2024-SWD392-SE1707-Group1**
-- Vercel Deployment Here: https://koi-fish-delivey-system.vercel.app
+- Vercel Deployment Here: https://kdos.vercel.app
 - # **Project Synopsis:**
   - **Topic:** Koi Fish Delivery System
   - **Supervisor:**
