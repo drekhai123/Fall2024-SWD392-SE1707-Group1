@@ -65,5 +65,7 @@
 }
 
 .leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive{
-    opacity: 1;
+    opacity: 1 !important;
 }
+
+

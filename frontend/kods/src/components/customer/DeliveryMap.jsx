@@ -39,7 +39,7 @@ export default function DeliveryMap({ suggestion, autoSetDistance }) {
         ],
 
         lineOptions: {
-          styles: [{ color: "#ff4500", weight: 4 }],
+          styles: [{ color: "#0a850f", weight: 4 }],
         },
         addWaypoints: false,
         draggableWaypoints: false,
