@@ -7,6 +7,7 @@ import axios from "axios";
 import { GetAllKoiFishes } from "../api/KoiFishApi";
 
 export default function OrderForm({ onSuggestionClick, distance }) {
+  const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
   const [check, setCheck] = useState(false)
@@ -331,8 +332,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   
   // Hàm Fetch API
   useEffect(() => {
-    axios.get('https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/1')
-      .then(response => {
+    axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
+      .then(response => { 
         setKoifishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
         console.log(response.data);
       })

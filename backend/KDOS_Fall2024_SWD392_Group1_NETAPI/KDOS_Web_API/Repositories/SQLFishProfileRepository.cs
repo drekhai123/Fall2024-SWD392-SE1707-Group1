@@ -46,7 +46,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<List<FishProfile>> GetProfileByCustomerId(int id)
         {
-            return await profileContext.FishProfile.Where(x => x.CustomerId == id).ToListAsync();
+            return await profileContext.FishProfile.Include(x=>x.KoiFish).Where(x => x.CustomerId == id).ToListAsync();
         }
 
         public async Task<FishProfile?> GetProfileById(int id)
