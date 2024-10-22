@@ -37,25 +37,25 @@ export default function DeliveryMap({ suggestion, autoSetDistance }) {
             suggestion?.to[1] ? suggestion?.to[1] : defaultPosition[1]
           ),
         ],
-  
+
         lineOptions: {
-          styles: [{ color: "#0a850f", weight: 4 }],
+          styles: [{ color: "#ff4500", weight: 4 }],
         },
         addWaypoints: false,
         draggableWaypoints: false,
         fitSelectedRoutes: true,
         showAlternatives: false,
       }).addTo(mapRef.current);
-  
+
       routingControl.on("routesfound", function (e) {
         const routes = e.routes;
         const summary = routes[0].summary;
         autoSetDistance((summary.totalDistance / 1000).toFixed(2))
         setDistance((summary.totalDistance / 1000).toFixed(2));
-      });  
+      });
       return () => mapRef.current.removeControl(routingControl);
     }
-    
+
   }, [suggestion]);
 
   return (
