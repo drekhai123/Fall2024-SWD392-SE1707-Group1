@@ -33,5 +33,6 @@ namespace KDOS_Web_API.Models.Domains
         public Account Account { get; set; } = null!;
         public ICollection<Orders> Orders { get; set; } = new List<Orders>(); // Navigation property
         public ICollection<FishProfile> FishProfiles { get; set; } = new List<FishProfile>(); // Navigation property
+        public ICollection<Feedback> Feedback { get; set; } = new List<Feedback>(); // Navigation property
     }
 }

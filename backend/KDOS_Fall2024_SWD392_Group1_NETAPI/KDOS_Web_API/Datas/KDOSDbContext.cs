@@ -16,6 +16,7 @@ namespace KDOS_Web_API.Datas
         public DbSet<Orders> Orders { get; set; }
         public DbSet<DeliveryStaff> DeliveryStaff { get; set; }
         public DbSet<FishProfile> FishProfile { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configuring one-to-one relationship between Customer and Account
@@ -62,6 +63,14 @@ namespace KDOS_Web_API.Datas
                 .HasOne(cus => cus.Customer) // Each Fish Can be own by one Customer
                 .WithMany(pro => pro.FishProfiles) //one Customer can own many fishes
                 .HasForeignKey(st => st.CustomerId);
+            modelBuilder.Entity<Feedback>() // Each Order Can have one feedback
+                .HasOne(or => or.Orders)
+                .WithOne(fe => fe.Feedback)
+                .HasForeignKey<Feedback>(x => x.OrderId);
+            modelBuilder.Entity<Feedback>() //one Customer can have many feedbacks
+                .HasOne(cus => cus.Customer)
+                .WithMany(fe => fe.Feedback)
+                .HasForeignKey(x => x.CustomerId);
         }
         public KDOSDbContext(DbContextOptions<KDOSDbContext> options) : base(options)
         {

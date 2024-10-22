@@ -4,6 +4,7 @@ using KDOS_Web_API.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KDOS_Web_API.Migrations
 {
     [DbContext(typeof(KDOSDbContext))]
-    partial class KDOSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241022094249_Update")]
+    partial class Update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,6 +86,9 @@ namespace KDOS_Web_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -130,43 +136,6 @@ namespace KDOS_Web_API.Migrations
                         .IsUnique();
 
                     b.ToTable("DeliveryStaff");
-                });
-
-            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Feedback", b =>
-                {
-                    b.Property<int>("FeedbackId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("FeedbackId"));
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("FeedbackId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
-                    b.ToTable("Feedback");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.FishProfile", b =>
@@ -452,25 +421,6 @@ namespace KDOS_Web_API.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Feedback", b =>
-                {
-                    b.HasOne("KDOS_Web_API.Models.Domains.Customer", "Customer")
-                        .WithMany("Feedback")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KDOS_Web_API.Models.Domains.Orders", "Orders")
-                        .WithOne("Feedback")
-                        .HasForeignKey("KDOS_Web_API.Models.Domains.Feedback", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.FishProfile", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.Domains.Customer", "Customer")
@@ -572,8 +522,6 @@ namespace KDOS_Web_API.Migrations
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Customer", b =>
                 {
-                    b.Navigation("Feedback");
-
                     b.Navigation("FishProfiles");
 
                     b.Navigation("Orders");
@@ -602,9 +550,6 @@ namespace KDOS_Web_API.Migrations
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Orders", b =>
                 {
-                    b.Navigation("Feedback")
-                        .IsRequired();
-
                     b.Navigation("OrderDetails");
                 });
 
