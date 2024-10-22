@@ -43,8 +43,18 @@ builder.Services.ConfigureSwaggerGen(setup =>
         Version = "v1"
     });
 });
+//// Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Configure enums to be serialized as strings
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 app.UseSwaggerUI();

@@ -4,6 +4,7 @@ using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using KDOS_Web_API.Models.Enum;
 
 namespace KDOS_Web_API.Controllers
 {
@@ -11,14 +12,12 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly KDOSDbContext orderContext;
         private readonly IOrderRepository orderRepository;
         private readonly IMapper mapper;
 
-        public OrdersController(KDOSDbContext orderContext, IOrderRepository orderRepository, IMapper mapper)
+        public OrdersController(IOrderRepository orderRepository, IMapper mapper)
         {
-            this.orderContext = orderContext;
-            this.orderContext = orderContext;
+            this.orderRepository = orderRepository;
             this.mapper = mapper;
         }
         [HttpGet]
@@ -42,7 +41,8 @@ namespace KDOS_Web_API.Controllers
             var ordersModel = mapper.Map<Orders>(addNewOrderDTO);
             ordersModel.CreatedAt = DateTime.Now;
             ordersModel.UpdatedAt = DateTime.Now;
-
+            ordersModel.DeliveryStatus = Models.Enum.OrderStatus.PENDING;
+            ordersModel.PaymentStatus = Models.Enum.PaymentStatus.PENDING;
             try
             {
                 ordersModel = await orderRepository.AddNewOrder(ordersModel);
