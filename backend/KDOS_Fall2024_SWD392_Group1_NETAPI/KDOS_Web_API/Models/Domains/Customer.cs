@@ -27,7 +27,6 @@ namespace KDOS_Web_API.Models.Domains
 
         [Required]
         public required string Address { get; set; }
-        public int OrderId { get; set; } // FK
         public DateTime CreatedAt { get; set; } // Include CreatedAt
         public DateTime UpdatedAt { get; set; } // Include UpdatedAt
         // Link between Account and Customer
