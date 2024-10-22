@@ -18,16 +18,17 @@ namespace KDOS_Web_API.Mappings
 				.ForMember(x => x.Password, option => option.Ignore())
 				.ForMember(x => x.Banned, option => option.Ignore())// Manually set the ban as false
 				.ForMember(x=>x.Role, option => option.Ignore());// Manually set the role dependent on the need
-
-            CreateMap<UpdateAccountDTO, Account>().ReverseMap()
-				.ForMember(x=>x.Password,option=>option.Ignore());
-			// Customer Mapping
-			CreateMap<Customer, CustomerDTO>();
+			CreateMap<Account, BanAccountDTO>().ReverseMap();
+			CreateMap<UpdateAccountDTO, Account>().ReverseMap();
+            CreateMap<Account, AccountCustomerViewDTO>().ReverseMap();
+            // Customer Mapping
+            CreateMap<Customer, CustomerDTO>();
 			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap()
                 .ForMember(x => x.UpdatedAt,option=>option.Ignore()); // Ignore the Create/Update date when mapping so we can do it manually
 			CreateMap<AddNewCustomerDTO, Customer>().ReverseMap()
                 .ForMember(x => x.CreatedAt,option=>option.Ignore())
                 .ForMember(x => x.CreatedAt, option => option.Ignore());
+            CreateMap<CustomerAccountDTO, Customer>().ReverseMap();
             // Staff Mapping
             CreateMap<Staff, StaffDTO>().ReverseMap();
 			CreateMap<AddNewStaffDTO, Staff>().ReverseMap();
@@ -48,10 +49,23 @@ namespace KDOS_Web_API.Mappings
             CreateMap<OrderDetails, OrderDetailsDTO>().ReverseMap();
             CreateMap<OrderDetails, AddNewOrderDetailsDTO>().ReverseMap();
 
+
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            // OrderDetails
+            CreateMap<OrderDetails, OrderDetailsDTO>().ReverseMap();
+            CreateMap<OrderDetails, AddNewOrderDetailsDTO>().ReverseMap();
+
             // HealthUpdate
+            CreateMap<HealthStatus, HealthStatusDTO>().ReverseMap();
+            CreateMap<HealthStatus, UpdateHealthStatusDTO>().ReverseMap();
+            CreateMap<HealthStatus, AddNewHealthStatusDTO>().ReverseMap().ForMember(x=> x.Date, option=> option.Ignore());
             // KoiFish
             CreateMap<KoiFish, KoiFishDTO>().ReverseMap();
             CreateMap<KoiFish, AddNewKoiFishDTO>().ReverseMap();
+            // FishProfile
+            CreateMap<FishProfile, FishProfileDTO>().ReverseMap();
+            CreateMap<FishProfile, UpdateFishProfileDTO>().ReverseMap();
+            CreateMap<FishProfile, AddNewFishProfileDTO>().ReverseMap();
             // BLog
         }
     }

@@ -2,6 +2,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Mappings;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Repositories;
+using KDOS_Web_API.Services.MailingService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,11 +19,15 @@ builder.Services.AddDbContext<KDOSDbContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 30))));
 // Inject the Repository
 builder.Services.AddScoped<IOrderRepository, SQLOrderRepository>();
+builder.Services.AddScoped<IOrderDetailsRepository, SQLOrderDetailsRepository>();
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
 builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>();
 builder.Services.AddScoped<IKoiFishRepository, SQLKoiFishRepository>();
+builder.Services.AddScoped<IFishProfileRepository, SQLFishProfileRepository>();
+//Inject Mailign service
+builder.Services.AddScoped<IMailingService, MailingService>();
 //End Respository
 //AutoMapper Service Inject
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

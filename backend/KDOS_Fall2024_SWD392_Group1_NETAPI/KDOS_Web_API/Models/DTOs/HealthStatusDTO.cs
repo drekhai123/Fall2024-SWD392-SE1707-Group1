@@ -1,9 +1,10 @@
 ﻿using System;
+using KDOS_Web_API.Models.Domains;
 using System.ComponentModel.DataAnnotations;
 
-namespace KDOS_Web_API.Models.Domains
+namespace KDOS_Web_API.Models.DTOs
 {
-	public class HealthStatus
+	public class HealthStatusDTO
 	{
         [Key]
         public int HealthStatusId { get; set; }
@@ -15,6 +16,7 @@ namespace KDOS_Web_API.Models.Domains
         required public string Notes { get; set; }
         // Relationship
         public int OrderDetailsId { get; set; }
-        public OrderDetails OrderDetails { get; set; } = null!; // REQUIRED relationship
+
     }
 }
+

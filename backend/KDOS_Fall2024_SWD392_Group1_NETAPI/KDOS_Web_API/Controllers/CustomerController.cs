@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
+using KDOS_Web_API.Services.MailingService;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,15 +12,15 @@ namespace KDOS_Web_API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase    {
-        private readonly KDOSDbContext customerContext;
         private readonly ICustomerRepository customerRepository;
         private readonly IMapper mapper;
+        private readonly IMailingService mailingService;
 
-        public CustomerController(KDOSDbContext customerContext, ICustomerRepository customerRepository, IMapper mapper)
+        public CustomerController(ICustomerRepository customerRepository, IMapper mapper,  IMailingService mailingService)
         {
-            this.customerContext = customerContext;
             this.customerRepository = customerRepository;
             this.mapper = mapper;
+            this.mailingService = mailingService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCustomer()
@@ -29,7 +28,7 @@ namespace KDOS_Web_API.Controllers
             // This method get data DIRECTLY from database -> not best practice
             var customerList = await customerRepository.GetAllCustomer();
            // Auto mapper
-            var customerDto = mapper.Map<List<CustomerDTO>>(customerList);
+            var customerDto = mapper.Map<List<CustomerAccountDTO>>(customerList);
             // Following Best Practice
             return Ok(customerDto);
         }
@@ -47,12 +46,17 @@ namespace KDOS_Web_API.Controllers
                 return NotFound();
             }
             //Map Model back to DTO
-            var customerDto = mapper.Map<CustomerDTO>(customerModel);
-            // Follow best practice
-            return CreatedAtAction(nameof(GetCustomerById), new { customerId = customerModel.CustomerId }, customerDto); // Respone with code 201 - Created Complete
-            //CreatedAtAction will trigger the action GetCustomerById to search for the created customer in the db using the id generate by the EF. Then convert the data to a DTO and respone that bakc to client. So we can know what dot created 
+            //Get Customer Account info
+            var accountModel = await customerRepository.GetAccountByCustomer(customerModel.AccountId);
+            if (accountModel != null)
+            {
+                var customerDto = mapper.Map<CustomerAccountDTO>(customerModel);
+                await mailingService.SendRegisterMail(accountModel);
+                // Follow best practice
+                return CreatedAtAction(nameof(GetCustomerById), new { customerId = customerModel.CustomerId }, customerDto); // Respone with code 201 - Created Complete                                                                                                                       //CreatedAtAction will trigger the action GetCustomerById to search for the created customer in the db using the id generate by the EF. Then convert the data to a DTO and respone that bakc to client. So we can know what dot created 
+            }
+            return NotFound(); //return 404
         }
-        
         [HttpPost]
         [Route("searchbyname")]
         public async Task<IActionResult> FindCustomerByName([FromBody] String customerName)
@@ -87,12 +91,13 @@ namespace KDOS_Web_API.Controllers
             {
                 //Get Customer Account info
                 var accountModel = await customerRepository.GetAccountByCustomer(customerModel.AccountId);
-                var customerDto = mapper.Map<CustomerDTO>(customerModel);
-                //var accountDto = mapper.Map<CustomerViewAccountDTO>(accountModel);
-                // TODO
-                return Ok(customerDto); //return 200 ok
+                if (accountModel != null)
+                {
+                    var customerDto = mapper.Map<CustomerAccountDTO>(customerModel);
+                    return Ok(customerDto); //return 200 ok
+                }
+                return NotFound(); //return 404
             }
-           
         }
         // PUT - Update a customer through their Id
         [HttpPut]
@@ -116,7 +121,7 @@ namespace KDOS_Web_API.Controllers
         }
         [HttpDelete]
         [Route("{customerId}")]
-        public async Task<IActionResult> DeleteCustomer([FromHeader] int customerId)
+        public async Task<IActionResult> DeleteCustomer([FromRoute] int customerId)
         {
             var deleteCustomer = await customerRepository.DeleteCustomer(customerId);
             if (deleteCustomer == null)
