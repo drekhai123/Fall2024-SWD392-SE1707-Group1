@@ -21,7 +21,7 @@ namespace KDOS_Web_API.Repositories
         }
         public async Task<Account?> GetAccountById(int id)
         {
-            return await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            return await accountContext.Account.Include(x=>x.Customer).FirstOrDefaultAsync(x => x.AccountId == id);
         }
 
         public async Task<Account?> AddNewAccount(Account account)
@@ -73,7 +73,7 @@ namespace KDOS_Web_API.Repositories
 
        public async Task<Account?> Login(string userNameOrEmail)
         {
-            return await accountContext.Account.FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
+            return await accountContext.Account.Include(x=>x.Customer).FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
         }
 
         public async Task<Account?> BanAccount(int id, Account account)
