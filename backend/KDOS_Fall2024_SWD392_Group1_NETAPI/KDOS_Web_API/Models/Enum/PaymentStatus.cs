@@ -11,9 +11,6 @@ namespace KDOS_Web_API.Models.Enum
         PENDING,
 
         [EnumMember(Value = "PAID")]
-        PAID,
-
-        [EnumMember(Value = "FAILED")]
-        FAILED
+        PAID
     }
 }
