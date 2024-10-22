@@ -48,10 +48,7 @@ namespace KDOS_Web_API.Mappings
             // OrderDetails
             CreateMap<OrderDetails, OrderDetailsDTO>().ReverseMap();
             CreateMap<OrderDetails, AddNewOrderDetailsDTO>().ReverseMap();
-            // OrderDetails
-            CreateMap<OrderDetails, OrderDetailsDTO>().ReverseMap();
-            CreateMap<OrderDetails, AddNewOrderDetailsDTO>().ReverseMap();
-
+            
             // HealthUpdate
             CreateMap<HealthStatus, HealthStatusDTO>().ReverseMap();
             CreateMap<HealthStatus, UpdateHealthStatusDTO>().ReverseMap();
