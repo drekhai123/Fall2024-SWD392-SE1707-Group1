@@ -140,8 +140,11 @@ namespace KDOS_Web_API.Controllers
                     {
                         return BadRequest("Token Expired!");
                     }
-                    else
-                    return Ok("Register Completed!"); // Account Verification Complete!
+                    else  // Account Verification Complete! Redirect To Login Page
+                    {
+                        string redirectUrl = "https://kdos.vercel.app/login";
+                        return Redirect(redirectUrl);
+                    }
                 } 
                 else
                 {
