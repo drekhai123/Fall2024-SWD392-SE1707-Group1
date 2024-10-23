@@ -3,6 +3,7 @@ using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
+using KDOS_Web_API.Services.MailingService;
 using Microsoft.AspNetCore.Identity; // PasswordHasher<Account>
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,14 +18,16 @@ namespace KDOS_Web_API.Controllers
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
         private readonly IPasswordHasher<Account> passwordHasher;
+        private readonly MailingService mailingServices;
 
         // Adding in the Repository Inject
         // Adding AutoMApper Service
-        public AccountController(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher, MailingService mailingServices)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
             this.passwordHasher = passwordHasher;
+            this.mailingServices = mailingServices;
         }
         [HttpGet]
         // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
@@ -75,6 +78,7 @@ namespace KDOS_Web_API.Controllers
             accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Role = "customer"; //Set Role fixed as Customer
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
+            accountModel.Verified = false;
             accountModel = await accountRepository.AddNewAccount(accountModel);
             // Turn Model to DTO for returning a response
             if (accountModel == null)
@@ -83,6 +87,68 @@ namespace KDOS_Web_API.Controllers
             }
             var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
+        }
+        [HttpPost]
+        [Route("AddVerification/{accountId}")]
+        public async Task<IActionResult> AddNewVerification([FromRoute] int accountId)
+        {
+            var accountModel = await accountRepository.GetAccountById(accountId);
+            if (accountModel == null)
+            {
+                return NotFound("No Account Exist To Verified");
+            }
+            var token = Guid.NewGuid().ToString(); // Create a unique Token with GUID
+            var verificationModel = new Verification
+            {
+                AccountId = accountId,
+                Token = token,
+                ExpiredDate = DateTime.Now.AddHours(1), // One hour to verify
+            };
+            accountModel=await accountRepository.VerificationMailing(accountModel, verificationModel);
+            if (accountModel == null)
+            {
+                return NotFound("Can't Create a Verification Data");
+            }
+            // Url.Action generate a url to an API in a Controller
+            //var verificationLink = Url.Action("API", "Controller",... , Request.Scheme);
+            //Request.Scheme send a command to execute the API
+            var verificationLink = Url.Action("Verification", "Account", new { accountId = accountModel.AccountId, token = verificationModel.Token }, Request.Scheme);
+            if (verificationLink == null)
+            {
+                return NotFound("Can't Generate A Verification Link");
+            }
+            await mailingServices.SendVerificationLink(accountModel, verificationLink);
+            return Ok(accountModel);
+        }
+        [HttpGet]
+        [Route("Verification")]
+        public async Task<IActionResult> Verification([FromQuery] string accountId,string token)
+        {
+            var accountModel = await accountRepository.GetAccountById(int.Parse(accountId));
+            var verificationModel = await accountRepository.FindVerificationWithAccountId(int.Parse(accountId));
+            if(accountModel==null || verificationModel == null)
+            {
+                return NotFound("No account or No Verification are stored");
+            }
+            else
+            {
+                if (verificationModel.Token.Equals(token))
+                {
+                    accountModel.Verified = true;
+                    verificationModel.ExpiredDate = DateTime.Now;
+                    accountModel = await accountRepository.VerificationAccount(accountModel, verificationModel);
+                    if (accountModel == null)
+                    {
+                        return BadRequest("Token Expired!");
+                    }
+                    else
+                    return Ok(accountModel); // Account Verification Complete!
+                } 
+                else
+                {
+                    return BadRequest("Wrong Token");
+                }
+            }
         }
         [HttpPost]
         [Route("AddStaff")]

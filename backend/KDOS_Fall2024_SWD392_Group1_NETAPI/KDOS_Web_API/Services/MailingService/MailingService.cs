@@ -48,6 +48,31 @@ namespace KDOS_Web_API.Services.MailingService
             Console.WriteLine(response.Headers.ToString());
         }
 
+        public async Task SendVerificationLink(Account account, string verificationUrl)
+        {
+            var mailModel = new MailModel
+            {
+                From = fromEmail,
+                To = new EmailAddress(account.Email, account.UserName),
+                TemplateId = "d-6192c1af361d4efc8411e3d8d2083110" // Verification template Id
+            };
+            var msg = new SendGridMessage();
+            msg.SetFrom(mailModel.From);
+            msg.AddTo(mailModel.To);
+            msg.SetTemplateId(mailModel.TemplateId);
+            var dynamicTemplateData = new VerificationMailModel
+            {
+                UserName = account.UserName,
+                VerificationLink = verificationUrl
+            };
+            msg.SetTemplateData(dynamicTemplateData);
+            // Confirm code with SendGrid service - return the SendGrid client
+            var client = new SendGridClient(apiKey);
+            var response = await client.SendEmailAsync(msg);
+            Console.WriteLine(response.StatusCode);
+            Console.WriteLine(response.Headers.ToString());
+        }
+
         public async Task SendResetPassword(Account account)
         {
             throw new NotImplementedException();
@@ -69,6 +94,7 @@ namespace KDOS_Web_API.Services.MailingService
             Console.WriteLine(response.StatusCode);
             Console.WriteLine(response.Headers.ToString());
         }
+
     }
 
 

@@ -11,7 +11,9 @@ namespace KDOS_Web_API.Mappings
 	{
 		public AutoMapperProfile()
 		{
-			// Maping AccountModel to DTO -> and vise versa
+            // Maping AccountModel to DTO -> and vise versa
+            // Verification
+                // CreateMap<Verification, VerificationDTO>().ReverseMap(); Don't think of using this
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
 			CreateMap<AddNewAccountDTO, Account>().ReverseMap()

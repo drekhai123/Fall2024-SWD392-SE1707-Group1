@@ -8,11 +8,14 @@ namespace KDOS_Web_API.Repositories
 	{
 		Task<List<Account>> GetAllAccountAsync();
 		Task<Account?>GetAccountById(int id);
-		Task<Account?> AddNewAccount(Account account);
-		Task<Account?> DeleteAccount(int id);
+        Task<Account?> AddNewAccount(Account account);
+        Task<Verification?> FindVerificationWithAccountId(int id);
+        Task<Account?> VerificationAccount(Account account, Verification verification);
+        Task<Account?> VerificationMailing(Account account,Verification verification);
+        Task<Account?> DeleteAccount(int id);
 		Task<Account?> UpdateAccount(int id, Account account);
         Task<Account?> BanAccount(int id, Account account);
-        Task<Account?> Login(String userNameOrEmail);
+        Task<Account?> Login(string userNameOrEmail);
 	}
 }
 
