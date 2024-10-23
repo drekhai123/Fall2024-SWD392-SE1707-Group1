@@ -24,21 +24,23 @@ namespace KDOS_Web_API.Controllers
             this.feedBackRepository = feedBackRepository;
             this.mapper = mapper;
         }
-        //public async Task<Feedback?> AddNewFeedBack(Feedback feedback)
-        //{
-        //    var customerModel = await feedbackContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == feedback.CustomerId);
-        //    var orderModel = await feedbackContext.Orders.FirstOrDefaultAsync(x => x.OrderId == feedback.OrderId);
-        //    if (customerModel == null || orderModel == null)
-        //    {
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        await feedbackContext.Feedback.AddAsync(feedback);
-        //        await feedbackContext.SaveChangesAsync();
-        //        return feedback;
-        //    }
-        //}
+        [HttpPost]
+        public async Task<IActionResult> AddNewFeedBack(AddNewFeedBackDTO feedback)
+        {
+            var feedbackModel = mapper.Map<Feedback>(feedback);
+            feedbackModel.CreatedAt = DateTime.Today;
+            feedbackModel.UpdatedAt = DateTime.Today;
+            feedbackModel = await feedBackRepository.AddNewFeedBack(feedbackModel);
+            if (feedbackModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var feedbackDto = mapper.Map<FeedbackDTO>(feedbackModel);
+                return CreatedAtAction(nameof(GetFeedbackById), new { feedbackId = feedbackModel.FeedbackId }, feedbackDto);
+            }
+        }
         [HttpDelete]
         [Route("{feedbackId}")]
         public async Task<IActionResult> DeleteFeedBack([FromRoute]int feedbackId)
@@ -82,25 +84,23 @@ namespace KDOS_Web_API.Controllers
             var feedbackDto = mapper.Map<FeedbackDTO>(feedbackModel);
             return Ok(feedbackDto);
         }
-        //[HttpPut]
-        //[Route("{feedbackId}")]
-        //public async Task<IActionResult> UpdateFeedBack(int id, UpdateFeedBackDTO feedback)
-        //{
-        //    var feedbackModel = mapper.Map<Feedback>(feedback);
-        //    feedbackModel = await feedBackRepository.UpdateFeedBack(id, feedbackModel);
-        //    if (feedbackModel == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    else
-        //    {
-        //        feedbackModel.Comment = feedback.Comment;
-        //        feedbackModel.Rating = feedback.Rating;
-        //        feedbackModel.UpdatedAt = feedback.UpdatedAt;
-        //        await feedbackContext.SaveChangesAsync();
-        //        return feedbackModel;
-        //    }
-        //}
+        [HttpPut]
+        [Route("{feedbackId}")]
+        public async Task<IActionResult> UpdateFeedBack(int id, UpdateFeedBackDTO feedback)
+        {
+            var feedbackModel = mapper.Map<Feedback>(feedback);
+            feedbackModel.UpdatedAt = DateTime.Today;
+            feedbackModel = await feedBackRepository.UpdateFeedBack(id, feedbackModel);
+            if (feedbackModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+               var feedbackDto = mapper.Map<FeedbackDTO>(feedbackModel);
+                return Ok(feedbackDto);
+            }
+        }
     }
 }
 
