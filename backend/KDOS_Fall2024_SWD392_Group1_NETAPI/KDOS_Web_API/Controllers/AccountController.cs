@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
@@ -18,16 +17,16 @@ namespace KDOS_Web_API.Controllers
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
         private readonly IPasswordHasher<Account> passwordHasher;
-        private readonly MailingService mailingServices;
+        private readonly IMailingService mailingService;
 
         // Adding in the Repository Inject
         // Adding AutoMApper Service
-        public AccountController(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher, MailingService mailingServices)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher, IMailingService mailingService)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
             this.passwordHasher = passwordHasher;
-            this.mailingServices = mailingServices;
+            this.mailingService = mailingService;
         }
         [HttpGet]
         // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
@@ -117,8 +116,8 @@ namespace KDOS_Web_API.Controllers
             {
                 return NotFound("Can't Generate A Verification Link");
             }
-            await mailingServices.SendVerificationLink(accountModel, verificationLink);
-            return Ok(accountModel);
+            var response = await mailingService.SendVerificationLink(accountModel, verificationLink);
+            return Ok(response);
         }
         [HttpGet]
         [Route("Verification")]
@@ -142,7 +141,7 @@ namespace KDOS_Web_API.Controllers
                         return BadRequest("Token Expired!");
                     }
                     else
-                    return Ok(accountModel); // Account Verification Complete!
+                    return Ok("Register Completed!"); // Account Verification Complete!
                 } 
                 else
                 {

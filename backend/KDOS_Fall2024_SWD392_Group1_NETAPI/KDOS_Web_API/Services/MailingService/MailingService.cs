@@ -23,7 +23,7 @@ namespace KDOS_Web_API.Services.MailingService
             throw new NotImplementedException();
         }
 
-        public async Task SendRegisterMail(Account account)
+        public async Task<Response> SendRegisterMail(Account account)
         {
             var mailModel = new MailModel
             {
@@ -44,11 +44,10 @@ namespace KDOS_Web_API.Services.MailingService
             // Confirm code with SendGrid service - return the SendGrid client
             var client = new SendGridClient(apiKey);
             var response = await client.SendEmailAsync(msg);
-            Console.WriteLine(response.StatusCode);
-            Console.WriteLine(response.Headers.ToString());
+            return response;
         }
 
-        public async Task SendVerificationLink(Account account, string verificationUrl)
+        public async Task<Response> SendVerificationLink(Account account, string verificationUrl)
         {
             var mailModel = new MailModel
             {
@@ -69,8 +68,7 @@ namespace KDOS_Web_API.Services.MailingService
             // Confirm code with SendGrid service - return the SendGrid client
             var client = new SendGridClient(apiKey);
             var response = await client.SendEmailAsync(msg);
-            Console.WriteLine(response.StatusCode);
-            Console.WriteLine(response.Headers.ToString());
+            return response;
         }
 
         public async Task SendResetPassword(Account account)
