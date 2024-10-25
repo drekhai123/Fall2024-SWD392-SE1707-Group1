@@ -15,7 +15,7 @@ import ViewOrderHistory from './components/customer/ViewOrderHistory';
 import ViewOrderDetail from './components/customer/ViewOrderDetail';
 import OrdersDashBoard from './components/admin/OrdersDashBoard';
 import PlaceOrder from './components/customer/PlaceOrder';
-import ProfilePage from "./components/customer/ProfilePage";
+// import ProfilePage from "./components/customer/ProfilePage";
 import PrivateRoute from './components/PrivateRoute';
 import UserProfilePage from "./components/customer/profile";
 import AddFishForm from './components/customer/profile/AddFishForm'; // Import AddFishForm

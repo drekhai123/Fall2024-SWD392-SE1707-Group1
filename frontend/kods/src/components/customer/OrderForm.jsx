@@ -9,7 +9,6 @@ import { GetAllKoiFishes } from "../api/KoiFishApi";
 export default function OrderForm({ onSuggestionClick, distance }) {
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
-
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
   const [markerPositionFrom, setMarkerPositionFrom] = useState(null);
@@ -182,7 +181,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
               )}&countrycodes=VN&format=json`
             );
             // có chỗ country codes này thì lên wikimedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
-           
+
 
             if (field === "addressSender") {
               setFromSuggestions(response.data);
@@ -227,8 +226,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   useEffect(() => {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
-  
-  
+
+
   return (
     <div className="order-form">
       <div className="con">

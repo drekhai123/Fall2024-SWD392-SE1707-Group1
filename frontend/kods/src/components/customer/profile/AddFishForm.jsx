@@ -14,33 +14,14 @@ import {
   DialogContent,
   DialogActions,
   Avatar,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
-
-// Mock API functions (replace these with actual API calls in a real application)
-const mockApi = {
-  getFishes: () => Promise.resolve([
-    {
-      id: 1,
-      name: 'Koi Fish 1',
-      image: '/placeholder.svg?height=50&width=50',
-      weight: '1kg',
-      species: 'Koi',
-      description: 'A beautiful koi fish.'
-    },
-    {
-      id: 2,
-      name: 'Koi Fish 2',
-      image: '/placeholder.svg?height=50&width=50',
-      weight: '1.5kg',
-      species: 'Koi',
-      description: 'Another beautiful koi fish.'
-    },
-  ]),
-  addFish: (fish) => Promise.resolve({ ...fish, id: Date.now() }),
-  updateFish: (fish) => Promise.resolve(fish),
-  deleteFish: (id) => Promise.resolve(),
-};
+import { GetAllKoiFishes } from '../../api/KoiFishApi';
+import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile } from '../../api/FishProfileApi';
 
 export default function AddFish() {
   const [fishes, setFishes] = useState([]);
@@ -51,70 +32,134 @@ export default function AddFish() {
   const [image, setImage] = useState('');
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [weight, setWeight] = useState(''); // New state for weight
-  const [species, setSpecies] = useState(''); // New state for species
-  const [description, setDescription] = useState(''); // New state for description
+  const [gender, setGender] = useState(''); // Initialize as empty string
+  const [notes, setNotes] = useState('');   // Initialize as empty string
+
+
+  const [koifish, setKoiFish] = useState([]);  // New state for species
+  // const [description, setDescription] = useState(''); // New state for description
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false); // New state for image zoom
+  const [selectedFishType, setSelectedFishType] = useState(''); // New state for selected fish type
+
+
+  // KOI species
+  useEffect(() => {
+    const getSpeciesList= async () => {
+      var koifishData = await GetAllKoiFishes();
+      setKoiFish(koifishData);
+    };
+    getSpeciesList();
+  }, []);
+
 
   useEffect(() => {
     fetchFishes(); // Fetches fish data on component mount
   }, []);
 
-  const fetchFishes = async () => {
-    const fetchedFishes = await mockApi.getFishes(); // Fetches from mockApi
-    const localFishes = Object.keys(localStorage)
-      .filter(key => key.startsWith('fish_'))
-      .map(key => JSON.parse(localStorage.getItem(key)));
-    setFishes([...fetchedFishes, ...localFishes]); // Cập nhật state với dữ liệu từ mockApi và Local Storage
+  //Get API By CustomerID
+ const fetchFishes = async () => {
+    try {
+        const user = JSON.parse(localStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
+        const customerId = user?.accountId; // Lấy accountId
+        const response = await getFishProfilebyCustomerid(customerId);
+        setFishes(response);
+    } catch (error) {
+        console.error('Error fetching fishes:', error);
+    }
   };
 
-  const handleAddFish = () => {
-    setSelectedFish(null);
-    setName('');
-    setImage('');
-    setIsFormOpen(true);
+  const handleAddFish = async (e) => {
+    e.preventDefault();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const customerId = user?.accountId;
+    const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
+
+    const newFish = {
+      weight: parseFloat(weight),
+      gender: gender,
+      notes: notes,
+      image: "image",
+      koiFishId: koiFishId,
+      customerId: customerId
+    };
+
+    try {
+      const addedFish = await addFishProfile(newFish);
+      localStorage.setItem(`fish_${addedFish.fishProfileId}`, JSON.stringify(newFish));
+      setIsFormOpen(false);
+      fetchFishes(); // Refresh fish list
+    } catch (error) {
+      console.error('Error adding fish:', error);
+    }
   };
 
   const handleEditFish = (fish) => {
     setSelectedFish(fish);
     setName(fish.name);
     setImage(fish.image);
+    setWeight(fish.weight);
+    setGender(fish.gender);
+    setNotes(fish.notes);
+    setSelectedFishType(fish.koiFish.fishType);
     setIsFormOpen(true);
   };
 
-  const handleDeleteFish = (fish) => {
-    setSelectedFish(fish);
+  const handleDeleteFish = (fish,id) => {
+    setSelectedFish(fish,id);
     setIsDeleteDialogOpen(true);
   };
 
-  const handleFormSubmit = async (e) => {
+  const handleUpdateFish = async (e) => {
     e.preventDefault();
-    const newFish = { name, image, weight, species, description }; // Tạo đối tượng cá mới
-    if (selectedFish) {
-      await mockApi.updateFish({ ...selectedFish, ...newFish }); // Cập nhật cá đã chọn
-    } else {
-      await mockApi.addFish(newFish); // Thêm cá mới
-      localStorage.setItem(`fish_${Date.now()}`, JSON.stringify(newFish)); // Lưu cá mới vào Local Storage
+    const user = JSON.parse(localStorage.getItem('user'));
+    const customerId = user?.accountId;
+    const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
+
+    const updatedFish = {
+      weight: parseFloat(weight),
+      gender: gender,
+      notes: notes,
+      image: "image",
+      koiFishId: koiFishId,
+      customerId: customerId
+    };
+
+    try {
+      await updateFishProfile(selectedFish.fishProfileId, updatedFish);
+      localStorage.setItem(`fish_${selectedFish.id}`, JSON.stringify({ ...selectedFish, ...updatedFish }));
+      setIsFormOpen(false);
+      fetchFishes(); // Refresh fish list
+    } catch (error) {
+      console.error('Error updating fish:', error);
     }
-    setIsFormOpen(false);
-    fetchFishes(); // Cập nhật danh sách cá
+  };
+
+  const handleFormSubmit = (e) => {
+    if (selectedFish) {
+      handleUpdateFish(e);
+    } else {
+      handleAddFish(e);
+    }
   };
 
   const handleDeleteConfirm = async () => {
     if (selectedFish) {
-      await mockApi.deleteFish(selectedFish.id);
-      setIsDeleteDialogOpen(false);
-      fetchFishes();
+        await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
+        localStorage.removeItem(`fish_${selectedFish.id}`); // Remove fish from Local Storage
+        setIsDeleteDialogOpen(false);
+        fetchFishes(); // Update the fish list
     }
   };
 
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            console.log('Image data:', reader.result); // Log the image data
+            setImage(reader.result); // Update state with the image data
+        };
+        reader.readAsDataURL(file); // Read the file as a data URL
     }
   };
 
@@ -131,6 +176,18 @@ export default function AddFish() {
     setIsImageZoomOpen(false);
   };
 
+  const handleOpenAddFishForm = () => {
+    // Reset form fields to initial state
+    setName('');
+    setWeight('');
+    setGender('');
+    setNotes('');
+    setImage('string');
+    setSelectedFishType('');
+    setSelectedFish(null); // Ensure no fish is selected
+    setIsFormOpen(true); // Open the form
+  };
+
   return (
     <div>
       <p className="text-4xl font-semibold">Add your Fish</p>
@@ -138,7 +195,7 @@ export default function AddFish() {
         This is your Fish profile. You can update your fish and picture here.
       </p>
       <div className="border-b border-gray-300 my-4"></div>
-      <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleAddFish}>
+      <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleOpenAddFishForm}>
         Add Fish
       </Button>
       <List>
@@ -175,6 +232,7 @@ export default function AddFish() {
               onChange={(e) => setName(e.target.value)}
               required
             />
+
             <TextField
               margin="dense"
               label="Weight"
@@ -184,22 +242,47 @@ export default function AddFish() {
               onChange={(e) => setWeight(e.target.value)} // New input for weight
               required
             />
+
+            <FormControl fullWidth margin="dense">
+              <InputLabel id="fish-type-label">Species</InputLabel>
+              <Select
+                labelId="fish-type-label"
+                value={selectedFishType} // Update to use selected species
+                onChange={(e) => setSelectedFishType(e.target.value)} // Update state for selected fish type
+                displayEmpty // Allow empty value to show placeholder
+                required
+              >
+                <MenuItem value="" disabled>Choose fish type</MenuItem>
+                {koifish.map((koifish) => (
+                  <MenuItem
+                    key={koifish.koiFishId}
+                    value={koifish.fishType}
+                  >
+                    {koifish.fishType}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth margin="dense">
+              <InputLabel id="gender-label">Gender</InputLabel>
+              <Select
+                labelId="gender-label"
+                value={gender} // Update to use selected gender
+                onChange={(e) => setGender(e.target.value)} // Update state for gender
+                required
+              >
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
               margin="dense"
-              label="Species"
+              label="Notes"
               type="text"
               fullWidth
-              value={species}
-              onChange={(e) => setSpecies(e.target.value)} // New input for species
-              required
-            />
-            <TextField
-              margin="dense"
-              label="Description"
-              type="text"
-              fullWidth
-              value={description}
-              onChange={(e) => setDescription(e.target.value)} // New input for description
+              value={notes} // New input for notes
+              onChange={(e) => setNotes(e.target.value)} // Update state for notes
               required
             />
             <input
@@ -230,7 +313,7 @@ export default function AddFish() {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+      <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)} inert={isDeleteDialogOpen}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
           Are you sure you want to delete this fish?
@@ -251,12 +334,16 @@ export default function AddFish() {
               <Avatar
                 src={selectedFish.image}
                 alt={selectedFish.name}
-                sx={{ width: 100, height: 100, cursor: 'pointer' }} // Add cursor pointer
+                sx={{ width: 100, height: 100, cursor: 'pointer'}} // Add cursor pointer
                 onClick={handleImageZoomOpen} // Open zoom on click
               />
-              <Typography variant="body1">Weight: {selectedFish.weight}</Typography>
-              <Typography variant="body1">Species: {selectedFish.species}</Typography>
-              <Typography variant="body1">Description: {selectedFish.description}</Typography>
+              <Typography variant="body1"><strong>Weight:</strong> {selectedFish.weight}</Typography>
+              <Typography variant="body1"><strong>Species:</strong> {selectedFish.koiFish.fishType}</Typography>
+              <Typography variant="body1"><strong>Description:</strong> {selectedFish.koiFish.description}</Typography>
+              <Typography variant="body1"><strong>Gender:</strong> {selectedFish.gender}</Typography>
+              <Typography variant="body1"><strong>Notes:</strong> {selectedFish.notes}</Typography>
+              {/* <Typography variant="body1">Customer ID: {selectedFish.customerId}</Typography>
+              <Typography variant="body1">Fish Profile ID: {selectedFish.fishProfileId}</Typography> */}
             </div>
           )}
         </DialogContent>
