@@ -7,6 +7,7 @@ import axios from "axios";
 import { GetAllKoiFishes } from "../api/KoiFishApi";
 
 export default function OrderForm({ onSuggestionClick, distance }) {
+  const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
   const [check, setCheck] = useState(false)
@@ -54,32 +55,32 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setFishData(updatedFishData);
   };
 
-  const addRow = () => {
-    setFishOrders([
-      ...fishOrders,
-      { name: "", quantity: 1, price: 0, total: 0 },
-    ]);
-  };
+  // const addRow = () => {
+  //   setFishOrders([
+  //     ...fishOrders,
+  //     { name: "", quantity: 1, price: 0, total: 0 },
+  //   ]);
+  // };
 
-  const deleteRow = (index) => {
-    const updatedOrders = fishOrders.filter((_, i) => i !== index);
-    setFishOrders(updatedOrders);
-  };
+  // const deleteRow = (index) => {
+  //   const updatedOrders = fishOrders.filter((_, i) => i !== index);
+  //   setFishOrders(updatedOrders);
+  // };
 
-  const updateRow = (index, field, value) => {
-    const updatedOrders = fishOrders.map((order, i) =>
-      i === index
-        ? {
-          ...order,
-          [field]: value,
-          total:
-            (field === "quantity" ? value : order.quantity) *
-            (field === "price" ? value : order.price),
-        }
-        : order
-    );
-    setFishOrders(updatedOrders);
-  };
+  // const updateRow = (index, field, value) => {
+  //   const updatedOrders = fishOrders.map((order, i) =>
+  //     i === index
+  //       ? {
+  //         ...order,
+  //         [field]: value,
+  //         total:
+  //           (field === "quantity" ? value : order.quantity) *
+  //           (field === "price" ? value : order.price),
+  //       }
+  //       : order
+  //   );
+  //   setFishOrders(updatedOrders);
+  // };
 
   function calculateEstimatedDeliveryDays(distance) {
     if (distance === 0) {
@@ -276,6 +277,47 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       }
     }
   };
+  //  useEffect(() => {
+  //     if (markerPositionFrom && markerPositionTo) {
+  //       onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
+  //     }
+  //   }, [markerPositionFrom, markerPositionTo])
+
+  //   useEffect(() => {
+  //     setCustomerInfo({ ...customerInfo, distance: distance });
+  //   }, [distance])
+
+  const [fishOrdersList, setFishList] = useState([]);
+  const [koifishList, setKoifishList] = useState([]);
+
+  // Hàm updaterow
+  const updateRow = (index, field, value) => {
+    const updatedOrders = [...fishOrdersList];
+    updatedOrders[index][field] = value;
+    if (field === "name") {
+      const selectedFish = koifishList.find(fish => fish.fishType === value);
+      if (selectedFish) {
+        updatedOrders[index].quantity = selectedFish.weight; // Cập nhật weight từ API
+        updatedOrders[index].price = selectedFish.price;     // Cập nhật price từ API
+      }
+    }
+
+    setFishList(updatedOrders);
+  };
+
+  // Hàm thêm dòng mới
+  const addRow = () => {
+    setFishList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
+  };
+
+  // Hàm xóa dòng
+  const deleteRow = (index) => {
+    const updatedOrders = fishOrdersList.filter((_, i) => i !== index);
+    setFishList(updatedOrders);
+  };
+
+
+  //Hàm của mapping để nguyên (comment cái const ở trên của nó)
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
@@ -283,9 +325,22 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     }
   }, [markerPositionFrom, markerPositionTo])
 
+  // Hàm của Distance (comment cái const ở trên của nó)
   useEffect(() => {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
+
+  // Hàm Fetch API
+  useEffect(() => {
+    axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
+      .then(response => {
+        setKoifishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching fish data:", error);
+      });
+  }, []);
 
 
   return (
@@ -497,8 +552,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 />
 
 
-                <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day" 
-                className="layout-checkbox" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px' }} >  {/* lười css làm z cho lẹ */}
+                <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
+                  className="layout-checkbox" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px' }} >  {/* lười css làm z cho lẹ */}
                   <p>
                     <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
                   </p>
@@ -507,11 +562,11 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                     {customerInfo?.distance <= 50 && ( // Nếu distance lớn hơn 50 thì checkbox biến mất
                       <label>
                         <input
-                          style={{ cursor: 'pointer' }} 
+                          style={{ cursor: 'pointer' }}
                           type="checkbox"
                           checked={check}
                           onChange={(e) => setCheck(e.target.checked)}
-                          
+
                         />
                         If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
                       </label>
