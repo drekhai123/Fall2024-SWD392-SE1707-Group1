@@ -2,10 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace KDOS_Web_API.Models.DTOs.CustomerDTO.CustomerDTO
+namespace KDOS_Web_API.Models.DTOs
 {
-    public class AddNewCustomerDTO
-    {
+	public class AddNewCustomerDTO
+	{
         [Required]
         required public string CustomerName { get; set; }
         [Required]
