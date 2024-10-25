@@ -23,7 +23,6 @@ namespace KDOS_Web_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            // This method get data DIRECTLY from database -> not best practice
             var ordersList = await orderRepository.GetAllOrders();
             // Auto mapper
             var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
