@@ -44,9 +44,30 @@ namespace KDOS_Web_API.Repositories
             return await profileContext.FishProfile.Include("KoiFish").ToListAsync();
         }
 
-        public async Task<List<FishProfile>> GetProfileByCustomerId(int id)
-        {
-            return await profileContext.FishProfile.Include(x=>x.KoiFish).Where(x => x.CustomerId == id).ToListAsync();
+        public async Task<List<FishProfile>> GetProfileByCustomerId(int id, string? filterBy = null, string? data = null)
+        {await profileContext.FishProfile.Include(x => x.KoiFish).Where(x => x.CustomerId == id).ToListAsync();
+            var profileModel = profileContext.FishProfile.Include(x => x.KoiFish).Where(x => x.CustomerId == id).AsQueryable(); // As Queryable apply the query datas
+            if (string.IsNullOrWhiteSpace(filterBy) ||  string.IsNullOrWhiteSpace(data))
+            {
+                return await profileModel.ToListAsync();
+            }
+            else
+            {
+                //Apply Filtering
+                switch (filterBy)
+                {
+                    case "FishType":
+                       return await profileModel.Include(x => x.KoiFish).Where(x => x.KoiFish.FishType.Contains(data)).ToListAsync();
+                    case "Weight":
+                        return await profileModel.Include(x => x.KoiFish).OrderBy(x=>x.Weight).ToListAsync();
+                    case "Gender":
+                        return await profileModel.Include(x => x.KoiFish).Where(x => x.Gender.Equals(data)).ToListAsync();
+                    default:
+                    {
+                        return await profileModel.ToListAsync();
+                    }
+                }
+            }
         }
 
         public async Task<FishProfile?> GetProfileById(int id)
