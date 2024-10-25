@@ -8,6 +8,8 @@ namespace KDOS_Web_API.Models.Domains
         [Key]
         public int FishProfileId { get; set; }
         [Required]
+        required public string Name { get; set; }
+        [Required]
         required public float Weight { get; set; }
         [Required]
         required public string Gender { get; set; }

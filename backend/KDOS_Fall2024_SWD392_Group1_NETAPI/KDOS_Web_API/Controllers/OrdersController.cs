@@ -76,7 +76,7 @@ namespace KDOS_Web_API.Controllers
         [Route("customer/{customerId}")]
         public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId)
         {
-            var ordersList = await orderRepository.GetOrdersByCustomerId(customerId);
+            var ordersList = await orderRepository.GetOrderByCustomerId(customerId);
             if (ordersList == null)
             {
                 return NotFound();
