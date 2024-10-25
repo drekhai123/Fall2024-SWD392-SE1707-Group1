@@ -28,7 +28,10 @@ namespace KDOS_Web_API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewHealthStatus(AddNewHealthStatusDTO addNewHealthStatusDTO)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             // using the DTO to convert Model
             var healthModel = mapper.Map<HealthStatus>(addNewHealthStatusDTO);
             healthModel.Date = DateTime.Now; //Manually set the current time, ignore automapper
@@ -111,7 +114,6 @@ namespace KDOS_Web_API.Controllers
                 return Ok(healthStatusDto);
             }
         }
-
     }
 }
 

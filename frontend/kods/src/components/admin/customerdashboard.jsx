@@ -53,7 +53,7 @@ export default function Customerdashboard() {
         </TableRow>
       </TableHead>
       <TableBody>
-        {customers.map((customers) => (
+        {customers?.map((customers) => (
           <TableRow
             key={customers.customerId}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
