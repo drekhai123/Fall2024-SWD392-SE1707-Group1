@@ -60,7 +60,7 @@ export default function AddFish() {
  const fetchFishes = async () => {
     try {
         const user = JSON.parse(localStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
-        const customerId = user?.accountId; // Lấy accountId
+        const customerId = user?.customer?.customerId; // Lấy accountId
         const response = await getFishProfilebyCustomerid(customerId);
         setFishes(response);
     } catch (error) {
@@ -71,7 +71,7 @@ export default function AddFish() {
   const handleAddFish = async (e) => {
     e.preventDefault();
     const user = JSON.parse(localStorage.getItem('user'));
-    const customerId = user?.accountId;
+    const customerId = user?.customer?.customerId; // Sử dụng đúng đường dẫn để lấy customerId
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
 
     const newFish = {
@@ -82,6 +82,8 @@ export default function AddFish() {
       koiFishId: koiFishId,
       customerId: customerId
     };
+
+    console.log('Adding new fish:', newFish);
 
     try {
       const addedFish = await addFishProfile(newFish);
@@ -182,7 +184,7 @@ export default function AddFish() {
     setWeight('');
     setGender('');
     setNotes('');
-    setImage('string');
+    setImage('');
     setSelectedFishType('');
     setSelectedFish(null); // Ensure no fish is selected
     setIsFormOpen(true); // Open the form
