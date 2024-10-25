@@ -120,5 +120,31 @@ namespace KDOS_Web_API.Controllers
             return Ok(updatedOrderDto);
         }
 
+        [HttpDelete]
+        [Route("{orderId}")]
+        public async Task<IActionResult> DeleteOrder([FromRoute] int orderId)
+        {
+            var orderModel = await orderRepository.DeleteOrder(orderId);
+            if (orderModel == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<OrdersDTO>(orderModel);
+            return Ok(orderDto);
+        }
+
+        [HttpGet]
+        [Route("date")]
+        public async Task<IActionResult> GetOrderByDate([FromQuery] DateTime date)
+        {
+            var ordersList = await orderRepository.GetOrderByDate(date);
+            if (ordersList == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            return Ok(orderDto);
+        }   
+
     }
 }

@@ -67,19 +67,43 @@ namespace KDOS_Web_API.Repositories
 
         
 
-        public Task<Orders?> DeleteOrder(int id)
+        public async Task<Orders?> DeleteOrder(int id)
         {
-            throw new NotImplementedException();
+            // Find the existing order by ID
+            var orderToDelete = await orderContext.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+
+            // If the order doesn't exist, return null
+            if (orderToDelete == null)
+            {
+                return null;
+            }
+
+            // Remove the order from the context and save changes
+            orderContext.Orders.Remove(orderToDelete);
+            await orderContext.SaveChangesAsync();
+
+            // Return the deleted order
+            return orderToDelete;
         }
 
-        public Task<List<Orders?>> GetOrderByDate(DateTime date)
+        public async Task<List<Orders?>> GetOrderByDate(DateTime date)
         {
-            throw new NotImplementedException();
+            // Find all orders created on the specified date
+            var orders = await orderContext.Orders
+                .Where(o => o.CreatedAt.Date == date.Date)
+                .ToListAsync();
+
+            return orders;
         }
 
-        public Task<List<Orders>> GetOrderByCustomerId(int id)
+        public async Task<List<Orders>> GetOrderByCustomerId(int id)
         {
-            throw new NotImplementedException();
+            // Find all orders associated with the specified customer ID
+            var orders = await orderContext.Orders
+                .Where(o => o.CustomerId == id)
+                .ToListAsync();
+
+            return orders ?? new List<Orders>();// Return an empty list if no orders are found
         }
     }
 }
