@@ -18,7 +18,7 @@ export default function Navbar() {
           <ul className="nav-list">
             <li className="nav-item">HOME</li>
             <li className="nav-item">ABOUT</li>
-            <li className="nav-item"><Link to={"/orderform"}>Make An Order</Link></li>
+            <li className="nav-item"><Link to={"/orderform"}>ODERS</Link></li>
             <li className="nav-item">
               <Link to="/feedback">FEEDBACK</Link>
             </li>
