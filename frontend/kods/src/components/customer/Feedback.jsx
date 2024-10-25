@@ -70,6 +70,7 @@ const Feedback = ({ setFeedbacks }) => {
     };
 
     return (
+    <div className="feedback-background">
         <div className="feedback-container">
             <button onClick={handleGoBack} className="go-back-button-feedback">
             ⭠ Previous Page 
@@ -109,6 +110,8 @@ const Feedback = ({ setFeedbacks }) => {
             </form>
             {submitted && <p style={{ color: 'green' }}>Thank you for your feedback!</p>}
         </div>
+        </div> 
+    
     );
 };
 
