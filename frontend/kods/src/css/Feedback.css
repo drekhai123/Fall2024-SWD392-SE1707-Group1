@@ -127,3 +127,14 @@
     color: white;
     border-color: #007bff;
 }
+
+.go-back-button-feedback {
+    background-color: transparent; /* No background color */
+    border: none; /* Remove border */
+    color: #000; /* Set text color */
+    font-size: 16px; /* Adjust font size */
+    cursor: pointer; /* Pointer cursor */
+    padding: 10px 20px; /* Padding for the button */
+    font-weight: bold; /* Make the text bold */
+  }
+  
