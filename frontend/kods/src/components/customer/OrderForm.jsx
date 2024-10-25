@@ -7,7 +7,6 @@ import axios from "axios";
 import { GetAllKoiFishes } from "../api/KoiFishApi";
 
 export default function OrderForm({ onSuggestionClick, distance }) {
-  const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
   const [check, setCheck] = useState(false)
@@ -55,32 +54,32 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setFishData(updatedFishData);
   };
 
-  // const addRow = () => {
-  //   setFishOrders([
-  //     ...fishOrders,
-  //     { name: "", quantity: 1, price: 0, total: 0 },
-  //   ]);
-  // };
+  const addRow = () => {
+    setFishOrders([
+      ...fishOrders,
+      { name: "", quantity: 1, price: 0, total: 0 },
+    ]);
+  };
 
-  // const deleteRow = (index) => {
-  //   const updatedOrders = fishOrders.filter((_, i) => i !== index);
-  //   setFishOrders(updatedOrders);
-  // };
+  const deleteRow = (index) => {
+    const updatedOrders = fishOrders.filter((_, i) => i !== index);
+    setFishOrders(updatedOrders);
+  };
 
-  // const updateRow = (index, field, value) => {
-  //   const updatedOrders = fishOrders.map((order, i) =>
-  //     i === index
-  //       ? {
-  //         ...order,
-  //         [field]: value,
-  //         total:
-  //           (field === "quantity" ? value : order.quantity) *
-  //           (field === "price" ? value : order.price),
-  //       }
-  //       : order
-  //   );
-  //   setFishOrders(updatedOrders);
-  //  };
+  const updateRow = (index, field, value) => {
+    const updatedOrders = fishOrders.map((order, i) =>
+      i === index
+        ? {
+          ...order,
+          [field]: value,
+          total:
+            (field === "quantity" ? value : order.quantity) *
+            (field === "price" ? value : order.price),
+        }
+        : order
+    );
+    setFishOrders(updatedOrders);
+  };
 
   function calculateEstimatedDeliveryDays(distance) {
     if (distance === 0) {
@@ -278,71 +277,17 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     }
   };
 
-//  useEffect(() => {
-//     if (markerPositionFrom && markerPositionTo) {
-//       onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
-//     }
-//   }, [markerPositionFrom, markerPositionTo])
-
-//   useEffect(() => {
-//     setCustomerInfo({ ...customerInfo, distance: distance });
-//   }, [distance])
-
-  const [fishOrdersList, setFishList] = useState([]);
-  const [koifishList, setKoifishList] = useState([]);
-
-  // Hàm updaterow
-  const updateRow = (index, field, value) => {
-    const updatedOrders = [...fishOrdersList];
-    updatedOrders[index][field] = value;
-      if (field === "name") {
-      const selectedFish = koifishList.find(fish => fish.fishType === value);
-      if (selectedFish) {
-        updatedOrders[index].quantity = selectedFish.weight; // Cập nhật weight từ API
-        updatedOrders[index].price = selectedFish.price;     // Cập nhật price từ API
-      }
-    }
-
-    setFishList(updatedOrders);
-  };
-
-  // Hàm thêm dòng mới
-  const addRow = () => {
-    setFishList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
-  };
-
-  // Hàm xóa dòng
-  const deleteRow = (index) => {
-    const updatedOrders = fishOrdersList.filter((_, i) => i !== index);
-    setFishList(updatedOrders);
-  };
-
-  
-  //Hàm của mapping để nguyên (comment cái const ở trên của nó)
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
       onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
     }
-  }, [markerPositionFrom, markerPositionTo])  
+  }, [markerPositionFrom, markerPositionTo])
 
-  // Hàm của Distance (comment cái const ở trên của nó)
   useEffect(() => {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
-  
-  // Hàm Fetch API
-  useEffect(() => {
-    axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
-      .then(response => { 
-        setKoifishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error("Error fetching fish data:", error);
-      });
-  }, []);
-  
-  
+
+
   return (
     <div className="order-form">
       <div className="con">
