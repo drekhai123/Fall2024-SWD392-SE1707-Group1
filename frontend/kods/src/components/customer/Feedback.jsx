@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../../css/Feedback.css';
+import { useNavigate } from 'react-router-dom';
 
 const Feedback = ({ setFeedbacks }) => {
     const [rating, setRating] = useState(0);
@@ -29,6 +30,12 @@ const Feedback = ({ setFeedbacks }) => {
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
     };
+
+    
+  const navigate = useNavigate();
+  const handleGoBack = () => {
+    navigate(-1);  // Quay lại trang trước đó
+  };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -64,6 +71,9 @@ const Feedback = ({ setFeedbacks }) => {
 
     return (
         <div className="feedback-container">
+            <button onClick={handleGoBack} className="go-back-button-feedback">
+            ⭠ Previous Page 
+            </button>
             <div className="feedback-header">
                 <p>We are committed to providing you with the best dining experience possible, so we welcome your comments.</p>
             </div>
