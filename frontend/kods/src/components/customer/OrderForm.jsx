@@ -10,6 +10,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
+  const [loading, setLoading] = useState(true); // Track loading state
+  const [error, setError] = useState(false); // Track error state
   const [check, setCheck] = useState(false)
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
@@ -25,19 +27,28 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     distance: 0,
   });
 
-  const [fishData, setFishData] = useState([
-    { name: "Fish A", weight: 2, price: 10000, status: "1" },
-    { name: "Fish B", weight: 3, price: 15000, status: "1" },
-  ]);
+  const [fishData, setFishData] = useState([]);
+
 
   useEffect(() => {
     const getKoiFishList = async () => {
-      var koifishData = await GetAllKoiFishes();
-      setKoiFish(koifishData);
+      try {
+        setLoading(true);
+        const koifishData = await GetAllKoiFishes();
+        console.log("Fetched Koi Fish Data:", koifishData); // Debugging log
+        setKoiFish(koifishData);
+        if (koifishData.length === 0) {
+          console.log("No fish available."); // Debugging log
+        }
+      } catch (err) {
+        console.error("Error fetching Koi fish data:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     };
     getKoiFishList();
   }, []);
-
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
   }, [customerInfo?.distance]);
@@ -49,11 +60,11 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
 
 
-  const handleStatusChange = (index, newStatus) => {
-    const updatedFishData = [...fishData];
-    updatedFishData[index].status = newStatus;
-    setFishData(updatedFishData);
-  };
+  // const handleStatusChange = (index, newStatus) => {
+  //   const updatedFishData = [...fishData];
+  //   updatedFishData[index].status = newStatus;
+  //   setFishData(updatedFishData);
+  // };
 
   // const addRow = () => {
   //   setFishOrders([
@@ -330,7 +341,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
-  // Hàm Fetch API
+  // Hàm Fetch API để lấy những con cá của customer riêng lẻ
   useEffect(() => {
     axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
       .then(response => {
@@ -348,67 +359,78 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       <div className="con">
         <div className="content">
           <h2 className="title">Order Form</h2>
-          <table className="fixed-table">
-            <thead>
-              <tr>
-                <th className="label-table">Index</th>
-                <th className="label-table">Name</th>
-                <th className="label-table">Weight (kg)</th>
-                <th className="label-table">Price (VND/Kg)</th>
-                {/* <th className="label-table">Health Status</th> */}
-                <th className="label-table">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fishOrders.map((order, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <select
-                      value={order.name}
-                      onChange={(e) => updateRow(index, "name", e.target.value)}
-                      className="custom-dropdown"
-                    >
-                      <option value="">Choose fish type</option>
-                      {koifish.map((koifish) => (
-                        <option
-                          key={koifish.koiFishId}
-                          value={koifish.fishType}
-                        >
-                          {koifish.fishType}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={order.quantity === 1 ? "" : order.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                      min=""
-                      onChange={(e) =>
-                        updateRow(
-                          index,
-                          "quantity",
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                      className="custom-dropdown"
-                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      value={order.price === 0 ? "" : order.price} // Nếu giá trị là 0, thì để trống
-                      onChange={(e) =>
-                        updateRow(index, "price", parseInt(e.target.value) || 0)
-                      }
-                      className="custom-dropdown"
-                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                    />
-                  </td>
-                  {/* <td>
+
+
+          {loading ? ( // Show loading message
+            <p>Loading fish data...</p>
+          ) : error ? ( // Show error message
+            <p>There was an error fetching the fish data. Please try again later.</p>
+          ) : fishData.length === 0 ? ( // Show no fish message
+            <p>There is no fish, you need to add more.</p>
+          ) : (
+
+
+            <table className="fixed-table">
+              <thead>
+                <tr>
+                  <th className="label-table">Index</th>
+                  <th className="label-table">Name</th>
+                  <th className="label-table">Weight (kg)</th>
+                  <th className="label-table">Price (VND/Kg)</th>
+                  {/* <th className="label-table">Health Status</th> */}
+                  <th className="label-table">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fishOrders.map((order, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <select
+                        value={order.name}
+                        onChange={(e) => updateRow(index, "name", e.target.value)}
+                        className="custom-dropdown"
+                      >
+                        <option value="">Choose fish type</option>
+                        {koifish.map((koifish) => (
+                          <option
+                            key={koifish.koiFishId}
+                            value={koifish.fishType}
+                          >
+                            {koifish.fishType}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={order.quantity === 1 ? "" : order.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
+                        min=""
+                        onChange={(e) =>
+                          updateRow(
+                            index,
+                            "quantity",
+                            parseInt(e.target.value) || 0
+                          )
+                        }
+                        className="custom-dropdown"
+                        disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min="0"
+                        value={order.price === 0 ? "" : order.price} // Nếu giá trị là 0, thì để trống
+                        onChange={(e) =>
+                          updateRow(index, "price", parseInt(e.target.value) || 0)
+                        }
+                        className="custom-dropdown"
+                        disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                      />
+                    </td>
+                    {/* <td>
                     <select
                       className="custom-dropdown"
                       value={fishData[index]?.status}
@@ -420,18 +442,19 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                       <option value="2">Healthy Check</option>
                     </select>
                   </td> */}
-                  <td>
-                    <button
-                      onClick={() => deleteRow(index)}
-                      className="delete-button"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <td>
+                      <button
+                        onClick={() => deleteRow(index)}
+                        className="delete-button"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           <button onClick={addRow} className="add-button">
             Add Fish
           </button>
@@ -539,7 +562,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 <input
                   className="input-customer"
                   type="number"
-                  disabled={distance}
+                  disabled
                   value={customerInfo?.distance}
                   placeholder="Distance (km)"
                   min="0"

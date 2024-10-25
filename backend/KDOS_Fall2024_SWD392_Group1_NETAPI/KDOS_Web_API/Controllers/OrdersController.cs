@@ -72,5 +72,54 @@ namespace KDOS_Web_API.Controllers
             return Ok(orderDto);
         }
 
+        [HttpGet]
+        [Route("customer/{customerId}")]
+        public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId)
+        {
+            var ordersList = await orderRepository.GetOrdersByCustomerId(customerId);
+            if (ordersList == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            return Ok(orderDto);
+        }
+
+        [HttpPut]
+        [Route("{orderId}")]
+        public async Task<IActionResult> UpdateOrder([FromRoute] int orderId, [FromBody] AddNewOrderDTO addNewOrderDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var orderModel = await orderRepository.GetOrderById(orderId);
+            if (orderModel == null)
+            {
+                return NotFound();
+            }
+
+            // Update the order model with the new data
+            orderModel = mapper.Map(addNewOrderDTO, orderModel);
+            orderModel.UpdatedAt = DateTime.Now;
+
+            try
+            {
+                orderModel = await orderRepository.UpdateOrder(orderId, orderModel);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "Internal server error" + ex);
+            }
+
+            // Map the updated order back to a DTO for the response
+            var updatedOrderDto = mapper.Map<AddNewOrderDTO>(orderModel);
+
+            // Return the updated order with a 200 OK status
+            return Ok(updatedOrderDto);
+        }
+
     }
 }
