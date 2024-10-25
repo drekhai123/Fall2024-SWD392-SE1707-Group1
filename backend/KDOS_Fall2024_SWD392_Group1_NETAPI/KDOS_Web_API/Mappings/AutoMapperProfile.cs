@@ -3,11 +3,16 @@ using AutoMapper;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Models.DTOs.AccountDTO;
+using KDOS_Web_API.Models.DTOs.CustomerDTO;
+using KDOS_Web_API.Models.DTOs.CustomerDTO.CustomerDTO;
+using KDOS_Web_API.Models.DTOs.CustomerDTO.CustomerDTO.CustomerDTO;
+using KDOS_Web_API.Models.DTOs.DeliveryStaffDTO;
 
 namespace KDOS_Web_API.Mappings
 {
-	// Profile is part of the Automapper
-	public class AutoMapperProfile:Profile
+    // Profile is part of the Automapper
+    public class AutoMapperProfile:Profile
 	{
 		public AutoMapperProfile()
 		{

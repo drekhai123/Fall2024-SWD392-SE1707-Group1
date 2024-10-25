@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Models\DTOs\FeedbackDTO\" />
     <Folder Include="Repositories\" />
     <Folder Include="Mappings\" />
     <Folder Include="Services\" />

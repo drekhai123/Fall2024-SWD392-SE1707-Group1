@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KDOS_Web_API.Models.DTOs
 {
-	public class FeedbackDTO
+    public class FeedbackDTO
 	{
         [Key]
         public int FeedbackId { get; set; } // PK

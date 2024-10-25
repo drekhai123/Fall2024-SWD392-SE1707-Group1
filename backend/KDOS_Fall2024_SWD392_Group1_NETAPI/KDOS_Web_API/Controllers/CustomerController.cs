@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using KDOS_Web_API.Models.Domains;
-using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Models.DTOs.CustomerDTO;
+using KDOS_Web_API.Models.DTOs.CustomerDTO.CustomerDTO;
+using KDOS_Web_API.Models.DTOs.CustomerDTO.CustomerDTO.CustomerDTO;
 using KDOS_Web_API.Repositories;
 using KDOS_Web_API.Services.MailingService;
 using Microsoft.AspNetCore.Mvc;

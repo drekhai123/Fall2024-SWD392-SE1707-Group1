@@ -1,10 +1,11 @@
 ﻿using System;
 using KDOS_Web_API.Models.Domains;
 using System.ComponentModel.DataAnnotations;
+using KDOS_Web_API.Models.DTOs.CustomerDTO.CustomerDTO;
 
 namespace KDOS_Web_API.Models.DTOs
 {
-	public class CustomerAccountDTO
+    public class CustomerAccountDTO
 	{
         [Key]
         public int CustomerId { get; set; } // PK

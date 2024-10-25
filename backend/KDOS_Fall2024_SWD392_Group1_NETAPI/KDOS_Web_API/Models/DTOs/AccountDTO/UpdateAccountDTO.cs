@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace KDOS_Web_API.Models.DTOs
+namespace KDOS_Web_API.Models.DTOs.AccountDTO
 {
-	public class UpdateAccountDTO
-	{
+    public class UpdateAccountDTO
+    {
         required public bool Banned { get; set; }
         [MaxLength(100, ErrorMessage = "Email Address is too long")]
         [MinLength(5, ErrorMessage = "Email Address is too short")]

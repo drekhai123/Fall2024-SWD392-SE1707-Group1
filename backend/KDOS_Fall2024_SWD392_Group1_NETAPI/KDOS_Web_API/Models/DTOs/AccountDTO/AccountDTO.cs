@@ -2,10 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using KDOS_Web_API.Models.Domains;
 
-namespace KDOS_Web_API.Models.DTOs
+namespace KDOS_Web_API.Models.DTOs.AccountDTO
 {
-	public class AccountDTO
-	{
+    public class AccountDTO
+    {
         [Key]
         public int AccountId { get; set; }
         required public bool Banned { get; set; }
