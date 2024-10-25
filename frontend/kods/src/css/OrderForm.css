@@ -8,6 +8,7 @@
   background-size: cover ;
   object-fit: cover;
   background: url("../../public/images/koifish.png"); 
+ 
   
   display: flex;
   flex-direction: column;
@@ -141,7 +142,7 @@
   }
 
   .add-button {
-    background-color: rgb(75, 75, 205);
+    background-color:  #1175c7;
     cursor: pointer;
     padding: 8px 12px;
     outline: none;
@@ -347,3 +348,21 @@
   margin: 0 auto;
   font-size: 20px;
 }
+
+.go-back-button {
+  background-color: #4CAF50; 
+  color: #000; 
+  border: none; 
+  border-bottom-right-radius: 5px;
+  padding: 10px 20px; 
+  font-size: 14px; 
+  cursor: pointer; 
+  transition: background-color 0.2s; 
+  font-weight: bold;
+  
+}
+
+.go-back-button:hover {
+  background-color: #45a049; 
+}
+
