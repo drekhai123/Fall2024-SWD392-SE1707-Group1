@@ -23,7 +23,7 @@
     text-align: center;
     border-radius: 5px;
     margin-bottom: 20px;
-    color: #6d4c41; /* Màu chữ ấm */
+    color: #6d4c41; 
     font-size: 18px;
     font-weight: bold;
 }
@@ -41,7 +41,7 @@
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
-    color: #6d4c41; /* Màu chữ nâu ấm */
+    color: #6d4c41; 
 }
 
 .form-group input,
@@ -49,15 +49,15 @@
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
-    border: 1px solid #d7ccc8; /* Viền nhẹ nhàng */
+    border: 1px solid #d7ccc8; 
     border-radius: 4px;
-    background-color: #fff3e0; /* Màu nền nhẹ nhàng cho input */
+    background-color: #fff3e0; 
     transition: border-color 0.3s;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-    border-color: #ffcc80; /* Tạo hiệu ứng khi focus */
+    border-color: #ffcc80; 
 }
 
 .rating-stars {
@@ -70,11 +70,11 @@
 .star {
     cursor: pointer;
     font-size: 40px;
-    color: #ffb74d; /* Màu vàng nhạt cho sao đánh giá */
+    color: #ffb74d; 
 }
 
 .submit-button {
-    background-color: #f97d02; /* Nút submit màu cam ấm */
+    background-color: #f97d02; 
     color: white;
     padding: 10px;
     border: none;
@@ -85,7 +85,7 @@
 }
 
 .submit-button:hover {
-    background-color: #e64a19; /* Hiệu ứng hover màu cam đậm */
+    background-color: #e64a19; 
 }
 
 .feedback-list-container {
@@ -158,12 +158,12 @@
 
 
 .go-back-button-feedback {
-    background-color: transparent; /* No background color */
-    border: none; /* Remove border */
-    color: #000; /* Set text color */
-    font-size: 16px; /* Adjust font size */
-    cursor: pointer; /* Pointer cursor */
-    padding: 10px 20px; /* Padding for the button */
-    font-weight: bold; /* Make the text bold */
+    background-color: transparent; 
+    border: none; 
+    color: #000; 
+    font-size: 16px; 
+    cursor: pointer; 
+    padding: 10px 20px; 
+    font-weight: bold; 
   }
   
