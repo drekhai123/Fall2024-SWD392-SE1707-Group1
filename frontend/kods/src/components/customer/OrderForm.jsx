@@ -5,6 +5,7 @@ import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
 import { GetAllKoiFishes } from "../api/KoiFishApi";
+import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm({ onSuggestionClick, distance }) {
   const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
@@ -297,6 +298,13 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   //   useEffect(() => {
   //     setCustomerInfo({ ...customerInfo, distance: distance });
   //   }, [distance])
+  
+  //Hàm button callbacks
+  const Link = useNavigate();  // Khởi tạo useNavigate
+  const navigate = useNavigate();
+  const handleGoBack = () => {
+    navigate(-1);  // Quay lại trang trước đó
+  };
 
   const [fishOrdersList, setFishList] = useState([]);
   const [koifishList, setKoifishList] = useState([]);
@@ -355,12 +363,16 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
 
   return (
+    
     <div className="order-form">
-      <div className="con">
+     <div className="con">
+      <button onClick={handleGoBack} className="go-back-button">
+              Previous Page 
+            </button>
+
         <div className="content">
           <h2 className="title">Order Form</h2>
-
-
+          
           {loading ? ( // Show loading message
             <p>Loading fish data...</p>
           ) : error ? ( // Show error message
@@ -369,7 +381,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <p>There is no fish, you need to add more.</p>
           ) : (
 
-
+            
             <table className="fixed-table">
               <thead>
                 <tr>
