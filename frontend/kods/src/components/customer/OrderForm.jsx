@@ -300,7 +300,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   //   }, [distance])
   
   //Hàm button callbacks
-  const Link = useNavigate();  // Khởi tạo useNavigate
+  
   const navigate = useNavigate();
   const handleGoBack = () => {
     navigate(-1);  // Quay lại trang trước đó
@@ -367,7 +367,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     <div className="order-form">
      <div className="con">
       <button onClick={handleGoBack} className="go-back-button">
-              Previous Page 
+             ⭠ Previous Page 
             </button>
 
         <div className="content">
