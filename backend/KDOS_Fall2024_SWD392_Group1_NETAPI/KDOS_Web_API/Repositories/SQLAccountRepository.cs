@@ -90,6 +90,42 @@ namespace KDOS_Web_API.Repositories
                 return account;
             }
         }
+
+        public async Task<Account?> VerificationAccount(Account account, Verification verification)
+        {
+            var verificationModel = await accountContext.Verification.FirstOrDefaultAsync(x=>x.AccountId== account.AccountId);
+            if (verificationModel==null||verificationModel.ExpiredDate < verification.ExpiredDate)
+            {
+                return null;
+            }
+            accountContext.Verification.Remove(verification);
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == account.AccountId);
+            // Account is guarantee in DB
+            accountExist!.Verified = account.Verified; 
+            await accountContext.SaveChangesAsync();
+            return accountExist;
+        }
+
+        public async Task<Account?> VerificationMailing(Account account, Verification verification)
+        {
+            // Add a new verification
+            await accountContext.Verification.AddAsync(verification);
+            await accountContext.SaveChangesAsync();
+            return account;
+        }
+
+        public async Task<Verification?> FindVerificationWithAccountId(int id)
+        {
+            var verificationExist = await accountContext.Verification.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (verificationExist == null)
+            {
+                return null;
+            }
+            else
+            {
+                return verificationExist;
+            }
+        }
     }
 }
 

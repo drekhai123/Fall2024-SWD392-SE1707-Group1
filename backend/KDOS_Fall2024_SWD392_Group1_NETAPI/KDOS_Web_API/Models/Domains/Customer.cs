@@ -1,7 +1,3 @@
-using KDOS_Web_API.Models.Domains;
-using Microsoft.VisualStudio.Web.CodeGeneration.Utils;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace KDOS_Web_API.Models.Domains

@@ -27,7 +27,7 @@ builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>
 builder.Services.AddScoped<IKoiFishRepository, SQLKoiFishRepository>();
 builder.Services.AddScoped<IFishProfileRepository, SQLFishProfileRepository>();
 builder.Services.AddScoped<IFeedBackRepository, SQLFeedBackRepository>();
-//Inject Mailign service
+//Inject Mailing service
 builder.Services.AddScoped<IMailingService, MailingService>();
 //End Respository
 //AutoMapper Service Inject

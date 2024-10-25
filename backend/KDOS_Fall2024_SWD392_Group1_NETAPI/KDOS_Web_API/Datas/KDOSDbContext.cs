@@ -11,6 +11,7 @@ namespace KDOS_Web_API.Datas
         public DbSet<HealthStatus> HealthStatus { get; set; }
         public DbSet<KoiFish> KoiFish { get; set; }
         public DbSet<Account> Account { get; set; }
+        public DbSet<Verification> Verification { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<Orders> Orders { get; set; }
@@ -19,6 +20,11 @@ namespace KDOS_Web_API.Datas
         public DbSet<Feedback> Feedback { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Verification>()
+               .HasOne(c => c.Account)           // A Verification has one Account
+               .WithOne(v => v.Verification)         // An Account has ONLY one Verification at a time
+               .HasForeignKey<Verification>(v => v.AccountId)  // Verification holds the foreign key
+               .OnDelete(DeleteBehavior.Cascade);  //
             // Configuring one-to-one relationship between Customer and Account
             modelBuilder.Entity<Customer>()
                 .HasOne(c => c.Account)           // A Customer has one Account
