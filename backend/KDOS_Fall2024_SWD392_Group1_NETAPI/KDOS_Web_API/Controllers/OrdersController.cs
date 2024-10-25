@@ -23,7 +23,6 @@ namespace KDOS_Web_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            // This method get data DIRECTLY from database -> not best practice
             var ordersList = await orderRepository.GetAllOrders();
             // Auto mapper
             var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
@@ -120,6 +119,32 @@ namespace KDOS_Web_API.Controllers
             // Return the updated order with a 200 OK status
             return Ok(updatedOrderDto);
         }
+
+        [HttpDelete]
+        [Route("{orderId}")]
+        public async Task<IActionResult> DeleteOrder([FromRoute] int orderId)
+        {
+            var orderModel = await orderRepository.DeleteOrder(orderId);
+            if (orderModel == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<OrdersDTO>(orderModel);
+            return Ok(orderDto);
+        }
+
+        [HttpGet]
+        [Route("date")]
+        public async Task<IActionResult> GetOrderByDate([FromQuery] DateTime date)
+        {
+            var ordersList = await orderRepository.GetOrderByDate(date);
+            if (ordersList == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            return Ok(orderDto);
+        }   
 
     }
 }
