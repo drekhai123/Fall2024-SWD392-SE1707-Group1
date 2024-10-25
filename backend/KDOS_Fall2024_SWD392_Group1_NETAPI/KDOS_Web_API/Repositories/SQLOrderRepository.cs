@@ -28,9 +28,9 @@ namespace KDOS_Web_API.Repositories
             return orderList;
         }
 
-        public Task<Orders?> GetOrderById(int id)
+        public async Task<Orders?> GetOrderById(int id)
         {
-            var order = orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);  
+            var order = await orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);  
             if(order == null)
             {
                 return null;
@@ -38,15 +38,33 @@ namespace KDOS_Web_API.Repositories
             return order;
         }
 
-        public Task<Orders?> UpdateOrder(int id, Orders order)
+        public async Task<Orders?> UpdateOrder(int id, Orders order)
         {
-            var orderModel = orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
+            var orderModel = await orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
             if (orderModel == null)
             {
                 return null;
             }
+            orderModel.SenderName = order.SenderName;
+            orderModel.SenderAddress = order.SenderAddress;
+            orderModel.SenderPhoneNumber = order.SenderPhoneNumber;
+            orderModel.RecipientName = order.RecipientName;
+            orderModel.RecipientAddress = order.RecipientAddress;
+            orderModel.RecipientPhoneNumber = order.RecipientPhoneNumber;
+            orderModel.DeliveryStatus = order.DeliveryStatus;
+            orderModel.PaymentStatus = order.PaymentStatus;
+            orderModel.TransportId = order.TransportId;
+            orderModel.Quantity = order.Quantity;
+            orderModel.TotalWeight = order.TotalWeight;
+            orderModel.TotalCost = order.TotalCost;
+            orderModel.UpdatedAt = DateTime.Now;
+            await orderContext.SaveChangesAsync();
+
+
             return orderModel;
         }
+
+
         
 
         public Task<Orders?> DeleteOrder(int id)
