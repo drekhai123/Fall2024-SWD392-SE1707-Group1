@@ -47,6 +47,7 @@ namespace KDOS_Web_API.Repositories
             }
             return orderModel;
         }
+        
 
         public Task<Orders?> DeleteOrder(int id)
         {
@@ -58,5 +59,9 @@ namespace KDOS_Web_API.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<List<Orders>> GetOrderByCustomerId(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

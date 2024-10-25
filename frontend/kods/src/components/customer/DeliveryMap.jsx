@@ -16,7 +16,7 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
   const [error, setError] = useState(null);
   const mapRef = useRef();
 
-  // Custom icon for marker
+
   const customIcon = new L.Icon({
     iconUrl: markerIcon,
     shadowUrl: markerShadow,
@@ -26,7 +26,7 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
     shadowSize: [41, 41],
   });
 
-  // Geolocation API to get user's position
+  // Geolocation API 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -34,10 +34,10 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
           const { latitude, longitude } = pos.coords;
           setUserPosition([latitude, longitude]);
 
-          // Điều chỉnh tâm bản đồ đến vị trí của người dùng
+          
           if (mapRef.current) {
             const map = mapRef.current;
-            map.flyTo([latitude, longitude], 16);  // zoom vào vị trí người dùng
+            map.flyTo([latitude, longitude], 16);  
           }
         },
         (err) => {
@@ -49,7 +49,7 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
     }
   }, []);
 
-  // Routing control to calculate distance
+  // Hàm tính toán distances
   useEffect(() => {
     if (mapRef.current) {
       const routingControl = L.Routing.control({
@@ -87,7 +87,7 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
   return (
     <div style={{ position: "relative" }}>
       <MapContainer
-        center={defaultPosition} // Ban đầu đặt defaultPosition
+        center={defaultPosition} // Ban đầu đặt defaultPosition để nếu người dùng không allow vị trí thì vẫn chạy bth
         zoom={16}
         style={{
           height: "100vh",
@@ -97,7 +97,7 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
       >
         <TileLayer url={mapURL} />
 
-        {/* Marker for user's current position */}
+        {/* Lấy vị trí ban đầu */}
         <Marker
           position={userPosition}
           icon={customIcon}
@@ -110,12 +110,12 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
         >
           {/* Popup sẽ mở ngay khi marker được thêm */}
         </Marker>
-        {/* Marker for form suggestion */}
+        {/* Chiều đi */}
         <Marker position={suggestion?.form || userPosition} icon={customIcon} zIndexOffset={1000}>
           {/* <Popup>Chiều đi: {fromAddress}</Popup> */}
         </Marker>
 
-        {/* Marker for to suggestion */}
+        {/* Chiều về */}
         <Marker position={suggestion?.to || userPosition} icon={customIcon} zIndexOffset={1000}>
           {/* <Popup>Chiều về: {toAddress}</Popup> */}
         </Marker>
