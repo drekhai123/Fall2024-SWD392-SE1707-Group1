@@ -82,6 +82,8 @@ namespace KDOS_Web_API.Repositories
             {
                 return null;
             }
+            profileModel.Name = fishProfile.Name;
+            profileModel.Image = fishProfile.Image;
             profileModel.Gender = fishProfile.Gender;
             profileModel.Weight = fishProfile.Weight;
             profileModel.Notes = fishProfile.Notes;

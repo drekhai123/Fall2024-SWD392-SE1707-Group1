@@ -85,7 +85,7 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
   }, [suggestion]);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative",zIndex:"0" }}>
       <MapContainer
         center={defaultPosition} // Ban đầu đặt defaultPosition để nếu người dùng không allow vị trí thì vẫn chạy bth
         zoom={16}
