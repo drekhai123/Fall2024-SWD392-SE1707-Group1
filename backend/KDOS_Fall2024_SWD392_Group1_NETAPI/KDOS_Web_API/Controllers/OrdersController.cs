@@ -159,5 +159,34 @@ namespace KDOS_Web_API.Controllers
             return Ok(orderDto);
         }
 
+        [HttpPut]
+        [Route("{orderId}/status")]
+        public async Task<IActionResult> UpdateOrderStatus([FromRoute] int orderId, [FromBody] UpdateOnlyOrderStatusDTO orderStatus)
+        {
+            // Validate the model state
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Retrieve the order by ID
+            
+                // Update the order status
+               var orderModel = mapper.Map<Orders>(orderStatus);   
+               orderModel = await orderRepository.UpdateOnlyOrderStatus(orderId, orderModel);
+
+                // If the orderModel is still null after the update, something went wrong
+                if (orderModel == null)
+                {
+                    return NotFound();
+                }
+
+            // Map the updated order back to a DTO for the response
+            var updatedOrderDto = mapper.Map<UpdateOnlyOrderStatusDTO>(orderModel);
+
+            // Return the updated order with a 200 OK status
+            return Ok(updatedOrderDto);
+        }
+
     }
 }
