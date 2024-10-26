@@ -21,6 +21,7 @@ namespace KDOS_Web_API.Models.Domains
         // Link between Account and Staff
         [Required]
         public Account? Account { get; set; }
+        public ICollection<Transport>? Transports { get; set; }
 
     }
 }
