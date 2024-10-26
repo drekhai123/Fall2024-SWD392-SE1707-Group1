@@ -20,6 +20,7 @@ const menuItems = [
 const UserProfilePage = () => {
   const location = useLocation(); // Lấy current path
   const currentPath = location.pathname;
+
   const [userData, setUserData] = useState(null); // Dữ liệu tài khoản
   const [customerData, setCustomerData] = useState(null); // Dữ liệu khách hàng
   // const userId = 4; // Lấy ID của tài khoản
@@ -34,14 +35,14 @@ const UserProfilePage = () => {
       try {
         const response = await GetAccountById(userId);
         setUserData(response.data);
-        setCustomerData(userData.customer) // Account include the data from Customer table
+        setCustomerData(response.data.customer); // Use response.data directly
         methodsProfile.reset(response.data);
       } catch (error) {
         console.error("Error fetching user data: ", error);
       }
     };
     fetchUserData();
-  }, [user]);
+  }, [userId]); // Update dependency to userId
 
   const onSubmitProfile = async (data) => {
     try {
