@@ -256,8 +256,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
               )}&countrycodes=VN&format=json`
             );
             // có chỗ country codes này thì lên wikipedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
-
-
             if (field === "addressSender") {
               setFromSuggestions(response.data);
             } else if (field === "addressCustomer") {
@@ -349,6 +347,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   useEffect(() => {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
+
+  // Hàm Fetch API để lấy những con cá của customer riêng lẻ
+  useEffect(() => {
+    axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
+      .then(response => {
+        setKoifishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching fish data:", error);
+      });
+  }, []);
 
 
   return (
