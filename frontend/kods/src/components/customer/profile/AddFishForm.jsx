@@ -22,6 +22,9 @@ import {
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
 import { GetAllKoiFishes } from '../../api/KoiFishApi';
 import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile } from '../../api/FishProfileApi';
+import { storage } from '../../../config/ConfigFirebase';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Import necessary functions
+
 
 export default function AddFish() {
   const [fishes, setFishes] = useState([]);
@@ -30,11 +33,14 @@ export default function AddFish() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
+  const [url, setUrl] = useState('');
+  const [progress, setProgres] = useState(0);
+
+  // const [storage, setStorage] = useState('');
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [weight, setWeight] = useState(''); // New state for weight
   const [gender, setGender] = useState(''); // Initialize as empty string
   const [notes, setNotes] = useState('');   // Initialize as empty string
-
 
   const [koifish, setKoiFish] = useState([]);  // New state for species
   // const [description, setDescription] = useState(''); // New state for description
@@ -63,6 +69,7 @@ export default function AddFish() {
         const customerId = user?.customer?.customerId; // Lấy accountId
         const response = await getFishProfilebyCustomerid(customerId);
         setFishes(response);
+        console.log(fishes)
     } catch (error) {
         console.error('Error fetching fishes:', error);
     }
@@ -72,34 +79,35 @@ export default function AddFish() {
   const handleAddFish = async (e) => {
     e.preventDefault();
     const user = JSON.parse(localStorage.getItem('user'));
-    const customerId = user?.customer?.customerId; // Sử dụng đúng đường dẫn để lấy customerId
+    const customerId = user?.customer?.customerId;
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
 
     const newFish = {
-      weight: parseFloat(weight),
-      gender: gender,
-      notes: notes,
-      image: "image",
-      koiFishId: koiFishId,
-      customerId: customerId
+        name: name,
+        weight: parseFloat(weight),
+        gender: gender,
+        notes: notes,
+        image: image, // Use the image URL from state
+        koiFishId: koiFishId,
+        customerId: customerId
     };
 
     console.log('Adding new fish:', newFish);
 
     try {
-      const addedFish = await addFishProfile(newFish);
-      localStorage.setItem(`fish_${addedFish.fishProfileId}`, JSON.stringify(newFish));
-      setIsFormOpen(false);
-      fetchFishes(); // Refresh fish list
+        const addedFish = await addFishProfile(newFish);
+        localStorage.setItem(`fish_${addedFish.fishProfileId}`, JSON.stringify(newFish));
+        setIsFormOpen(false);
+        fetchFishes(); // Refresh fish list
     } catch (error) {
-      console.error('Error adding fish:', error);
+        console.error('Error adding fish:', error);
     }
   };
 
   const handleEditFish = (fish) => {
     setSelectedFish(fish);
     setName(fish.name);
-    setImage(fish.image);
+    setImage(fish.image );
     setWeight(fish.weight);
     setGender(fish.gender);
     setNotes(fish.notes);
@@ -119,21 +127,22 @@ export default function AddFish() {
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
 
     const updatedFish = {
-      weight: parseFloat(weight),
-      gender: gender,
-      notes: notes,
-      image: "image",
-      koiFishId: koiFishId,
-      customerId: customerId
+        name: name,
+        weight: parseFloat(weight),
+        gender: gender,
+        notes: notes,
+        image: image, // Use the image URL from state
+        koiFishId: koiFishId,
+        customerId: customerId
     };
 
     try {
-      await updateFishProfile(selectedFish.fishProfileId, updatedFish);
-      localStorage.setItem(`fish_${selectedFish.id}`, JSON.stringify({ ...selectedFish, ...updatedFish }));
-      setIsFormOpen(false);
-      fetchFishes(); // Refresh fish list
+        await updateFishProfile(selectedFish.fishProfileId, updatedFish);
+        localStorage.setItem(`fish_${selectedFish.id}`, JSON.stringify({ ...selectedFish, ...updatedFish }));
+        setIsFormOpen(false);
+        fetchFishes(); // Refresh fish list
     } catch (error) {
-      console.error('Error updating fish:', error);
+        console.error('Error updating fish:', error);
     }
   };
 
@@ -154,15 +163,32 @@ export default function AddFish() {
     }
   };
 
+
   const handleImageUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            console.log('Image data:', reader.result); // Log the image data
-            setImage(reader.result); // Update state with the image data
-        };
-        reader.readAsDataURL(file); // Read the file as a data URL
+    if (e.target.files[0]) {
+      const selectedImage = e.target.files[0];
+      const storageRef = ref(storage, `images/${selectedImage.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgres(progress); // Update progress state
+        },
+        (error) => {
+          console.error("Error uploading image:", error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            setImage(downloadURL); // Set the image URL to state
+            setUrl(downloadURL);   // Set the URL state with the download URL
+          });
+        }
+      );
     }
   };
 
@@ -190,6 +216,21 @@ export default function AddFish() {
     setSelectedFish(null); // Ensure no fish is selected
     setIsFormOpen(true); // Open the form
   };
+
+  const fetchImageFromFirebase = async (imageName) => {
+    try {
+      const storageRef = ref(storage, `images/${imageName}`);
+      const url = await getDownloadURL(storageRef);
+      setImage(url); // Set the image URL to state
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Call this function with the specific image name you want to fetch
+    fetchImageFromFirebase('your-image-name.jpg');
+  }, []);
 
   return (
     <div>
