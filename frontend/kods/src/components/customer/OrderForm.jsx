@@ -380,8 +380,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <p>There is no fish, you need to add more.</p>
           ) : (
 
-            
             <table className="fixed-table">
+           
               <thead>
                 <tr>
                   <th className="label-table">Index</th>
@@ -390,9 +390,24 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   <th className="label-table">Price (VND/Kg)</th>
                   {/* <th className="label-table">Health Status</th> */}
                   <th className="label-table">Action</th>
+                            
                 </tr>
+                
               </thead>
               <tbody>
+              <tr>
+    <td colSpan="5" className="Fish-container">
+      {loading ? ( // Hiển thị thông báo đang tải
+        <p className="Fish-status.loading">Loading fish data...</p>
+      ) : error ? ( // Hiển thị thông báo lỗi
+        <p className="Fish-status.error">There was an error fetching the fish data. Please try again later.</p>
+      ) : fishData.length === 0 ? ( // Hiển thị thông báo không có cá
+        <p className="Fish-status.empty">There is no fish, you need to add more.</p>
+      ) : (
+        <p className="Fish-status">Dữ liệu cá đã được tải.</p> // Thông báo khác nếu cần
+      )}
+    </td>
+  </tr>
                 {fishOrders.map((order, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
@@ -465,7 +480,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 ))}
               </tbody>
             </table>
-          )}
+          
           <button onClick={addRow} className="add-button">
             Add Fish
           </button>
