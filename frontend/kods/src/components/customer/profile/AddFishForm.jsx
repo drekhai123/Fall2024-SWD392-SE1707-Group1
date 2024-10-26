@@ -59,13 +59,14 @@ export default function AddFish() {
   //Get API By CustomerID
  const fetchFishes = async () => {
     try {
-        const user = JSON.parse(localStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
+        const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
         const customerId = user?.customer?.customerId; // Lấy accountId
         const response = await getFishProfilebyCustomerid(customerId);
         setFishes(response);
     } catch (error) {
         console.error('Error fetching fishes:', error);
     }
+
   };
 
   const handleAddFish = async (e) => {

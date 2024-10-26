@@ -165,5 +165,10 @@
     cursor: pointer; 
     padding: 10px 20px; 
     font-weight: bold; 
+    transition: color 0.3s ease; 
+  }
+
+  .go-back-button-feedback:hover {
+    color: #007bff; 
   }
   

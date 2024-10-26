@@ -23,41 +23,25 @@ const UserProfilePage = () => {
   const [userData, setUserData] = useState(null); // Dữ liệu tài khoản
   const [customerData, setCustomerData] = useState(null); // Dữ liệu khách hàng
   // const userId = 4; // Lấy ID của tài khoản
-  const user = JSON.parse(localStorage.getItem("account"));
-  const userId = user ? user.accountId : null; // Kiểm tra user có tồn tại
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const userId = user.accountId;
   const methodsProfile = useForm(); // useForm cho ProfileForm
   const methodsCustomer = useForm(); // useForm cho CustomerForm
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    if (userId) {
-      const fetchUserData = async () => {
-        try {
-          const response = await GetAccountById(userId);
-          setUserData(response.data);
-          methodsProfile.reset(response.data);
-        } catch (error) {
-          console.error("Error fetching user data: ", error);
-        }
-      };
-
-      const fetchCustomerData = async () => {
-        try {
-          const response = await GetCustomerById(userId);
-          setCustomerData(response.data);
-          methodsCustomer.reset(response.data); // Reset CustomerForm với dữ liệu khách hàng
-        } catch (error) {
-          console.error("Error fetching customer data: ", error);
-        }
-      };
-
-      fetchUserData();
-      fetchCustomerData();
-    } else {
-      console.error("User ID is null. User may not be logged in.");
-      // Có thể điều hướng đến trang đăng nhập hoặc hiển thị thông báo
-    }
-  }, [userId, methodsProfile, methodsCustomer]);
+    const fetchUserData = async () => {
+      try {
+        const response = await GetAccountById(userId);
+        setUserData(response.data);
+        setCustomerData(userData.customer) // Account include the data from Customer table
+        methodsProfile.reset(response.data);
+      } catch (error) {
+        console.error("Error fetching user data: ", error);
+      }
+    };
+    fetchUserData();
+  }, [user]);
 
   const onSubmitProfile = async (data) => {
     try {

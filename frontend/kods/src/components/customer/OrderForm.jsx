@@ -8,12 +8,17 @@ import { GetAllKoiFishes } from "../api/KoiFishApi";
 import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm({ onSuggestionClick, distance }) {
-  const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
+  const navigateToLogin = useNavigate();
+  const user = JSON.parse(sessionStorage.getItem("user")); // Get user info from local storage
+  console.log(user)
+
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
   const [loading, setLoading] = useState(true); // Track loading state
   const [error, setError] = useState(false); // Track error state
   const [check, setCheck] = useState(false)
+  const [koifishList, setKoiFishList] = useState([]);
+  const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
   const [markerPositionFrom, setMarkerPositionFrom] = useState(null);
@@ -28,28 +33,27 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     distance: 0,
   });
 
-  const [fishData, setFishData] = useState([]);
-
-
+  // Hàm Fetch API để lấy những con cá của customer riêng lẻ
   useEffect(() => {
-    const getKoiFishList = async () => {
-      try {
-        setLoading(true);
-        const koifishData = await GetAllKoiFishes();
-        console.log("Fetched Koi Fish Data:", koifishData); // Debugging log
-        setKoiFish(koifishData);
-        if (koifishData.length === 0) {
-          console.log("No fish available."); // Debugging log
-        }
-      } catch (err) {
-        console.error("Error fetching Koi fish data:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getKoiFishList();
-  }, []);
+    const getFishProfile = async()=>{
+      axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
+      .then(response => {
+        setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching fish data:", error);
+      });
+    }
+    if(user!==null){
+      getFishProfile();
+    }else{
+      alert("Please Login To Continue...")
+      navigateToLogin("/login")
+    }
+    
+  },[koifishList]);
+
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
   }, [customerInfo?.distance]);
@@ -304,9 +308,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     navigate(-1);  // Quay lại trang trước đó
   };
 
-  const [fishOrdersList, setFishList] = useState([]);
-  const [koifishList, setKoifishList] = useState([]);
-
   // Hàm updaterow
   const updateRow = (index, field, value) => {
     const updatedOrders = [...fishOrdersList];
@@ -319,18 +320,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       }
     }
 
-    setFishList(updatedOrders);
+    setFishOrdersList(updatedOrders);
   };
 
   // Hàm thêm dòng mới
   const addRow = () => {
-    setFishList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
+    setFishOrdersList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
   };
 
   // Hàm xóa dòng
   const deleteRow = (index) => {
     const updatedOrders = fishOrdersList.filter((_, i) => i !== index);
-    setFishList(updatedOrders);
+    setFishOrdersList(updatedOrders);
   };
 
 
@@ -359,6 +360,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       });
   }, []);
 
+
   return (
     
     <div className="order-form">
@@ -374,7 +376,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <p>Loading fish data...</p>
           ) : error ? ( // Show error message
             <p>There was an error fetching the fish data. Please try again later.</p>
-          ) : fishData.length === 0 ? ( // Show no fish message
+          ) : koifishList.length === 0 ? ( // Show no fish message
             <p>There is no fish, you need to add more.</p>
           ) : (
 
