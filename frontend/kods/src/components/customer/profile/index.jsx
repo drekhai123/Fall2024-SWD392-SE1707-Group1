@@ -4,12 +4,12 @@ import UserProfileForm from "./ProfileForm";
 import CustomerForm from "./CustomerForm"; // Import form khách hàng
 import Sidebar from "./UserSidebar";
 import Footer from "../../common/footer";
-import NavbarUser from "./NavbarUser";
 import { GetAccountById, UpdateAccount } from "../../api/AccountApi";
 import { GetCustomerById, UpdateCustomer } from "../../api/CustomerApi"; // API khách hàng
 import { useSnackbar } from "notistack";
 import { useLocation } from "react-router-dom"; // Import useLocation để lấy đường dẫn
 import AddFishForm from "./AddFishForm"; // Import AddFishForm
+import Navbar from "../../common/navbar";
 
 const menuItems = [
   { label: "Profile", link: "/profile" },
@@ -84,8 +84,8 @@ const UserProfilePage = () => {
 
   return (
     <div>
-      <NavbarUser />
-      <div className="mx-auto px-1 md:px-16">
+      <Navbar />
+      <div className="mt-[6%] mx-auto px-1 md:px-16">
         <div>
           <p className="text-4xl font-semibold">User Profile</p>
           <p className="text-gray-600 text-lg my-4">

@@ -20,7 +20,7 @@ export default function Navbar() {
       <nav className="navbar">
         <div className="nav-left">
           <ul className="nav-list">
-            <li className="nav-item">HOME</li>
+            <li className="nav-item"><Link to={"/"}>HOME</Link></li>
             <li className="nav-item">ABOUT</li>
             <li className="nav-item"><Link to={"/orderform"}>DELIVERY</Link></li>
             <li className="nav-item">
@@ -51,17 +51,6 @@ export default function Navbar() {
         )}
 
       </nav>
-
-      <div className="header-content">
-        <img
-          src="images/header.png"
-          alt="Service"
-          className="service-image"
-        />
-        <h1 className="service-name">Koi <br></br>Delivery<br></br>
-        <button onClick={gotoOderForm} className="oders-button">Delivery Now ⮕ </button>
-         </h1>       
-      </div>
     </header>
   );
 }

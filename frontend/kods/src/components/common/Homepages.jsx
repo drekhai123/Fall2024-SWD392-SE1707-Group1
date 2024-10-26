@@ -1,14 +1,18 @@
 import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
+
 import "../../css/Homepages.css"
 import Footer from "./footer";
+import CardHeader from "./cardHeader";
 export default function Homepage() {
+
     const rowsRef = useRef([]);
     const imageList = [
       "/images/homepage1.png",
       "/images/homepage2.png",
       "/images/homepage3.png"
     ];
+   
     useEffect(() => {
       const observer = new IntersectionObserver(
         (entries) => {
@@ -43,6 +47,7 @@ export default function Homepage() {
     <>
     <div>
         <Navbar/>
+        <CardHeader/>
         <section className="content-section">
       <div className="row" ref={(el) => (rowsRef.current[0] = el)}>
         <img

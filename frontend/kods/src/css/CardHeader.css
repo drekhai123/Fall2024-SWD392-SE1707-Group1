@@ -1,0 +1,55 @@
+
+/* General header styles */
+.header-container {
+    position: relative;
+    width: 100%;
+  }
+  
+    /* Image container */
+    .image-container {
+      position: relative;
+      width: 100%;
+      height: 70vh; /* Adjust as necessary */
+    }
+    /* Service image styles */
+    .service-image {
+      width: 100%;
+      height: 70vh;
+      object-fit: cover; /* Ensures the image covers the entire area */
+    }
+    /* Service name over the image */
+    .service-name {
+      position: absolute;
+      bottom: 25%;
+      left: 1%;
+      color: white;
+      font-size: 5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    }
+  
+  a {
+      text-decoration: none;
+      color: inherit;
+    }
+  
+    .oders-button {
+      background: linear-gradient(45deg, #ffdd1f, #FFC700); 
+      color: #000000; 
+      padding: 10px 20px; 
+      margin: 5px 20px;
+      font-size: 30px; 
+      font-weight: bold; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      transition: background 0.3s ease; 
+      width: 300px;
+      height: 95px;    
+  }
+  
+  .oders-button:hover {
+      background: linear-gradient(45deg, #FFC700, #FFD700); 
+      filter: brightness(1.1); 
+  }
+  

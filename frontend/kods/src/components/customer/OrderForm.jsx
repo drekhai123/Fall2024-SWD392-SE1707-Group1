@@ -352,7 +352,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   useEffect(() => {
     axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
       .then(response => {
-        setKoifishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
+        setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
         console.log(response.data);
       })
       .catch(error => {
