@@ -27,9 +27,12 @@ namespace KDOS_Web_API.Models.Domains
         required public double TotalCost { get; set; }
         required public DateTime CreatedAt { get; set; }
         required public DateTime UpdatedAt { get; set; }
-
-        // Relationships
+        public int DistancePriceListId { get; set; }
+        public int WeightPriceListId { get; set; }
         required public int CustomerId { get; set; }
+        // Relationships
+        public WeightPriceList WeightPriceList { get; set; } = null!;
+        public DistancePriceList DistancePriceList { get; set; } = null!;
         public Customer Customer { get; set; } = null!; // REQUIRED Many-to-one relationship with Customer
         public Feedback Feedback { get; set; } = null!;
         public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
