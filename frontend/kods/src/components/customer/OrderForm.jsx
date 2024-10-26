@@ -53,7 +53,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       alert("Please Login To Continue...")
       navigateToLogin("/login")
     }
-
   }, []);
 
   useEffect(() => {
@@ -275,7 +274,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Hàm thêm dòng mới
   const addRow = () => {
-    setKoiFishList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
+    setFishOrdersList([...fishOrdersList]);
   };
 
   // Hàm xóa dòng

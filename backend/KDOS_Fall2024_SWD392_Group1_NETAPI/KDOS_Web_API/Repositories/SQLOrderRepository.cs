@@ -1,5 +1,6 @@
 ﻿using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
+using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Models.Enum;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,10 +17,10 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Orders?> AddNewOrder(Orders order)
         {
-          
-                await orderContext.Orders.AddAsync(order);
-                await orderContext.SaveChangesAsync();
-                return order;
+
+            await orderContext.Orders.AddAsync(order);
+            await orderContext.SaveChangesAsync();
+            return order;
 
         }
 
@@ -31,8 +32,8 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Orders?> GetOrderById(int id)
         {
-            var order = await orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);  
-            if(order == null)
+            var order = await orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
+            if (order == null)
             {
                 return null;
             }
@@ -66,7 +67,7 @@ namespace KDOS_Web_API.Repositories
         }
 
 
-        
+
 
         public async Task<Orders?> DeleteOrder(int id)
         {
@@ -114,6 +115,26 @@ namespace KDOS_Web_API.Repositories
                 .ToListAsync();
 
             return orders;
+        }
+        public async Task<Orders?> UpdateOnlyOrderStatus(int id, Orders orderStatus)
+        {
+            // Find the order by ID
+            var order = await orderContext.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+
+            // If the order doesn't exist, return null
+            if (order == null)
+            {
+                return null;
+            }
+
+            // Update the order status based on the DTO
+            order.DeliveryStatus = orderStatus.DeliveryStatus; // Ensure orderStatus has DeliveryStatus property
+            order.UpdatedAt = DateTime.Now;
+
+            // Save changes to the database
+            await orderContext.SaveChangesAsync();
+
+            return order;
         }
     }
 }
