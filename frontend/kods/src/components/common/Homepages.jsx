@@ -1,28 +1,32 @@
 import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
+
 import "../../css/Homepages.css"
 import Footer from "./footer";
+import CardHeader from "./cardHeader";
 export default function Homepage() {
-  const rowsRef = useRef([]);
-  const imageList = [
-    "/images/homepage1.png",
-    "/images/homepage2.png",
-    "/images/homepage3.png"
-  ];
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible"); // Add visible class when in view
-          } else {
-            entry.target.classList.remove("visible"); // Remove visible class when out of view
-          }
-        });
-      },
-      { threshold: 0.1 } // Trigger when 10% of the row is visible
-    );
 
+
+    const rowsRef = useRef([]);
+    const imageList = [
+      "/images/homepage1.png",
+      "/images/homepage2.png",
+      "/images/homepage3.png"
+    ];
+   
+    useEffect(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible"); // Add visible class when in view
+            } else {
+              entry.target.classList.remove("visible"); // Remove visible class when out of view
+            }
+          });
+        },
+        { threshold: 0.1 } // Trigger when 10% of the row is visible
+      );
     // Copy the current ref values to a local variable
     const rows = rowsRef.current;
 
@@ -43,6 +47,7 @@ export default function Homepage() {
     <>
     <div>
         <Navbar/>
+        <CardHeader/>
         <section className="content-section">
           <div className="row" ref={(el) => (rowsRef.current[0] = el)}>
             <img
@@ -90,13 +95,9 @@ export default function Homepage() {
           <div className="divider"></div>
           <Customerdashboard />
         </section>
+      <div className="divider"/>
+      <Footer/>
       </div>
-      <div className="divider"></div>
-
-    </section>
-    </div>
-    <Footer/>
-    </>
-
+      </>
   )
 }
