@@ -48,7 +48,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         });
     }
     if (user !== null) {
-      getFishProfile();
+      //  getFishProfile();
     } else {
       alert("Please Login To Continue...")
       navigateToLogin("/login")
@@ -64,41 +64,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     const savedOrders = sessionStorage.getItem("fishOrders");
     return savedOrders ? JSON.parse(savedOrders) : [];
   });
-
-
-
-  // const handleStatusChange = (index, newStatus) => {
-  //   const updatedFishData = [...fishData];
-  //   updatedFishData[index].status = newStatus;
-  //   setFishData(updatedFishData);
-  // };
-
-  // const addRow = () => {
-  //   setFishOrders([
-  //     ...fishOrders,
-  //     { name: "", quantity: 1, price: 0, total: 0 },
-  //   ]);
-  // };
-
-  // const deleteRow = (index) => {
-  //   const updatedOrders = fishOrders.filter((_, i) => i !== index);
-  //   setFishOrders(updatedOrders);
-  // };
-
-  // const updateRow = (index, field, value) => {
-  //   const updatedOrders = fishOrders.map((order, i) =>
-  //     i === index
-  //       ? {
-  //         ...order,
-  //         [field]: value,
-  //         total:
-  //           (field === "quantity" ? value : order.quantity) *
-  //           (field === "price" ? value : order.price),
-  //       }
-  //       : order
-  //   );
-  //   setFishOrders(updatedOrders);
-  // };
 
   function calculateEstimatedDeliveryDays(distance) {
     if (distance === 0) {
@@ -139,12 +104,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       return baseFee + 20000 * estimatedDays;
     }
   };
-
-  // const handleCheckboxChange = (e) => {
-  //   const value = e.target.checked;
-  //   setCheck(value);
-  //   localStorage.setItem('feedFish', JSON.stringify(value)); // Lưu giá trị vào localStorage
-  // };
 
   const calculateVAT = () => {
     return (getTotalAmount() * 0.03).toFixed(0);
@@ -293,17 +252,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       }
     }
   };
-  //  useEffect(() => {
-  //     if (markerPositionFrom && markerPositionTo) {
-  //       onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
-  //     }
-  //   }, [markerPositionFrom, markerPositionTo])
-
-  //   useEffect(() => {
-  //     setCustomerInfo({ ...customerInfo, distance: distance });
-  //   }, [distance])
-
-  //Hàm button callbacks
 
   const navigate = useNavigate();
   const handleGoBack = () => {
@@ -327,13 +275,13 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Hàm thêm dòng mới
   const addRow = () => {
-    setFishOrdersList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
+    setKoiFishList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
   };
 
   // Hàm xóa dòng
   const deleteRow = (index) => {
     const updatedOrders = fishOrdersList.filter((_, i) => i !== index);
-    setFishOrdersList(updatedOrders);
+    setKoiFishList(updatedOrders);
   };
 
 
