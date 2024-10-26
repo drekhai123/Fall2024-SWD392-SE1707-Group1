@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
-
+import Blogcarousel from './blogcarousel'
 import "../../css/Homepages.css"
 import Footer from "./footer";
 import CardHeader from "./cardHeader";
@@ -91,9 +91,8 @@ export default function Homepage() {
             </div>
           </div>
           <div className="divider"></div>
-          <Blogcarousel />
+          <Blogcarousel/>
           <div className="divider"></div>
-          <Customerdashboard />
         </section>
       <div className="divider"/>
       <Footer/>

@@ -36,10 +36,12 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   // Hàm Fetch API để lấy những con cá của customer riêng lẻ
   useEffect(() => {
     const getFishProfile = async()=>{
+      setLoading(true)
       axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
       .then(response => {
         setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
         console.log(response.data);
+        setLoading(false)
       })
       .catch(error => {
         console.error("Error fetching fish data:", error);
@@ -52,7 +54,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       navigateToLogin("/login")
     }
     
-  },[koifishList]);
+  },[]);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
@@ -372,16 +374,9 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         <div className="content">
           <h2 className="title">Order Form</h2>
           
-          {loading ? ( // Show loading message
-            <p>Loading fish data...</p>
-          ) : error ? ( // Show error message
-            <p>There was an error fetching the fish data. Please try again later.</p>
-          ) : koifishList.length === 0 ? ( // Show no fish message
-            <p>There is no fish, you need to add more.</p>
-          ) : (
+         
 
             <table className="fixed-table">
-           
               <thead>
                 <tr>
                   <th className="label-table">Index</th>
@@ -389,10 +384,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   <th className="label-table">Weight (kg)</th>
                   <th className="label-table">Price (VND/Kg)</th>
                   {/* <th className="label-table">Health Status</th> */}
-                  <th className="label-table">Action</th>
-                            
+                  <th className="label-table">Action</th>        
                 </tr>
-                
               </thead>
               <tbody>
               <tr>
@@ -401,7 +394,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         <p className="Fish-status.loading">Loading fish data...</p>
       ) : error ? ( // Hiển thị thông báo lỗi
         <p className="Fish-status.error">There was an error fetching the fish data. Please try again later.</p>
-      ) : fishData.length === 0 ? ( // Hiển thị thông báo không có cá
+      ) : koifishList.length === 0 ? ( // Hiển thị thông báo không có cá
         <p className="Fish-status.empty">There is no fish, you need to add more.</p>
       ) : (
         <p className="Fish-status">Dữ liệu cá đã được tải.</p> // Thông báo khác nếu cần
@@ -456,18 +449,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                         disabled // Vô hiệu hóa input người dùng (Tạm thời)
                       />
                     </td>
-                    {/* <td>
-                    <select
-                      className="custom-dropdown"
-                      value={fishData[index]?.status}
-                      onChange={(e) =>
-                        handleStatusChange(index, e.target.value)
-                      }
-                    >
-                      <option value="1">Healthy</option>
-                      <option value="2">Healthy Check</option>
-                    </select>
-                  </td> */}
                     <td>
                       <button
                         onClick={() => deleteRow(index)}
@@ -480,7 +461,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 ))}
               </tbody>
             </table>
-          
           <button onClick={addRow} className="add-button">
             Add Fish
           </button>
