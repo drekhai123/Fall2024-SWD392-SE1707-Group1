@@ -347,19 +347,6 @@
   font-size: 20px;
 }
 
-/* .go-back-button {
-  background-color: #4CAF50; 
-  color: #000; 
-  border: none; 
-  border-bottom-right-radius: 5px;
-  padding: 10px 20px; 
-  font-size: 14px; 
-  cursor: pointer; 
-  transition: background-color 0.2s; 
-  font-weight: bold;
-  
-}*/
-
 .go-back-button {
   background-color: transparent; 
   border: none; 
@@ -375,3 +362,29 @@
   color: #007bff; 
 }
 
+.Fish-container {
+  margin-top: 10px; 
+  padding: 15px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px; 
+  background-color: #f9f9f9; 
+}
+
+/* Định dạng chữ thông báo */
+.Fish-status {
+  margin: 0; 
+  font-size: 14px; 
+}
+
+
+.Fish-status.loading {
+  color: #ffa500; /* Màu cam cho thông báo đang tải */
+}
+
+.Fish-status.error {
+  color: #ff4500; /* Màu đỏ cho thông báo lỗi */
+}
+
+.Fish-status.empty {
+  color: #51ff00; /* Màu xanh cho thông báo không có cá */
+}
