@@ -23,7 +23,7 @@ const UserProfilePage = () => {
   const [userData, setUserData] = useState(null); // Dữ liệu tài khoản
   const [customerData, setCustomerData] = useState(null); // Dữ liệu khách hàng
   // const userId = 4; // Lấy ID của tài khoản
-  const user = JSON.parse(localStorage.getItem("account"));
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const userId = user.accountId;
   const methodsProfile = useForm(); // useForm cho ProfileForm
   const methodsCustomer = useForm(); // useForm cho CustomerForm
@@ -34,25 +34,14 @@ const UserProfilePage = () => {
       try {
         const response = await GetAccountById(userId);
         setUserData(response.data);
+        setCustomerData(userData.customer) // Account include the data from Customer table
         methodsProfile.reset(response.data);
       } catch (error) {
         console.error("Error fetching user data: ", error);
       }
     };
-
-    const fetchCustomerData = async () => {
-      try {
-        const response = await GetCustomerById(userId);
-        setCustomerData(response.data);
-        methodsCustomer.reset(response.data); // Reset CustomerForm với dữ liệu khách hàng
-      } catch (error) {
-        console.error("Error fetching customer data: ", error);
-      }
-    };
-
     fetchUserData();
-    fetchCustomerData();
-  }, [userId, methodsProfile, methodsCustomer]);
+  }, [user]);
 
   const onSubmitProfile = async (data) => {
     try {

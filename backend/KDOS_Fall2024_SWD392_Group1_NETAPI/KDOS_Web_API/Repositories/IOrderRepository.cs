@@ -2,6 +2,7 @@
 
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Models.Enum;
 
 namespace KDOS_Web_API.Repositories
 {
@@ -14,5 +15,6 @@ namespace KDOS_Web_API.Repositories
         Task<Orders?> DeleteOrder(int id);
         Task<List<Orders?>> GetOrderByDate(DateTime date);
         Task<List<Orders>> GetOrderByCustomerId(int id);
+        Task<List<Orders>> GetOrderByStatus(OrderStatus status);
     }
 }

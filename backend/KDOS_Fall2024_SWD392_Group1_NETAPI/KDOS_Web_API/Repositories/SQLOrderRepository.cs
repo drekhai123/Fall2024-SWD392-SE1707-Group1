@@ -1,5 +1,6 @@
 ﻿using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
+using KDOS_Web_API.Models.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace KDOS_Web_API.Repositories
@@ -104,6 +105,15 @@ namespace KDOS_Web_API.Repositories
                 .ToListAsync();
 
             return orders ?? new List<Orders>();// Return an empty list if no orders are found
+        }
+        public async Task<List<Orders>> GetOrderByStatus(OrderStatus status)
+        {
+            // Find all orders with the specified status
+            var orders = await orderContext.Orders
+                .Where(o => o.DeliveryStatus == status)
+                .ToListAsync();
+
+            return orders;
         }
     }
 }
