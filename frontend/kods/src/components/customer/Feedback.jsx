@@ -70,7 +70,8 @@ const Feedback = ({ setFeedbacks }) => {
     };
 
     return (
-    <div className="feedback-background">
+     //Thêm background cho đẹp hơn   
+    <div className="feedback-background"> 
         <div className="feedback-container">
             <button onClick={handleGoBack} className="go-back-button-feedback">
             ⭠ Previous Page 
