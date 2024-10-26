@@ -7,6 +7,8 @@ namespace KDOS_Web_API.Models.DTOs
 	public class UpdateFishProfileDTO
 	{
         [Required]
+        required public string Name { get; set; }
+        [Required]
         required public float Weight { get; set; }
         [Required]
         required public string Gender { get; set; }

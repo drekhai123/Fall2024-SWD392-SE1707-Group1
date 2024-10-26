@@ -16,6 +16,7 @@ namespace KDOS_Web_API.Models.Domains
         required public string RecipientAddress { get; set; }
         required public string RecipientName { get; set; }
         required public string RecipientPhoneNumber { get; set; }
+        [EmailAddress]
         required public string RecipientEmail { get; set; }
         required public PaymentMethod PaymentMethod { get; set; }
         required public PaymentStatus PaymentStatus { get; set; }

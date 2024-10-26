@@ -9,6 +9,8 @@ namespace KDOS_Web_API.Models.DTOs
 	{
         [Required]
         required public float Weight { get; set; }
+        [Required] 
+        public string Name { get; set; }
         [Required]
         required public string Gender { get; set; }
         [Required]
