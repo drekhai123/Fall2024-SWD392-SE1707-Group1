@@ -17,31 +17,6 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
 
-// Mock API functions (replace these with actual API calls in a real application)
-const mockApi = {
-  getFishes: () => Promise.resolve([
-    {
-      id: 1,
-      name: 'Koi Fish 1',
-      image: '/placeholder.svg?height=50&width=50',
-      weight: '1kg',
-      species: 'Koi',
-      description: 'A beautiful koi fish.'
-    },
-    {
-      id: 2,
-      name: 'Koi Fish 2',
-      image: '/placeholder.svg?height=50&width=50',
-      weight: '1.5kg',
-      species: 'Koi',
-      description: 'Another beautiful koi fish.'
-    },
-  ]),
-  addFish: (fish) => Promise.resolve({ ...fish, id: Date.now() }),
-  updateFish: (fish) => Promise.resolve(fish),
-  deleteFish: (id) => Promise.resolve(),
-};
-
 export default function AddFish() {
   const [fishes, setFishes] = useState([]);
   const [selectedFish, setSelectedFish] = useState(null);
@@ -60,11 +35,7 @@ export default function AddFish() {
   }, []);
 
   const fetchFishes = async () => {
-    const fetchedFishes = await mockApi.getFishes(); // Fetches from mockApi
-    const localFishes = Object.keys(localStorage)
-      .filter(key => key.startsWith('fish_'))
-      .map(key => JSON.parse(localStorage.getItem(key)));
-    setFishes([...fetchedFishes, ...localFishes]); // Cập nhật state với dữ liệu từ mockApi và Local Storage
+   
   };
 
   const handleAddFish = () => {
@@ -87,24 +58,11 @@ export default function AddFish() {
   };
 
   const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    const newFish = { name, image, weight, species, description }; // Tạo đối tượng cá mới
-    if (selectedFish) {
-      await mockApi.updateFish({ ...selectedFish, ...newFish }); // Cập nhật cá đã chọn
-    } else {
-      await mockApi.addFish(newFish); // Thêm cá mới
-      localStorage.setItem(`fish_${Date.now()}`, JSON.stringify(newFish)); // Lưu cá mới vào Local Storage
-    }
-    setIsFormOpen(false);
-    fetchFishes(); // Cập nhật danh sách cá
+    
   };
 
   const handleDeleteConfirm = async () => {
-    if (selectedFish) {
-      await mockApi.deleteFish(selectedFish.id);
-      setIsDeleteDialogOpen(false);
-      fetchFishes();
-    }
+  
   };
 
   const handleImageUpload = (e) => {

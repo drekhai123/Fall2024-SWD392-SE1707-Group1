@@ -2,9 +2,6 @@ import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
 import "../../css/Homepages.css"
 import Footer from "./footer";
-import Blogcarousel from "./blogcarousel";
-import Customerdashboard from "../admin/customerdashboard";
-import OrderNoti from './OrderNoti';
 export default function Homepage() {
     const rowsRef = useRef([]);
     const imageList = [
@@ -46,8 +43,6 @@ export default function Homepage() {
     <>
     <div>
         <Navbar/>
-        <OrderNoti /> {/* Add the OrderNoti component here */}
-
         <section className="content-section">
       <div className="row" ref={(el) => (rowsRef.current[0] = el)}>
         <img
@@ -91,9 +86,7 @@ export default function Homepage() {
         </div>
       </div>
       <div className="divider"></div>
-      <Blogcarousel/>
-      <div className="divider"></div>
-      <Customerdashboard/>
+
     </section>
     </div>
     <Footer/>

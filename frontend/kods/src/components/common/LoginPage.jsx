@@ -25,11 +25,11 @@ const LoginPage = () => {
     };
     const account = await LoginApi(login);
     if (account !== null) {
-      localStorage.setItem('user', JSON.stringify(account));
-      // Lấy access token từ account và lưu vào localStorage
-      if (account.accessToken) {
-        localStorage.setItem('accessToken', account.accessToken);
-      }
+      sessionStorage.setItem('user', JSON.stringify(account));
+      // Lấy access token từ account và lưu vào sessionSession
+      // if (account.accessToken) {
+      //   sessionStorage.setItem('accessToken', account.accessToken);
+      // }
       navigate('/');
     } else {
       alert("Invalid credentials");
