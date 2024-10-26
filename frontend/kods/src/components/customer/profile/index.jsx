@@ -23,7 +23,7 @@ const UserProfilePage = () => {
   const [userData, setUserData] = useState(null); // Dữ liệu tài khoản
   const [customerData, setCustomerData] = useState(null); // Dữ liệu khách hàng
   // const userId = 4; // Lấy ID của tài khoản
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const userId = user.accountId;
   const methodsProfile = useForm(); // useForm cho ProfileForm
   const methodsCustomer = useForm(); // useForm cho CustomerForm

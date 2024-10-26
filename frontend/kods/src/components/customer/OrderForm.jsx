@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm({ onSuggestionClick, distance }) {
   const navigateToLogin = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
+  const user = JSON.parse(sessionStorage.getItem("user")); // Get user info from local storage
   console.log(user)
 
   const [showQRCode, setShowQRCode] = useState(false);
