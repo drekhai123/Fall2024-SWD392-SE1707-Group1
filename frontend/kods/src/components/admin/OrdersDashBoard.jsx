@@ -4,6 +4,7 @@ import "../../css/OrdersDashBoard.css";
 import { Dates } from "../../utils/Dates";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from 'react-router-dom';
 
 const option = [
   "Wait for confirmation",
@@ -18,6 +19,10 @@ const DashBoardStaffAdmin = () => {
   const [orders, setOrders] = useState([]);
   const [ordersDisplay, setOrdersDisplay] = useState([]);
   const [showDetail, setShowDetail] = useState(null);
+  const navigate = useNavigate();
+  const goToHomepage = () => {
+    navigate('/'); // Đường dẫn của trang homepage
+  };
 
   useEffect(() => {
     fetch();
@@ -84,6 +89,9 @@ const DashBoardStaffAdmin = () => {
     <div className="checkout-form">
       <div className="container">
         <div className="form-datePicker">
+        <button onClick={goToHomepage} className="Back-to-Homepages">
+              🏠
+            </button>
           <label className="label-total">Sort by date: </label>
           <DatePicker
         selected={selectDate}

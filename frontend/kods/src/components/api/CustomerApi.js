@@ -14,9 +14,11 @@ export async function GetAllCustomers() {
   return allCustomers
 }
 export async function GetCustomerById(id) {
+  var customer = null
   try {
     const response = await axios.get(`${getAllCustomerURL}/${id}`, headers);
-    return response;
+    customer = response.data;
+    return customer;
   } catch (error) {
     console.error("Error fetching Customer:", error);
     throw error;

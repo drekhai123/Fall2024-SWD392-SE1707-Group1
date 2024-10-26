@@ -3,12 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import "../../css/navbar.css";
 
 export default function Navbar() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
   const logout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     navigate('/');
     window.location.reload();
+  };
+  const navigate1 = useNavigate();
+  const gotoOderForm = () => {
+    navigate1('/OrderForm'); 
   };
 
   return (
@@ -18,7 +22,7 @@ export default function Navbar() {
           <ul className="nav-list">
             <li className="nav-item">HOME</li>
             <li className="nav-item">ABOUT</li>
-            <li className="nav-item"><Link to={"/orderform"}>ODERS</Link></li>
+            <li className="nav-item"><Link to={"/orderform"}>DELIVERY</Link></li>
             <li className="nav-item">
               <Link to="/feedback">FEEDBACK</Link>
             </li>
@@ -32,10 +36,11 @@ export default function Navbar() {
 
         {user ? (
           <div className="nav-right">
-            <div className="nav-item">
-              <Link to="/profile">Hello {user.userName}!   </Link> {}
-              <button className="btn-Logout" onClick={logout}>LOGOUT</button> {}
-            </div>
+            <ul className="nav-list">
+            <li className="nav-item"><Link to="/profile">VIEW PROFILE</Link> {}</li>
+            <li className="nav-item"> Hello, {user.userName}!</li>
+            <li className="nav-item"><button className="btn-Logout" onClick={logout}>LOGOUT</button> {}</li>
+            </ul>
           </div>
         ) : ( // chưa đăng nhập, hiển thị LOGIN
           <div className="nav-right">
@@ -53,7 +58,9 @@ export default function Navbar() {
           alt="Service"
           className="service-image"
         />
-        <h1 className="service-name">Koi <br></br>Delivery</h1>
+        <h1 className="service-name">Koi <br></br>Delivery<br></br>
+        <button onClick={gotoOderForm} className="oders-button">Delivery Now ⮕ </button>
+         </h1>       
       </div>
     </header>
   );

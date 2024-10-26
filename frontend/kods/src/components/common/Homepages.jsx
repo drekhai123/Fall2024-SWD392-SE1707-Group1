@@ -2,9 +2,6 @@ import React, { useEffect, useRef } from "react";
 import Navbar from './navbar'
 import "../../css/Homepages.css"
 import Footer from "./footer";
-import Blogcarousel from "./blogcarousel";
-import Customerdashboard from "../admin/customerdashboard";
-import OrderNoti from './OrderNoti';
 export default function Homepage() {
   const rowsRef = useRef([]);
   const imageList = [
@@ -44,10 +41,8 @@ export default function Homepage() {
   }, []); // Empty dependency array so this runs only on mount
   return (
     <>
-      <div>
-        <Navbar />
-        <OrderNoti /> {/* Add the OrderNoti component here */}
-
+    <div>
+        <Navbar/>
         <section className="content-section">
           <div className="row" ref={(el) => (rowsRef.current[0] = el)}>
             <img
@@ -96,7 +91,11 @@ export default function Homepage() {
           <Customerdashboard />
         </section>
       </div>
-      <Footer />
+      <div className="divider"></div>
+
+    </section>
+    </div>
+    <Footer/>
     </>
 
   )
