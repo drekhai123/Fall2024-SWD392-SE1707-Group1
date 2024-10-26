@@ -15,7 +15,7 @@
     padding: 15px 0px;
     background-color: rgba(0, 0, 0, 0.8); /* Transparent background */
     transition: all 0.3s ease-in-out;
-    opacity: 50%;
+    opacity: 80%;
     z-index: 1000;
   }
   .navbar:hover{
@@ -88,3 +88,22 @@ a {
     color: inherit;
   }
 
+  .oders-button {
+    background: linear-gradient(45deg, #ffdd1f, #FFC700); 
+    color: #000000; 
+    padding: 10px 20px; 
+    margin: 5px 20px;
+    font-size: 30px; 
+    font-weight: bold; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: background 0.3s ease; 
+    width: 300px;
+    height: 95px;    
+}
+
+.oders-button:hover {
+    background: linear-gradient(45deg, #FFC700, #FFD700); 
+    filter: brightness(1.1); 
+}
