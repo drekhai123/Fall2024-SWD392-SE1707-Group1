@@ -25,7 +25,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [markerPositionTo, setMarkerPositionTo] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [days, setDays] = useState(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const [customerInfo, setCustomerInfo] = useState({
     nameCustomer: "",
@@ -274,7 +273,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setKoiFishList(updatedOrders);
   };
 
-
   // Hàm thêm dòng mới
   const addRow = () => {
     setKoiFishList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
@@ -300,13 +298,9 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
-  
-
    const FishTable = ()=>{
-    
     return(
-      <table className="fixed-table">
-          
+      <table className="fixed-table">      
             <thead>
               <tr>
                <th className="label-table">Index</th>
