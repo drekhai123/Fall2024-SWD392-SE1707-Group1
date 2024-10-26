@@ -13,19 +13,13 @@ namespace KDOS_Web_API.Repositories
             this.orderContext = orderContext;
         }
 
-        public async Task<Orders> AddNewOrder(Orders order)
+        public async Task<Orders?> AddNewOrder(Orders order)
         {
-            var customerExist = await orderContext.Customer.FirstOrDefaultAsync(x => x.CustomerId == order.CustomerId);
-            if (customerExist == null)
-            {
-                return null;
-            }
-            else
-            {
+          
                 await orderContext.Orders.AddAsync(order);
                 await orderContext.SaveChangesAsync();
                 return order;
-            }
+
         }
 
         public async Task<List<Orders>> GetAllOrders()
@@ -34,9 +28,9 @@ namespace KDOS_Web_API.Repositories
             return orderList;
         }
 
-        public Task<Orders> GetOrderById(int id)
+        public async Task<Orders?> GetOrderById(int id)
         {
-            var order = orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);  
+            var order = await orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);  
             if(order == null)
             {
                 return null;
@@ -44,25 +38,72 @@ namespace KDOS_Web_API.Repositories
             return order;
         }
 
-        public Task<Orders> UpdateOrder(int id, Orders order)
+        public async Task<Orders?> UpdateOrder(int id, Orders order)
         {
-            var orderModel = orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
+            var orderModel = await orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
             if (orderModel == null)
             {
                 return null;
             }
+            orderModel.SenderName = order.SenderName;
+            orderModel.SenderAddress = order.SenderAddress;
+            orderModel.SenderPhoneNumber = order.SenderPhoneNumber;
+            orderModel.RecipientName = order.RecipientName;
+            orderModel.RecipientAddress = order.RecipientAddress;
+            orderModel.RecipientPhoneNumber = order.RecipientPhoneNumber;
+            orderModel.DeliveryStatus = order.DeliveryStatus;
+            orderModel.PaymentStatus = order.PaymentStatus;
+            orderModel.TransportId = order.TransportId;
+            orderModel.Quantity = order.Quantity;
+            orderModel.TotalWeight = order.TotalWeight;
+            orderModel.TotalCost = order.TotalCost;
+            orderModel.UpdatedAt = DateTime.Now;
+            await orderContext.SaveChangesAsync();
+
+
             return orderModel;
         }
 
-        public Task<Orders> DeleteOrder(int id)
+
+        
+
+        public async Task<Orders?> DeleteOrder(int id)
         {
-            throw new NotImplementedException();
+            // Find the existing order by ID
+            var orderToDelete = await orderContext.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+
+            // If the order doesn't exist, return null
+            if (orderToDelete == null)
+            {
+                return null;
+            }
+
+            // Remove the order from the context and save changes
+            orderContext.Orders.Remove(orderToDelete);
+            await orderContext.SaveChangesAsync();
+
+            // Return the deleted order
+            return orderToDelete;
         }
 
-        public Task<List<Orders>> GetOrderByDate(DateTime date)
+        public async Task<List<Orders?>> GetOrderByDate(DateTime date)
         {
-            throw new NotImplementedException();
+            // Find all orders created on the specified date
+            var orders = await orderContext.Orders
+                .Where(o => o.CreatedAt.Date == date.Date)
+                .ToListAsync();
+
+            return orders;
         }
 
+        public async Task<List<Orders>> GetOrderByCustomerId(int id)
+        {
+            // Find all orders associated with the specified customer ID
+            var orders = await orderContext.Orders
+                .Where(o => o.CustomerId == id)
+                .ToListAsync();
+
+            return orders ?? new List<Orders>();// Return an empty list if no orders are found
+        }
     }
 }

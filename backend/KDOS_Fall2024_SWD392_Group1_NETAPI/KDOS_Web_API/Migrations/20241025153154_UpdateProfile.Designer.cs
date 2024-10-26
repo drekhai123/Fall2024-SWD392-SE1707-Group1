@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KDOS_Web_API.Migrations
 {
     [DbContext(typeof(KDOSDbContext))]
-    [Migration("20241009063244_AddDeliveryStaff")]
-    partial class AddDeliveryStaff
+    [Migration("20241025153154_UpdateProfile")]
+    partial class UpdateProfile
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -51,6 +51,9 @@ namespace KDOS_Web_API.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<bool>("Verified")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("AccountId");
 
@@ -85,9 +88,6 @@ namespace KDOS_Web_API.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -138,6 +138,122 @@ namespace KDOS_Web_API.Migrations
                     b.ToTable("DeliveryStaff");
                 });
 
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Feedback", b =>
+                {
+                    b.Property<int>("FeedbackId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("FeedbackId"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("FeedbackId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("Feedback");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.FishProfile", b =>
+                {
+                    b.Property<int>("FishProfileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("FishProfileId"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("KoiFishId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("float");
+
+                    b.HasKey("FishProfileId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("KoiFishId");
+
+                    b.ToTable("FishProfile");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.HealthStatus", b =>
+                {
+                    b.Property<int>("HealthStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("HealthStatusId"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("OrderDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("OxygenLevel")
+                        .HasColumnType("float");
+
+                    b.Property<float>("PHLevel")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Temperature")
+                        .HasColumnType("float");
+
+                    b.HasKey("HealthStatusId");
+
+                    b.HasIndex("OrderDetailsId");
+
+                    b.ToTable("HealthStatus");
+                });
+
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.KoiFish", b =>
                 {
                     b.Property<int>("KoiFishId")
@@ -146,18 +262,15 @@ namespace KDOS_Web_API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("KoiFishId"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("FishType")
+                        .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<string>("HealthStatus")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("OrderDetailsId")
-                        .HasColumnType("int");
 
                     b.HasKey("KoiFishId");
-
-                    b.HasIndex("OrderDetailsId");
 
                     b.ToTable("KoiFish");
                 });
@@ -170,16 +283,16 @@ namespace KDOS_Web_API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrderDetailsId"));
 
+                    b.Property<int>("FishProfileId")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<float>("Weight")
-                        .HasColumnType("float");
-
                     b.HasKey("OrderDetailsId");
+
+                    b.HasIndex("FishProfileId")
+                        .IsUnique();
 
                     b.HasIndex("OrderId");
 
@@ -201,12 +314,10 @@ namespace KDOS_Web_API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("DeliveryNote")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("DeliveryStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("PaymentMethod")
@@ -219,15 +330,31 @@ namespace KDOS_Web_API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RecipientAddress")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RecipientEmail")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RecipientName")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RecipientPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SenderAddress")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SenderPhoneNumber")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<double>("TotalCost")
@@ -312,6 +439,32 @@ namespace KDOS_Web_API.Migrations
                     b.ToTable("Transport");
                 });
 
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Verification", b =>
+                {
+                    b.Property<int>("VerificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VerificationId"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpiredDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("VerificationId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.ToTable("Verification");
+                });
+
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Customer", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.Domains.Account", "Account")
@@ -334,10 +487,48 @@ namespace KDOS_Web_API.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("KDOS_Web_API.Models.Domains.KoiFish", b =>
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Feedback", b =>
+                {
+                    b.HasOne("KDOS_Web_API.Models.Domains.Customer", "Customer")
+                        .WithMany("Feedback")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KDOS_Web_API.Models.Domains.Orders", "Orders")
+                        .WithOne("Feedback")
+                        .HasForeignKey("KDOS_Web_API.Models.Domains.Feedback", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.FishProfile", b =>
+                {
+                    b.HasOne("KDOS_Web_API.Models.Domains.Customer", "Customer")
+                        .WithMany("FishProfiles")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KDOS_Web_API.Models.Domains.KoiFish", "KoiFish")
+                        .WithMany("FishProfile")
+                        .HasForeignKey("KoiFishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("KoiFish");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.HealthStatus", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.Domains.OrderDetails", "OrderDetails")
-                        .WithMany("KoiFish")
+                        .WithMany("HealthStatus")
                         .HasForeignKey("OrderDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -347,11 +538,19 @@ namespace KDOS_Web_API.Migrations
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.OrderDetails", b =>
                 {
+                    b.HasOne("KDOS_Web_API.Models.Domains.FishProfile", "FishProfile")
+                        .WithOne("OrderDetails")
+                        .HasForeignKey("KDOS_Web_API.Models.Domains.OrderDetails", "FishProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("KDOS_Web_API.Models.Domains.Orders", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FishProfile");
 
                     b.Navigation("Order");
                 });
@@ -397,6 +596,17 @@ namespace KDOS_Web_API.Migrations
                     b.Navigation("DeliveryStaff");
                 });
 
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Verification", b =>
+                {
+                    b.HasOne("KDOS_Web_API.Models.Domains.Account", "Account")
+                        .WithOne("Verification")
+                        .HasForeignKey("KDOS_Web_API.Models.Domains.Verification", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Account", b =>
                 {
                     b.Navigation("Customer");
@@ -404,10 +614,16 @@ namespace KDOS_Web_API.Migrations
                     b.Navigation("DeliveryStaff");
 
                     b.Navigation("Staff");
+
+                    b.Navigation("Verification");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Customer", b =>
                 {
+                    b.Navigation("Feedback");
+
+                    b.Navigation("FishProfiles");
+
                     b.Navigation("Orders");
                 });
 
@@ -416,13 +632,27 @@ namespace KDOS_Web_API.Migrations
                     b.Navigation("Transport");
                 });
 
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.FishProfile", b =>
+                {
+                    b.Navigation("OrderDetails")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.KoiFish", b =>
+                {
+                    b.Navigation("FishProfile");
+                });
+
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.OrderDetails", b =>
                 {
-                    b.Navigation("KoiFish");
+                    b.Navigation("HealthStatus");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Orders", b =>
                 {
+                    b.Navigation("Feedback")
+                        .IsRequired();
+
                     b.Navigation("OrderDetails");
                 });
 

@@ -5,28 +5,21 @@ import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
 import { GetAllKoiFishes } from "../api/KoiFishApi";
+import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm({ onSuggestionClick, distance }) {
+  const user = JSON.parse(localStorage.getItem("user")); // Get user info from local storage
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
+  const [loading, setLoading] = useState(true); // Track loading state
+  const [error, setError] = useState(false); // Track error state
+  const [check, setCheck] = useState(false)
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
   const [markerPositionFrom, setMarkerPositionFrom] = useState(null);
   const [markerPositionTo, setMarkerPositionTo] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
-
-  useEffect(() => {
-    const getKoiFishList = async () => {
-      var koifishData = await GetAllKoiFishes();
-      setKoiFish(koifishData);
-    };
-    getKoiFishList();
-  }, []);
-
-  const [fishOrders, setFishOrders] = useState(() => {
-    const savedOrders = localStorage.getItem("fishOrders");
-    return savedOrders ? JSON.parse(savedOrders) : [];
-  });
+  const [days, setDays] = useState(null);
 
   const [customerInfo, setCustomerInfo] = useState({
     nameCustomer: "",
@@ -35,53 +28,117 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     distance: 0,
   });
 
-  const [fishData, setFishData] = useState([
-    { name: "Fish A", weight: 2, price: 10000, status: "1" },
-    { name: "Fish B", weight: 3, price: 15000, status: "1" },
-  ]);
+  const [fishData, setFishData] = useState([]);
 
-  const handleStatusChange = (index, newStatus) => {
-    const updatedFishData = [...fishData];
-    updatedFishData[index].status = newStatus;
-    setFishData(updatedFishData);
-  };
 
-  const addRow = () => {
-    setFishOrders([
-      ...fishOrders,
-      { name: "", quantity: 1, price: 0, total: 0 },
-    ]);
-  };
+  useEffect(() => {
+    const getKoiFishList = async () => {
+      try {
+        setLoading(true);
+        const koifishData = await GetAllKoiFishes();
+        console.log("Fetched Koi Fish Data:", koifishData); // Debugging log
+        setKoiFish(koifishData);
+        if (koifishData.length === 0) {
+          console.log("No fish available."); // Debugging log
+        }
+      } catch (err) {
+        console.error("Error fetching Koi fish data:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getKoiFishList();
+  }, []);
+  useEffect(() => {
+    setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
+  }, [customerInfo?.distance]);
 
-  const deleteRow = (index) => {
-    const updatedOrders = fishOrders.filter((_, i) => i !== index);
-    setFishOrders(updatedOrders);
-  };
+  const [fishOrders, setFishOrders] = useState(() => {
+    const savedOrders = localStorage.getItem("fishOrders");
+    return savedOrders ? JSON.parse(savedOrders) : [];
+  });
 
-  const updateRow = (index, field, value) => {
-    const updatedOrders = fishOrders.map((order, i) =>
-      i === index
-        ? {
-            ...order,
-            [field]: value,
-            total:
-              (field === "quantity" ? value : order.quantity) *
-              (field === "price" ? value : order.price),
-          }
-        : order
-    );
-    setFishOrders(updatedOrders);
-  };
+
+
+  // const handleStatusChange = (index, newStatus) => {
+  //   const updatedFishData = [...fishData];
+  //   updatedFishData[index].status = newStatus;
+  //   setFishData(updatedFishData);
+  // };
+
+  // const addRow = () => {
+  //   setFishOrders([
+  //     ...fishOrders,
+  //     { name: "", quantity: 1, price: 0, total: 0 },
+  //   ]);
+  // };
+
+  // const deleteRow = (index) => {
+  //   const updatedOrders = fishOrders.filter((_, i) => i !== index);
+  //   setFishOrders(updatedOrders);
+  // };
+
+  // const updateRow = (index, field, value) => {
+  //   const updatedOrders = fishOrders.map((order, i) =>
+  //     i === index
+  //       ? {
+  //         ...order,
+  //         [field]: value,
+  //         total:
+  //           (field === "quantity" ? value : order.quantity) *
+  //           (field === "price" ? value : order.price),
+  //       }
+  //       : order
+  //   );
+  //   setFishOrders(updatedOrders);
+  // };
+
+  function calculateEstimatedDeliveryDays(distance) {
+    if (distance === 0) {
+      return 0;
+    } else if (distance < 50) {
+      return 1;
+    } else if (distance >= 50 && distance < 100) {
+      return 2;
+    } else if (distance >= 100 && distance <= 500) {
+      return 4;
+    } else if (distance > 500 && distance <= 1000) {
+      return 7;
+    } else {
+      return 10;
+    }
+  }
+
 
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
-
+  // phí shipping
   const calculateShippingFee = () => {
     const { distance } = customerInfo;
-    if (distance <= 5) return 0;
-    return Math.ceil((distance - 5) / 5) * 12000;
+    const estimatedDays = calculateEstimatedDeliveryDays(distance);
+
+    if (distance <= 5) {
+      return check ? 25000 : 0;
+    }
+
+    const baseFee = Math.ceil((distance - 5) / 5) * 12000;
+
+    if (check && estimatedDays === 1) {
+      return baseFee + 25000;
+    } else if (!check && estimatedDays === 1) {
+      return baseFee
+    } else {
+      return baseFee + 20000 * estimatedDays;
+    }
   };
+
+  // const handleCheckboxChange = (e) => {
+  //   const value = e.target.checked;
+  //   setCheck(value);
+  //   localStorage.setItem('feedFish', JSON.stringify(value)); // Lưu giá trị vào localStorage
+  // };
 
   const calculateVAT = () => {
     return (getTotalAmount() * 0.03).toFixed(0);
@@ -114,10 +171,10 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         <p>Name customer: ${customerInfo.nameCustomer}</p>
         <p>Phone customer: ${customerInfo.phoneCustomer}</p>
         <p>Address customer: ${customerInfo.addressCustomer}</p>
-        <p>Total amount: ${
-          getTotalAmount() +
-          parseInt(calculateVAT()) +
-          parseFloat(calculateShippingFee().toFixed(0))
+        <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
+        <p>Total amount: ${getTotalAmount() +
+        parseInt(calculateVAT()) +
+        parseFloat(calculateShippingFee().toFixed(0))
         } VND</p>
       `,
       icon: "info",
@@ -165,6 +222,20 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setShowQRCode(false);
   };
 
+  const calculateDeliveryDate = (days) => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + days);
+    return currentDate.toLocaleDateString();
+  };
+
+  const estimatedDays = customerInfo?.distance
+    ? calculateEstimatedDeliveryDays(customerInfo?.distance)
+    : 0;
+
+  const deliveryDate = customerInfo?.distance
+    ? calculateDeliveryDate(estimatedDays)
+    : '--';
+
   const handleCustomerChange = async (field, value) => {
     if (typingTimeout) {
       clearTimeout(typingTimeout);
@@ -180,9 +251,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 value
               )}&countrycodes=VN&format=json`
             );
-            // có chỗ country codes này thì lên wikimedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
-
-
+            // có chỗ country codes này thì lên wikipedia tìm mã code của từng nước rồi add zô, hiện thì hiển thị nhiều nước rối quá nên chỉ set Vn thôi
             if (field === "addressSender") {
               setFromSuggestions(response.data);
             } else if (field === "addressCustomer") {
@@ -203,6 +272,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setCustomerInfo({ ...customerInfo, [field]: value });
   };
 
+
+
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
@@ -216,6 +287,54 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       }
     }
   };
+  //  useEffect(() => {
+  //     if (markerPositionFrom && markerPositionTo) {
+  //       onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
+  //     }
+  //   }, [markerPositionFrom, markerPositionTo])
+
+  //   useEffect(() => {
+  //     setCustomerInfo({ ...customerInfo, distance: distance });
+  //   }, [distance])
+  
+  //Hàm button callbacks
+  
+  const navigate = useNavigate();
+  const handleGoBack = () => {
+    navigate(-1);  // Quay lại trang trước đó
+  };
+
+  const [fishOrdersList, setFishList] = useState([]);
+  const [koifishList, setKoifishList] = useState([]);
+
+  // Hàm updaterow
+  const updateRow = (index, field, value) => {
+    const updatedOrders = [...fishOrdersList];
+    updatedOrders[index][field] = value;
+    if (field === "name") {
+      const selectedFish = koifishList.find(fish => fish.fishType === value);
+      if (selectedFish) {
+        updatedOrders[index].quantity = selectedFish.weight; // Cập nhật weight từ API
+        updatedOrders[index].price = selectedFish.price;     // Cập nhật price từ API
+      }
+    }
+
+    setFishList(updatedOrders);
+  };
+
+  // Hàm thêm dòng mới
+  const addRow = () => {
+    setFishList([...fishOrdersList, { name: "", quantity: 0, price: 0 }]);
+  };
+
+  // Hàm xóa dòng
+  const deleteRow = (index) => {
+    const updatedOrders = fishOrdersList.filter((_, i) => i !== index);
+    setFishList(updatedOrders);
+  };
+
+
+  //Hàm của mapping để nguyên (comment cái const ở trên của nó)
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
@@ -223,75 +342,104 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     }
   }, [markerPositionFrom, markerPositionTo])
 
+  // Hàm của Distance (comment cái const ở trên của nó)
   useEffect(() => {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
+  // Hàm Fetch API để lấy những con cá của customer riêng lẻ
+  useEffect(() => {
+    axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
+      .then(response => {
+        setKoifishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching fish data:", error);
+      });
+  }, []);
 
   return (
+    
     <div className="order-form">
-      <div className="con">
+     <div className="con">
+      <button onClick={handleGoBack} className="go-back-button">
+             ⭠ Previous Page 
+            </button>
+
         <div className="content">
           <h2 className="title">Order Form</h2>
-          <table className="fixed-table">
-            <thead>
-              <tr>
-                <th className="label-table">Index</th>
-                <th className="label-table">Name</th>
-                <th className="label-table">Weight (kg)</th>
-                <th className="label-table">Price (VND/Kg)</th>
-                {/* <th className="label-table">Health Status</th> */}
-                <th className="label-table">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fishOrders.map((order, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <select
-                      value={order.name}
-                      onChange={(e) => updateRow(index, "name", e.target.value)}
-                      className="custom-dropdown"
-                    >
-                      <option value="">Choose fish type</option>
-                      {koifish.map((koifish) => (
-                        <option
-                          key={koifish.koiFishId}
-                          value={koifish.fishType}
-                        >
-                          {koifish.fishType}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={order.quantity}
-                      min="0"
-                      onChange={(e) =>
-                        updateRow(
-                          index,
-                          "quantity",
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                      className="custom-dropdown"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      value={order.price}
-                      onChange={(e) =>
-                        updateRow(index, "price", parseInt(e.target.value) || 0)
-                      }
-                      className="custom-dropdown"
-                    />
-                  </td>
-                  {/* <td>
+          
+          {loading ? ( // Show loading message
+            <p>Loading fish data...</p>
+          ) : error ? ( // Show error message
+            <p>There was an error fetching the fish data. Please try again later.</p>
+          ) : fishData.length === 0 ? ( // Show no fish message
+            <p>There is no fish, you need to add more.</p>
+          ) : (
+
+            
+            <table className="fixed-table">
+              <thead>
+                <tr>
+                  <th className="label-table">Index</th>
+                  <th className="label-table">Name</th>
+                  <th className="label-table">Weight (kg)</th>
+                  <th className="label-table">Price (VND/Kg)</th>
+                  {/* <th className="label-table">Health Status</th> */}
+                  <th className="label-table">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fishOrders.map((order, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <select
+                        value={order.name}
+                        onChange={(e) => updateRow(index, "name", e.target.value)}
+                        className="custom-dropdown"
+                      >
+                        <option value="">Choose fish type</option>
+                        {koifish.map((koifish) => (
+                          <option
+                            key={koifish.koiFishId}
+                            value={koifish.fishType}
+                          >
+                            {koifish.fishType}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={order.quantity === 1 ? "" : order.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
+                        min=""
+                        onChange={(e) =>
+                          updateRow(
+                            index,
+                            "quantity",
+                            parseInt(e.target.value) || 0
+                          )
+                        }
+                        className="custom-dropdown"
+                        disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min="0"
+                        value={order.price === 0 ? "" : order.price} // Nếu giá trị là 0, thì để trống
+                        onChange={(e) =>
+                          updateRow(index, "price", parseInt(e.target.value) || 0)
+                        }
+                        className="custom-dropdown"
+                        disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                      />
+                    </td>
+                    {/* <td>
                     <select
                       className="custom-dropdown"
                       value={fishData[index]?.status}
@@ -303,18 +451,19 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                       <option value="2">Healthy Check</option>
                     </select>
                   </td> */}
-                  <td>
-                    <button
-                      onClick={() => deleteRow(index)}
-                      className="delete-button"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <td>
+                      <button
+                        onClick={() => deleteRow(index)}
+                        className="delete-button"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           <button onClick={addRow} className="add-button">
             Add Fish
           </button>
@@ -417,26 +566,52 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 </div>
               </div>
 
-              <div style={{marginTop: 10}} className="customer-info">
-              <h3 className="label-customer">Distance (km)</h3>
-              <input
-                className="input-customer"
-                type="number"
-                disabled={distance}
-                value={customerInfo?.distance}
-                placeholder="Distance (km)"
-                min="0"
-                onChange={(e) =>
-                  handleCustomerChange(
-                    "distance",
-                    parseInt(e.target.value) || 0
-                  )
-                }
-              />
+              <div style={{ marginTop: 10 }} className="customer-info">
+                <h3 className="label-customer">Distance (km)</h3>
+                <input
+                  className="input-customer"
+                  type="number"
+                  disabled
+                  value={customerInfo?.distance}
+                  placeholder="Distance (km)"
+                  min="0"
+                  onChange={(e) =>
+                    handleCustomerChange(
+                      "distance",
+                      parseInt(e.target.value) || 0
+                    )
+                  }
+                />
+
+
+                <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
+                  className="layout-checkbox" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px' }} >  {/* lười css làm z cho lẹ */}
+                  <p>
+                    <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
+                  </p>
+
+                  <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND" className="checkbox-container">
+                    {customerInfo?.distance <= 50 && ( // Nếu distance lớn hơn 50 thì checkbox biến mất
+                      <label>
+                        <input
+                          style={{ cursor: 'pointer' }}
+                          type="checkbox"
+                          checked={check}
+                          onChange={(e) => setCheck(e.target.checked)}
+
+                        />
+                        If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
+                      </label>
+                    )}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
         </div>
+
+
 
         <div className="layout-total">
           <p className="label-total">

@@ -9,10 +9,11 @@ namespace KDOS_Web_API.Models.DTOs
         [Key]
         public int AccountId { get; set; }
         required public bool Banned { get; set; }
-        required public String Email { get; set; }
-        required public String UserName { get; set; }
-        required public String Password { get; set; }
-        required public String Role { get; set; }
+        required public string Email { get; set; }
+        required public string UserName { get; set; }
+        required public string Password { get; set; }
+        required public string Role { get; set; }
+        public CustomerDTO? Customer { get; set; }
     }
 }
 

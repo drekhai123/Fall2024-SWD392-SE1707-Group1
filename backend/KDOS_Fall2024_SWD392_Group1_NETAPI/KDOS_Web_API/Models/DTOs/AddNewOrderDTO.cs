@@ -18,5 +18,9 @@ namespace KDOS_Web_API.Models.DTOs
         public required int Quantity { get; set; }
         public required double TotalWeight { get; set; }
         public required double TotalCost { get; set; }
+        public required DateTime CreatedAt { get; set; }
+        public required DateTime UpdatedAt { get; set; }
+        public required int CustomerId { get; set; }
+        public required int TransportId { get; set; }
     }
 }

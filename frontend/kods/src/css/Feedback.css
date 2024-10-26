@@ -1,18 +1,31 @@
+.feedback-background {
+    background: url('../../public/images/background.jpg') no-repeat center center fixed;
+    background-size: cover; 
+    min-height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
+
 .feedback-container {
-    border: 1px solid #ddd;
+    border: 2px solid #e0e0e0; 
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     max-width: 600px;
+    height: fit-content;
     margin: 0 auto;
-    background-color: #f9f9f9;
+    background-color: #fff8e1; 
 }
 
 .feedback-header {
-    background-color: #f3e5f5;
-    padding: 10px;
+    background-color: #8feee9; 
+    padding: 15px;
     text-align: center;
     border-radius: 5px;
     margin-bottom: 20px;
+    color: #6d4c41; 
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .feedback-form {
@@ -27,40 +40,53 @@
 .form-group label {
     display: block;
     margin-bottom: 5px;
+    font-weight: 500;
+    color: #6d4c41; 
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     box-sizing: border-box;
-    border: 1px solid #ccc;
+    border: 1px solid #d7ccc8; 
     border-radius: 4px;
+    background-color: #fff3e0; 
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #ffcc80; 
 }
 
 .rating-stars {
     display: flex;
     gap: 5px;
+    justify-content: center;
+    margin-bottom: 15px;
 }
 
 .star {
     cursor: pointer;
-    font-size: 24px;
+    font-size: 40px;
+    color: #ffb74d; 
 }
 
 .submit-button {
-    background-color: #6a1b9a;
+    background-color: #f97d02; 
     color: white;
     padding: 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
 }
 
 .submit-button:hover {
-    background-color: #4a148c;
+    background-color: #e64a19; 
 }
-/* ... existing styles ... */
 
 .feedback-list-container {
     padding: 20px;
@@ -70,37 +96,38 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background-color: #fff8e1;
 }
 
-.feedback-table th, .feedback-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+.feedback-table th, 
+.feedback-table td {
+    border: 1px solid #e0e0e0;
+    padding: 10px;
     text-align: left;
 }
 
 .feedback-table th {
-    background-color: #f2f2f2;
-    color: black;
+    background-color: #ffe0b2;
+    color: #6d4c41;
+    font-weight: bold;
 }
 
 .feedback-table tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #fff3e0;
 }
 
 .feedback-table tr:hover {
-    background-color: #ddd;
+    background-color: #ffe0b2;
 }
 
 .feedback-table a {
-    color: purple;
+    color: #ff7043;
     text-decoration: none;
 }
 
 .feedback-table a:hover {
     text-decoration: underline;
 }
-
-/* ... existing CSS ... */
 
 .pagination {
     display: flex;
@@ -114,16 +141,29 @@
     cursor: pointer;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #ffe0b2;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .page-number:hover {
-    background-color: #e0e0e0;
+    background-color: #ffcc80;
 }
 
 .page-number.active {
-    background-color: #007bff;
+    background-color: #ff7043;
     color: white;
-    border-color: #007bff;
+    border-color: #ff7043;
 }
+
+
+
+.go-back-button-feedback {
+    background-color: transparent; 
+    border: none; 
+    color: #000; 
+    font-size: 16px; 
+    cursor: pointer; 
+    padding: 10px 20px; 
+    font-weight: bold; 
+  }
+  

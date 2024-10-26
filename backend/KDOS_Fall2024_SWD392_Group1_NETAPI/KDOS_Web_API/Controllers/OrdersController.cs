@@ -4,6 +4,7 @@ using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using KDOS_Web_API.Models.Enum;
 
 namespace KDOS_Web_API.Controllers
 {
@@ -11,20 +12,17 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly KDOSDbContext orderContext;
         private readonly IOrderRepository orderRepository;
         private readonly IMapper mapper;
 
-        public OrdersController(KDOSDbContext orderContext, IOrderRepository orderRepository, IMapper mapper)
+        public OrdersController(IOrderRepository orderRepository, IMapper mapper)
         {
-            this.orderContext = orderContext;
-            this.orderContext = orderContext;
+            this.orderRepository = orderRepository;
             this.mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            // This method get data DIRECTLY from database -> not best practice
             var ordersList = await orderRepository.GetAllOrders();
             // Auto mapper
             var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
@@ -32,17 +30,18 @@ namespace KDOS_Web_API.Controllers
             return Ok(orderDto);
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewOrder([FromBody] AddNewOrderDTO ordersDto)
+        public async Task<IActionResult> AddNewOrder([FromBody] AddNewOrderDTO addNewOrderDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var ordersModel = mapper.Map<Orders>(ordersDto);
-            ordersModel.CreatedAt = DateTime.UtcNow;
-            ordersModel.UpdatedAt = DateTime.UtcNow;
-
+            var ordersModel = mapper.Map<Orders>(addNewOrderDTO);
+            ordersModel.CreatedAt = DateTime.Now;
+            ordersModel.UpdatedAt = DateTime.Now;
+            ordersModel.DeliveryStatus = Models.Enum.OrderStatus.PENDING;
+            ordersModel.PaymentStatus = Models.Enum.PaymentStatus.PENDING;
             try
             {
                 ordersModel = await orderRepository.AddNewOrder(ordersModel);
@@ -50,7 +49,7 @@ namespace KDOS_Web_API.Controllers
             catch (Exception ex)
             {
                 // Log the exception
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Internal server error" + ex);
             }
 
             // Map the newly created order back to a DTO for the response
@@ -71,6 +70,81 @@ namespace KDOS_Web_API.Controllers
             var orderDto = mapper.Map<OrdersDTO>(orderModel); // Map to the appropriate DTO
             return Ok(orderDto);
         }
+
+        [HttpGet]
+        [Route("customer/{customerId}")]
+        public async Task<IActionResult> GetOrdersByCustomerId([FromRoute] int customerId)
+        {
+            var ordersList = await orderRepository.GetOrderByCustomerId(customerId);
+            if (ordersList == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            return Ok(orderDto);
+        }
+
+        [HttpPut]
+        [Route("{orderId}")]
+        public async Task<IActionResult> UpdateOrder([FromRoute] int orderId, [FromBody] AddNewOrderDTO addNewOrderDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var orderModel = await orderRepository.GetOrderById(orderId);
+            if (orderModel == null)
+            {
+                return NotFound();
+            }
+
+            // Update the order model with the new data
+            orderModel = mapper.Map(addNewOrderDTO, orderModel);
+            orderModel.UpdatedAt = DateTime.Now;
+
+            try
+            {
+                orderModel = await orderRepository.UpdateOrder(orderId, orderModel);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "Internal server error" + ex);
+            }
+
+            // Map the updated order back to a DTO for the response
+            var updatedOrderDto = mapper.Map<AddNewOrderDTO>(orderModel);
+
+            // Return the updated order with a 200 OK status
+            return Ok(updatedOrderDto);
+        }
+
+        [HttpDelete]
+        [Route("{orderId}")]
+        public async Task<IActionResult> DeleteOrder([FromRoute] int orderId)
+        {
+            var orderModel = await orderRepository.DeleteOrder(orderId);
+            if (orderModel == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<OrdersDTO>(orderModel);
+            return Ok(orderDto);
+        }
+
+        [HttpGet]
+        [Route("date")]
+        public async Task<IActionResult> GetOrderByDate([FromQuery] DateTime date)
+        {
+            var ordersList = await orderRepository.GetOrderByDate(date);
+            if (ordersList == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            return Ok(orderDto);
+        }   
 
     }
 }

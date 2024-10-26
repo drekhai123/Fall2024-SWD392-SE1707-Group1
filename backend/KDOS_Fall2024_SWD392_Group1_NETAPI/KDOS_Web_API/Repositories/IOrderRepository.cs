@@ -13,5 +13,6 @@ namespace KDOS_Web_API.Repositories
         Task<Orders?> UpdateOrder(int id, Orders order);
         Task<Orders?> DeleteOrder(int id);
         Task<List<Orders?>> GetOrderByDate(DateTime date);
+        Task<List<Orders>> GetOrderByCustomerId(int id);
     }
 }
