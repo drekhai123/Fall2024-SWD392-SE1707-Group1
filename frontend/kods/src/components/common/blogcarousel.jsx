@@ -1,28 +1,27 @@
 import React from 'react'
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css"; // Import core Swiper styles
-import "swiper/css/autoplay"; // Import autoplay-specific styles (optional)
-import 'swiper/css/bundle';
+import "../../css/blogcarousel.css";
+
 export default function Blogcarousel() {
-    const placeholder1 = "images/homepage1.png"
-    const placeholder2 = "images/homepage2.png"
-    const placeholder3 = "images/homepage3.png"
+  const fishImageList = [
+    "/images/homepage1.png",
+    "/images/homepage1.png",
+    "/images/homepage1.png",
+    "/images/homepage1.png",
+    "/images/homepage1.png",
+    "/images/homepage1.png",
+  ];
+
   return (
-    <Swiper
-    spaceBetween={50}
-    slidesPerView={1}
-    autoplay={{ delay: 5, disableOnInteraction: false }} // Autoplay every 5 seconds
-  >
-    <SwiperSlide>
-      <img src={placeholder1} alt="Slide 1" />
-    </SwiperSlide>
-    <SwiperSlide>
-      <img src={placeholder2} alt="Slide 2" />
-    </SwiperSlide>
-    <SwiperSlide>
-      <img src={placeholder3} alt="Slide 3" />
-    </SwiperSlide>
-  </Swiper>
+    <div className="wrapper">
+      <div className="item item1"><img src={fishImageList[0]}></img></div>
+      <div className="item item2"><img src={fishImageList[1]}></img></div>
+      <div className="item item3"><img src={fishImageList[2]}></img></div>
+      <div className="item item4"><img src={fishImageList[3]}></img></div>
+      <div className="item item5"><img src={fishImageList[4]}></img></div>
+      <div className="item item6"><img src={fishImageList[5]}></img></div>
+      <div className="item item7"><img src={fishImageList[0]}></img></div>
+      <div className="item item8"><img src={fishImageList[1]}></img></div>
+    </div>
   )
 }
 
