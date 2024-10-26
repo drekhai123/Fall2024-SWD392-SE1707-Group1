@@ -7,10 +7,10 @@ namespace KDOS_Web_API.Models.Enum
     [JsonConverter(typeof(StringEnumConverter))]
     public enum PaymentStatus
     {
-        [EnumMember(Value = "PENDING")]
+        [EnumMember(Value = "PENDING")] //Cho xu ly
         PENDING,
 
-        [EnumMember(Value = "PAID")]
+        [EnumMember(Value = "PAID")] //Da thanh toan
         PAID
     }
 }

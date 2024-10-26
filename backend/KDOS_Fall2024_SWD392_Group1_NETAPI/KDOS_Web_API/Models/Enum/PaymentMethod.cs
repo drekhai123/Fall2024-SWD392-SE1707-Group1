@@ -7,10 +7,10 @@ namespace KDOS_Web_API.Models.Enum
     [JsonConverter(typeof(StringEnumConverter))]
     public enum PaymentMethod
     {
-        [EnumMember(Value = "CASH")]
+        [EnumMember(Value = "CASH")] //Tien mat
         CASH,
 
-        [EnumMember(Value = "BANK_TRANSFER")]
+        [EnumMember(Value = "BANK_TRANSFER")] //Chuyen khoan
         BANK_TRANSFER
     }
 }

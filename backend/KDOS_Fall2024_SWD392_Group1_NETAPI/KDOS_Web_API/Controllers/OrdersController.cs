@@ -144,7 +144,20 @@ namespace KDOS_Web_API.Controllers
             }
             var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
             return Ok(orderDto);
-        }   
+        }
+
+        [HttpGet]
+        [Route("status")]
+        public async Task<IActionResult> GetOrderByStatus([FromQuery] OrderStatus status)
+        {
+            var ordersList = await orderRepository.GetOrderByStatus(status);
+            if (ordersList == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            return Ok(orderDto);
+        }
 
     }
 }
