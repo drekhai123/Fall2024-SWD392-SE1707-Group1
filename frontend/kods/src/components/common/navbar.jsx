@@ -10,6 +10,10 @@ export default function Navbar() {
     navigate('/');
     window.location.reload();
   };
+  const navigate1 = useNavigate();
+  const gotoOderForm = () => {
+    navigate1('/OrderForm'); 
+  };
 
   return (
     <header className="header-container">
@@ -18,7 +22,7 @@ export default function Navbar() {
           <ul className="nav-list">
             <li className="nav-item">HOME</li>
             <li className="nav-item">ABOUT</li>
-            <li className="nav-item"><Link to={"/orderform"}>ODERS</Link></li>
+            <li className="nav-item"><Link to={"/orderform"}>DELIVERY</Link></li>
             <li className="nav-item">
               <Link to="/feedback">FEEDBACK</Link>
             </li>
@@ -53,7 +57,9 @@ export default function Navbar() {
           alt="Service"
           className="service-image"
         />
-        <h1 className="service-name">Koi <br></br>Delivery</h1>
+        <h1 className="service-name">Koi <br></br>Delivery<br></br>
+        <button onClick={gotoOderForm} className="oders-button">Delivery Now ⮕ </button>
+         </h1>       
       </div>
     </header>
   );
