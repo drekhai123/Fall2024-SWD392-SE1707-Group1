@@ -163,25 +163,23 @@ namespace KDOS_Web_API.Controllers
         [Route("{orderId}/status")]
         public async Task<IActionResult> UpdateOrderStatus([FromRoute] int orderId, [FromBody] UpdateOnlyOrderStatusDTO orderStatus)
         {
+            // Validate the model state
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var orderModel = await orderRepository.GetOrderById(orderId);
-            if (orderModel == null)
-            {
-                return NotFound();
-            }
-            try
-            {
-                orderModel = await orderRepository.UpdateOnlyOrderStatus(orderId, orderStatus);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                return StatusCode(500, "Internal server error" + ex);
-            }
+            // Retrieve the order by ID
+            
+                // Update the order status
+               var orderModel = mapper.Map<Orders>(orderStatus);   
+               orderModel = await orderRepository.UpdateOnlyOrderStatus(orderId, orderModel);
+
+                // If the orderModel is still null after the update, something went wrong
+                if (orderModel == null)
+                {
+                    return NotFound();
+                }
 
             // Map the updated order back to a DTO for the response
             var updatedOrderDto = mapper.Map<UpdateOnlyOrderStatusDTO>(orderModel);

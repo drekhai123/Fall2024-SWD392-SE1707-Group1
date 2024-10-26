@@ -127,19 +127,14 @@ namespace KDOS_Web_API.Repositories
                 return null;
             }
 
-            // Update the order status
-            order.DeliveryStatus = orderStatus.DeliveryStatus;
+            // Update the order status based on the DTO
+            order.DeliveryStatus = orderStatus.DeliveryStatus; // Ensure orderStatus has DeliveryStatus property
             order.UpdatedAt = DateTime.Now;
 
             // Save changes to the database
             await orderContext.SaveChangesAsync();
 
             return order;
-        }
-
-        public Task<Orders?> UpdateOnlyOrderStatus(int id, UpdateOnlyOrderStatusDTO orderStatus)
-        {
-            throw new NotImplementedException();
         }
     }
 }

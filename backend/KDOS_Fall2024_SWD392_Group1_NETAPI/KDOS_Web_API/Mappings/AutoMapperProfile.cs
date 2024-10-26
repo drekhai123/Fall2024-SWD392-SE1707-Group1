@@ -42,7 +42,7 @@ namespace KDOS_Web_API.Mappings
             // Transport
             // Order
             CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
-                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()).ReverseMap();
             CreateMap<Orders, OrdersDTO>().ReverseMap();
             CreateMap<Orders, UpdateOrderDTO>().ReverseMap();
             CreateMap<Orders, AddNewOrderDTO>()
