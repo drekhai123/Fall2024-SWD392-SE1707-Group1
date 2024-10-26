@@ -350,18 +350,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
-  // Hàm Fetch API để lấy những con cá của customer riêng lẻ
-  useEffect(() => {
-    axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
-      .then(response => {
-        setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error("Error fetching fish data:", error);
-      });
-  }, []);
-
   const FishTable = ()=>{
     return(
       <table className="fixed-table">
