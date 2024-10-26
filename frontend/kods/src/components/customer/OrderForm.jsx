@@ -14,7 +14,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   const [showQRCode, setShowQRCode] = useState(false);
   const [koifish, setKoiFish] = useState([]);
-  const [loading, setLoading] = useState(true); // Track loading state
+  const [loading, setLoading] = useState(false); // Track loading state
   const [error, setError] = useState(false); // Track error state
   const [check, setCheck] = useState(false)
   const [koifishList, setKoiFishList] = useState([]);
@@ -35,33 +35,33 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Hàm Fetch API để lấy những con cá của customer riêng lẻ
   useEffect(() => {
-    const getFishProfile = async()=>{
+    const getFishProfile = async () => {
       setLoading(true)
       axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
-      .then(response => {
-        setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
-        console.log(response.data);
-        setLoading(false)
-      })
-      .catch(error => {
-        console.error("Error fetching fish data:", error);
-      });
+        .then(response => {
+          setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
+          console.log(response.data);
+          setLoading(false)
+        })
+        .catch(error => {
+          console.error("Error fetching fish data:", error);
+        });
     }
-    if(user!==null){
+    if (user !== null) {
       getFishProfile();
-    }else{
+    } else {
       alert("Please Login To Continue...")
       navigateToLogin("/login")
     }
-    
-  },[]);
+
+  }, []);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
   }, [customerInfo?.distance]);
 
   const [fishOrders, setFishOrders] = useState(() => {
-    const savedOrders = localStorage.getItem("fishOrders");
+    const savedOrders = sessionStorage.getItem("fishOrders");
     return savedOrders ? JSON.parse(savedOrders) : [];
   });
 
@@ -195,7 +195,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   };
 
   useEffect(() => {
-    localStorage.setItem("fishOrders", JSON.stringify(fishOrders));
+    sessionStorage.setItem("fishOrders", JSON.stringify(fishOrders));
   }, [fishOrders]);
 
   const confirmPay = () => {
@@ -302,9 +302,9 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   //   useEffect(() => {
   //     setCustomerInfo({ ...customerInfo, distance: distance });
   //   }, [distance])
-  
+
   //Hàm button callbacks
-  
+
   const navigate = useNavigate();
   const handleGoBack = () => {
     navigate(-1);  // Quay lại trang trước đó
@@ -362,105 +362,106 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       });
   }, []);
 
+  const FishTable = ()=>{
+    return(
+      <table className="fixed-table">
+            <thead>
+              <tr>
+                <th className="label-table">Index</th>
+                <th className="label-table">Name</th>
+                <th className="label-table">Weight (kg)</th>
+                <th className="label-table">Price (VND/Kg)</th>
+                {/* <th className="label-table">Health Status</th> */}
+                <th className="label-table">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {koifishList.map((fish, index) => (
+                <tr key={fish.fishProfileId}>
+                  <td>{index + 1}</td>
+                  <td>
+                    <select
+                      value={fish.name}
+                      onChange={(e) => updateRow(index, "name", e.target.value)}
+                      className="custom-dropdown"
+                    >
+                      <option value="">Choose fish type</option>
+                      {koifish.map((koifish) => (
+                        <option
+                          key={koifish.koiFishId}
+                          value={koifish.fishType}
+                        >
+                          {koifish.fishType}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
+                      min=""
+                      onChange={(e) =>
+                        updateRow(
+                          index,
+                          "quantity",
+                          parseInt(e.target.value) || 0
+                        )
+                      }
+                      className="custom-dropdown"
+                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
+                      onChange={(e) =>
+                        updateRow(index, "price", parseInt(e.target.value) || 0)
+                      }
+                      className="custom-dropdown"
+                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                    />
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => deleteRow(index)}
+                      className="delete-button"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+    )
+  }
 
   return (
-    
+
     <div className="order-form">
-     <div className="con">
-      <button onClick={handleGoBack} className="go-back-button">
-             ⭠ Previous Page 
-            </button>
+      <div className="con">
+        <button onClick={handleGoBack} className="go-back-button">
+          ⭠ Previous Page
+        </button>
 
         <div className="content">
           <h2 className="title">Order Form</h2>
-          
-         
-
-            <table className="fixed-table">
-              <thead>
-                <tr>
-                  <th className="label-table">Index</th>
-                  <th className="label-table">Name</th>
-                  <th className="label-table">Weight (kg)</th>
-                  <th className="label-table">Price (VND/Kg)</th>
-                  {/* <th className="label-table">Health Status</th> */}
-                  <th className="label-table">Action</th>        
-                </tr>
-              </thead>
-              <tbody>
-              <tr>
-    <td colSpan="5" className="Fish-container">
-      {loading ? ( // Hiển thị thông báo đang tải
-        <p className="Fish-status.loading">Loading fish data...</p>
-      ) : error ? ( // Hiển thị thông báo lỗi
-        <p className="Fish-status.error">There was an error fetching the fish data. Please try again later.</p>
-      ) : koifishList.length === 0 ? ( // Hiển thị thông báo không có cá
-        <p className="Fish-status.empty">There is no fish, you need to add more.</p>
-      ) : (
-        <p className="Fish-status">Dữ liệu cá đã được tải.</p> // Thông báo khác nếu cần
-      )}
-    </td>
-  </tr>
-                {fishOrders.map((order, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>
-                      <select
-                        value={order.name}
-                        onChange={(e) => updateRow(index, "name", e.target.value)}
-                        className="custom-dropdown"
-                      >
-                        <option value="">Choose fish type</option>
-                        {koifish.map((koifish) => (
-                          <option
-                            key={koifish.koiFishId}
-                            value={koifish.fishType}
-                          >
-                            {koifish.fishType}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={order.quantity === 1 ? "" : order.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                        min=""
-                        onChange={(e) =>
-                          updateRow(
-                            index,
-                            "quantity",
-                            parseInt(e.target.value) || 0
-                          )
-                        }
-                        className="custom-dropdown"
-                        disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min="0"
-                        value={order.price === 0 ? "" : order.price} // Nếu giá trị là 0, thì để trống
-                        onChange={(e) =>
-                          updateRow(index, "price", parseInt(e.target.value) || 0)
-                        }
-                        className="custom-dropdown"
-                        disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                      />
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => deleteRow(index)}
-                        className="delete-button"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {koifishList ?
+                  <>
+                    {loading ? ( // Hiển thị thông báo đang tải
+                      <p className="Fish-status-loading">Loading fish data...</p>
+                    ) : error ? ( // Hiển thị thông báo lỗi
+                      <p className="Fish-status-error">There was an error fetching the fish data. Please try again later.</p>
+                    ) : koifishList.length === 0 ? ( // Hiển thị thông báo không có cá
+                      <p className="Fish-status-empty">There is no fish, you need to add more.</p>
+                    ) : <FishTable/>
+                    }
+                  </>
+                    :""
+                }
           <button onClick={addRow} className="add-button">
             Add Fish
           </button>

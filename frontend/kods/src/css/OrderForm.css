@@ -377,14 +377,14 @@
 }
 
 
-.Fish-status.loading {
+.Fish-status-loading {
   color: #ffa500; /* Màu cam cho thông báo đang tải */
 }
 
-.Fish-status.error {
+.Fish-status-error {
   color: #ff4500; /* Màu đỏ cho thông báo lỗi */
 }
 
-.Fish-status.empty {
+.Fish-status-empty {
   color: #51ff00; /* Màu xanh cho thông báo không có cá */
 }
