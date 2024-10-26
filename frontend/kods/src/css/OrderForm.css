@@ -358,19 +358,20 @@
   transition: background-color 0.2s; 
   font-weight: bold;
   
+}*/
+
+.go-back-button {
+  background-color: transparent; 
+  border: none; 
+  color: #000; 
+  font-size: 16px; 
+  cursor: pointer; 
+  padding: 10px 20px; 
+  font-weight: bold; 
+  transition: color 0.3s ease; 
 }
 
 .go-back-button:hover {
-  background-color: #45a049; 
-} */
-
-.go-back-button {
-  background-color: transparent; /* No background color */
-  border: none; /* Remove border */
-  color: #000; /* Set text color */
-  font-size: 16px; /* Adjust font size */
-  cursor: pointer; /* Pointer cursor */
-  padding: 10px 20px; /* Padding for the button */
-  font-weight: bold; /* Make the text bold */
+  color: #007bff; 
 }
 
