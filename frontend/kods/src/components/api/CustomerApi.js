@@ -13,6 +13,16 @@ export async function GetAllCustomers() {
     })
   return allCustomers
 }
+export async function AddNewCustomer(data) {
+  var customer = null
+  await axios.post(getAllCustomerURL,data,headers)
+  .then(response =>{customer = response.data;})
+  .catch(error => {
+    console.error(error)
+    alert('Error fetching Customer data')
+  })
+return customer
+}
 export async function GetCustomerById(id) {
   var customer = null
   try {

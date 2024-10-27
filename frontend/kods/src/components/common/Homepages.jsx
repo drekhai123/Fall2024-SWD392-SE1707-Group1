@@ -13,7 +13,7 @@ export default function Homepage() {
       "/images/homepage2.png",
       "/images/homepage3.png"
     ];
-   
+
     useEffect(() => {
       const observer = new IntersectionObserver(
         (entries) => {

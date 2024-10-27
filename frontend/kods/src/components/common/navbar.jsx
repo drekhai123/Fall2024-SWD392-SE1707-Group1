@@ -1,18 +1,21 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import "../../css/navbar.css";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Navbar() {
   const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
   const logout = () => {
     sessionStorage.removeItem("user");
+    toast.success("Logged out successfully!");
     navigate('/');
     window.location.reload();
   };
   const navigate1 = useNavigate();
   const gotoOderForm = () => {
-    navigate1('/OrderForm'); 
+    navigate1('/OrderForm');
   };
 
   return (
@@ -51,6 +54,7 @@ export default function Navbar() {
         )}
 
       </nav>
+      <ToastContainer />
     </header>
   );
 }

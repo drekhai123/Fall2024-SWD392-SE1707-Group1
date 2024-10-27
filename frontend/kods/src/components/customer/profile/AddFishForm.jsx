@@ -23,7 +23,9 @@ import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIco
 import { GetAllKoiFishes } from '../../api/KoiFishApi';
 import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile } from '../../api/FishProfileApi';
 import { storage } from '../../../config/ConfigFirebase';
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Import necessary functions
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function AddFish() {
@@ -35,17 +37,13 @@ export default function AddFish() {
   const [image, setImage] = useState('');
   const [url, setUrl] = useState('');
   const [progress, setProgres] = useState(0);
-
-  // const [storage, setStorage] = useState('');
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [weight, setWeight] = useState(''); // New state for weight
-  const [gender, setGender] = useState(''); // Initialize as empty string
-  const [notes, setNotes] = useState('');   // Initialize as empty string
-
-  const [koifish, setKoiFish] = useState([]);  // New state for species
-  // const [description, setDescription] = useState(''); // New state for description
-  const [isImageZoomOpen, setIsImageZoomOpen] = useState(false); // New state for image zoom
-  const [selectedFishType, setSelectedFishType] = useState(''); // New state for selected fish type
+  const [weight, setWeight] = useState('');
+  const [gender, setGender] = useState('');
+  const [notes, setNotes] = useState('');
+  const [koifish, setKoiFish] = useState([]);  //state for species
+  const [isImageZoomOpen, setIsImageZoomOpen] = useState(false); // state for image zoom
+  const [selectedFishType, setSelectedFishType] = useState(''); //  state for selected fish type
 
 
   // KOI species
@@ -78,7 +76,7 @@ export default function AddFish() {
 
   const handleAddFish = async (e) => {
     e.preventDefault();
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(sessionStorage.getItem('user')); // Changed to sessionStorage
     const customerId = user?.customer?.customerId;
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
 
@@ -87,7 +85,7 @@ export default function AddFish() {
         weight: parseFloat(weight),
         gender: gender,
         notes: notes,
-        image: image, // Use the image URL from state
+        image: image,
         koiFishId: koiFishId,
         customerId: customerId
     };
@@ -95,8 +93,10 @@ export default function AddFish() {
     console.log('Adding new fish:', newFish);
 
     try {
-        const addedFish = await addFishProfile(newFish);
-        localStorage.setItem(`fish_${addedFish.fishProfileId}`, JSON.stringify(newFish));
+        await addFishProfile(newFish);
+        toast.success("Add fish successfully", {
+            autoClose: 2000 // Duration in milliseconds (10 seconds)
+        });
         setIsFormOpen(false);
         fetchFishes(); // Refresh fish list
     } catch (error) {
@@ -122,7 +122,7 @@ export default function AddFish() {
 
   const handleUpdateFish = async (e) => {
     e.preventDefault();
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(sessionStorage.getItem('user'));
     const customerId = user?.accountId;
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
 
@@ -138,7 +138,9 @@ export default function AddFish() {
 
     try {
         await updateFishProfile(selectedFish.fishProfileId, updatedFish);
-        localStorage.setItem(`fish_${selectedFish.id}`, JSON.stringify({ ...selectedFish, ...updatedFish }));
+        toast.info("Update fish success", {
+            autoClose: 2000 // Duration in milliseconds (2 seconds)
+        });
         setIsFormOpen(false);
         fetchFishes(); // Refresh fish list
     } catch (error) {
@@ -147,19 +149,35 @@ export default function AddFish() {
   };
 
   const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    // Validation: Check if all required fields are filled
+    if (!name || !weight || !gender || !selectedFishType || !image) {
+        toast.error("Please fill out all required fields.", {
+            autoClose: 2000 // Duration in milliseconds (10 seconds)
+        });
+        return;
+    }
+
     if (selectedFish) {
-      handleUpdateFish(e);
+        handleUpdateFish(e);
     } else {
-      handleAddFish(e);
+        handleAddFish(e);
     }
   };
 
   const handleDeleteConfirm = async () => {
     if (selectedFish) {
-        await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
-        localStorage.removeItem(`fish_${selectedFish.id}`); // Remove fish from Local Storage
-        setIsDeleteDialogOpen(false);
-        fetchFishes(); // Update the fish list
+        try {
+            await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
+            toast.error("Delete fish success", {
+                autoClose: 2000 // Duration in milliseconds (2 seconds)
+            });
+            setIsDeleteDialogOpen(false);
+            fetchFishes(); // Update the fish list
+        } catch (error) {
+            console.error('Error deleting fish:', error);
+        }
     }
   };
 
@@ -192,31 +210,6 @@ export default function AddFish() {
     }
   };
 
-  const handleViewDetail = (fish) => {
-    setSelectedFish(fish);
-    setIsDetailDialogOpen(true);
-  };
-
-  const handleImageZoomOpen = () => {
-    setIsImageZoomOpen(true);
-  };
-
-  const handleImageZoomClose = () => {
-    setIsImageZoomOpen(false);
-  };
-
-  const handleOpenAddFishForm = () => {
-    // Reset form fields to initial state
-    setName('');
-    setWeight('');
-    setGender('');
-    setNotes('');
-    setImage('');
-    setSelectedFishType('');
-    setSelectedFish(null); // Ensure no fish is selected
-    setIsFormOpen(true); // Open the form
-  };
-
   const fetchImageFromFirebase = async (imageName) => {
     try {
       const storageRef = ref(storage, `images/${imageName}`);
@@ -232,8 +225,34 @@ export default function AddFish() {
     fetchImageFromFirebase('your-image-name.jpg');
   }, []);
 
+  const handleViewDetail = (fish) => {
+    setSelectedFish(fish);
+    setIsDetailDialogOpen(true);
+  };
+
+  const handleImageZoomOpen = () => {
+    setIsImageZoomOpen(true);
+  };
+
+  const handleImageZoomClose = () => {
+    setIsImageZoomOpen(false);
+  };
+
+  const handleOpenAddFishForm = () => {
+    setName('');
+    setWeight('');
+    setGender('');
+    setNotes('');
+    setImage('');
+    setSelectedFishType('');
+    setSelectedFish(null);
+    setIsFormOpen(true);
+  };
+
+
   return (
     <div>
+      <ToastContainer />
       <p className="text-4xl font-semibold">Add your Fish</p>
       <p className="text-gray-600 text-lg my-2">
         This is your Fish profile. You can update your fish and picture here.
@@ -283,7 +302,7 @@ export default function AddFish() {
               type="text"
               fullWidth
               value={weight}
-              onChange={(e) => setWeight(e.target.value)} // New input for weight
+              onChange={(e) => setWeight(e.target.value)}
               required
             />
 
@@ -357,7 +376,7 @@ export default function AddFish() {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)} inert={isDeleteDialogOpen}>
+      <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
           Are you sure you want to delete this fish?
@@ -381,7 +400,7 @@ export default function AddFish() {
                 sx={{ width: 100, height: 100, cursor: 'pointer'}} // Add cursor pointer
                 onClick={handleImageZoomOpen} // Open zoom on click
               />
-              <Typography variant="body1"><strong>Weight:</strong> {selectedFish.weight}</Typography>
+              <Typography variant="body1"><strong>Weight:</strong> {selectedFish.weight} kg</Typography>
               <Typography variant="body1"><strong>Species:</strong> {selectedFish.koiFish.fishType}</Typography>
               <Typography variant="body1"><strong>Description:</strong> {selectedFish.koiFish.description}</Typography>
               <Typography variant="body1"><strong>Gender:</strong> {selectedFish.gender}</Typography>

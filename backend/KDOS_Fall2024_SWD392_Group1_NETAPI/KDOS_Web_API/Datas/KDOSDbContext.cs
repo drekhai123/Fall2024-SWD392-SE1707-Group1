@@ -18,6 +18,7 @@ namespace KDOS_Web_API.Datas
         public DbSet<DeliveryStaff> DeliveryStaff { get; set; }
         public DbSet<FishProfile> FishProfile { get; set; }
         public DbSet<Feedback> Feedback { get; set; }
+        public DbSet<Transport> Transport { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Verification>()
@@ -46,6 +47,18 @@ namespace KDOS_Web_API.Datas
                 .HasOne(o => o.Transport) // One Transport can have Many orders
                 .WithMany(tr => tr.Orders)
                 .HasForeignKey(o => o.TransportId);
+            modelBuilder.Entity<Orders>()
+               .HasOne(o => o.DistancePriceList) // One Price can have Many orders
+               .WithMany(tr => tr.Orders)
+               .HasForeignKey(o => o.DistancePriceListId);
+            modelBuilder.Entity<Orders>()
+               .HasOne(o => o.WeightPriceList) // One Price can have Many orders
+               .WithMany(tr => tr.Orders)
+               .HasForeignKey(o => o.WeightPriceListId);
+            modelBuilder.Entity<LogTransport>()
+               .HasOne(o => o.Transport) // One Transport can have Many orders
+               .WithMany(tr => tr.LogTransports)
+               .HasForeignKey(o => o.TransportId);
             modelBuilder.Entity<OrderDetails>()
                 .HasOne(od => od.Order) // Each OrderDetails references one Order
                 .WithMany(o => o.OrderDetails) // An Order can have many OrderDetails
@@ -77,6 +90,7 @@ namespace KDOS_Web_API.Datas
                 .HasOne(cus => cus.Customer)
                 .WithMany(fe => fe.Feedback)
                 .HasForeignKey(x => x.CustomerId);
+
         }
         public KDOSDbContext(DbContextOptions<KDOSDbContext> options) : base(options)
         {

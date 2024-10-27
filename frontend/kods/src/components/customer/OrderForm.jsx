@@ -48,7 +48,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         });
     }
     if (user !== null) {
-      //  getFishProfile();
+      //getFishProfile();
     } else {
       alert("Please Login To Continue...")
       navigateToLogin("/login")
@@ -269,7 +269,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       }
     }
 
-    setFishOrdersList(updatedOrders);
+    setKoiFishList(updatedOrders);
   };
 
   // Hàm thêm dòng mới
@@ -297,21 +297,20 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
-  const FishTable = ()=>{
+   const FishTable = ()=>{
     return(
-      <table className="fixed-table">
+      <table className="fixed-table">      
             <thead>
               <tr>
-                <th className="label-table">Index</th>
+               <th className="label-table">Index</th>
                 <th className="label-table">Name</th>
                 <th className="label-table">Weight (kg)</th>
                 <th className="label-table">Price (VND/Kg)</th>
-                {/* <th className="label-table">Health Status</th> */}
-                <th className="label-table">Action</th>
-              </tr>
-            </thead>
+                <th className="label-table">Action</th>  
+               </tr> 
+            </thead> 
             <tbody>
-              {koifishList.map((fish, index) => (
+             {koifishList.map((fish, index) => (
                 <tr key={fish.fishProfileId}>
                   <td>{index + 1}</td>
                   <td>
@@ -319,7 +318,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                       value={fish.name}
                       onChange={(e) => updateRow(index, "name", e.target.value)}
                       className="custom-dropdown"
-                    >
+                    > 
                       <option value="">Choose fish type</option>
                       {koifish.map((koifish) => (
                         <option
@@ -327,7 +326,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                           value={koifish.fishType}
                         >
                           {koifish.fishType}
-                        </option>
+                        </option> 
                       ))}
                     </select>
                   </td>

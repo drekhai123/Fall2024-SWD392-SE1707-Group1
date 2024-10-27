@@ -16,9 +16,10 @@ namespace KDOS_Web_API.Mappings
                 // CreateMap<Verification, VerificationDTO>().ReverseMap(); Don't think of using this
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
-			CreateMap<AddNewAccountDTO, Account>().ReverseMap()
+			CreateMap<Account, AddNewAccountDTO>().ReverseMap()
 				.ForMember(x => x.Password, option => option.Ignore())
-				.ForMember(x => x.Banned, option => option.Ignore())// Manually set the ban as false
+                .ForMember(x => x.Role, option => option.Ignore())
+                .ForMember(x => x.Banned, option => option.Ignore())// Manually set the ban as false
 				.ForMember(x=>x.Role, option => option.Ignore());// Manually set the role dependent on the need
 			CreateMap<Account, UpdateAccountStatus>().ReverseMap();
 			CreateMap<UpdateAccountDTO, Account>().ReverseMap();
@@ -40,6 +41,10 @@ namespace KDOS_Web_API.Mappings
             CreateMap<DeliveryStaff, AddNewDeliveryStaffDTO>().ReverseMap();
             CreateMap<DeliveryStaff, UpdateDeliveryStaffDTO>().ReverseMap();
             // Transport
+            CreateMap<Transport, TransportDTO>().ReverseMap();
+            CreateMap<Transport, UpdateTransportDTO>().ReverseMap();
+            CreateMap<Transport,AddNewTransportDTO>()
+                .ForMember(a => a.Status, opt => opt.Ignore()).ReverseMap();
             // Order
             CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()).ReverseMap();

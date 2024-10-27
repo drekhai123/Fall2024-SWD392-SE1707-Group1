@@ -82,7 +82,7 @@ namespace KDOS_Web_API.Controllers
             // Turn Model to DTO for returning a response
             if (accountModel == null)
             {
-                return BadRequest();
+                return BadRequest("Email or username already in use.");
             }
             var accountDto = mapper.Map<AccountDTO>(accountModel);
             return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
@@ -168,7 +168,7 @@ namespace KDOS_Web_API.Controllers
             accountModel = await accountRepository.AddNewAccount(accountModel);
             if (accountModel == null)
             {
-                return BadRequest();
+                return BadRequest("Email or username already in use.");
             }
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);
@@ -190,7 +190,7 @@ namespace KDOS_Web_API.Controllers
             accountModel = await accountRepository.AddNewAccount(accountModel);
             if (accountModel == null)
             {
-                return BadRequest();
+                return BadRequest("Email or username already in use.");
             }
             // Turn Model to DTO for returning a response
             var accountDto = mapper.Map<AccountDTO>(accountModel);

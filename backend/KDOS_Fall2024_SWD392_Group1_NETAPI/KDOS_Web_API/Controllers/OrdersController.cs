@@ -53,7 +53,7 @@ namespace KDOS_Web_API.Controllers
             }
 
             // Map the newly created order back to a DTO for the response
-            var newOrderDto = mapper.Map<AddNewOrderDTO>(ordersModel);
+            var newOrderDto = mapper.Map<OrdersDTO>(ordersModel);
 
             // Return the created order with a 201 Created status
             return CreatedAtAction(nameof(GetOrderById), new { orderId = ordersModel.OrderId }, newOrderDto);
@@ -86,7 +86,7 @@ namespace KDOS_Web_API.Controllers
 
         [HttpPut]
         [Route("{orderId}")]
-        public async Task<IActionResult> UpdateOrder([FromRoute] int orderId, [FromBody] AddNewOrderDTO addNewOrderDTO)
+        public async Task<IActionResult> UpdateOrder([FromRoute] int orderId, [FromBody] UpdateOrderDTO updateOrderDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -100,7 +100,7 @@ namespace KDOS_Web_API.Controllers
             }
 
             // Update the order model with the new data
-            orderModel = mapper.Map(addNewOrderDTO, orderModel);
+            orderModel = mapper.Map(updateOrderDTO, orderModel);
             orderModel.UpdatedAt = DateTime.Now;
 
             try
@@ -114,7 +114,7 @@ namespace KDOS_Web_API.Controllers
             }
 
             // Map the updated order back to a DTO for the response
-            var updatedOrderDto = mapper.Map<AddNewOrderDTO>(orderModel);
+            var updatedOrderDto = mapper.Map<OrdersDTO>(orderModel);
 
             // Return the updated order with a 200 OK status
             return Ok(updatedOrderDto);

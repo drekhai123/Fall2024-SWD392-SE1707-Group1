@@ -27,6 +27,7 @@ builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>
 builder.Services.AddScoped<IKoiFishRepository, SQLKoiFishRepository>();
 builder.Services.AddScoped<IFishProfileRepository, SQLFishProfileRepository>();
 builder.Services.AddScoped<IFeedBackRepository, SQLFeedBackRepository>();
+builder.Services.AddScoped<ITransportRepository, SQLTransportRepository>();
 //Inject Mailing service
 builder.Services.AddScoped<IMailingService, MailingService>();
 //End Respository
