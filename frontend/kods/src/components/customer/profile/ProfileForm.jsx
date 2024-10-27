@@ -19,6 +19,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
           <div>
             <label className="block mb-2">Change your user name here</label>
             <InputField
+              defaultValue="User Name"
               name="userName"
               label="User Name"
               fullWidth
@@ -32,6 +33,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
           <div>
             <label className="block mb-2">Change your email here</label>
             <InputField
+            defaultValue="Email"
               name="email"
               label="Email"
               fullWidth

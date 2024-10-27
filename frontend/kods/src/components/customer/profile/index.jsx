@@ -37,6 +37,8 @@ const UserProfilePage = () => {
         setUserData(response.data);
         setCustomerData(response.data.customer); // Use response.data directly
         methodsProfile.reset(response.data);
+        methodsCustomer.reset(response.data.customer); // Use response.data directly
+        console.log(response.data.customer)
       } catch (error) {
         console.error("Error fetching user data: ", error);
       }
