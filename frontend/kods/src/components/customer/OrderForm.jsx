@@ -1,23 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import Swal from "sweetalert2";
-import { QRCodeSVG } from "qrcode.react";
+import {QRCodeSVG} from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
-import { GetAllKoiFishes } from "../api/KoiFishApi";
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-export default function OrderForm({ onSuggestionClick, distance }) {
+export default function OrderForm({onSuggestionClick, distance}) {
   const navigateToLogin = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user")); // Get user info from local storage
-  console.log(user)
 
+  const [modal, setOpenModal] = useState(false);
+  const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(false);
-  const [koifish, setKoiFish] = useState([]);
-  const [loading, setLoading] = useState(false); // Track loading state
-  const [error, setError] = useState(false); // Track error state
+  const [loading, setLoading] = useState(false);// Track error state
   const [check, setCheck] = useState(false)
-  const [koifishList, setKoiFishList] = useState([]);
   const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
@@ -25,6 +22,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [markerPositionTo, setMarkerPositionTo] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [days, setDays] = useState(null);
+  const [selectedFish, setSelectedFish] = useState([]);
 
   const [customerInfo, setCustomerInfo] = useState({
     nameCustomer: "",
@@ -33,25 +31,24 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     distance: 0,
   });
 
-  // Hàm Fetch API để lấy những con cá của customer riêng lẻ
-  useEffect(() => {
-    const getFishProfile = async () => {
-      setLoading(true)
-      axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
-        .then(response => {
-          setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
-          console.log(response.data);
-          setLoading(false)
-        })
-        .catch(error => {
-          console.error("Error fetching fish data:", error);
-        });
+  const getFishProfile = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user?.customer?.customerId}`);
+      setData(response?.data);
+    } catch (error) {
+      console.error("Error fetching fish data:", error);
+    } finally {
+      setLoading(false);
     }
+  }, [user?.customer?.customerId]); // Chỉ tạo lại khi user.customer.customerId thay đổi
+
+  useEffect(() => {
     if (user !== null) {
-      //getFishProfile();
+      getFishProfile();
     } else {
-      alert("Please Login To Continue...")
-      navigateToLogin("/login")
+      alert("Please login to continue...");
+      navigateToLogin("/login");
     }
   }, []);
 
@@ -80,13 +77,12 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     }
   }
 
-
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
   // phí shipping
   const calculateShippingFee = () => {
-    const { distance } = customerInfo;
+    const {distance} = customerInfo;
     const estimatedDays = calculateEstimatedDeliveryDays(distance);
 
     if (distance <= 5) {
@@ -233,20 +229,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         }
       }, 500)
     );
-    setCustomerInfo({ ...customerInfo, [field]: value });
+    setCustomerInfo({...customerInfo, [field]: value});
   };
-
-
 
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
         setMarkerPositionFrom([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({ ...customerInfo, addressSender: suggestion?.display_name });
+        setCustomerInfo({...customerInfo, addressSender: suggestion?.display_name});
         setFromSuggestions(null);
       } else if ('addressCustomer') {
         setMarkerPositionTo([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({ ...customerInfo, addressCustomer: suggestion?.display_name });
+        setCustomerInfo({...customerInfo, addressCustomer: suggestion?.display_name});
         setToSuggestions(null);
       }
     }
@@ -257,124 +251,128 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     navigate(-1);  // Quay lại trang trước đó
   };
 
-  // Hàm updaterow
-  const updateRow = (index, field, value) => {
-    const updatedOrders = [...fishOrdersList];
-    updatedOrders[index][field] = value;
-    if (field === "name") {
-      const selectedFish = koifishList.find(fish => fish.fishType === value);
-      if (selectedFish) {
-        updatedOrders[index].quantity = selectedFish.weight; // Cập nhật weight từ API
-        updatedOrders[index].price = selectedFish.price;     // Cập nhật price từ API
-      }
-    }
-
-    setKoiFishList(updatedOrders);
-  };
-
   // Hàm thêm dòng mới
   const addRow = () => {
-    setFishOrdersList([...fishOrdersList]);
+    const selectedFishData = data.filter((fish) =>
+      selectedFish.includes(fish.fishProfileId)
+    );
+
+    setFishOrdersList((prevList) => {
+      const newFish = selectedFishData.filter(
+        (fish) => !prevList.some((item) => item.fishProfileId === fish.fishProfileId)
+      );
+      return [...prevList, ...newFish];
+    });
+
+    setOpenModal(false);
   };
 
   // Hàm xóa dòng
   const deleteRow = (index) => {
-    const updatedOrders = fishOrdersList.filter((_, i) => i !== index);
-    setKoiFishList(updatedOrders);
+    const updatedOrders = fishOrdersList?.filter((_, i) => i !== index);
+    const updatedOrdersCheckbox = selectedFish?.filter((_, i) => i !== index);
+    setFishOrdersList(updatedOrders);
+    setSelectedFish(updatedOrdersCheckbox)
   };
-
 
   //Hàm của mapping để nguyên (comment cái const ở trên của nó)
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
-      onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
+      onSuggestionClick({form: markerPositionFrom, to: markerPositionTo});
     }
   }, [markerPositionFrom, markerPositionTo])
 
   // Hàm của Distance (comment cái const ở trên của nó)
   useEffect(() => {
-    setCustomerInfo({ ...customerInfo, distance: distance });
+    setCustomerInfo({...customerInfo, distance: distance});
   }, [distance])
 
-   const FishTable = ()=>{
-    return(
-      <table className="fixed-table">      
-            <thead>
-              <tr>
-               <th className="label-table">Index</th>
-                <th className="label-table">Name</th>
-                <th className="label-table">Weight (kg)</th>
-                <th className="label-table">Price (VND/Kg)</th>
-                <th className="label-table">Action</th>  
-               </tr> 
-            </thead> 
-            <tbody>
-             {koifishList.map((fish, index) => (
-                <tr key={fish.fishProfileId}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <select
-                      value={fish.name}
-                      onChange={(e) => updateRow(index, "name", e.target.value)}
-                      className="custom-dropdown"
-                    > 
-                      <option value="">Choose fish type</option>
-                      {koifish.map((koifish) => (
-                        <option
-                          key={koifish.koiFishId}
-                          value={koifish.fishType}
-                        >
-                          {koifish.fishType}
-                        </option> 
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                      min=""
-                      onChange={(e) =>
-                        updateRow(
-                          index,
-                          "quantity",
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                      className="custom-dropdown"
-                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
-                      onChange={(e) =>
-                        updateRow(index, "price", parseInt(e.target.value) || 0)
-                      }
-                      className="custom-dropdown"
-                      disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                    />
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => deleteRow(index)}
-                      className="delete-button"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  const handleCheckboxChange = (fishProfileId) => {
+    setSelectedFish((prevSelected) =>
+      prevSelected.includes(fishProfileId)
+        ? prevSelected.filter((id) => id !== fishProfileId) // Bỏ chọn nếu đã chọn trước đó
+        : [...prevSelected, fishProfileId] // Thêm vào danh sách nếu chưa chọn
+    );
+  };
+
+  const handleSelectAll = (isChecked) => {
+    setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
+  };
+
+  const FishTable = ({data}) => {
+    return (
+      <table className="fixed-table">
+        <thead>
+          <tr>
+            <th className="label-table">Index</th>
+            <th className="label-table">Name</th>
+            <th className="label-table">Weight (kg)</th>
+            <th className="label-table">Gender</th>
+            <th className="label-table">Price (VND/Kg)</th>
+            <th className="label-table">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data?.map((fish, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>
+                {fish?.name}
+              </td>
+              <td>
+                {fish?.weight}
+              </td>
+              <td>
+                {fish?.gender}
+              </td>
+              <td>
+                {fish?.price}
+              </td>
+              {/*<td>
+                <input
+                  type="number"
+                  value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
+                  min=""
+                  onChange={(e) =>
+                    updateRow(
+                      index,
+                      "quantity",
+                      parseInt(e.target.value) || 0
+                    )
+                  }
+                  className="custom-dropdown"
+                  disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
+                  onChange={(e) =>
+                    updateRow(index, "price", parseInt(e.target.value) || 0)
+                  }
+                  className="custom-dropdown"
+                  disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                />
+              </td>*/}
+              <td>
+                <button
+                  onClick={() => deleteRow(index)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     )
   }
 
   return (
-
     <div className="order-form">
       <div className="con">
         <button onClick={handleGoBack} className="go-back-button">
@@ -383,20 +381,20 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
         <div className="content">
           <h2 className="title">Order Form</h2>
-          {koifishList ?
-                  <>
-                    {loading ? ( // Hiển thị thông báo đang tải
-                      <p className="Fish-status-loading">Loading fish data...</p>
-                    ) : error ? ( // Hiển thị thông báo lỗi
-                      <p className="Fish-status-error">There was an error fetching the fish data. Please try again later.</p>
-                    ) : koifishList.length === 0 ? ( // Hiển thị thông báo không có cá
-                      <p className="Fish-status-empty">There is no fish, you need to add more.</p>
-                    ) : <FishTable/>
-                    }
-                  </>
-                    :""
-                }
-          <button onClick={addRow} className="add-button">
+          {data ?
+            <>
+              {loading ? ( // Hiển thị thông báo đang tải
+                <p className="Fish-status-loading">Loading fish data...</p>
+              ) : data?.length === 0 ? ( // Hiển thị thông báo không có cá
+                <p className="Fish-status-empty">There is no fish, you need to add more.</p>
+              ) :
+                <p className="Fish-status-empty">Ready to choose fish.</p>
+              }
+            </>
+            : ""
+          }
+          <FishTable data={fishOrdersList} />
+          <button onClick={() => setOpenModal(true)} className="add-button">
             Add Fish
           </button>
 
@@ -498,7 +496,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 </div>
               </div>
 
-              <div style={{ marginTop: 10 }} className="customer-info">
+              <div style={{marginTop: 10}} className="customer-info">
                 <h3 className="label-customer">Distance (km)</h3>
                 <input
                   className="input-customer"
@@ -517,7 +515,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
 
                 <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
-                  className="layout-checkbox" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px' }} >  {/* lười css làm z cho lẹ */}
+                  className="layout-checkbox" style={{cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px'}} >  {/* lười css làm z cho lẹ */}
                   <p>
                     <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
                   </p>
@@ -526,7 +524,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                     {customerInfo?.distance <= 50 && ( // Nếu distance lớn hơn 50 thì checkbox biến mất
                       <label>
                         <input
-                          style={{ cursor: 'pointer' }}
+                          style={{cursor: 'pointer'}}
                           type="checkbox"
                           checked={check}
                           onChange={(e) => setCheck(e.target.checked)}
@@ -590,6 +588,62 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   onClick={() => setShowQRCode(false)}
                   className="cancel-btn"
                 >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {modal && (
+          <div className="popup">
+            <div className="container-popup">
+              <h3 className="title-popup">Choose fish</h3>
+
+              <div className="layout-checkbox">
+                <div className="fish-item">
+                  <label className="label-checkbox-0">
+                    <input
+                      name="checkbox-all"
+                      type="checkbox"
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      checked={selectedFish.length === data.length}
+                    />
+                    <div className="layout-select">
+                      <span className="label">Name</span>
+                      <span className="label">Type</span>
+                      <span className="label">Gender</span>
+                      <span className="label">Weight</span>
+                      <span className="label">Notes</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <div className="layout-checkbox">
+                {data?.map((fish) => (
+                  <div key={fish.fishProfileId} className="fish-item">
+                    <label className="label-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedFish.includes(fish.fishProfileId)}
+                        onChange={() => handleCheckboxChange(fish.fishProfileId)}
+                      />
+                      <div className="layout-select">
+                        <span>{fish?.name}</span>
+                        <span>{fish?.koiFish?.fishType}</span>
+                        <span>{fish?.gender}</span>
+                        <span>{fish?.weight}</span>
+                        <span>{fish?.notes}</span>
+                      </div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <div className="layout-btn">
+                <button onClick={() => addRow()} className="confirm-btn">
+                  Confirm
+                </button>
+                <button onClick={() => setOpenModal(false)} className="cancel-btn">
                   Cancel
                 </button>
               </div>

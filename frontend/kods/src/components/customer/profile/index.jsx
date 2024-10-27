@@ -5,11 +5,12 @@ import CustomerForm from "./CustomerForm"; // Import form khách hàng
 import Sidebar from "./UserSidebar";
 import Footer from "../../common/footer";
 import { GetAccountById, UpdateAccount } from "../../api/AccountApi";
-import { GetCustomerById, UpdateCustomer } from "../../api/CustomerApi"; // API khách hàng
+import { UpdateCustomer } from "../../api/CustomerApi"; // API khách hàng
 import { useSnackbar } from "notistack";
 import { useLocation } from "react-router-dom"; // Import useLocation để lấy đường dẫn
 import AddFishForm from "./AddFishForm"; // Import AddFishForm
 import Navbar from "../../common/navbar";
+import LoadingScreen from "../../../utils/LoadingScreen";
 
 const menuItems = [
   { label: "Profile", link: "/profile" },
@@ -28,21 +29,25 @@ const UserProfilePage = () => {
   const userId = user.accountId;
   const methodsProfile = useForm(); // useForm cho ProfileForm
   const methodsCustomer = useForm(); // useForm cho CustomerForm
+  const [loadingScreen,setLoadingScreen] = useState(false); //
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setLoadingScreen(true)
       try {
         const response = await GetAccountById(userId);
         setUserData(response.data);
         setCustomerData(response.data.customer); // Use response.data directly
         methodsProfile.reset(response.data);
+        methodsCustomer.reset(response.data.customer); // Use response.data directly
       } catch (error) {
         console.error("Error fetching user data: ", error);
       }
+      setLoadingScreen(false)
     };
     fetchUserData();
-  }, [userId]); // Update dependency to userId
+  },[userId]);
 
   const onSubmitProfile = async (data) => {
     try {
@@ -85,6 +90,7 @@ const UserProfilePage = () => {
 
   return (
     <div>
+      {loadingScreen? <LoadingScreen/>:""}
       <Navbar />
       <div className="mt-[6%] mx-auto px-1 md:px-16">
         <div>

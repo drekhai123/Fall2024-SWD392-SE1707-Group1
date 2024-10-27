@@ -6,7 +6,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
   const [customer, setCustomer] = useState(customerData)
   useEffect(() => {
     setCustomer(customerData)
-  }, [customerData])
+  }, [])
 
   return (
     <>
@@ -28,7 +28,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               fullWidth
               rules={{ required: "Customer name is required" }}
               placeholder="Enter your customer name"
-              defaultValue={customer?.customerName || ""}
+              defaultValue={customer?.customerName || "Name"}
+              value={customer?.customerName}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, customerName: e.target.value }))
               }
@@ -48,7 +49,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
                 min: { value: 1, message: "Age must be at least 1" },
               }}
               placeholder="Enter your age"
-              defaultValue={customer?.age || ""}
+              defaultValue={customer?.age || "0"}
+              value={customer?.age}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, age: e.target.value }))
               }
@@ -63,11 +65,11 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               fullWidth
               rules={{ required: "Gender is required" }}
               options={[
-                { value: "male", label: "Male" },
-                { value: "female", label: "Female" },
-                { value: "other", label: "Other" },
+                { value: "Male", label: "Male" },
+                { value: "Female", label: "Female" },
+                { value: "Others", label: "Others" },
               ]}
-              value={customer.gender || ""}
+              value={customer?.gender || "Others"}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, gender: e.target.value }))
               }
@@ -89,7 +91,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
                 },
               }}
               placeholder="Enter your phone number"
-              defaultValue={customer?.phoneNumber || ""}
+              defaultValue={customer?.phoneNumber || "0"}
+              value={customer?.phoneNumber}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, phoneNumber: e.target.value }))
               }
@@ -105,7 +108,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               fullWidth
               rules={{ required: "Address is required" }}
               placeholder="Enter your address"
-              defaultValue={customer?.address || ""}
+              defaultValue={customer?.address || "Address"}
+              value={customer?.address}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, address: e.target.value }))
               }
@@ -117,10 +121,10 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Created At</label>
             <InputField
               name="createdAt"
-              label="Created At"
+              label="Created Since"
               fullWidth
               readOnly
-              defaultValue={customer?.createdAt || ""}
+              defaultValue={customer?.createdAt || "Date"}
             />
           </div>
 
@@ -129,10 +133,10 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Updated At</label>
             <InputField
               name="updatedAt"
-              label="Updated At"
+              label="Updated Since"
               fullWidth
               readOnly
-              defaultValue={customer?.updatedAt || ""}
+              defaultValue={customer?.updatedAt || "Date"}
             />
           </div>
 

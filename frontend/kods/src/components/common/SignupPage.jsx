@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/SignupPage.css";
-import { regCus, signUp } from "../api/Auth.api";
 import { toast } from "react-toastify";
+import { AddNewAccount, VerifyAccount } from "../api/AccountApi";
+import { AddNewCustomer } from "../api/CustomerApi";
+import LoadingScreen from "../../utils/LoadingScreen";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -14,13 +16,18 @@ const SignupPage = () => {
   const [address, setAddress] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
-
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [registerEmail, setRegisterEmail] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
   // Trạng thái cho lỗi bỏ trống
   const [emailError, setEmailError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [genderError, setGenderError] = useState(false);
   const [addressError, setAddressError] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [ageError, setAgeError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -48,14 +55,16 @@ const SignupPage = () => {
   };
 
   const handleSignupClick = async (e) => {
+    setLoadingScreen(true)
     e.preventDefault();
-
     // Kiểm tra xem các field nào đang trống và đặt trạng thái lỗi tương ứng
     setEmailError(!email);
     setUsernameError(!username);
     setConfirmPasswordError(!confirmPassword);
     setGenderError(!gender);
     setAddressError(!address);
+    setNameError(!name);
+    setAgeError(!age)
 
     // Kiểm tra điều kiện khi có lỗi
     // if (passwordError || phoneError || !email || !username || !confirmPassword || !gender || !address) {
@@ -64,35 +73,45 @@ const SignupPage = () => {
     // }
 
     const data = {
-      banned: false,
       email: email,
       userName: username,
       password: password,
-      role: "customer",
     };
     // Implement signup logic here
-    const res = await signUp(data);
-    if (res) {
-      console.log(res);
-      const data = {
-        customerName: "bilong",
-        age: 35,
-        accountId: res.data.accountId,
-        gender: gender,
-        phoneNumber: phoneNumber,
-        address: address,
-        createdAt: "2024-10-16T16:20:36.482Z",
-        updatedAt: "2024-10-16T16:20:36.482Z",
-      };
-      const response = await regCus(data);
-      if (response) {
-        toast.success("Success");
-      } else {
-        toast.error("fail");
+    const res = await AddNewAccount(data);
+    if (res.status >= 200 && res.status < 300) {
+      var account = await res.data
+      if (account.accountId != null) {
+        const verification = await VerifyAccount(account.accountId) //send verification email and notify
+        if (verification.status >= 200 && verification.status < 300) {
+          setRegisterEmail(true)
+          alert("Check Your Email For Verification Code")
+          const data = {
+            customerName: name,
+            age: age,
+            accountId: res.data.accountId,
+            gender: gender,
+            phoneNumber: phoneNumber,
+            address: address,
+            createdAt: "2024-10-16T16:20:36.482Z",
+            updatedAt: "2024-10-16T16:20:36.482Z",
+          };
+          const response = await AddNewCustomer(data);
+          if (response) {
+            toast.success("Success");
+          } else {
+            toast.error("fail");
+          }
+        }else{
+          toast.error("Error Adding User Data");
+        }
+      }else{
+        toast.error("Error Sending Verification Code");
       }
     } else {
-      toast.error("Error");
+      toast.error("Error Adding Account Data");
     }
+    setLoadingScreen(false)
   };
 
   const handleLoginClick = () => {
@@ -101,6 +120,7 @@ const SignupPage = () => {
 
   return (
     <div className="signup-page-container">
+      {loadingScreen? <LoadingScreen/>:""}
       <div className="brand-container">
         <img src="/images/coco.jpg" alt="Brand" className="brand-img" />
       </div>
@@ -169,7 +189,27 @@ const SignupPage = () => {
               <p className="error-text">Confirm Password is required</p>
             )}
           </div>
-
+          {/* Customer Name field */}
+          <div className="input-wrapper">
+            <input
+              type="text"
+              className="address-input"
+              placeholder="Enter Your Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            {nameError && <p className="error-text">Name is required</p>}
+          </div>
+          <div className="input-wrapper">
+            <input
+              type="number"
+              className="address-input"
+              placeholder="Enter Your Age"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
+            {ageError && <p className="error-text">Age is required</p>}
+          </div>
           {/* Gender field */}
           <div className="input-wrapper">
             <select
@@ -180,9 +220,9 @@ const SignupPage = () => {
               <option value="" disabled>
                 Select Your Gender
               </option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Others">Others</option>
             </select>
             {genderError && <p className="error-text">Gender is required</p>}
           </div>
@@ -196,6 +236,7 @@ const SignupPage = () => {
               value={phoneNumber}
               onChange={handleChangePhoneNumber}
             />
+            {phoneError && <p className="error-text">Phone is required</p>}
             <div className="icon-container">
               <span className="tooltip-icon">?</span>
               {phoneError && (
@@ -222,7 +263,9 @@ const SignupPage = () => {
           <button className="signup-btn" onClick={handleSignupClick}>
             Create Account
           </button>
-
+          {registerEmail ?
+            <h3 style={{color:"yellow"}}>Check Your Email For Verification Code</h3> : ""
+          }
           <div className="to-login-container">
             <p className="to-login-text">Already have an account?</p>
             <button className="to-login-btn" onClick={handleLoginClick}>
