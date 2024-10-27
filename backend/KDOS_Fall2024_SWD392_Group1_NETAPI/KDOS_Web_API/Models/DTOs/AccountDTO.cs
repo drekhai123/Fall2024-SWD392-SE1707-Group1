@@ -13,6 +13,7 @@ namespace KDOS_Web_API.Models.DTOs
         required public string UserName { get; set; }
         required public string Password { get; set; }
         required public string Role { get; set; }
+        required public bool Verified { get; set; }
         public CustomerDTO? Customer { get; set; }
     }
 }
