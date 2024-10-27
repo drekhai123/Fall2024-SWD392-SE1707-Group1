@@ -40,7 +40,7 @@ namespace KDOS_Web_API.Repositories
             return order;
         }
 
-        public async Task<Orders?> UpdateOrder(int id, Orders order)
+        public async Task<Orders?> UpdateOrderForStaff(int id, Orders order)
         {
             var orderModel = await orderContext.Orders.FirstOrDefaultAsync(x => x.OrderId == id);
             if (orderModel == null)
@@ -59,6 +59,8 @@ namespace KDOS_Web_API.Repositories
             orderModel.Quantity = order.Quantity;
             orderModel.TotalWeight = order.TotalWeight;
             orderModel.TotalCost = order.TotalCost;
+            orderModel.WeightPriceListId = order.WeightPriceListId;
+            orderModel.DistancePriceListId = order.DistancePriceListId;
             orderModel.UpdatedAt = DateTime.Now;
             await orderContext.SaveChangesAsync();
 
