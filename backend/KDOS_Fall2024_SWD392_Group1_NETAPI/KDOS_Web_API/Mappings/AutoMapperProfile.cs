@@ -40,6 +40,10 @@ namespace KDOS_Web_API.Mappings
             CreateMap<DeliveryStaff, AddNewDeliveryStaffDTO>().ReverseMap();
             CreateMap<DeliveryStaff, UpdateDeliveryStaffDTO>().ReverseMap();
             // Transport
+            CreateMap<Transport, TransportDTO>().ReverseMap();
+            CreateMap<Transport, UpdateTransportDTO>().ReverseMap();
+            CreateMap<Transport,AddNewTransportDTO>()
+                .ForMember(a => a.Status, opt => opt.Ignore()).ReverseMap();
             // Order
             CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()).ReverseMap();
