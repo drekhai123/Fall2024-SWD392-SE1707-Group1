@@ -6,7 +6,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
   const [customer, setCustomer] = useState(customerData)
   useEffect(() => {
     setCustomer(customerData)
-  }, [customerData])
+  }, [])
 
   return (
     <>
@@ -29,6 +29,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               rules={{ required: "Customer name is required" }}
               placeholder="Enter your customer name"
               defaultValue={customer?.customerName || "Name"}
+              value={customer?.customerName}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, customerName: e.target.value }))
               }
@@ -49,6 +50,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               }}
               placeholder="Enter your age"
               defaultValue={customer?.age || "0"}
+              value={customer?.age}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, age: e.target.value }))
               }
@@ -90,6 +92,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               }}
               placeholder="Enter your phone number"
               defaultValue={customer?.phoneNumber || "0"}
+              value={customer?.phoneNumber}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, phoneNumber: e.target.value }))
               }
@@ -106,6 +109,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               rules={{ required: "Address is required" }}
               placeholder="Enter your address"
               defaultValue={customer?.address || "Address"}
+              value={customer?.address}
               onChange={(e) =>
                 setCustomer((prev) => ({ ...prev, address: e.target.value }))
               }
@@ -117,7 +121,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Created At</label>
             <InputField
               name="createdAt"
-              label="Created At"
+              label="Created Since"
               fullWidth
               readOnly
               defaultValue={customer?.createdAt || "Date"}
@@ -129,7 +133,7 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Updated At</label>
             <InputField
               name="updatedAt"
-              label="Updated At"
+              label="Updated Since"
               fullWidth
               readOnly
               defaultValue={customer?.updatedAt || "Date"}
