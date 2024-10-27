@@ -8966,6 +8966,7 @@ klona@^2.0.4, klona@^2.0.5:
     "@turf/turf" "^7.1.0"
     axios "^1.7.7"
     dayjs "^1.11.13"
+    firebase "^11.0.1"
     kods "file:"
     leaflet "^1.9.4"
     leaflet-routing-machine "^3.2.12"

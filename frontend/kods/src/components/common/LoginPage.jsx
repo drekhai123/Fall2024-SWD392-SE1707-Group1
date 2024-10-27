@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../../css/LoginPage.css";
 import { LoginApi } from "../api/LoginApi";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage = () => {
   const [usernameoremail, setUsernameoremail] = useState("");
@@ -26,11 +28,11 @@ const LoginPage = () => {
     const account = await LoginApi(login);
     if (account !== null) {
       sessionStorage.setItem('user', JSON.stringify(account));
-      // Lấy access token từ account và lưu vào sessionSession
-      // if (account.accessToken) {
-      //   sessionStorage.setItem('accessToken', account.accessToken);
-      // }
-      navigate('/');
+      if (account.accessToken) {
+        sessionStorage.setItem('accessToken', account.accessToken);
+      }
+      toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
+      setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
     } else {
       alert("Invalid credentials");
     }
@@ -123,6 +125,7 @@ const LoginPage = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
