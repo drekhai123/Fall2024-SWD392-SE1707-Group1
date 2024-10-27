@@ -388,3 +388,31 @@
 .Fish-status-empty {
   color: #0e3b03; /* Màu xanh cho thông báo không có cá */
 }
+.layout-checkbox{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.label-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.layout-select {
+  margin-left: 20px;
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.fish-item{
+  width: 100%;
+}
+.label{
+  font-weight: bold;
+}
+.label-checkbox-0{
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
