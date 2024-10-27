@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "@mui/material";
 import { InputField, SelectField } from "../../form";
 
-const CustomerForm = ({ customerData, onSubmit, methods }) => {
-  const [customer, setCustomer] = useState(customerData)
-  useEffect(() => {
-    setCustomer(customerData)
-  }, [])
-
+const CustomerForm = ({onSubmit, methods }) => {
   return (
     <>
       <div>
@@ -28,11 +23,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               fullWidth
               rules={{ required: "Customer name is required" }}
               placeholder="Enter your customer name"
-              defaultValue={customer?.customerName || "Name"}
-              value={customer?.customerName}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, customerName: e.target.value }))
-              }
+              defaultValue={"Customer Name"}
+            
             />
           </div>
 
@@ -49,11 +41,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
                 min: { value: 1, message: "Age must be at least 1" },
               }}
               placeholder="Enter your age"
-              defaultValue={customer?.age || "0"}
-              value={customer?.age}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, age: e.target.value }))
-              }
+              defaultValue={"0"}
+            
             />
           </div>
 
@@ -69,10 +58,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
                 { value: "Female", label: "Female" },
                 { value: "Others", label: "Others" },
               ]}
-              value={customer?.gender || "Others"}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, gender: e.target.value }))
-              }
+              value={"Gender"}
+             
             />
           </div>
 
@@ -91,11 +78,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
                 },
               }}
               placeholder="Enter your phone number"
-              defaultValue={customer?.phoneNumber || "0"}
-              value={customer?.phoneNumber}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, phoneNumber: e.target.value }))
-              }
+              defaultValue={"Phone Number"}
+             
             />
           </div>
 
@@ -108,11 +92,8 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
               fullWidth
               rules={{ required: "Address is required" }}
               placeholder="Enter your address"
-              defaultValue={customer?.address || "Address"}
-              value={customer?.address}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, address: e.target.value }))
-              }
+              defaultValue={"Address"}
+             
             />
           </div>
 
@@ -121,10 +102,10 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Created At</label>
             <InputField
               name="createdAt"
-              label="Created Since"
+              label="Created At"
               fullWidth
               readOnly
-              defaultValue={customer?.createdAt || "Date"}
+              defaultValue={"createdAt"}
             />
           </div>
 
@@ -133,10 +114,10 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Updated At</label>
             <InputField
               name="updatedAt"
-              label="Updated Since"
+              label="Updated At"
               fullWidth
               readOnly
-              defaultValue={customer?.updatedAt || "Date"}
+              defaultValue={"updatedAt"}
             />
           </div>
 

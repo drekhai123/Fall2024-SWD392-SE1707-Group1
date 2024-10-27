@@ -5,7 +5,7 @@ import CustomerForm from "./CustomerForm"; // Import form khách hàng
 import Sidebar from "./UserSidebar";
 import Footer from "../../common/footer";
 import { GetAccountById, UpdateAccount } from "../../api/AccountApi";
-import { UpdateCustomer } from "../../api/CustomerApi"; // API khách hàng
+import { GetCustomerById, UpdateCustomer } from "../../api/CustomerApi"; // API khách hàng
 import { useSnackbar } from "notistack";
 import { useLocation } from "react-router-dom"; // Import useLocation để lấy đường dẫn
 import AddFishForm from "./AddFishForm"; // Import AddFishForm
@@ -47,7 +47,7 @@ const UserProfilePage = () => {
       setLoadingScreen(false)
     };
     fetchUserData();
-  },[userId]);
+  }, []); // Update dependency to userId
 
   const onSubmitProfile = async (data) => {
     try {
@@ -56,10 +56,8 @@ const UserProfilePage = () => {
 
       // Call UpdateAccount with the updatedData that doesn't include the password
       const response = await UpdateAccount(userId, updatedData);
-
       setUserData(response.data);
       methodsProfile.reset(response.data);
-
       enqueueSnackbar("Profile updated successfully!", { variant: "success" });
     } catch (error) {
       console.error("Error submitting profile form: ", error);
@@ -72,8 +70,8 @@ const UserProfilePage = () => {
 
   const onSubmitCustomer = async (data) => {
     try {
-      const response = await UpdateCustomer(userId, data);
-      setCustomerData(response.data);
+      const response = await UpdateCustomer(customerData.customerId, data);
+      setCustomerData(await response.data);
       enqueueSnackbar("Customer information updated successfully!", {
         variant: "success",
       });
