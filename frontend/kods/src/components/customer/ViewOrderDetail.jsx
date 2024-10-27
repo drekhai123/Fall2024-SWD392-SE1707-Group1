@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Container,
   Typography,
   Paper,
   Grid,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -12,220 +11,148 @@ import {
   TableHead,
   TableRow,
   Button,
-  Select,
-  MenuItem
+  Rating
 } from '@mui/material';
-import { useParams, Link } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
+// Mock data for demonstration
 const orders = [
   {
     id: 1,
-    date: '2023-05-01',
-    total: 150.99,
-    status: 'Delivered',
-    items: [
-      {
-        id: 1,
-        name: 'Fish 1',
-        quantity: 2,
-        price: 49.99,
-        fishStatus: [
-          { time: '2024-10-01', status: 'OK' },
-          { time: '2024-10-02', status: 'OK' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Fish 2',
-        quantity: 1,
-        price: 51.01,
-        fishStatus: [
-          { time: '2024-10-01', status: 'Not OK' },
-          { time: '2024-10-02', status: 'OK' }
-        ]
-      },
+    code: 'ORD001',
+    sender: {
+      name: 'Nguyễn Văn A',
+      address: '123 Đường ABC, Quận 1, TP.HCM',
+      phone: '0123456789',
+    },
+    receiver: {
+      name: 'Trần Thị B',
+      address: '456 Đường XYZ, Quận 2, TP.HCM',
+      phone: '0987654321',
+    },
+    createdAt: '2023-05-01 10:00:00',
+    paymentMethod: 'Tiền mặt',
+    paymentStatus: 'Đã thanh toán',
+    deliveryStatus: 'Đã giao hàng',
+    totalWeight: 5,
+    totalCost: 150000,
+    fishes: [
+      { id: 1, name: 'Koi 1', fishStatus: [
+        { date: '2023-05-01', status: 'oke' },
+        { date: '2023-05-02', status: 'oke' },
+        { date: '2023-05-03', status: 'oke' },
+      ]},
+      { id: 2, name: 'Koi 2', fishStatus: [
+        { date: '2023-05-01', status: 'Đoke' },
+        { date: '2023-05-02', status: 'oke' },
+        { date: '2023-05-03', status: 'oke' },
+      ]},
     ],
-    shippingAddress: '123 Main St, City, Country, 12345',
-    review: ''
-  },
-  {
-    id: 2,
-    date: '2023-05-15',
-    total: 89.99,
-    status: 'Processing',
-    items: [
-      {
-        id: 3,
-        name: 'Fish 3',
-        quantity: 1,
-        price: 89.99,
-        fishStatus: [
-          { time: '2024-10-01', status: 'Not OK' },
-          { time: '2024-10-02', status: 'OK' }
-        ]
-      },
-    ],
-    shippingAddress: '456 Elm St, City, Country, 67890',
-    review: ''
-  },
-  {
-    id: 3,
-    date: '2023-06-02',
-    total: 200.50,
-    status: 'Shipped',
-    items: [
-      {
-        id: 4,
-        name: 'Fish 4',
-        quantity: 2,
-        price: 100.25,
-        fishStatus: [
-          { time: '2024-10-01', status: 'OK' },
-          { time: '2024-10-02', status: 'Not OK' }
-        ]
-      },
-    ],
-    shippingAddress: '789 Oak St, City, Country, 11223',
-    review: ''
   },
 ];
 
-export default function ViewOrderDetail() {
-  const { id } = useParams();
-  const orderId = parseInt(id, 10);
-  const orderDetails = orders.find(order => order.id === orderId);
+export default function OrderDetail({ onBack }) {
+  const { orderId } = useParams();
+  const [feedback, setFeedback] = useState('');
+  const [rating, setRating] = useState(0);
+  const navigate = useNavigate();
 
-  const allTimes = [...new Set(orderDetails.items.flatMap(item => item.fishStatus.map(status => status.time)))];
-  const [selectedDate, setSelectedDate] = useState(allTimes[0]);
+  // Find the order detail based on orderId
+  const orderDetail = orders.find(order => order.id === parseInt(orderId));
 
-  const [review, setReview] = useState('');
-  const [isReviewSubmitted, setIsReviewSubmitted] = useState(false);
-
-  useEffect(() => {
-    setReview(orderDetails.review || '');
-    setIsReviewSubmitted(!!orderDetails.review);
-  }, [orderId, orderDetails.review]);
-
-  const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
-  };
-
-  const handleReviewChange = (content) => {
-    setReview(content);
-  };
-
-  const handleSubmitReview = () => {
-    console.log('Submitting review:', review);
-    setIsReviewSubmitted(true);
-    orderDetails.review = review;
-  };
-
-  if (!orderDetails) {
+  if (!orderDetail) {
     return <Typography variant="h6">Order not found</Typography>;
   }
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Button component={Link} to="/orders" variant="outlined" sx={{ mb: 1 }}>
-        Back to Order History
+    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => navigate('/orders')}
+        style={{ marginBottom: '20px' }}
+      >
+        Go Back
       </Button>
       <Typography variant="h4" gutterBottom>
-        Order Details - Order #{orderDetails.id}
+        Order Details {orderDetail.code}
       </Typography>
-      <Paper sx={{ p: 3 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6">Order Information</Typography>
-            <Box>
-              <Typography>Date: {orderDetails.date}</Typography>
-              <Typography>Status: {orderDetails.status}</Typography>
-              <Typography>Total: ${orderDetails.total.toFixed(2)}</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6">Shipping Address</Typography>
-            <Typography>{orderDetails.shippingAddress}</Typography>
-          </Grid>
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
+          <Paper style={{ padding: '20px', flex: 1, border: '1px solid #ccc', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+            <Typography variant="h6" gutterBottom>Sender Information</Typography>
+            <Typography>Name: {orderDetail.sender.name}</Typography>
+            <Typography>Address: {orderDetail.sender.address}</Typography>
+            <Typography>Phone: {orderDetail.sender.phone}</Typography>
+            <Typography>Order Created At: {orderDetail.createdAt}</Typography>
+          </Paper>
         </Grid>
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            Order Items
-          </Typography>
-          <Select
-            value={selectedDate}
-            onChange={handleDateChange}
-            displayEmpty
-            sx={{ mb: 2 }}
-          >
-            {allTimes.map((time, index) => (
-              <MenuItem key={index} value={time}>
-                {time}
-              </MenuItem>
-            ))}
-          </Select>
-          <TableContainer>
+        <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
+          <Paper style={{ padding: '20px', flex: 1, border: '1px solid #ccc', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+            <Typography variant="h6" gutterBottom>Receiver Information</Typography>
+            <Typography>Name: {orderDetail.receiver.name}</Typography>
+            <Typography>Address: {orderDetail.receiver.address}</Typography>
+            <Typography>Phone: {orderDetail.receiver.phone}</Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper style={{ padding: '20px' }}>
+            <Typography variant="h6" gutterBottom>Order Information</Typography>
+            <Typography>Payment Method: {orderDetail.paymentMethod}</Typography>
+            <Typography>Payment Status: {orderDetail.paymentStatus}</Typography>
+            <Typography>Delivery Status: {orderDetail.deliveryStatus}</Typography>
+            <Typography>Total Weight: {orderDetail.totalWeight} kg</Typography>
+            <Typography>Total Cost: {orderDetail.totalCost.toLocaleString('vi-VN')} VND</Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Fish</TableCell>
-                  <TableCell align="right">Fish Status</TableCell>
-                  <TableCell align="right">Price</TableCell>
-                  <TableCell align="right">Total</TableCell>
+                  <TableCell>Fish Name</TableCell>
+                  <TableCell>Fish Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orderDetails.items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell align="right">
-                      {item.fishStatus.find(status => status.time === selectedDate)?.status || 'N/A'}
+                {orderDetail.fishes.map((fish) => (
+                  <TableRow key={fish.id}>
+                    <TableCell>{fish.name}</TableCell>
+                    <TableCell>
+                      {fish.fishStatus.map((status, index) => (
+                        <div key={index}>
+                          {status.date}: {status.status}
+                        </div>
+                      ))}
                     </TableCell>
-                    <TableCell align="right">${item.price.toFixed(2)}</TableCell>
-                    <TableCell align="right">${(item.quantity * item.price).toFixed(2)}</TableCell>
                   </TableRow>
                 ))}
-                <TableRow>
-                  <TableCell colSpan={3} align="right"><strong>Total</strong></TableCell>
-                  <TableCell align="right"><strong>${orderDetails.total.toFixed(2)}</strong></TableCell>
-                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
-        </Box>
-      </Paper>
-
-      <Paper sx={{ p: 3, mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Order Review
-        </Typography>
-        {isReviewSubmitted ? (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Your Review:
-            </Typography>
-            <div dangerouslySetInnerHTML={{ __html: review }} />
-          </div>
-        ) : (
-          <div>
-            <ReactQuill
-              theme="snow"
-              value={review}
-              onChange={handleReviewChange}
-              style={{ height: '200px', marginBottom: '50px' }}
+        </Grid>
+        <Grid item xs={12}>
+          <Paper style={{ padding: '20px' }}>
+            <Typography variant="h6" gutterBottom>Feedback and Rating</Typography>
+            <Rating
+              name="simple-controlled"
+              value={rating}
+              onChange={(event, newValue) => setRating(newValue)}
+              style={{ marginBottom: '20px' }}
             />
+            <ReactQuill value={feedback} onChange={(content) => setFeedback(content)} />
             <Button
               variant="contained"
               color="primary"
-              onClick={handleSubmitReview}
-              sx={{ mt: 2 }}
+              style={{ marginTop: '20px' }}
+              onClick={() => console.log('Feedback submitted:', { rating, feedback })}
             >
-              Submit Review
+              Submit Feedback
             </Button>
-          </div>
-        )}
-      </Paper>
-    </Container>
+          </Paper>
+        </Grid>
+      </Grid>
+    </div>
   );
 }

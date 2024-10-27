@@ -69,23 +69,29 @@ export const router = createBrowserRouter([
   },
   {
     path: "/ordertracking",
-    element: (
-      <PrivateRoute>
-        <OrderStatusTracking />
-      </PrivateRoute>
-    ), // Wrapped with PrivateRoute
+    element: <OrderStatusTracking />
   },
   {
     path: "/trackingstaff",
     element: <TrackingStaff />,
   },
-  {
-    path: "/orders/:id",
-    element: <ViewOrderDetail />,
-  },
+  // {
+  //   path: "/orders/:id",
+  //   element: <ViewOrderDetail />,
+  // },
+
+  // {
+  //   path: "/orders",
+  //   element: <ViewOrderHistory />,
+  // },
+
   {
     path: "/orders",
     element: <ViewOrderHistory />,
+  },
+  {
+    path: "/orders/:orderId",
+    element: <ViewOrderDetail />,
   },
   {
     path: "/staffDashBoard",
