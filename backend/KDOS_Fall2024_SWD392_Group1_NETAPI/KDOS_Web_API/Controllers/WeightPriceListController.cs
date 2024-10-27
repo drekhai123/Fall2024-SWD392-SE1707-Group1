@@ -57,15 +57,14 @@ namespace KDOS_Web_API.Controllers
             try
             {
                 weightPriceListModel = await weightPriceListRepository.AddNewWeightPriceList(weightPriceListModel);
+                var newWeightPriceListModelDto = mapper.Map<WeightPriceListDTO>(weightPriceListModel);
+                return CreatedAtAction(nameof(GetWeightPriceListById), new { id = weightPriceListModel.WeightPriceListId }, newWeightPriceListModelDto);
             }
             catch (Exception ex)
             {
-                // Log the exception
-                return StatusCode(500, "Internal server error" + ex);
+                logger.LogError(ex, "Error adding new Weigh Price List");
+                return StatusCode(500, "Internal server error");
             }
-           
-
-            return CreatedAtAction(nameof(GetWeightPriceListById), new { id = weightPriceListModel.WeightPriceListId }, newWeightPriceListDto);
         }
 
         // PUT: api/WeightPriceList/5
