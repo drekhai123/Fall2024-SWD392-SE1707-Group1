@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../../css/Feedback.css';
+import Rating from '@mui/material/Rating'; // Import MUI Rating component
 
 const FeedbackList = () => {
 
@@ -23,18 +24,6 @@ const FeedbackList = () => {
     const indexOfLastFeedback = currentPage * feedbacksPerPage;
     const indexOfFirstFeedback = indexOfLastFeedback - feedbacksPerPage;
     const currentFeedbacks = feedbacks.slice(indexOfFirstFeedback, indexOfLastFeedback);
-
-    const renderStars = (rating) => {
-        return (
-            <div className="rating-stars">
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <span key={star} className="star">
-                        {star <= rating ? '⭐' : '☆'}
-                    </span>
-                ))}
-            </div>
-        );
-    };
 
     const handleClick = (event) => {
         setCurrentPage(Number(event.target.id));
@@ -68,7 +57,9 @@ const FeedbackList = () => {
                                     <td>{feedback.name}</td>
                                     <td>{feedback.email}</td>
                                     <td>{feedback.phone}</td>
-                                    <td>{renderStars(feedback.rating)}</td>
+                                    <td>
+                                        <Rating value={feedback.rating} readOnly /> {/* Use MUI Rating */}
+                                    </td>
                                     <td>{feedback.comment}</td>
                                 </tr>
                             ))}
