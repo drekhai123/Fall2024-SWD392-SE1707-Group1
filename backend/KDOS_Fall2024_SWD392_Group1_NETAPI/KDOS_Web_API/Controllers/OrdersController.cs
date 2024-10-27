@@ -105,7 +105,7 @@ namespace KDOS_Web_API.Controllers
 
             try
             {
-                orderModel = await orderRepository.UpdateOrder(orderId, orderModel);
+                orderModel = await orderRepository.UpdateOrderForStaff(orderId, orderModel);
             }
             catch (Exception ex)
             {
@@ -182,7 +182,7 @@ namespace KDOS_Web_API.Controllers
                 }
 
             // Map the updated order back to a DTO for the response
-            var updatedOrderDto = mapper.Map<UpdateOnlyOrderStatusDTO>(orderModel);
+            var updatedOrderDto = mapper.Map<TransportDTO>(orderModel);
 
             // Return the updated order with a 200 OK status
             return Ok(updatedOrderDto);

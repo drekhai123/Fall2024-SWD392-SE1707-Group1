@@ -19,6 +19,8 @@ namespace KDOS_Web_API.Datas
         public DbSet<FishProfile> FishProfile { get; set; }
         public DbSet<Feedback> Feedback { get; set; }
         public DbSet<Transport> Transport { get; set; }
+        public DbSet<WeightPriceList> WeightPriceList { get; set; }
+        public DbSet<DistancePriceList> DistancePriceList { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Verification>()

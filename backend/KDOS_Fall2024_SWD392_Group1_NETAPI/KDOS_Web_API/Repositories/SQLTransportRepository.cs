@@ -20,9 +20,23 @@ namespace KDOS_Web_API.Repositories
             return transport;
         }
 
-        public Task<Transport?> DeleteTransport(int id)
+        public async Task<Transport?> DeleteTransport(int id)
         {
-            throw new NotImplementedException();
+            // Find the existing order by ID
+            var transportToDelete = await transportContext.Transport.FirstOrDefaultAsync(o => o.TransportId == id);
+
+            // If the order doesn't exist, return null
+            if (transportToDelete == null)
+            {
+                return null;
+            }
+
+            // Remove the order from the context and save changes
+            transportContext.Transport.Remove(transportToDelete);
+            await transportContext.SaveChangesAsync();
+
+            // Return the deleted order
+            return transportToDelete;
         }
 
         public async Task<List<Transport>> GetAllTransport()
@@ -35,9 +49,14 @@ namespace KDOS_Web_API.Repositories
             return await transportContext.Transport.FindAsync(id);
         }
 
-        public Task<List<Transport>> GetTransportByStatus(TransportStatus status)
+        public async Task<List<Transport>> GetTransportByStatus(TransportStatus status)
         {
-            throw new NotImplementedException();
+            // Find all orders with the specified status
+            var transports = await transportContext.Transport
+                .Where(o => o.Status == status)
+                .ToListAsync();
+
+            return transports;
         }
 
         public async Task<Transport?> UpdateTransport(int id, Transport transport)
@@ -53,7 +72,7 @@ namespace KDOS_Web_API.Repositories
             transportModel.Status = transport.Status;
 
             await transportContext.SaveChangesAsync();
-            return transport;
+            return transportModel;
         }
     }
 }
