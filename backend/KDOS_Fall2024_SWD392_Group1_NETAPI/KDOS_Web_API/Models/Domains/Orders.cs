@@ -30,13 +30,14 @@ namespace KDOS_Web_API.Models.Domains
         public int DistancePriceListId { get; set; }
         public int WeightPriceListId { get; set; }
         required public int CustomerId { get; set; }
+        public int TransportId { get; set; } // Foreign key to transport. 1 transport can have Many Order
+
         // Relationships
         public WeightPriceList WeightPriceList { get; set; } = null!;
         public DistancePriceList DistancePriceList { get; set; } = null!;
         public Customer Customer { get; set; } = null!; // REQUIRED Many-to-one relationship with Customer
         public Feedback Feedback { get; set; } = null!;
         public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
-        public int TransportId { get; set; } // Foreign key to transport. 1 transport can have Many Order
         public Transport? Transport { get; set; } // many-1 relationship with Tranport
     }
 }

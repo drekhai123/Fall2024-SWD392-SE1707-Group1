@@ -75,6 +75,21 @@ namespace KDOS_Web_API.Repositories
             return await profileContext.FishProfile.Include("KoiFish").FirstOrDefaultAsync(x => x.FishProfileId == id);
         }
 
+        public async Task<List<FishProfile>> SearchFishProfileByName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return new List<FishProfile>();
+            }
+
+            // Use EF Core to search for fish profiles by name
+            var fishProfiles = await profileContext.FishProfile
+                .Where(x => x.Name.Contains(name)) // Use Contains for partial match
+                .ToListAsync();
+
+            return fishProfiles;
+        }
+
         public async Task<FishProfile?> UpdateFishProfile(int id, FishProfile fishProfile)
         {
             var profileModel = await profileContext.FishProfile.FirstOrDefaultAsync(x => x.FishProfileId == id);
