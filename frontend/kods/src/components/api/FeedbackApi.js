@@ -1,18 +1,18 @@
 import { baseUrl, headers } from './Url'
 import axios from 'axios'
 
-const addFeedbackURL = baseUrl + '/api/FeedBack/' // URL for adding feedback
-const updateFeedbackURL = baseUrl + '/api/FeedBack/' // URL for updating feedback
-const deleteFeedbackURL = baseUrl + '/api/FeedBack/' // URL for deleting feedback
-const getFeedbackURL = baseUrl + '/api/FeedBack/' // URL for getting feedback by ID
-const getFeedbackByCustomerURL = baseUrl + '/api/FeedBack/customer/' // URL for getting feedback by customer ID
-const getFeedbackByOrderURL = baseUrl + '/api/FeedBack/order/' // URL for getting feedback by order ID
+const addFeedbackURL = baseUrl + '/FeedBack/' // URL for adding feedback
+const updateFeedbackURL = baseUrl + '/FeedBack/' // URL for updating feedback
+const deleteFeedbackURL = baseUrl + '/FeedBack/' // URL for deleting feedback
+const getFeedbackURL = baseUrl + '/FeedBack/' // URL for getting feedback by ID
+const getFeedbackByCustomerURL = baseUrl + '/FeedBack/customer/' // URL for getting feedback by customer ID
+const getFeedbackByOrderURL = baseUrl + '/FeedBack/order/' // URL for getting feedback by order ID
 
 // Function to add feedback
 export async function addFeedback(feedback) {
     try {
         const response = await axios.post(addFeedbackURL, feedback); // Send POST request
-        return response.data; // Return the added feedback data
+        return await response.data; // Return the added feedback data
     } catch (error) {
         console.error('Error adding feedback:', error);
         throw error; // Rethrow the error for handling in the calling function
@@ -31,9 +31,10 @@ export async function updateFeedback(id, feedback) {
 }
 
 // Function to delete feedback
-export async function deleteFeedback(id) {
+export async function deleteFeedback(feedbackId) {
     try {
-        await axios.delete(deleteFeedbackURL + id); // Send DELETE request
+        await axios.delete(deleteFeedbackURL + feedbackId); // Send DELETE request
+        console.log(`Feedback with ID ${feedbackId} deleted successfully.`);
     } catch (error) {
         console.error('Error deleting feedback:', error);
         throw error; // Rethrow the error for handling in the calling function
