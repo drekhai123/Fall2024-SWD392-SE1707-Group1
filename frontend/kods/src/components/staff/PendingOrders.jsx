@@ -2,78 +2,65 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { useState } from "react";
-import { OrderConfirmationDialog } from "./OrderConfirmationDialog";
 
 export function PendingOrders() {
   const pendingOrders = [
     {
       orderId: 1,
       customerName: "John Doe",
-      product: "Fish",
       date: "2021-10-20",
+      status: "Pending",
     },
     {
       orderId: 2,
       customerName: "Jane Doe",
-      product: "Fish",
-      date: "2021-10-20",
+      date: "2021-10-21",
+      status: "Pending",
     },
     {
       orderId: 3,
       customerName: "John Smith",
-      product: "Fish",
-      date: "2021-10-20",
+      date: "2021-10-22",
+      status: "Pending",
     },
   ];
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [orders, setOrders] = useState(pendingOrders);
 
-  const confirmOrder = (order) => {
-    setSelectedOrder(order);
-    setShowConfirmDialog(true);
-  };
-
-  const handleConfirm = (confirmationData) => {
-    console.log("Order confirmed:", confirmationData);
+  const updateOrderStatus = (orderId) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.orderId === orderId ? { ...order, status: "Processing" } : order
+      )
+    );
   };
 
   return (
     <div>
       <DataTable
-        value={pendingOrders}
+        value={orders}
         showGridlines
         stripedRows
         tableStyle={{ minWidth: "50rem" }}
       >
         <Column field="orderId" header="Order Id"></Column>
         <Column field="customerName" header="Customer"></Column>
-        <Column field="product" header="Products"></Column>
         <Column field="date" header="Date"></Column>
+        <Column field="status" header="Status"></Column>
         <Column
-          field="orderId"
           header="Action"
           body={(rowData) => {
             return (
               <Button
-                label="Confirm Order"
+                label="Update to Processing"
                 severity="info"
                 className="text-black !bg-cyan-500 border border-black p-2"
-                onClick={() => confirmOrder(rowData)}
+                onClick={() => updateOrderStatus(rowData.orderId)}
               ></Button>
             );
           }}
         ></Column>
       </DataTable>
-
-      {selectedOrder && (
-        <OrderConfirmationDialog
-          order={selectedOrder}
-          visible={showConfirmDialog}
-          onHide={() => setShowConfirmDialog(false)}
-          onConfirm={handleConfirm}
-        />
-      )}
     </div>
   );
 }

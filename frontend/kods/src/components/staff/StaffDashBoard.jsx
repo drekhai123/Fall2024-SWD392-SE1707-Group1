@@ -58,7 +58,7 @@ export function StaffDashBoard() {
 
       {/* Main Dashboard Content */}
       <div className="w-3/4 p-6">
-        <h1 className="text-3xl font-bold mb-4">Staff Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-4">{selectedMenu}</h1>
         {/* Render selected component based on the menu */}
         {renderComponent()}
       </div>
