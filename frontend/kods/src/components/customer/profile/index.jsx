@@ -11,11 +11,13 @@ import { useLocation } from "react-router-dom"; // Import useLocation để lấ
 import AddFishForm from "./AddFishForm"; // Import AddFishForm
 import Navbar from "../../common/navbar";
 import LoadingScreen from "../../../utils/LoadingScreen";
+import ViewOrderHistory from "./ViewOrderHistory";
 
 const menuItems = [
   { label: "Profile", link: "/profile" },
   { label: "Information", link: "/profile/customer" },
-  { label: "Add Fish", link: "/profile/addfish" }, // Thêm mục Add Fish
+  { label: "Add Fish", link: "/profile/AddFish" },
+  { label: "Order History", link: "/profile/ViewOrderHistory" },
 ];
 
 const UserProfilePage = () => {
@@ -88,7 +90,7 @@ const UserProfilePage = () => {
 
   return (
     <div>
-      {loadingScreen? <LoadingScreen/>:""}
+      {loadingScreen ? <LoadingScreen /> : ""}
       <Navbar />
       <div className="mt-[6%] mx-auto px-1 md:px-16">
         <div>
@@ -130,9 +132,16 @@ const UserProfilePage = () => {
             )}
 
             {/* Form Add Fish */}
-            {currentPath === "/profile/addfish" && (
+            {currentPath === "/profile/AddFish" && (
               <div className="flex-1 p-8">
                 <AddFishForm />
+              </div>
+            )}
+
+            {/* View Order History */}
+            {currentPath === "/profile/ViewOrderHistory" && (
+              <div className="flex-1 p-8">
+                <ViewOrderHistory />
               </div>
             )}
           </div>
