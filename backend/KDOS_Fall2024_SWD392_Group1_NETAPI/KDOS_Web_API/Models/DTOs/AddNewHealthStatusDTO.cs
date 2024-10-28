@@ -11,6 +11,7 @@ namespace KDOS_Web_API.Models.DTOs
         required public float OxygenLevel { get; set; }
         required public float PHLevel { get; set; }
         required public string Notes { get; set; }
+        public int OrderDetailsId { get; set; }
     }
 }
 

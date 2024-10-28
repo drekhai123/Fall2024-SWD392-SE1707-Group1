@@ -1,6 +1,5 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Container,
   Typography,
   Button,
   TextField,
@@ -28,6 +27,7 @@ import { storage } from '../../../config/ConfigFirebase';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingScreen from '../../../utils/LoadingScreen';
 
 
 
@@ -46,8 +46,12 @@ export default function AddFish() {
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false); // state for image zoom
   const [selectedFishType, setSelectedFishType] = useState(''); //  state for selected fish type
   const [refresh, setRefresh] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(null);
+  const [error, setError] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
+  const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
+  const customerId = user?.customer?.customerId; // Lấy accountId
   // KOI species
   useEffect(() => {
     const getSpeciesList = async () => {
@@ -57,31 +61,46 @@ export default function AddFish() {
     //Get API By CustomerID
     const fetchFishes = async () => {
       try {
-        const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
-        const customerId = user?.customer?.customerId; // Lấy accountId
+        setLoadingScreen(true);
         const response = await getFishProfilebyCustomerid(customerId);
         setFishes(response);
-        console.log(fishes)
       } catch (error) {
         console.error('Error fetching fishes:', error);
       }
+      setLoadingScreen(false)
     };
     getSpeciesList();
     fetchFishes();
-  }, [refresh]);
-// Search Feature
+  }, [refresh, customerId]);
+  // Search Feature
+  // eslint-disable-next-line
   const handleSearch = useCallback(
-    _.debounce(async (name) => {
+    _.debounce((name) => {
+      setError(false)
       try {
-        const data = await findProfileByName(name);
-        setFishes(data); // backend returns the searched fish list
-      } catch (error) {
+        if (!name) {  // Check if `name` is empty
+          console.log("no search!")
+          setRefresh(()=>!refresh)
+        } else {
+          searchResult(name);
+      }} catch (error) {
         console.error("Search error:", error);
       }
     }, 500),
-    []
+    
   );
-
+  const searchResult = async (name)=>{
+    const response = await findProfileByName(customerId, name);
+    if (response.status >= 400) {
+      toast.error("Fish not found", {
+        autoClose: 2000 // Duration in milliseconds (10 seconds)
+      });
+      setError(true)
+    }
+    else
+      setFishes(await response.data); // Update the fish list with the search results
+    }
+  
   // Update search term and call the debounced search
   const handleSearchChange = (e) => {
     const term = e.target.value;
@@ -92,6 +111,7 @@ export default function AddFish() {
 
 
   const handleAddFish = async (e) => {
+    setLoadingScreen(true);
     e.preventDefault();
     const user = JSON.parse(sessionStorage.getItem('user')); // Changed to sessionStorage
     const customerId = user?.customer?.customerId;
@@ -117,7 +137,9 @@ export default function AddFish() {
       console.error('Error adding fish:', error);
     }
     setRefresh(!refresh)
+    setLoadingScreen(false)
   };
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const handlePageChange = (event, page) => {
@@ -144,6 +166,7 @@ export default function AddFish() {
   };
 
   const handleUpdateFish = async (e) => {
+    setLoadingScreen(true);
     e.preventDefault();
     const user = JSON.parse(sessionStorage.getItem('user'));
     const customerId = user?.accountId;
@@ -169,6 +192,7 @@ export default function AddFish() {
       console.error('Error updating fish:', error);
     }
     setRefresh(!refresh)
+    setLoadingScreen(false)
   };
 
   const handleFormSubmit = (e) => {
@@ -214,11 +238,6 @@ export default function AddFish() {
 
       uploadTask.on(
         "state_changed",
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-        },
         (error) => {
           console.error("Error uploading image:", error);
         },
@@ -231,21 +250,6 @@ export default function AddFish() {
       );
     }
   };
-
-  const fetchImageFromFirebase = async (imageName) => {
-    try {
-      const storageRef = ref(storage, `images/${imageName}`);
-      const url = await getDownloadURL(storageRef);
-      setImage(url); // Set the image URL to state
-    } catch (error) {
-      console.error("Error fetching image:", error);
-    }
-  };
-
-  useEffect(() => {
-    // Call this function with the specific image name you want to fetch
-    fetchImageFromFirebase('your-image-name.jpg');
-  }, []);
 
   const handleViewDetail = (fish) => {
     setSelectedFish(fish);
@@ -274,6 +278,7 @@ export default function AddFish() {
 
   return (
     <div>
+      {loadingScreen?? <LoadingScreen/>}
       <ToastContainer />
       <p className="text-4xl font-semibold">Add your Fish</p>
       <p className="text-gray-600 text-lg my-2">
@@ -295,27 +300,31 @@ export default function AddFish() {
           position: 'relative',
         }}
       />
-      <Divider/>
-      <div style={{margin:"2%"}}></div>
+      <Divider />
+      <div style={{ margin: "2%" }}></div>
       <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleOpenAddFishForm}>
         Add Fish
       </Button>
       <List>
-        {paginatedFishes.map((fish, index) => (
-          <ListItem key={index}>
-            <Avatar src={fish.image} alt={fish.name} style={{ marginRight: "3%" }} />
-            <ListItemText primary={fish.name} />
-            <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
-              <InfoIcon />
-            </IconButton>
-            <IconButton edge="end" aria-label="edit" onClick={() => handleEditFish(fish)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItem>
-        ))}
+        {error ?
+          <ListItem><Typography variant="h4" fontWeight={"bold"} color='warning'>No Fish Found With That Search</Typography></ListItem>
+          :
+          paginatedFishes.map((fish, index) => (
+            <ListItem key={index}>
+              <Avatar src={fish.image} alt={fish.name} style={{ marginRight: "3%" }} />
+              <ListItemText primary={fish.name} />
+              <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
+                <InfoIcon />
+              </IconButton>
+              <IconButton edge="end" aria-label="edit" onClick={() => handleEditFish(fish)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
+                <DeleteIcon />
+              </IconButton>
+            </ListItem>
+          ))
+        }
       </List>
       <div className='pagination-footer' style={{
         position: 'relative',
