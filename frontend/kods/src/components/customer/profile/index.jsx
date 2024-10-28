@@ -10,7 +10,6 @@ import { useSnackbar } from "notistack";
 import { useLocation } from "react-router-dom"; // Import useLocation để lấy đường dẫn
 import AddFishForm from "./AddFishForm"; // Import AddFishForm
 import Navbar from "../../common/navbar";
-import LoadingScreen from "../../../utils/LoadingScreen";
 
 const menuItems = [
   { label: "Profile", link: "/profile" },
@@ -29,12 +28,10 @@ const UserProfilePage = () => {
   const userId = user.accountId;
   const methodsProfile = useForm(); // useForm cho ProfileForm
   const methodsCustomer = useForm(); // useForm cho CustomerForm
-  const [loadingScreen,setLoadingScreen] = useState(false); //
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const fetchUserData = async () => {
-      setLoadingScreen(true)
       try {
         const response = await GetAccountById(userId);
         setUserData(response.data);
@@ -44,10 +41,9 @@ const UserProfilePage = () => {
       } catch (error) {
         console.error("Error fetching user data: ", error);
       }
-      setLoadingScreen(false)
     };
     fetchUserData();
-  }, []); // Update dependency to userId
+  }, [userId]); // Update dependency to userId
 
   const onSubmitProfile = async (data) => {
     try {
@@ -56,8 +52,10 @@ const UserProfilePage = () => {
 
       // Call UpdateAccount with the updatedData that doesn't include the password
       const response = await UpdateAccount(userId, updatedData);
+
       setUserData(response.data);
       methodsProfile.reset(response.data);
+
       enqueueSnackbar("Profile updated successfully!", { variant: "success" });
     } catch (error) {
       console.error("Error submitting profile form: ", error);
@@ -70,8 +68,8 @@ const UserProfilePage = () => {
 
   const onSubmitCustomer = async (data) => {
     try {
-      const response = await UpdateCustomer(customerData.customerId, data);
-      setCustomerData(await response.data);
+      const response = await UpdateCustomer(userId, data);
+      setCustomerData(response.data);
       enqueueSnackbar("Customer information updated successfully!", {
         variant: "success",
       });
@@ -88,7 +86,6 @@ const UserProfilePage = () => {
 
   return (
     <div>
-      {loadingScreen? <LoadingScreen/>:""}
       <Navbar />
       <div className="mt-[6%] mx-auto px-1 md:px-16">
         <div>

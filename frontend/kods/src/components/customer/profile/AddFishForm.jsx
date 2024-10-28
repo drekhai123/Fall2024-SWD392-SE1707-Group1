@@ -67,7 +67,6 @@ export default function AddFish() {
         const customerId = user?.customer?.customerId; // Lấy accountId
         const response = await getFishProfilebyCustomerid(customerId);
         setFishes(response);
-        console.log(fishes)
     } catch (error) {
         console.error('Error fetching fishes:', error);
     }
@@ -90,7 +89,6 @@ export default function AddFish() {
         customerId: customerId
     };
 
-    console.log('Adding new fish:', newFish);
 
     try {
         await addFishProfile(newFish);
@@ -201,7 +199,6 @@ export default function AddFish() {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log("File available at", downloadURL);
             setImage(downloadURL); // Set the image URL to state
             setUrl(downloadURL);   // Set the URL state with the download URL
           });

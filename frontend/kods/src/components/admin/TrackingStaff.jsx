@@ -57,7 +57,6 @@ const OrderStatusTracking = () => {
 
   const handleSave = () => {
     // Implement the save logic here
-    console.log('Save order:', editableOrder);
     setEditMode(false);
   };
 

@@ -1,38 +1,44 @@
+
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { useState } from "react";
+import { baseUrl } from "../api/Url";
 
 export function PendingOrders() {
-  const pendingOrders = [
-    {
-      orderId: 1,
-      customerName: "John Doe",
-      date: "2021-10-20",
-      status: "Pending",
-    },
-    {
-      orderId: 2,
-      customerName: "Jane Doe",
-      date: "2021-10-21",
-      status: "Pending",
-    },
-    {
-      orderId: 3,
-      customerName: "John Smith",
-      date: "2021-10-22",
-      status: "Pending",
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [orders, setOrders] = useState(pendingOrders);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setIsLoading(true);
+      setError(null);
 
-  const updateOrderStatus = (orderId) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.orderId === orderId ? { ...order, status: "Processing" } : order
-      )
-    );
+      try {
+        const response = await axios.get(`${baseUrl}/Orders`);
+        setOrders(response.data.filter(data => data.deliveryStatus === 'PENDING'));
+      } catch (err) {
+        console.error(err);
+        setError("Error fetching orders data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+  const updateOrderStatus = (order) => {
+    const updatedOrder = { deliveryStatus: "PROCESSING", updateAt: Date.now() };
+    axios
+      .put(`${baseUrl}/Orders/${order.orderId}/status`, updatedOrder)
+      .then(() => {
+        alert("Update order status success!");
+      })
+      .catch((err) => {
+        alert("Update order failed: " + err);
+      });
   };
 
   return (
@@ -44,9 +50,9 @@ export function PendingOrders() {
         tableStyle={{ minWidth: "50rem" }}
       >
         <Column field="orderId" header="Order Id"></Column>
-        <Column field="customerName" header="Customer"></Column>
-        <Column field="date" header="Date"></Column>
-        <Column field="status" header="Status"></Column>
+        <Column field="senderName" header="Customer"></Column>
+        <Column field="createdAt" header="Date"></Column>
+        <Column field="deliveryStatus" header="Status"></Column>
         <Column
           header="Action"
           body={(rowData) => {
@@ -55,7 +61,7 @@ export function PendingOrders() {
                 label="Update to Processing"
                 severity="info"
                 className="text-black !bg-cyan-500 border border-black p-2"
-                onClick={() => updateOrderStatus(rowData.orderId)}
+                onClick={() => updateOrderStatus(rowData)}
               ></Button>
             );
           }}

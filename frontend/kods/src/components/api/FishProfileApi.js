@@ -19,7 +19,6 @@ export async function addFishProfile(fish) {
 
 // Function to update a fish profile
 export async function updateFishProfile(id,fish) {
-    console.log(fish)
     try {
         const response = await axios.put(updateFishProfileURL + id,fish,headers)// Send PUT request
         return response.data; // Return the updated fish profile data

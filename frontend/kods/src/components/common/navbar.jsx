@@ -13,11 +13,6 @@ export default function Navbar() {
     navigate('/');
     window.location.reload();
   };
-  const navigate1 = useNavigate();
-  const gotoOderForm = () => {
-    navigate1('/OrderForm');
-  };
-
   return (
     <header className="header-container">
       <nav className="navbar">

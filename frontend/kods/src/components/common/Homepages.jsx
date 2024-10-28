@@ -5,6 +5,8 @@ import "../../css/Homepages.css"
 import Footer from "./footer";
 import CardHeader from "./cardHeader";
 export default function Homepage() {
+
+
     const rowsRef = useRef([]);
     const imageList = [
       "/images/homepage1.png",
