@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
-import {QRCodeSVG} from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-export default function OrderForm({onSuggestionClick, distance}) {
+export default function OrderForm({ onSuggestionClick, distance }) {
   const navigateToLogin = useNavigate();
-  const user = JSON.parse(sessionStorage.getItem("user")); 
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const [modal, setOpenModal] = useState(false);
   const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -31,7 +31,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     addressCustomer: "",
     distance: 0,
   });
- //Hàm fecth API mới
+  //Hàm fecth API mới
   const getFishProfile = useCallback(async () => {
     setLoading(true);
     try {
@@ -77,7 +77,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     if (user?.customer?.customerId) {
       getFishProfile();
     }
-  }, [ getDistancePriceList]);
+  }, [getDistancePriceList]);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
@@ -117,18 +117,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
     const range = distancePriceList.find(
       (item) => distance >= item.minRange && distance <= item.maxRange
     );
-    
+
     // Nếu tìm thấy, sử dụng giá tương ứng từ API, nếu không tìm thấy thì gán giá trị mặc định
     if (range) {
       unitPrice = range.price; // Gán giá từ range nếu tìm thấy
     }
-    
+
     const baseFee = distance * parseFloat(unitPrice); // Tính toán baseFee
-  
+
     if (distance <= 5) {
       return check ? 25000 : 0;
     }
-  
+
     if (check && estimatedDays === 1) {
       return baseFee + 25000;
     } else if (!check && estimatedDays === 1) {
@@ -267,18 +267,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
         }
       }, 500)
     );
-    setCustomerInfo({...customerInfo, [field]: value});
+    setCustomerInfo({ ...customerInfo, [field]: value });
   };
 
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
         setMarkerPositionFrom([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressSender: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressSender: suggestion?.display_name });
         setFromSuggestions(null);
       } else if ('addressCustomer') {
         setMarkerPositionTo([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressCustomer: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressCustomer: suggestion?.display_name });
         setToSuggestions(null);
       }
     }
@@ -317,13 +317,13 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
-      onSuggestionClick({form: markerPositionFrom, to: markerPositionTo});
+      onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
     }
   }, [markerPositionFrom, markerPositionTo])
 
   // Hàm của Distance (comment cái const ở trên của nó)
   useEffect(() => {
-    setCustomerInfo({...customerInfo, distance: distance});
+    setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
   const handleCheckboxChange = (fishProfileId) => {
@@ -338,7 +338,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
   };
 
-  const FishTable = ({data}) => {
+  const FishTable = ({ data }) => {
     return (
       <table className="fixed-table">
         <thead>
@@ -348,7 +348,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
             <th className="label-table">Weight (kg)</th>
             <th className="label-table">Gender</th>
             {/* <th className="label-table">Price (VND/Kg)</th> */}
-            <th className="label-table">Action</th>
+            {/* <th className="label-table">Action</th> */}
           </tr>
         </thead>
         <tbody>
@@ -534,7 +534,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </div>
               </div>
 
-              <div style={{marginTop: 10}} className="customer-info">
+              <div style={{ marginTop: 10 }} className="customer-info">
                 <h3 className="label-customer">Distance (km)</h3>
                 <input
                   className="input-customer"
@@ -551,29 +551,23 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   }
                 />
 
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  marginTop: '10px',
-                  gap: '20px'
-                }}>
+                <div class="total-amount">
                   <div>
                     <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
-                      className="layout-checkbox" 
-                      style={{marginBottom: '10px'}}
+                      className="layout-checkbox"
+                      style={{ marginBottom: '10px' }}
                     >
                       <p>
                         <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
                       </p>
 
-                      <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND" 
+                      <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND"
                         className="checkbox-container"
                       >
                         {customerInfo?.distance <= 50 && (
                           <label>
                             <input
-                              style={{cursor: 'pointer'}}
+                              style={{ cursor: 'pointer' }}
                               type="checkbox"
                               checked={check}
                               onChange={(e) => setCheck(e.target.checked)}
@@ -583,10 +577,10 @@ export default function OrderForm({onSuggestionClick, distance}) {
                         )}
                       </div>
                     </div>
-                    
-                    <div style={{marginTop: '10px'}}>
+
+                    <div style={{ marginTop: '10px' }}>
                       <p className="label-total">
-                        Shipping fee: {calculateShippingFee() || 0} VND
+                        Shipping fee: {calculateShippingFee().toLocaleString('vi-VN') || 0} VND
                       </p>
                       <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
                     </div>
@@ -597,20 +591,20 @@ export default function OrderForm({onSuggestionClick, distance}) {
                     alignItems: 'center',
                     height: '100%'
                   }}>
-                    <h3 className="total-amount" style={{margin: 0}}>
-                      Total Amount: {" "}
-                      {getTotalAmount() +
-                        parseInt(calculateVAT()) +
-                        parseFloat(calculateShippingFee().toFixed(0))}{" "}
-                      VND
-                    </h3>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
+        <div className="total-amount" style={{
+          margin: 0,
+          fontWeight: 'bold',
+          color: 'purple'
+        }}
+        >
+          Total Amount: {" "}
+          {(getTotalAmount() + parseInt(calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))).toLocaleString('vi-VN')} VND</div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>
@@ -698,10 +692,10 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 <button onClick={() => addRow()} className="confirm-btn">
                   Confirm
                 </button>
-                <button 
-                  onClick={() => navigate('/profile/addfish')} 
+                <button
+                  onClick={() => navigate('/profile/addfish')}
                   className="confirm-btn"
-                  style={{ 
+                  style={{
                     backgroundColor: '#4CAF50',  // màu xanh lá
                     marginLeft: '10px',
                     marginRight: '10px'
