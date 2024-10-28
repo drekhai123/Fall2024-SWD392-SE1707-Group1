@@ -77,7 +77,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     if (user?.customer?.customerId) {
       getFishProfile();
     }
-  }, [, getDistancePriceList]);
+  }, [ getDistancePriceList]);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
@@ -380,7 +380,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                     )
                   }
                   className="custom-dropdown"
-                  disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                  disabled // Vô hiệu hóa input người dùng (Tạm thi)
                 />
               </td>
               <td>
@@ -680,6 +680,17 @@ export default function OrderForm({onSuggestionClick, distance}) {
               <div className="layout-btn">
                 <button onClick={() => addRow()} className="confirm-btn">
                   Confirm
+                </button>
+                <button 
+                  onClick={() => navigate('/profile/addfish')} 
+                  className="confirm-btn"
+                  style={{ 
+                    backgroundColor: '#4CAF50',  // màu xanh lá
+                    marginLeft: '10px',
+                    marginRight: '10px'
+                  }}
+                >
+                  Create Fish Profile
                 </button>
                 <button onClick={() => setOpenModal(false)} className="cancel-btn">
                   Cancel
