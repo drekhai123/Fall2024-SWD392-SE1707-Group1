@@ -92,6 +92,7 @@ export default function AddFish() {
             autoClose: 2000 // Duration in milliseconds (10 seconds)
         });
         setIsFormOpen(false);
+        window.location.reload(); // Refresh the page
     } catch (error) {
         console.error('Error adding fish:', error);
     }
@@ -143,6 +144,7 @@ export default function AddFish() {
             autoClose: 2000 // Duration in milliseconds (2 seconds)
         });
         setIsFormOpen(false);
+        window.location.reload(); // Refresh the page
     } catch (error) {
         console.error('Error updating fish:', error);
     }
@@ -174,6 +176,7 @@ export default function AddFish() {
                 autoClose: 2000 // Duration in milliseconds (2 seconds)
             });
             setIsDeleteDialogOpen(false);
+            window.location.reload(); // Refresh the page
         } catch (error) {
             console.error('Error deleting fish:', error);
         }
