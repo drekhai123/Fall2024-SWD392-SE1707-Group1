@@ -551,49 +551,66 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   }
                 />
 
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginTop: '10px',
+                  gap: '20px'
+                }}>
+                  <div>
+                    <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
+                      className="layout-checkbox" 
+                      style={{marginBottom: '10px'}}
+                    >
+                      <p>
+                        <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
+                      </p>
 
-                <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
-                  className="layout-checkbox" style={{cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px'}} >  {/* lười css làm z cho lẹ */}
-                  <p>
-                    <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
-                  </p>
+                      <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND" 
+                        className="checkbox-container"
+                      >
+                        {customerInfo?.distance <= 50 && (
+                          <label>
+                            <input
+                              style={{cursor: 'pointer'}}
+                              type="checkbox"
+                              checked={check}
+                              onChange={(e) => setCheck(e.target.checked)}
+                            />
+                            If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
+                          </label>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div style={{marginTop: '10px'}}>
+                      <p className="label-total">
+                        Shipping fee: {calculateShippingFee() || 0} VND
+                      </p>
+                      <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
+                    </div>
+                  </div>
 
-                  <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND" className="checkbox-container">
-                    {customerInfo?.distance <= 50 && ( // Nếu distance lớn hơn 50 thì checkbox biến mất
-                      <label>
-                        <input
-                          style={{cursor: 'pointer'}}
-                          type="checkbox"
-                          checked={check}
-                          onChange={(e) => setCheck(e.target.checked)}
-
-                        />
-                        If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
-                      </label>
-                    )}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '100%'
+                  }}>
+                    <h3 className="total-amount" style={{margin: 0}}>
+                      Total Amount: {" "}
+                      {getTotalAmount() +
+                        parseInt(calculateVAT()) +
+                        parseFloat(calculateShippingFee().toFixed(0))}{" "}
+                      VND
+                    </h3>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
 
-
-
-        <div className="layout-total">
-          <p className="label-total">
-            Shipping fee: {calculateShippingFee() || 0} VND
-          </p>
-          <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
-          <h3 className="total-amount">
-            Total Amount:{" "}
-            {getTotalAmount() +
-              parseInt(calculateVAT()) +
-              parseFloat(calculateShippingFee().toFixed(0))}{" "}
-            VND
-          </h3>
-        </div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>
