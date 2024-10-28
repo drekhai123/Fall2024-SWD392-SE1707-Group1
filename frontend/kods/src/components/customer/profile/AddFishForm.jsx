@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import {
   Container,
   Typography,
@@ -20,10 +20,10 @@ import {
   Pagination,
   Divider
 } from '@mui/material';
-
+import _ from "lodash";
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
 import { GetAllKoiFishes } from '../../api/KoiFishApi';
-import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile } from '../../api/FishProfileApi';
+import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile, findProfileByName } from '../../api/FishProfileApi';
 import { storage } from '../../../config/ConfigFirebase';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast, ToastContainer } from 'react-toastify';
@@ -45,29 +45,50 @@ export default function AddFish() {
   const [koifish, setKoiFish] = useState([]);  //state for species
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false); // state for image zoom
   const [selectedFishType, setSelectedFishType] = useState(''); //  state for selected fish type
-
+  const [refresh, setRefresh] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // KOI species
   useEffect(() => {
-    const getSpeciesList= async () => {
+    const getSpeciesList = async () => {
       var koifishData = await GetAllKoiFishes();
       setKoiFish(koifishData);
     };
-      //Get API By CustomerID
- const fetchFishes = async () => {
-  try {
-      const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
-      const customerId = user?.customer?.customerId; // Lấy accountId
-      const response = await getFishProfilebyCustomerid(customerId);
-      setFishes(response);
-      console.log(fishes)
-  } catch (error) {
-      console.error('Error fetching fishes:', error);
-  }
-};
+    //Get API By CustomerID
+    const fetchFishes = async () => {
+      try {
+        const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
+        const customerId = user?.customer?.customerId; // Lấy accountId
+        const response = await getFishProfilebyCustomerid(customerId);
+        setFishes(response);
+        console.log(fishes)
+      } catch (error) {
+        console.error('Error fetching fishes:', error);
+      }
+    };
     getSpeciesList();
     fetchFishes();
-  }, []);
+  }, [refresh]);
+// Search Feature
+  const handleSearch = useCallback(
+    _.debounce(async (name) => {
+      try {
+        const data = await findProfileByName(name);
+        setFishes(data); // backend returns the searched fish list
+      } catch (error) {
+        console.error("Search error:", error);
+      }
+    }, 500),
+    []
+  );
+
+  // Update search term and call the debounced search
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    handleSearch(term);
+  };
+
 
 
   const handleAddFish = async (e) => {
@@ -76,25 +97,26 @@ export default function AddFish() {
     const customerId = user?.customer?.customerId;
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
     const newFish = {
-        name: name,
-        weight: parseFloat(weight),
-        gender: gender,
-        notes: notes,
-        image: image,
-        koiFishId: koiFishId,
-        customerId: customerId
+      name: name,
+      weight: parseFloat(weight),
+      gender: gender,
+      notes: notes,
+      image: image,
+      koiFishId: koiFishId,
+      customerId: customerId
     };
     console.log('Adding new fish:', newFish);
 
     try {
-        await addFishProfile(newFish);
-        toast.success("Add fish successfully", {
-            autoClose: 2000 // Duration in milliseconds (10 seconds)
-        });
-        setIsFormOpen(false);
+      await addFishProfile(newFish);
+      toast.success("Add fish successfully", {
+        autoClose: 2000 // Duration in milliseconds (10 seconds)
+      });
+      setIsFormOpen(false);
     } catch (error) {
-        console.error('Error adding fish:', error);
+      console.error('Error adding fish:', error);
     }
+    setRefresh(!refresh)
   };
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -108,7 +130,7 @@ export default function AddFish() {
   const handleEditFish = (fish) => {
     setSelectedFish(fish);
     setName(fish.name);
-    setImage(fish.image );
+    setImage(fish.image);
     setWeight(fish.weight);
     setGender(fish.gender);
     setNotes(fish.notes);
@@ -116,8 +138,8 @@ export default function AddFish() {
     setIsFormOpen(true);
   };
 
-  const handleDeleteFish = (fish,id) => {
-    setSelectedFish(fish,id);
+  const handleDeleteFish = (fish, id) => {
+    setSelectedFish(fish, id);
     setIsDeleteDialogOpen(true);
   };
 
@@ -128,24 +150,25 @@ export default function AddFish() {
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
 
     const updatedFish = {
-        name: name,
-        weight: parseFloat(weight),
-        gender: gender,
-        notes: notes,
-        image: image, // Use the image URL from state
-        koiFishId: koiFishId,
-        customerId: customerId
+      name: name,
+      weight: parseFloat(weight),
+      gender: gender,
+      notes: notes,
+      image: image, // Use the image URL from state
+      koiFishId: koiFishId,
+      customerId: customerId
     };
 
     try {
-        await updateFishProfile(selectedFish.fishProfileId, updatedFish);
-        toast.info("Update fish success", {
-            autoClose: 2000 // Duration in milliseconds (2 seconds)
-        });
-        setIsFormOpen(false);
+      await updateFishProfile(selectedFish.fishProfileId, updatedFish);
+      toast.info("Update fish success", {
+        autoClose: 2000 // Duration in milliseconds (2 seconds)
+      });
+      setIsFormOpen(false);
     } catch (error) {
-        console.error('Error updating fish:', error);
+      console.error('Error updating fish:', error);
     }
+    setRefresh(!refresh)
   };
 
   const handleFormSubmit = (e) => {
@@ -153,31 +176,33 @@ export default function AddFish() {
 
     // Validation: Check if all required fields are filled
     if (!name || !weight || !gender || !selectedFishType || !image) {
-        toast.error("Please fill out all required fields.", {
-            autoClose: 2000 // Duration in milliseconds (10 seconds)
-        });
-        return;
+      toast.error("Please fill out all required fields.", {
+        autoClose: 2000 // Duration in milliseconds (10 seconds)
+      });
+      return;
     }
 
     if (selectedFish) {
-        handleUpdateFish(e);
+      handleUpdateFish(e);
     } else {
-        handleAddFish(e);
+      handleAddFish(e);
     }
+
   };
 
   const handleDeleteConfirm = async () => {
     if (selectedFish) {
-        try {
-            await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
-            toast.error("Delete fish success", {
-                autoClose: 2000 // Duration in milliseconds (2 seconds)
-            });
-            setIsDeleteDialogOpen(false);
-        } catch (error) {
-            console.error('Error deleting fish:', error);
-        }
+      try {
+        await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
+        toast.error("Delete fish success", {
+          autoClose: 2000 // Duration in milliseconds (2 seconds)
+        });
+        setIsDeleteDialogOpen(false);
+      } catch (error) {
+        console.error('Error deleting fish:', error);
+      }
     }
+    setRefresh(!refresh)
   };
 
 
@@ -254,38 +279,59 @@ export default function AddFish() {
       <p className="text-gray-600 text-lg my-2">
         This is your Fish profile. You can update your fish and picture here.
       </p>
-      <div className="border-b border-gray-300 my-4"></div>
+      <input
+        type="text"
+        placeholder="Search Fish"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        style={{
+          padding: '10px',
+          marginBottom: '20px',
+          width: '100%',
+          fontSize: '16px',
+          border: '2px solid #ccc',
+          borderRadius: '5px',
+          zIndex: 10,
+          position: 'relative',
+        }}
+      />
+      <Divider/>
+      <div style={{margin:"2%"}}></div>
       <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleOpenAddFishForm}>
         Add Fish
       </Button>
       <List>
-        {paginatedFishes.map((fish,index) => (
+        {paginatedFishes.map((fish, index) => (
           <ListItem key={index}>
-            <Avatar src={fish.image} alt={fish.name} style={{marginRight:"3%"}} />
+            <Avatar src={fish.image} alt={fish.name} style={{ marginRight: "3%" }} />
             <ListItemText primary={fish.name} />
-              <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
-                <InfoIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="edit" onClick={() => handleEditFish(fish)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
-                <DeleteIcon />
-              </IconButton>
-              <Divider/>
+            <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
+              <InfoIcon />
+            </IconButton>
+            <IconButton edge="end" aria-label="edit" onClick={() => handleEditFish(fish)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
+              <DeleteIcon />
+            </IconButton>
           </ListItem>
         ))}
       </List>
-      {paginatedFishes.length>5?
-       <Pagination
-       count={Math.ceil(fishes.length / itemsPerPage)}
-       page={currentPage}
-       onChange={handlePageChange}
-       color="primary"
-     />
-     :
-     "" // Paging only if 5 or more fishes
-    }
+      <div className='pagination-footer' style={{
+        position: 'relative',
+      }}>
+        <Divider />
+        <div className="pagination">
+          {fishes.length > 5 ??
+            <Pagination
+              count={Math.ceil(fishes.length / itemsPerPage)}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+            /> // Paging only if 5 or more fishes
+          }
+        </div>
+      </div>
       {/* Dialogs for form and delete confirmation */}
       <Dialog open={isFormOpen} onClose={() => setIsFormOpen(false)}>
         <DialogTitle>{selectedFish ? 'Edit Fish' : 'Add Fish'}</DialogTitle>
@@ -312,7 +358,7 @@ export default function AddFish() {
               required
             />
             <FormControl required aria-selected fullWidth margin="dense">
-            <InputLabel style={{backgroundColor:"white",marginRight:"5px",marginLeft:"5px"}} required id="fish-type-label">Species</InputLabel>
+              <InputLabel style={{ backgroundColor: "white", marginRight: "5px", marginLeft: "5px" }} required id="fish-type-label">Species</InputLabel>
               <Select
                 labelId="fish-type-label"
                 value={selectedFishType} // Update to use selected species
@@ -333,7 +379,7 @@ export default function AddFish() {
             </FormControl>
 
             <FormControl fullWidth margin="dense">
-              <InputLabel required id="gender-label" style={{backgroundColor:"white",marginRight:"5px",marginLeft:"5px"}}>Gender</InputLabel>
+              <InputLabel required id="gender-label" style={{ backgroundColor: "white", marginRight: "5px", marginLeft: "5px" }}>Gender</InputLabel>
               <Select
                 labelId="gender-label"
                 value={gender} // Update to use selected gender
@@ -402,7 +448,7 @@ export default function AddFish() {
               <Avatar
                 src={selectedFish.image}
                 alt={selectedFish.name}
-                sx={{ width: 100, height: 100, cursor: 'pointer'}} // Add cursor pointer
+                sx={{ width: 100, height: 100, cursor: 'pointer' }} // Add cursor pointer
                 onClick={handleImageZoomOpen} // Open zoom on click
               />
               <Typography variant="body1"><strong>Weight:</strong> {selectedFish.weight} kg</Typography>

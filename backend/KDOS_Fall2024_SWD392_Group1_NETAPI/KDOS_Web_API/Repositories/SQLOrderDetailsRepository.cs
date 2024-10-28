@@ -16,7 +16,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<OrderDetails?> AddNewOrderDetails(OrderDetails orderDetails)
         {
-            var orderModel = orderDetailContext.Orders.FirstOrDefaultAsync(x => x.OrderId == orderDetails.OrderId);
+            var orderModel = await orderDetailContext.Orders.FirstOrDefaultAsync(x => x.OrderId == orderDetails.OrderId);
             if (orderModel == null)
             {
                 return null;
@@ -45,7 +45,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<OrderDetails?> GetOrderDetailsById(int id)
         {
-            var detailModel = await orderDetailContext.OrderDetails.Include("FishProfile").Include("HealthStatus").FirstOrDefaultAsync(x => x.OrderDetailsId == id);
+            var detailModel = await orderDetailContext.OrderDetails.Include(x=>x.FishProfile).Include(x=>x.HealthStatus).FirstOrDefaultAsync(x => x.OrderDetailsId == id);
             if (detailModel == null)
             {
                 return null;
@@ -53,13 +53,9 @@ namespace KDOS_Web_API.Repositories
             return detailModel;
         }
 
-        public async Task<OrderDetails?> GetOrderDetailsByOrderId(int id)
+        public async Task<List<OrderDetails>> GetOrderDetailsByOrderId(int id)
         {
-            var orderModel = await orderDetailContext.OrderDetails.Include("FishProfile").Include("HealthStatus").FirstOrDefaultAsync(x => x.OrderId == id);
-            if (orderModel == null)
-            {
-                return null;
-            }
+            var orderModel = await orderDetailContext.OrderDetails.Include(x=>x.FishProfile).Include(x=>x.HealthStatus).Where(x => x.OrderId == id).ToListAsync();
             return orderModel;
         }
 
