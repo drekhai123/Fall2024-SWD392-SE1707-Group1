@@ -30,6 +30,7 @@ builder.Services.AddScoped<IFeedBackRepository, SQLFeedBackRepository>();
 builder.Services.AddScoped<ITransportRepository, SQLTransportRepository>();
 builder.Services.AddScoped<IWeightPriceListRepository, SQLWeightPriceListRepository>();
 builder.Services.AddScoped<IDistancePriceListRepository, SQLDistancePriceListRepository>();
+builder.Services.AddScoped<ILogTransportRepository, SQLLogTransportRepository>();
 //Inject Mailing service
 builder.Services.AddScoped<IMailingService, MailingService>();
 //End Respository
