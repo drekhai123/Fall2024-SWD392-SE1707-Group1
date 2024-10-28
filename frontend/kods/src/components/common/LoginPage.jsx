@@ -4,10 +4,12 @@ import "../../css/LoginPage.css";
 import { LoginApi } from "../api/LoginApi";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingScreen from "../../utils/LoadingScreen";
 
 const LoginPage = () => {
   const [usernameoremail, setUsernameoremail] = useState("");
   const [password, setPassword] = useState("");
+  const [loadingScreen,setLoadingScreen] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // Thêm state để điều khiển ẩn/hiện mật khẩu
   const navigate = useNavigate();
 
@@ -20,6 +22,7 @@ const LoginPage = () => {
   };
 
   const handleLoginClick = async (e) => {
+    setLoadingScreen(true)
     e.preventDefault();
     const login = {
       usernameoremail: usernameoremail,
@@ -61,6 +64,7 @@ const LoginPage = () => {
 
   return (
     <div className="login-page-container">
+      {loadingScreen? <LoadingScreen/>:""}
       <div className="brand-container">
         <img src="/images/coco.jpg" alt="Brand" className="brand-img" />
       </div>

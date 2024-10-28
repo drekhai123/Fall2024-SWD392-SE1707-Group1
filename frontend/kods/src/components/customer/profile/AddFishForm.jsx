@@ -7,7 +7,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
   IconButton,
   Dialog,
   DialogTitle,
@@ -18,7 +17,10 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Pagination,
+  Divider
 } from '@mui/material';
+
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
 import { GetAllKoiFishes } from '../../api/KoiFishApi';
 import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile } from '../../api/FishProfileApi';
@@ -28,6 +30,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+
 export default function AddFish() {
   const [fishes, setFishes] = useState([]);
   const [selectedFish, setSelectedFish] = useState(null);
@@ -35,8 +38,6 @@ export default function AddFish() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
-  const [url, setUrl] = useState('');
-  const [progress, setProgres] = useState(0);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
@@ -52,34 +53,28 @@ export default function AddFish() {
       var koifishData = await GetAllKoiFishes();
       setKoiFish(koifishData);
     };
-    getSpeciesList();
-  }, []);
-
-
-  useEffect(() => {
-    fetchFishes(); // Fetches fish data on component mount
-  }, []);
-
-  //Get API By CustomerID
+      //Get API By CustomerID
  const fetchFishes = async () => {
-    try {
-        const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
-        const customerId = user?.customer?.customerId; // Lấy accountId
-        const response = await getFishProfilebyCustomerid(customerId);
-        setFishes(response);
-        console.log(fishes)
-    } catch (error) {
-        console.error('Error fetching fishes:', error);
-    }
+  try {
+      const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
+      const customerId = user?.customer?.customerId; // Lấy accountId
+      const response = await getFishProfilebyCustomerid(customerId);
+      setFishes(response);
+      console.log(fishes)
+  } catch (error) {
+      console.error('Error fetching fishes:', error);
+  }
+};
+    getSpeciesList();
+    fetchFishes();
+  }, []);
 
-  };
 
   const handleAddFish = async (e) => {
     e.preventDefault();
     const user = JSON.parse(sessionStorage.getItem('user')); // Changed to sessionStorage
     const customerId = user?.customer?.customerId;
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
-
     const newFish = {
         name: name,
         weight: parseFloat(weight),
@@ -89,7 +84,6 @@ export default function AddFish() {
         koiFishId: koiFishId,
         customerId: customerId
     };
-
     console.log('Adding new fish:', newFish);
 
     try {
@@ -98,11 +92,18 @@ export default function AddFish() {
             autoClose: 2000 // Duration in milliseconds (10 seconds)
         });
         setIsFormOpen(false);
-        fetchFishes(); // Refresh fish list
     } catch (error) {
         console.error('Error adding fish:', error);
     }
   };
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedFishes = fishes.slice(startIndex, startIndex + itemsPerPage);
+
 
   const handleEditFish = (fish) => {
     setSelectedFish(fish);
@@ -142,7 +143,6 @@ export default function AddFish() {
             autoClose: 2000 // Duration in milliseconds (2 seconds)
         });
         setIsFormOpen(false);
-        fetchFishes(); // Refresh fish list
     } catch (error) {
         console.error('Error updating fish:', error);
     }
@@ -174,7 +174,6 @@ export default function AddFish() {
                 autoClose: 2000 // Duration in milliseconds (2 seconds)
             });
             setIsDeleteDialogOpen(false);
-            fetchFishes(); // Update the fish list
         } catch (error) {
             console.error('Error deleting fish:', error);
         }
@@ -194,7 +193,6 @@ export default function AddFish() {
           const progress = Math.round(
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           );
-          setProgres(progress); // Update progress state
         },
         (error) => {
           console.error("Error uploading image:", error);
@@ -203,7 +201,6 @@ export default function AddFish() {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log("File available at", downloadURL);
             setImage(downloadURL); // Set the image URL to state
-            setUrl(downloadURL);   // Set the URL state with the download URL
           });
         }
       );
@@ -262,11 +259,10 @@ export default function AddFish() {
         Add Fish
       </Button>
       <List>
-        {fishes.map((fish) => (
-          <ListItem key={fish.id}>
-            <Avatar src={fish.image} alt={fish.name} />
+        {paginatedFishes.map((fish,index) => (
+          <ListItem key={index}>
+            <Avatar src={fish.image} alt={fish.name} style={{marginRight:"3%"}} />
             <ListItemText primary={fish.name} />
-            <ListItemSecondaryAction>
               <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
                 <InfoIcon />
               </IconButton>
@@ -276,10 +272,20 @@ export default function AddFish() {
               <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
                 <DeleteIcon />
               </IconButton>
-            </ListItemSecondaryAction>
+              <Divider/>
           </ListItem>
         ))}
       </List>
+      {paginatedFishes.length>5?
+       <Pagination
+       count={Math.ceil(fishes.length / itemsPerPage)}
+       page={currentPage}
+       onChange={handlePageChange}
+       color="primary"
+     />
+     :
+     "" // Paging only if 5 or more fishes
+    }
       {/* Dialogs for form and delete confirmation */}
       <Dialog open={isFormOpen} onClose={() => setIsFormOpen(false)}>
         <DialogTitle>{selectedFish ? 'Edit Fish' : 'Add Fish'}</DialogTitle>
@@ -305,17 +311,16 @@ export default function AddFish() {
               onChange={(e) => setWeight(e.target.value)}
               required
             />
-
-            <FormControl fullWidth margin="dense">
-              <InputLabel id="fish-type-label">Species</InputLabel>
+            <FormControl required aria-selected fullWidth margin="dense">
+            <InputLabel style={{backgroundColor:"white",marginRight:"5px",marginLeft:"5px"}} required id="fish-type-label">Species</InputLabel>
               <Select
                 labelId="fish-type-label"
                 value={selectedFishType} // Update to use selected species
                 onChange={(e) => setSelectedFishType(e.target.value)} // Update state for selected fish type
-                displayEmpty // Allow empty value to show placeholder
+                placeholder='Koi Type'
                 required
               >
-                <MenuItem value="" disabled>Choose fish type</MenuItem>
+                <MenuItem value="Koi Type">Choose Koi type</MenuItem>
                 {koifish.map((koifish) => (
                   <MenuItem
                     key={koifish.koiFishId}
@@ -328,7 +333,7 @@ export default function AddFish() {
             </FormControl>
 
             <FormControl fullWidth margin="dense">
-              <InputLabel id="gender-label">Gender</InputLabel>
+              <InputLabel required id="gender-label" style={{backgroundColor:"white",marginRight:"5px",marginLeft:"5px"}}>Gender</InputLabel>
               <Select
                 labelId="gender-label"
                 value={gender} // Update to use selected gender
