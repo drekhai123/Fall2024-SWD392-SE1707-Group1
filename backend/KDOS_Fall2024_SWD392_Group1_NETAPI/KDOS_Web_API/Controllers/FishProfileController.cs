@@ -92,6 +92,21 @@ namespace KDOS_Web_API.Controllers
             var profileDto = mapper.Map<List<FishProfileDTO>>(profileList);
             return Ok(profileDto);
         }
+
+        // GET: api/fishprofile/search?name=salmon
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchFishProfileByName([FromQuery] string name)
+        {
+            var fishProfiles = await fishProfileRepository.SearchFishProfileByName(name);
+
+            if (fishProfiles == null || fishProfiles.Count == 0)
+            {
+                return NotFound("No fish profiles found.");
+            }
+
+            return Ok(fishProfiles);
+        }
+
     }
 }
 
