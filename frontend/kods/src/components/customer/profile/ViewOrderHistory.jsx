@@ -96,15 +96,13 @@ const OrderHistory = () => {
                   </TableCell>
                   <TableCell>{order.totalCost}</TableCell>
                   <TableCell>
-                    {order.deliveryStatus === 'DELIVERED' && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleViewDetail(order.orderId)}
-                      >
-                        View Details
-                      </Button>
-                    )}
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleViewDetail(order.orderId)}
+                    >
+                      View Details
+                    </Button>
                   </TableCell>
                 </TableRow>
               );
