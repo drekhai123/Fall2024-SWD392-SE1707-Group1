@@ -21,6 +21,8 @@ namespace KDOS_Web_API.Datas
         public DbSet<Transport> Transport { get; set; }
         public DbSet<WeightPriceList> WeightPriceList { get; set; }
         public DbSet<DistancePriceList> DistancePriceList { get; set; }
+        public DbSet<LogTransport> LogTransport { get; set; }
+        public DbSet<Payment> Payment { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Verification>()
