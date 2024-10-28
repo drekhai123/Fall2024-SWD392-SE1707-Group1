@@ -5,7 +5,7 @@ const addFishProfileURL = baseUrl + '/FishProfile/' // URL for adding fish profi
 const updateFishProfileURL = baseUrl + '/FishProfile/' // URL for updating fish profiles
 const deleteFishProfileURL = baseUrl + '/FishProfile/' // URL for deleting fish profiles
 const getFishProfileURL = baseUrl + '/FishProfile/Customer/' // URL for getting fish profiles by customer ID
-const searchProfileURL = baseUrl + '/FishProfile/search?name='
+const searchProfileURL = baseUrl + '/FishProfile/'
 // Function to add a fish profile
 export async function addFishProfile(fish) {
     try {
@@ -16,14 +16,13 @@ export async function addFishProfile(fish) {
         throw error; // Rethrow the error for handling in the calling function
     }
 }
-
-export async function findProfileByName(name) {
+export async function findProfileByName(id,name) {
     try {
-        const response = await axios.get(searchProfileURL + name); // Send POST request
-        return await response.data; // Return the added fish profile data
+        const response = await axios.get(searchProfileURL+`${id}/search?name=${name}`); // Send POST request
+        return response; // Return the added fish profile data
     } catch (error) {
         console.error('Error adding fish profile:', error);
-        throw error; // Rethrow the error for handling in the calling function
+        return error; // Rethrow the error for handling in the calling function
     }
 }
 

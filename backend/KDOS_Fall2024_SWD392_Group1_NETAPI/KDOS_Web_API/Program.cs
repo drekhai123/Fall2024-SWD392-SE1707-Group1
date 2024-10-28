@@ -29,6 +29,7 @@ builder.Services.AddScoped<IFishProfileRepository, SQLFishProfileRepository>();
 builder.Services.AddScoped<IFeedBackRepository, SQLFeedBackRepository>();
 builder.Services.AddScoped<ITransportRepository, SQLTransportRepository>();
 builder.Services.AddScoped<IWeightPriceListRepository, SQLWeightPriceListRepository>();
+builder.Services.AddScoped<IHealthStatusRepository, SQLHealthStatusRepository>();
 builder.Services.AddScoped<IDistancePriceListRepository, SQLDistancePriceListRepository>();
 builder.Services.AddScoped<ILogTransportRepository, SQLLogTransportRepository>();
 //Inject Mailing service

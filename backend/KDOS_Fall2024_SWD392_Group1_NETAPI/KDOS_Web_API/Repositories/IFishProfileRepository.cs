@@ -11,7 +11,7 @@ namespace KDOS_Web_API.Repositories
         Task<FishProfile?> UpdateFishProfile(int id, FishProfile fishProfile);
         Task<FishProfile?> DeleteProfile(int id);
         Task<List<FishProfile>> GetProfileByCustomerId(int id, string? filterBy = null,string? fishType=null);
-        Task<List<FishProfile>> SearchFishProfileByName(string name);
+        Task<List<FishProfile>> SearchFishProfileByName(int customerId,string name);
     }
 }
 

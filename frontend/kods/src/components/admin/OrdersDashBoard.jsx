@@ -74,7 +74,7 @@ const DashBoardStaffAdmin = () => {
   };
 
   const CustomInput = ({ value, onClick }) => (
-    <div className="layout-date-picker">    
+    <div className="layout-date-picker">
       <button className="date-picker" onClick={handleViewAll}>
         View all
       </button>
@@ -83,7 +83,7 @@ const DashBoardStaffAdmin = () => {
       </button>
     </div>
   );
-  
+
 
   return (
     <div className="checkout-form">
