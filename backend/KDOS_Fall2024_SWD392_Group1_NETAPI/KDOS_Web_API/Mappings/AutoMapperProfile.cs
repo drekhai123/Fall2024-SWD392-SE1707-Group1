@@ -40,6 +40,14 @@ namespace KDOS_Web_API.Mappings
 			CreateMap<DeliveryStaff, DeliveryStaffDTO>().ReverseMap();
             CreateMap<DeliveryStaff, AddNewDeliveryStaffDTO>().ReverseMap();
             CreateMap<DeliveryStaff, UpdateDeliveryStaffDTO>().ReverseMap();
+            //WeightPriceList
+            CreateMap<WeightPriceList, WeightPriceListDTO>().ReverseMap();
+            CreateMap<WeightPriceList, AddNewWeightPriceListDTO>().ReverseMap();
+            CreateMap<WeightPriceList, UpdateWeightPriceListDTO>().ReverseMap();
+            //DistancePriceList
+            CreateMap<DistancePriceList, DistancePriceListDTO>().ReverseMap();
+            CreateMap<DistancePriceList, AddNewDistancePriceListDTO>().ReverseMap();
+            CreateMap<DistancePriceList, UpdateDistancePriceListDTO>().ReverseMap();
             // Transport
             CreateMap<Transport, TransportDTO>().ReverseMap();
             CreateMap<Transport, UpdateTransportDTO>().ReverseMap();

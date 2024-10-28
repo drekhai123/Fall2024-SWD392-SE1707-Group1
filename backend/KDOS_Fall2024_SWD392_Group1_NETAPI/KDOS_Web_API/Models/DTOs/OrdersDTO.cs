@@ -42,6 +42,8 @@ namespace KDOS_Web_API.Models.DTOs
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public int DistancePriceListId { get; set; }
+        public int WeightPriceListId { get; set; }
         public int CustomerId { get; set; }
         public int TransporterId { get; set; }
 

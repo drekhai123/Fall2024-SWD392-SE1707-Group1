@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../../css/Feedback.css';
 import { useNavigate } from 'react-router-dom';
+import Rating from '@mui/material/Rating'; // Import MUI Rating component
 
 const Feedback = ({ setFeedbacks }) => {
     const [rating, setRating] = useState(0);
@@ -31,7 +32,7 @@ const Feedback = ({ setFeedbacks }) => {
         setEmail(event.target.value);
     };
 
-    
+
   const navigate = useNavigate();
   const handleGoBack = () => {
     navigate(-1);  // Quay lại trang trước đó
@@ -70,11 +71,11 @@ const Feedback = ({ setFeedbacks }) => {
     };
 
     return (
-     //Thêm background cho đẹp hơn   
-    <div className="feedback-background"> 
+     //Thêm background cho đẹp hơn
+    <div className="feedback-background">
         <div className="feedback-container">
             <button onClick={handleGoBack} className="go-back-button-feedback">
-            ⭠ Previous Page 
+            ⭠ Previous Page
             </button>
             <div className="feedback-header">
                 <p>We are committed to providing you with the best dining experience possible, so we welcome your comments.</p>
@@ -95,13 +96,14 @@ const Feedback = ({ setFeedbacks }) => {
                 </div>
                 <div className="form-group">
                     <label>Your rating: </label>
-                    <div className="rating-stars">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <span key={star} onClick={() => handleRatingChange(star)} className="star">
-                                {star <= rating ? '⭐' : '☆'}
-                            </span>
-                        ))}
-                    </div>
+                    <Rating
+                        name="feedback-rating"
+                        value={rating}
+                        precision={0.5} // Allow half-star ratings
+                        onChange={(event, newValue) => {
+                            setRating(newValue);
+                        }}
+                    />
                 </div>
                 <div className="form-group">
                     <label>Your Comment: </label>
@@ -111,8 +113,8 @@ const Feedback = ({ setFeedbacks }) => {
             </form>
             {submitted && <p style={{ color: 'green' }}>Thank you for your feedback!</p>}
         </div>
-        </div> 
-    
+        </div>
+
     );
 };
 

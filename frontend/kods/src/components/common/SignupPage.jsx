@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/SignupPage.css";
-import { regCus, signUp } from "../api/Auth.api";
 import { toast } from "react-toastify";
 import { AddNewAccount, VerifyAccount } from "../api/AccountApi";
 import { AddNewCustomer } from "../api/CustomerApi";
+import LoadingScreen from "../../utils/LoadingScreen";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -19,6 +19,7 @@ const SignupPage = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [registerEmail, setRegisterEmail] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
   // Trạng thái cho lỗi bỏ trống
   const [emailError, setEmailError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
@@ -54,6 +55,7 @@ const SignupPage = () => {
   };
 
   const handleSignupClick = async (e) => {
+    setLoadingScreen(true)
     e.preventDefault();
     // Kiểm tra xem các field nào đang trống và đặt trạng thái lỗi tương ứng
     setEmailError(!email);
@@ -77,12 +79,11 @@ const SignupPage = () => {
     };
     // Implement signup logic here
     const res = await AddNewAccount(data);
-    if (res) {
-      console.log(res);
+    if (res.status >= 200 && res.status < 300) {
       var account = await res.data
       if (account.accountId != null) {
         const verification = await VerifyAccount(account.accountId) //send verification email and notify
-        if (verification) {
+        if (verification.status >= 200 && verification.status < 300) {
           setRegisterEmail(true)
           alert("Check Your Email For Verification Code")
           const data = {
@@ -110,6 +111,7 @@ const SignupPage = () => {
     } else {
       toast.error("Error Adding Account Data");
     }
+    setLoadingScreen(false)
   };
 
   const handleLoginClick = () => {
@@ -118,6 +120,7 @@ const SignupPage = () => {
 
   return (
     <div className="signup-page-container">
+      {loadingScreen? <LoadingScreen/>:""}
       <div className="brand-container">
         <img src="/images/coco.jpg" alt="Brand" className="brand-img" />
       </div>
@@ -219,7 +222,7 @@ const SignupPage = () => {
               </option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Others">Other</option>
+              <option value="Others">Others</option>
             </select>
             {genderError && <p className="error-text">Gender is required</p>}
           </div>
@@ -233,6 +236,7 @@ const SignupPage = () => {
               value={phoneNumber}
               onChange={handleChangePhoneNumber}
             />
+            {phoneError && <p className="error-text">Phone is required</p>}
             <div className="icon-container">
               <span className="tooltip-icon">?</span>
               {phoneError && (

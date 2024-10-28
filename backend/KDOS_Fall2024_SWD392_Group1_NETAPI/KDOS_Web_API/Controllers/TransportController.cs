@@ -100,6 +100,23 @@ public class TransportController : ControllerBase
         return Ok(updatedOrderDto);
     }
 
+    [HttpDelete]
+    [Route("{transportId}")]
+    public async Task<IActionResult> DeleteTransport([FromRoute] int transportId)
+    {
+        var transportModel = await transportRepository.DeleteTransport(transportId);
+        if (transportModel == null)
+        {
+            return NotFound("Cannot find the transport ID");
+        }
+        var orderDto = mapper.Map<TransportDTO>(transportModel);
+        return Ok(orderDto);
+    }
+
+
+
+
+
 
 
 }

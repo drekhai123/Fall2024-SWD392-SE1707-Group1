@@ -7,7 +7,6 @@ const loginUrl = baseUrl+"/Account/Login";
 export async function LoginApi(value)
 {
     var account = null
-    console.log(value)
     await axios.post(loginUrl,value,headers)
     .then(response => {
         account = response.data;
