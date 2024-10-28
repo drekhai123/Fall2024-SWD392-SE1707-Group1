@@ -8,7 +8,7 @@ import {useNavigate} from 'react-router-dom';
 
 export default function OrderForm({onSuggestionClick, distance}) {
   const navigateToLogin = useNavigate();
-  const user = JSON.parse(sessionStorage.getItem("user")); 
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const [modal, setOpenModal] = useState(false);
   const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -117,18 +117,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
     const range = distancePriceList.find(
       (item) => distance >= item.minRange && distance <= item.maxRange
     );
-    
+
     // Nếu tìm thấy, sử dụng giá tương ứng từ API, nếu không tìm thấy thì gán giá trị mặc định
     if (range) {
       unitPrice = range.price; // Gán giá từ range nếu tìm thấy
     }
-    
+
     const baseFee = distance * parseFloat(unitPrice); // Tính toán baseFee
-  
+
     if (distance <= 5) {
       return check ? 25000 : 0;
     }
-  
+
     if (check && estimatedDays === 1) {
       return baseFee + 25000;
     } else if (!check && estimatedDays === 1) {

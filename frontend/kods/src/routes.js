@@ -19,13 +19,20 @@ import AddFishForm from "./components/customer/profile/AddFishForm"; // Import A
 import { StaffDashBoard } from "./components/staff/StaffDashBoard";
 import ViewOrderHistory from "./components/customer/profile/ViewOrderHistory"; // Import ViewOrderHistory
 import ViewOrderDetails from './components/customer/profile/ViewOrderDetail';
-
+import NotFound from "./components/common/404page";
+import ContactPage from "./components/common/Contact";
+import AboutPage from "./components/common/About";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Homepage />,
   },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+
   {
     path: "/login",
     element: <LoginPage />,
@@ -97,5 +104,13 @@ export const router = createBrowserRouter([
   {
     path: "/profile/ViewOrderHistory/:orderId", // Ensure this matches the path used in handleViewDetail
     element: <ViewOrderDetails />, // Ensure this component is correct
+  },
+  {
+    path: "/contact", // Ensure this matches the path used in handleViewDetail
+    element: <ContactPage />, // Ensure this component is correct
+  },
+  {
+    path: "/about", // Define the path for the About page
+    element: <AboutPage />, // Set the AboutPage component as the element
   },
 ]);

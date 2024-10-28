@@ -210,48 +210,50 @@ export default function OrderDetail({ onBack }) {
               </Table>
             </TableContainer>
           </Grid>
-          <Grid item xs={12}>
-            <Paper style={{ padding: '20px' }}>
-              <Typography variant="h6" gutterBottom>Feedback and Rating</Typography>
-              {feedbackData ? (
-                <div>
-                  <Typography>Comment: {feedbackData.comment}</Typography>
-                  <div style={{ marginBottom: '20px' }}>
-                    <Rating
-                      name="read-only"
-                      value={feedbackData.rating}
-                      readOnly
-                    />
+          {orderDetail.deliveryStatus === 'DELIVERED' && (
+            <Grid item xs={12}>
+              <Paper style={{ padding: '20px' }}>
+                <Typography variant="h6" gutterBottom>Feedback and Rating</Typography>
+                {feedbackData ? (
+                  <div>
+                    <Typography>Comment: {feedbackData.comment}</Typography>
+                    <div style={{ marginBottom: '20px' }}>
+                      <Rating
+                        name="read-only"
+                        value={feedbackData.rating}
+                        readOnly
+                      />
+                    </div>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleDeleteFeedback}
+                    >
+                      Delete Feedback
+                    </Button>
                   </div>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleDeleteFeedback}
-                  >
-                    Delete Feedback
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <Rating
-                    name="simple-controlled"
-                    value={rating}
-                    onChange={(event, newValue) => setRating(newValue)}
-                    style={{ marginBottom: '20px' }}
-                  />
-                  <ReactQuill value={feedback} onChange={(content) => setFeedback(content)} />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: '20px' }}
-                    onClick={handleFeedbackSubmit}
-                  >
-                    Submit Feedback
-                  </Button>
-                </div>
-              )}
-            </Paper>
-          </Grid>
+                ) : (
+                  <div>
+                    <Rating
+                      name="simple-controlled"
+                      value={rating}
+                      onChange={(event, newValue) => setRating(newValue)}
+                      style={{ marginBottom: '20px' }}
+                    />
+                    <ReactQuill value={feedback} onChange={(content) => setFeedback(content)} />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{ marginTop: '20px' }}
+                      onClick={handleFeedbackSubmit}
+                    >
+                      Submit Feedback
+                    </Button>
+                  </div>
+                )}
+              </Paper>
+            </Grid>
+          )}
         </Grid>
         <Modal
           open={open}
