@@ -8,7 +8,7 @@ namespace KDOS_Web_API.Controllers
     public class VNPayController : ControllerBase
     {
         private const string VnPayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // Replace with production URL
-        private const string VnPayHashSecret = "YOUR_HASH_SECRET"; // Your VNPAY hash secret
-        private const string VnPayMerchantId = "YOUR_MERCHANT_ID"; // Your VNPAY merchant ID
+        private const string VnPayHashSecret = "Z7XFKBO2UR0V4GJ8VTGMBXJMP4G4IX0X"; // Your VNPAY hash secret
+        private const string VnPayMerchantId = "X2VM8SWR"; // Your VNPAY merchant ID
     }
 }

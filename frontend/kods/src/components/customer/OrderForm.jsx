@@ -8,12 +8,10 @@ import {useNavigate} from 'react-router-dom';
 
 export default function OrderForm({onSuggestionClick, distance}) {
   const navigateToLogin = useNavigate();
-  const user = JSON.parse(sessionStorage.getItem("user")); // Get user info from local storage
-
+  const user = JSON.parse(sessionStorage.getItem("user")); 
   const [modal, setOpenModal] = useState(false);
   const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(false);
-  const [loading, setLoading] = useState(false);// Track error state
   const [check, setCheck] = useState(false)
   const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
@@ -24,13 +22,16 @@ export default function OrderForm({onSuggestionClick, distance}) {
   const [days, setDays] = useState(null);
   const [selectedFish, setSelectedFish] = useState([]);
 
+  const [distancePriceList, setDistancePriceList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [customerInfo, setCustomerInfo] = useState({
     nameCustomer: "",
     phoneCustomer: "",
     addressCustomer: "",
     distance: 0,
   });
-
+ //Hàm fecth API mới
   const getFishProfile = useCallback(async () => {
     setLoading(true);
     try {
@@ -43,6 +44,26 @@ export default function OrderForm({onSuggestionClick, distance}) {
     }
   }, [user?.customer?.customerId]); // Chỉ tạo lại khi user.customer.customerId thay đổi
 
+
+
+  const getDistancePriceList = useCallback(async () => {
+    setLoading(true);
+    try {
+      const distanceResponse = await axios.get(
+        "https://kdosdreapiservice.azurewebsites.net/api/DistancePriceList"
+      );
+      setDistancePriceList(distanceResponse?.data); // Lưu dữ liệu từ API vào state
+    } catch (error) {
+      console.error("Error fetching distance data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    getDistancePriceList();
+  }, [getDistancePriceList]);
+
   useEffect(() => {
     if (user !== null) {
       getFishProfile();
@@ -51,6 +72,12 @@ export default function OrderForm({onSuggestionClick, distance}) {
       navigateToLogin("/login");
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.customer?.customerId) {
+      getFishProfile();
+    }
+  }, [, getDistancePriceList]);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
@@ -82,19 +109,30 @@ export default function OrderForm({onSuggestionClick, distance}) {
   };
   // phí shipping
   const calculateShippingFee = () => {
-    const {distance} = customerInfo;
+    const { distance } = customerInfo;
     const estimatedDays = calculateEstimatedDeliveryDays(distance);
+    var unitPrice = 0;
 
+    // Tìm giá từ khoảng cách tương ứng trong distancePriceList
+    const range = distancePriceList.find(
+      (item) => distance >= item.minRange && distance <= item.maxRange
+    );
+    
+    // Nếu tìm thấy, sử dụng giá tương ứng từ API, nếu không tìm thấy thì gán giá trị mặc định
+    if (range) {
+      unitPrice = range.price; // Gán giá từ range nếu tìm thấy
+    }
+    
+    const baseFee = distance * parseFloat(unitPrice); // Tính toán baseFee
+  
     if (distance <= 5) {
       return check ? 25000 : 0;
     }
-
-    const baseFee = Math.ceil((distance - 5) / 5) * 12000;
-
+  
     if (check && estimatedDays === 1) {
       return baseFee + 25000;
     } else if (!check && estimatedDays === 1) {
-      return baseFee
+      return baseFee;
     } else {
       return baseFee + 20000 * estimatedDays;
     }
@@ -309,7 +347,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
             <th className="label-table">Name</th>
             <th className="label-table">Weight (kg)</th>
             <th className="label-table">Gender</th>
-            <th className="label-table">Price (VND/Kg)</th>
+            {/* <th className="label-table">Price (VND/Kg)</th> */}
             <th className="label-table">Action</th>
           </tr>
         </thead>
