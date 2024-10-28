@@ -19,7 +19,7 @@ export default function Navbar() {
         <div className="nav-left">
           <ul className="nav-list">
             <li className="nav-item"><Link to={"/"}>HOME</Link></li>
-            <li className="nav-item">ABOUT</li>
+            <li className="nav-item"><Link to={"/about"}>ABOUT</Link></li>
             <li className="nav-item"><Link to={"/orderform"}>DELIVERY</Link></li>
             <li className="nav-item">
               <Link to="/feedback">FEEDBACK</Link>
@@ -28,7 +28,7 @@ export default function Navbar() {
               <Link to="/ordertracking">ORDERTRACKING</Link>
             </li>
 
-            <li className="nav-item">CONTACT</li>
+            <li className="nav-item"><Link to={"/contact"}>Contact</Link></li>
           </ul>
         </div>
 

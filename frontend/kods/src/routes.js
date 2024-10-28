@@ -10,21 +10,29 @@ import FeedbackList from "./components/customer/FeedbackList";
 // import OrderForm from './components/customer/OrderForm';
 import OrderStatusTracking from "./components/customer/OrderStatusTracking";
 import TrackingStaff from "./components/admin/TrackingStaff";
-import ViewOrderHistory from "./components/customer/ViewOrderHistory";
-import ViewOrderDetail from "./components/customer/ViewOrderDetail";
 import OrdersDashBoard from "./components/admin/OrdersDashBoard";
 import PlaceOrder from "./components/customer/PlaceOrder";
 // import ProfilePage from "./components/customer/ProfilePage";
-import PrivateRoute from "./components/PrivateRoute";
+// import PrivateRoute from "./components/PrivateRoute";
 import UserProfilePage from "./components/customer/profile";
 import AddFishForm from "./components/customer/profile/AddFishForm"; // Import AddFishForm
 import { StaffDashBoard } from "./components/staff/StaffDashBoard";
+import ViewOrderHistory from "./components/customer/profile/ViewOrderHistory"; // Import ViewOrderHistory
+import ViewOrderDetails from './components/customer/profile/ViewOrderDetail';
+import NotFound from "./components/common/404page";
+import ContactPage from "./components/common/Contact";
+import AboutPage from "./components/common/About";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Homepage />,
   },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+
   {
     path: "/login",
     element: <LoginPage />,
@@ -42,8 +50,12 @@ export const router = createBrowserRouter([
         element: <UserProfilePage />,
       },
       {
-        path: "addfish", // Thêm đường dẫn cho Add Fish
+        path: "AddFish", // Thêm đường dẫn cho Add Fish
         element: <AddFishForm />, // Hiển thị AddFishForm
+      },
+      {
+        path: "ViewOrderHistory", // Add route for View Order History
+        element: <ViewOrderHistory />, // Display ViewOrderHistory component
       },
     ],
   },
@@ -79,6 +91,7 @@ export const router = createBrowserRouter([
     path: "/trackingstaff",
     element: <TrackingStaff />,
   },
+<<<<<<< HEAD
   {
     path: "/orders/:id",
     element: <ViewOrderDetail />,
@@ -88,7 +101,32 @@ export const router = createBrowserRouter([
     element: <ViewOrderHistory />,
   },
   {
+=======
+  // {
+  //   path: "/orders/:id",
+  //   element: <ViewOrderDetails />,
+  // },
+
+  // {
+  //   path: "/orders",
+  //   element: <ViewOrderHistory />,
+  // },
+
+  {
+>>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
     path: "/staffDashBoard",
     element: <StaffDashBoard />,
+  },
+  {
+    path: "/profile/ViewOrderHistory/:orderId", // Ensure this matches the path used in handleViewDetail
+    element: <ViewOrderDetails />, // Ensure this component is correct
+  },
+  {
+    path: "/contact", // Ensure this matches the path used in handleViewDetail
+    element: <ContactPage />, // Ensure this component is correct
+  },
+  {
+    path: "/about", // Define the path for the About page
+    element: <AboutPage />, // Set the AboutPage component as the element
   },
 ]);

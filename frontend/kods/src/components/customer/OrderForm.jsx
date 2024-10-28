@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
 import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
@@ -10,12 +11,10 @@ import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm({ onSuggestionClick, distance }) {
   const navigateToLogin = useNavigate();
-  const user = JSON.parse(sessionStorage.getItem("user")); // Get user info from local storage
-
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const [modal, setOpenModal] = useState(false);
+  const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(false);
-  const [koifish, setKoiFish] = useState([]);
-  const [loading, setLoading] = useState(false); // Track loading state
-  const [error, setError] = useState(false); // Track error state
   const [check, setCheck] = useState(false)
   const [koifishList, setKoiFishList] = useState([]);
   const [fishOrdersList, setFishOrdersList] = useState([]);
@@ -26,14 +25,48 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [days, setDays] = useState(null);
 
+  const [distancePriceList, setDistancePriceList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [customerInfo, setCustomerInfo] = useState({
     nameCustomer: "",
     phoneCustomer: "",
     addressCustomer: "",
     distance: 0,
   });
+  //Hàm fecth API mới
+  const getFishProfile = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user?.customer?.customerId}`);
+      setData(response?.data);
+    } catch (error) {
+      console.error("Error fetching fish data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.customer?.customerId]); // Chỉ tạo lại khi user.customer.customerId thay đổi
 
-  // Hàm Fetch API để lấy những con cá của customer riêng lẻ
+
+
+  const getDistancePriceList = useCallback(async () => {
+    setLoading(true);
+    try {
+      const distanceResponse = await axios.get(
+        "https://kdosdreapiservice.azurewebsites.net/api/DistancePriceList"
+      );
+      setDistancePriceList(distanceResponse?.data); // Lưu dữ liệu từ API vào state
+    } catch (error) {
+      console.error("Error fetching distance data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    getDistancePriceList();
+  }, [getDistancePriceList]);
+
   useEffect(() => {
     const getFishProfile = async () => {
       setLoading(true)
@@ -53,6 +86,12 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       navigateToLogin("/login")
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.customer?.customerId) {
+      getFishProfile();
+    }
+  }, [getDistancePriceList]);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
@@ -87,17 +126,28 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const calculateShippingFee = () => {
     const { distance } = customerInfo;
     const estimatedDays = calculateEstimatedDeliveryDays(distance);
+    var unitPrice = 0;
+
+    // Tìm giá từ khoảng cách tương ứng trong distancePriceList
+    const range = distancePriceList.find(
+      (item) => distance >= item.minRange && distance <= item.maxRange
+    );
+
+    // Nếu tìm thấy, sử dụng giá tương ứng từ API, nếu không tìm thấy thì gán giá trị mặc định
+    if (range) {
+      unitPrice = range.price; // Gán giá từ range nếu tìm thấy
+    }
+
+    const baseFee = distance * parseFloat(unitPrice); // Tính toán baseFee
 
     if (distance <= 5) {
       return check ? 25000 : 0;
     }
 
-    const baseFee = Math.ceil((distance - 5) / 5) * 12000;
-
     if (check && estimatedDays === 1) {
       return baseFee + 25000;
     } else if (!check && estimatedDays === 1) {
-      return baseFee
+      return baseFee;
     } else {
       return baseFee + 20000 * estimatedDays;
     }
@@ -306,6 +356,19 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   }, [distance])
 
   const FishTable = () => {
+  const handleCheckboxChange = (fishProfileId) => {
+    setSelectedFish((prevSelected) =>
+      prevSelected.includes(fishProfileId)
+        ? prevSelected.filter((id) => id !== fishProfileId) // Bỏ chọn nếu đã chọn trước đó
+        : [...prevSelected, fishProfileId] // Thêm vào danh sách nếu chưa chọn
+    );
+  };
+
+  const handleSelectAll = (isChecked) => {
+    setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
+  };
+
+  const FishTable = ({ data }) => {
     return (
       <table className="fixed-table">
         <thead>
@@ -315,6 +378,9 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <th className="label-table">Weight (kg)</th>
             <th className="label-table">Price (VND/Kg)</th>
             <th className="label-table">Action</th>
+            <th className="label-table">Gender</th>
+            {/* <th className="label-table">Price (VND/Kg)</th> */}
+            {/* <th className="label-table">Action</th> */}
           </tr>
         </thead>
         <tbody>
@@ -351,7 +417,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                     )
                   }
                   className="custom-dropdown"
-                  disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                  disabled // Vô hiệu hóa input người dùng (Tạm thi)
                 />
               </td>
               <td>
@@ -523,49 +589,60 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   }
                 />
 
+                <div class="total-amount">
+                  <div>
+                    <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
+                      className="layout-checkbox"
+                      style={{ marginBottom: '10px' }}
+                    >
+                      <p>
+                        <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
+                      </p>
 
-                <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
-                  className="layout-checkbox" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px' }} >  {/* lười css làm z cho lẹ */}
-                  <p>
-                    <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
-                  </p>
+                      <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND"
+                        className="checkbox-container"
+                      >
+                        {customerInfo?.distance <= 50 && (
+                          <label>
+                            <input
+                              style={{ cursor: 'pointer' }}
+                              type="checkbox"
+                              checked={check}
+                              onChange={(e) => setCheck(e.target.checked)}
+                            />
+                            If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
+                          </label>
+                        )}
+                      </div>
+                    </div>
 
-                  <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND" className="checkbox-container">
-                    {customerInfo?.distance <= 50 && ( // Nếu distance lớn hơn 50 thì checkbox biến mất
-                      <label>
-                        <input
-                          style={{ cursor: 'pointer' }}
-                          type="checkbox"
-                          checked={check}
-                          onChange={(e) => setCheck(e.target.checked)}
+                    <div style={{ marginTop: '10px' }}>
+                      <p className="label-total">
+                        Shipping fee: {calculateShippingFee().toLocaleString('vi-VN') || 0} VND
+                      </p>
+                      <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
+                    </div>
+                  </div>
 
-                        />
-                        If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
-                      </label>
-                    )}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '100%'
+                  }}>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
-
-
-
-        <div className="layout-total">
-          <p className="label-total">
-            Shipping fee: {calculateShippingFee() || 0} VND
-          </p>
-          <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
-          <h3 className="total-amount">
-            Total Amount:{" "}
-            {getTotalAmount() +
-              parseInt(calculateVAT()) +
-              parseFloat(calculateShippingFee().toFixed(0))}{" "}
-            VND
-          </h3>
-        </div>
+        <div className="total-amount" style={{
+          margin: 0,
+          fontWeight: 'bold',
+          color: 'purple'
+        }}
+        >
+          Total Amount: {" "}
+          {(getTotalAmount() + parseInt(calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))).toLocaleString('vi-VN')} VND</div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>
@@ -598,6 +675,73 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   onClick={() => setShowQRCode(false)}
                   className="cancel-btn"
                 >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {modal && (
+          <div className="popup">
+            <div className="container-popup">
+              <h3 className="title-popup">Choose fish</h3>
+
+              <div className="layout-checkbox">
+                <div className="fish-item">
+                  <label className="label-checkbox-0">
+                    <input
+                      name="checkbox-all"
+                      type="checkbox"
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      checked={selectedFish.length === data.length}
+                    />
+                    <div className="layout-select">
+                      <span className="label">Name</span>
+                      <span className="label">Type</span>
+                      <span className="label">Gender</span>
+                      <span className="label">Weight</span>
+                      <span className="label">Notes</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <div className="layout-checkbox">
+                {data?.map((fish) => (
+                  <div key={fish.fishProfileId} className="fish-item">
+                    <label className="label-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedFish.includes(fish.fishProfileId)}
+                        onChange={() => handleCheckboxChange(fish.fishProfileId)}
+                      />
+                      <div className="layout-select">
+                        <span>{fish?.name}</span>
+                        <span>{fish?.koiFish?.fishType}</span>
+                        <span>{fish?.gender}</span>
+                        <span>{fish?.weight}</span>
+                        <span>{fish?.notes}</span>
+                      </div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <div className="layout-btn">
+                <button onClick={() => addRow()} className="confirm-btn">
+                  Confirm
+                </button>
+                <button
+                  onClick={() => navigate('/profile/addfish')}
+                  className="confirm-btn"
+                  style={{
+                    backgroundColor: '#4CAF50',  // màu xanh lá
+                    marginLeft: '10px',
+                    marginRight: '10px'
+                  }}
+                >
+                  Create Fish Profile
+                </button>
+                <button onClick={() => setOpenModal(false)} className="cancel-btn">
                   Cancel
                 </button>
               </div>

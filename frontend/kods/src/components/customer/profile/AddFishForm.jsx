@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Container,
   Typography,
   Button,
   TextField,
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
   IconButton,
   Dialog,
   DialogTitle,
@@ -18,14 +16,19 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Pagination,
+  Divider
 } from '@mui/material';
+import _ from "lodash";
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
 import { GetAllKoiFishes } from '../../api/KoiFishApi';
-import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile } from '../../api/FishProfileApi';
+import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile, findProfileByName } from '../../api/FishProfileApi';
 import { storage } from '../../../config/ConfigFirebase';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingScreen from '../../../utils/LoadingScreen';
+
 
 
 export default function AddFish() {
@@ -35,8 +38,6 @@ export default function AddFish() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
-  const [url, setUrl] = useState('');
-  const [progress, setProgres] = useState(0);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
@@ -44,68 +45,122 @@ export default function AddFish() {
   const [koifish, setKoiFish] = useState([]);  //state for species
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false); // state for image zoom
   const [selectedFishType, setSelectedFishType] = useState(''); //  state for selected fish type
+  const [refresh, setRefresh] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(null);
+  const [error, setError] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
-
+  const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
+  const customerId = user?.customer?.customerId; // Lấy accountId
   // KOI species
   useEffect(() => {
-    const getSpeciesList= async () => {
+    const getSpeciesList = async () => {
       var koifishData = await GetAllKoiFishes();
       setKoiFish(koifishData);
     };
-    getSpeciesList();
-  }, []);
-
-
-  useEffect(() => {
-    fetchFishes(); // Fetches fish data on component mount
-  }, []);
-
-  //Get API By CustomerID
- const fetchFishes = async () => {
-    try {
-        const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
-        const customerId = user?.customer?.customerId; // Lấy accountId
+    //Get API By CustomerID
+    const fetchFishes = async () => {
+      try {
+        setLoadingScreen(true);
         const response = await getFishProfilebyCustomerid(customerId);
         setFishes(response);
+<<<<<<< HEAD
     } catch (error) {
+=======
+      } catch (error) {
+>>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
         console.error('Error fetching fishes:', error);
+      }
+      setLoadingScreen(false)
+    };
+    getSpeciesList();
+    fetchFishes();
+  }, [refresh, customerId]);
+  // Search Feature
+  // eslint-disable-next-line
+  const handleSearch = useCallback(
+    _.debounce((name) => {
+      setError(false)
+      try {
+        if (!name) {  // Check if `name` is empty
+          console.log("no search!")
+          setRefresh(()=>!refresh)
+        } else {
+          searchResult(name);
+      }} catch (error) {
+        console.error("Search error:", error);
+      }
+    }, 500),
+    
+  );
+  const searchResult = async (name)=>{
+    const response = await findProfileByName(customerId, name);
+    if (response.status >= 400) {
+      toast.error("Fish not found", {
+        autoClose: 2000 // Duration in milliseconds (10 seconds)
+      });
+      setError(true)
     }
-
+    else
+      setFishes(await response.data); // Update the fish list with the search results
+    }
+  
+  // Update search term and call the debounced search
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    handleSearch(term);
   };
 
+
+
   const handleAddFish = async (e) => {
+    setLoadingScreen(true);
     e.preventDefault();
     const user = JSON.parse(sessionStorage.getItem('user')); // Changed to sessionStorage
     const customerId = user?.customer?.customerId;
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
-
     const newFish = {
-        name: name,
-        weight: parseFloat(weight),
-        gender: gender,
-        notes: notes,
-        image: image,
-        koiFishId: koiFishId,
-        customerId: customerId
+      name: name,
+      weight: parseFloat(weight),
+      gender: gender,
+      notes: notes,
+      image: image,
+      koiFishId: koiFishId,
+      customerId: customerId
     };
+<<<<<<< HEAD
 
+=======
+    console.log('Adding new fish:', newFish);
+>>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
 
     try {
-        await addFishProfile(newFish);
-        toast.success("Add fish successfully", {
-            autoClose: 2000 // Duration in milliseconds (10 seconds)
-        });
-        setIsFormOpen(false);
-        fetchFishes(); // Refresh fish list
+      await addFishProfile(newFish);
+      toast.success("Add fish successfully", {
+        autoClose: 2000 // Duration in milliseconds (10 seconds)
+      });
+      setIsFormOpen(false);
     } catch (error) {
-        console.error('Error adding fish:', error);
+      console.error('Error adding fish:', error);
     }
+    setRefresh(!refresh)
+    setLoadingScreen(false)
   };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedFishes = fishes.slice(startIndex, startIndex + itemsPerPage);
+
 
   const handleEditFish = (fish) => {
     setSelectedFish(fish);
     setName(fish.name);
-    setImage(fish.image );
+    setImage(fish.image);
     setWeight(fish.weight);
     setGender(fish.gender);
     setNotes(fish.notes);
@@ -113,37 +168,39 @@ export default function AddFish() {
     setIsFormOpen(true);
   };
 
-  const handleDeleteFish = (fish,id) => {
-    setSelectedFish(fish,id);
+  const handleDeleteFish = (fish, id) => {
+    setSelectedFish(fish, id);
     setIsDeleteDialogOpen(true);
   };
 
   const handleUpdateFish = async (e) => {
+    setLoadingScreen(true);
     e.preventDefault();
     const user = JSON.parse(sessionStorage.getItem('user'));
     const customerId = user?.accountId;
     const koiFishId = koifish.find(koi => koi.fishType === selectedFishType)?.koiFishId;
 
     const updatedFish = {
-        name: name,
-        weight: parseFloat(weight),
-        gender: gender,
-        notes: notes,
-        image: image, // Use the image URL from state
-        koiFishId: koiFishId,
-        customerId: customerId
+      name: name,
+      weight: parseFloat(weight),
+      gender: gender,
+      notes: notes,
+      image: image, // Use the image URL from state
+      koiFishId: koiFishId,
+      customerId: customerId
     };
 
     try {
-        await updateFishProfile(selectedFish.fishProfileId, updatedFish);
-        toast.info("Update fish success", {
-            autoClose: 2000 // Duration in milliseconds (2 seconds)
-        });
-        setIsFormOpen(false);
-        fetchFishes(); // Refresh fish list
+      await updateFishProfile(selectedFish.fishProfileId, updatedFish);
+      toast.info("Update fish success", {
+        autoClose: 2000 // Duration in milliseconds (2 seconds)
+      });
+      setIsFormOpen(false);
     } catch (error) {
-        console.error('Error updating fish:', error);
+      console.error('Error updating fish:', error);
     }
+    setRefresh(!refresh)
+    setLoadingScreen(false)
   };
 
   const handleFormSubmit = (e) => {
@@ -151,32 +208,33 @@ export default function AddFish() {
 
     // Validation: Check if all required fields are filled
     if (!name || !weight || !gender || !selectedFishType || !image) {
-        toast.error("Please fill out all required fields.", {
-            autoClose: 2000 // Duration in milliseconds (10 seconds)
-        });
-        return;
+      toast.error("Please fill out all required fields.", {
+        autoClose: 2000 // Duration in milliseconds (10 seconds)
+      });
+      return;
     }
 
     if (selectedFish) {
-        handleUpdateFish(e);
+      handleUpdateFish(e);
     } else {
-        handleAddFish(e);
+      handleAddFish(e);
     }
+
   };
 
   const handleDeleteConfirm = async () => {
     if (selectedFish) {
-        try {
-            await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
-            toast.error("Delete fish success", {
-                autoClose: 2000 // Duration in milliseconds (2 seconds)
-            });
-            setIsDeleteDialogOpen(false);
-            fetchFishes(); // Update the fish list
-        } catch (error) {
-            console.error('Error deleting fish:', error);
-        }
+      try {
+        await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
+        toast.error("Delete fish success", {
+          autoClose: 2000 // Duration in milliseconds (2 seconds)
+        });
+        setIsDeleteDialogOpen(false);
+      } catch (error) {
+        console.error('Error deleting fish:', error);
+      }
     }
+    setRefresh(!refresh)
   };
 
 
@@ -188,39 +246,17 @@ export default function AddFish() {
 
       uploadTask.on(
         "state_changed",
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgres(progress); // Update progress state
-        },
         (error) => {
           console.error("Error uploading image:", error);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setImage(downloadURL); // Set the image URL to state
-            setUrl(downloadURL);   // Set the URL state with the download URL
           });
         }
       );
     }
   };
-
-  const fetchImageFromFirebase = async (imageName) => {
-    try {
-      const storageRef = ref(storage, `images/${imageName}`);
-      const url = await getDownloadURL(storageRef);
-      setImage(url); // Set the image URL to state
-    } catch (error) {
-      console.error("Error fetching image:", error);
-    }
-  };
-
-  useEffect(() => {
-    // Call this function with the specific image name you want to fetch
-    fetchImageFromFirebase('your-image-name.jpg');
-  }, []);
 
   const handleViewDetail = (fish) => {
     setSelectedFish(fish);
@@ -249,21 +285,41 @@ export default function AddFish() {
 
   return (
     <div>
+      {loadingScreen?? <LoadingScreen/>}
       <ToastContainer />
       <p className="text-4xl font-semibold">Add your Fish</p>
       <p className="text-gray-600 text-lg my-2">
         This is your Fish profile. You can update your fish and picture here.
       </p>
-      <div className="border-b border-gray-300 my-4"></div>
+      <input
+        type="text"
+        placeholder="Search Fish"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        style={{
+          padding: '10px',
+          marginBottom: '20px',
+          width: '100%',
+          fontSize: '16px',
+          border: '2px solid #ccc',
+          borderRadius: '5px',
+          zIndex: 10,
+          position: 'relative',
+        }}
+      />
+      <Divider />
+      <div style={{ margin: "2%" }}></div>
       <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleOpenAddFishForm}>
         Add Fish
       </Button>
       <List>
-        {fishes.map((fish) => (
-          <ListItem key={fish.id}>
-            <Avatar src={fish.image} alt={fish.name} />
-            <ListItemText primary={fish.name} />
-            <ListItemSecondaryAction>
+        {error ?
+          <ListItem><Typography variant="h4" fontWeight={"bold"} color='warning'>No Fish Found With That Search</Typography></ListItem>
+          :
+          paginatedFishes.map((fish, index) => (
+            <ListItem key={index}>
+              <Avatar src={fish.image} alt={fish.name} style={{ marginRight: "3%" }} />
+              <ListItemText primary={fish.name} />
               <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
                 <InfoIcon />
               </IconButton>
@@ -273,10 +329,25 @@ export default function AddFish() {
               <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
                 <DeleteIcon />
               </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
+            </ListItem>
+          ))
+        }
       </List>
+      <div className='pagination-footer' style={{
+        position: 'relative',
+      }}>
+        <Divider />
+        <div className="pagination">
+          {fishes.length > 5 ??
+            <Pagination
+              count={Math.ceil(fishes.length / itemsPerPage)}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+            /> // Paging only if 5 or more fishes
+          }
+        </div>
+      </div>
       {/* Dialogs for form and delete confirmation */}
       <Dialog open={isFormOpen} onClose={() => setIsFormOpen(false)}>
         <DialogTitle>{selectedFish ? 'Edit Fish' : 'Add Fish'}</DialogTitle>
@@ -302,17 +373,16 @@ export default function AddFish() {
               onChange={(e) => setWeight(e.target.value)}
               required
             />
-
-            <FormControl fullWidth margin="dense">
-              <InputLabel id="fish-type-label">Species</InputLabel>
+            <FormControl required aria-selected fullWidth margin="dense">
+              <InputLabel style={{ backgroundColor: "white", marginRight: "5px", marginLeft: "5px" }} required id="fish-type-label">Species</InputLabel>
               <Select
                 labelId="fish-type-label"
                 value={selectedFishType} // Update to use selected species
                 onChange={(e) => setSelectedFishType(e.target.value)} // Update state for selected fish type
-                displayEmpty // Allow empty value to show placeholder
+                placeholder='Koi Type'
                 required
               >
-                <MenuItem value="" disabled>Choose fish type</MenuItem>
+                <MenuItem value="Koi Type">Choose Koi type</MenuItem>
                 {koifish.map((koifish) => (
                   <MenuItem
                     key={koifish.koiFishId}
@@ -325,7 +395,7 @@ export default function AddFish() {
             </FormControl>
 
             <FormControl fullWidth margin="dense">
-              <InputLabel id="gender-label">Gender</InputLabel>
+              <InputLabel required id="gender-label" style={{ backgroundColor: "white", marginRight: "5px", marginLeft: "5px" }}>Gender</InputLabel>
               <Select
                 labelId="gender-label"
                 value={gender} // Update to use selected gender
@@ -394,7 +464,7 @@ export default function AddFish() {
               <Avatar
                 src={selectedFish.image}
                 alt={selectedFish.name}
-                sx={{ width: 100, height: 100, cursor: 'pointer'}} // Add cursor pointer
+                sx={{ width: 100, height: 100, cursor: 'pointer' }} // Add cursor pointer
                 onClick={handleImageZoomOpen} // Open zoom on click
               />
               <Typography variant="body1"><strong>Weight:</strong> {selectedFish.weight} kg</Typography>

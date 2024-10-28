@@ -53,6 +53,10 @@ namespace KDOS_Web_API.Mappings
             CreateMap<Transport, UpdateTransportDTO>().ReverseMap();
             CreateMap<Transport,AddNewTransportDTO>()
                 .ForMember(a => a.Status, opt => opt.Ignore()).ReverseMap();
+            //Log Transport
+            CreateMap<LogTransport, AddNewLogTransportDTO>()
+                .ForMember(dest => dest.Time, opt => opt.Ignore()).ReverseMap();
+            CreateMap<LogTransport, LogTransportDTO>().ReverseMap();
             // Order
             CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()).ReverseMap();

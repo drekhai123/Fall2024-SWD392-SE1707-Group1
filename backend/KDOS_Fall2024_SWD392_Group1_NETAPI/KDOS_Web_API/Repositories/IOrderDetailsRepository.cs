@@ -7,7 +7,7 @@ namespace KDOS_Web_API.Repositories
 	{
         Task<List<OrderDetails>> GetAllOrderDetails();
         Task<OrderDetails?> GetOrderDetailsById(int id);
-        Task<OrderDetails?> GetOrderDetailsByOrderId(int id);
+        Task<List<OrderDetails>> GetOrderDetailsByOrderId(int id);
         Task<OrderDetails?> AddNewOrderDetails(OrderDetails orderDetails);
         Task<OrderDetails?> DeleteOrderDetails(int id);
     }

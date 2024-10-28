@@ -21,6 +21,8 @@ namespace KDOS_Web_API.Datas
         public DbSet<Transport> Transport { get; set; }
         public DbSet<WeightPriceList> WeightPriceList { get; set; }
         public DbSet<DistancePriceList> DistancePriceList { get; set; }
+        public DbSet<LogTransport> LogTransport { get; set; }
+        public DbSet<Payment> Payment { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Verification>()
@@ -60,6 +62,10 @@ namespace KDOS_Web_API.Datas
             modelBuilder.Entity<LogTransport>()
                .HasOne(o => o.Transport) // One Transport can have Many orders
                .WithMany(tr => tr.LogTransports)
+               .HasForeignKey(o => o.TransportId);
+            modelBuilder.Entity<LogTransport>()
+               .HasOne(o => o.Customer) // One Transport can have Many orders
+               .WithMany(cs => cs.LogTransport)
                .HasForeignKey(o => o.TransportId);
             modelBuilder.Entity<OrderDetails>()
                 .HasOne(od => od.Order) // Each OrderDetails references one Order

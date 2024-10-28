@@ -74,7 +74,7 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> GetOrderDetailsByOrderId([FromRoute] int orderId)
         {
             var detailsModel = await orderDetailsRepository.GetOrderDetailsByOrderId(orderId);
-            if (detailsModel == null)
+            if (detailsModel.Count == 0)
             {
                 return NotFound();
             }
