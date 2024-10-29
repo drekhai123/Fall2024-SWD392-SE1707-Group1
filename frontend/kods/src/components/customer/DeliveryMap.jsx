@@ -71,7 +71,7 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
         fitSelectedRoutes: true,
         showAlternatives: false,
       }).addTo(mapRef.current);
-
+  
       routingControl.on("routesfound", function (e) {
         const routes = e.routes;
         const summary = routes[0].summary;
@@ -79,10 +79,15 @@ const DeliveryMap = ({ suggestion, autoSetDistance }) => {
         autoSetDistance(distanceInKm);
         setDistance(distanceInKm);
       });
-
-      return () => mapRef.current.removeControl(routingControl);
+  
+      return () => {
+        if (mapRef.current && routingControl) {
+          mapRef.current.removeControl(routingControl);
+        }
+      };
     }
   }, [suggestion]);
+  
 
   return (
     <div style={{ position: "relative",zIndex:"0" }}>
