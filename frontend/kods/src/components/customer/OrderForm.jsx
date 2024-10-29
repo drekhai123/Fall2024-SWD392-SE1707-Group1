@@ -286,7 +286,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate(-1);  // Quay lại trang trước đó
+    window.close();
+    navigate("/");  // Quay lại trang trước đó
   };
 
   // Hàm thêm dòng mới
