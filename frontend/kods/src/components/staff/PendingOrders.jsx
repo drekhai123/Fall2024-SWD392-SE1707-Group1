@@ -69,4 +69,4 @@ export function PendingOrders() {
       </DataTable>
     </div>
   );
-}
+ }
