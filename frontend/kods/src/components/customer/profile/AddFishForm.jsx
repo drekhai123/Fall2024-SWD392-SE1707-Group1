@@ -64,11 +64,7 @@ export default function AddFish() {
         setLoadingScreen(true);
         const response = await getFishProfilebyCustomerid(customerId);
         setFishes(response);
-<<<<<<< HEAD
-    } catch (error) {
-=======
       } catch (error) {
->>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
         console.error('Error fetching fishes:', error);
       }
       setLoadingScreen(false)
@@ -129,11 +125,7 @@ export default function AddFish() {
       koiFishId: koiFishId,
       customerId: customerId
     };
-<<<<<<< HEAD
-
-=======
     console.log('Adding new fish:', newFish);
->>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
 
     try {
       await addFishProfile(newFish);

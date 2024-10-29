@@ -10,11 +10,8 @@ import { useSnackbar } from "notistack";
 import { useLocation } from "react-router-dom"; // Import useLocation để lấy đường dẫn
 import AddFishForm from "./AddFishForm"; // Import AddFishForm
 import Navbar from "../../common/navbar";
-<<<<<<< HEAD
-=======
 import LoadingScreen from "../../../utils/LoadingScreen";
 import ViewOrderHistory from "./ViewOrderHistory";
->>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
 
 const menuItems = [
   { label: "Profile", link: "/profile" },
@@ -92,10 +89,7 @@ const UserProfilePage = () => {
 
   return (
     <div>
-<<<<<<< HEAD
-=======
       {loadingScreen ? <LoadingScreen /> : ""}
->>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
       <Navbar />
       <div className="mt-[6%] mx-auto px-1 md:px-16">
         <div>
