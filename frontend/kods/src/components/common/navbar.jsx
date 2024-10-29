@@ -24,26 +24,22 @@ export default function Navbar() {
             <li className="nav-item">
               <Link to="/feedback">FEEDBACK</Link>
             </li>
-            <li className="nav-item">
-              <Link to="/ordertracking">ORDERTRACKING</Link>
-            </li>
-
-            <li className="nav-item"><Link to={"/contact"}>Contact</Link></li>
+            <li className="nav-item"><Link to={"/contact"}>CONTACT US</Link></li>
           </ul>
         </div>
 
         {user ? (
           <div className="nav-right">
             <ul className="nav-list">
-            <li className="nav-item"><Link to="/profile">VIEW PROFILE</Link> {}</li>
-            <li className="nav-item"> Hello, {user.userName}!</li>
-            <li className="nav-item"><button className="btn-Logout" onClick={logout}>LOGOUT</button> {}</li>
+              <li className="nav-item"><Link to="/profile">VIEW PROFILE</Link> { }</li>
+              <li className="nav-item"> Hello, {user.userName}!</li>
+              <li className="nav-item"><button className="btn-Logout" onClick={logout}>LOGOUT</button> { }</li>
             </ul>
           </div>
         ) : ( // chưa đăng nhập, hiển thị LOGIN
           <div className="nav-right">
             <div className="nav-item-login">
-              <Link className="btn-login" to="/login">LOGIN</Link> {}
+              <Link className="btn-login" to="/login">LOGIN</Link> { }
             </div>
           </div>
         )}

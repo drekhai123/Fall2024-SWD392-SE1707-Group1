@@ -25,12 +25,12 @@ import { Star as StarIcon } from '@mui/icons-material';
 
 const teamMembers = [
 
-  { name: 'Nguyễn Văn F', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
-  { name: 'Trần Thị G', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
-  { name: 'Lê Văn H', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
+  { name: 'Đoàn Tuấn Khải', role: 'Backend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
+  { name: 'Nguyễn Dương Gia Bảo', role: 'Backend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
+  { name: 'Võ Việt Dũng', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
   // Adding 2 Backend Engineers
-  { name: 'Phạm Thị I', role: 'Backend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
-  { name: 'Hoàng Văn J', role: 'Backend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
+  { name: 'Phan Anh Hoàng', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
+  { name: 'Nguyễn Tuấn Khải', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
 ];
 
 const milestones = [

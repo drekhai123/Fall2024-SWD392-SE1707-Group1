@@ -312,7 +312,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate(-1);  // Quay lại trang trước đó
+    window.close();
+    navigate("/");  // Quay lại trang trước đó
   };
 
   // Hàm updaterow
@@ -375,10 +376,15 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           <tr>
             <th className="label-table">Index</th>
             <th className="label-table">Name</th>
+            <th className="label-table">Type</th>
             <th className="label-table">Weight (kg)</th>
             <th className="label-table">Price (VND/Kg)</th>
             <th className="label-table">Action</th>
             <th className="label-table">Gender</th>
+            <th className="label-table">Note</th>
+            <th className="label-table">Action</th>
+
+
             {/* <th className="label-table">Price (VND/Kg)</th> */}
             {/* <th className="label-table">Action</th> */}
           </tr>
@@ -388,23 +394,21 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <tr key={fish.fishProfileId}>
               <td>{index + 1}</td>
               <td>
-                <select
-                  value={fish.name}
-                  onChange={(e) => updateRow(index, "name", e.target.value)}
-                  className="custom-dropdown"
-                >
-                  <option value="">Choose fish type</option>
-                  {koifish.map((koifish) => (
-                    <option
-                      key={koifish.koiFishId}
-                      value={koifish.fishType}
-                    >
-                      {koifish.fishType}
-                    </option>
-                  ))}
-                </select>
+                {fish?.name}
               </td>
               <td>
+                {fish?.koiFish?.fishType}
+              </td>
+              <td>
+                {fish?.weight}
+              </td>
+              <td>
+                {fish?.gender}
+              </td>
+              <td>
+                {fish?.notes}
+              </td>
+              {/*<td>
                 <input
                   type="number"
                   value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
