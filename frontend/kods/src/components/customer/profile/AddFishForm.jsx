@@ -87,7 +87,7 @@ export default function AddFish() {
         console.error("Search error:", error);
       }
     }, 500),
-    
+
   );
   const searchResult = async (name)=>{
     const response = await findProfileByName(customerId, name);
@@ -100,7 +100,7 @@ export default function AddFish() {
     else
       setFishes(await response.data); // Update the fish list with the search results
     }
-  
+
   // Update search term and call the debounced search
   const handleSearchChange = (e) => {
     const term = e.target.value;
@@ -238,6 +238,8 @@ export default function AddFish() {
 
       uploadTask.on(
         "state_changed",
+        //có thiếu snapshot thì không lấy ảnh được
+        (snapshot) => {},
         (error) => {
           console.error("Error uploading image:", error);
         },
@@ -404,9 +406,10 @@ export default function AddFish() {
               label="Notes"
               type="text"
               fullWidth
-              value={notes} // New input for notes
-              onChange={(e) => setNotes(e.target.value)} // Update state for notes
-              required
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              multiline
+              rows={4}
             />
             <input
               accept="image/*"
