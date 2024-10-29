@@ -80,10 +80,6 @@ export const router = createBrowserRouter([
     element: <FeedbackList />,
   },
   {
-    path: "/ordertracking",
-    element: <OrderStatusTracking />
-  },
-  {
     path: "/trackingstaff",
     element: <TrackingStaff />,
   },

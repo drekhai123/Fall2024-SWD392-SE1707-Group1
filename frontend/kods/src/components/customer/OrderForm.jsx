@@ -345,8 +345,13 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           <tr>
             <th className="label-table">Index</th>
             <th className="label-table">Name</th>
+            <th className="label-table">Type</th>
             <th className="label-table">Weight (kg)</th>
             <th className="label-table">Gender</th>
+            <th className="label-table">Note</th>
+            <th className="label-table">Action</th>
+
+
             {/* <th className="label-table">Price (VND/Kg)</th> */}
             {/* <th className="label-table">Action</th> */}
           </tr>
@@ -359,13 +364,16 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 {fish?.name}
               </td>
               <td>
+                {fish?.koiFish?.fishType}
+              </td>
+              <td>
                 {fish?.weight}
               </td>
               <td>
                 {fish?.gender}
               </td>
               <td>
-                {fish?.price}
+                {fish?.notes}
               </td>
               {/*<td>
                 <input
