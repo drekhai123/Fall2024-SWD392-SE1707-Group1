@@ -4,7 +4,19 @@ import axios from 'axios'
 const getOrderByCustomerIdUrl = baseUrl+'/Orders/customer/'
 const getOrderbyOrderIdUrl = baseUrl+'/Orders/'
 const getOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/Order/'
+const postOrdersUrl = baseUrl+'/Orders/'
 
+
+
+export async function postOrders(orderData) {
+    try {
+        const response = await axios.post(postOrdersUrl, orderData);
+        return await response.data;
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+    }
+}
 
 export async function getOrderByCustomerId(customerId) {
     try {
