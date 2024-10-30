@@ -21,6 +21,15 @@ public class TransportController : ControllerBase
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetAllTransports()
+    {
+        var transportsList = await transportRepository.GetAllTransport();
+        // Auto mapper
+        var transportDTOs = mapper.Map<List<TransportDTO>>(transportsList);
+        // Following Best Practice
+        return Ok(transportDTOs);
+    }
+    [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetTransportById([FromRoute]int id)
     {
