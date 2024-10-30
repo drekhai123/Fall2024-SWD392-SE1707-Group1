@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import LoginPage from "./components/common/LoginPage";
 import SignupPage from "./components/common/SignupPage";
+import EmailConfirmationWaiting from "./components/common/EmailConfirmationWaiting"; // Import the component
 // import ProfilePage from './components/customer/ProfilePage';
 import OrderHistoryPage from "./components/customer/OrderHistoryPage";
 
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />,
+  },
+  {
+    path: "/email-confirmation-waiting", // Define the new route path
+    element: <EmailConfirmationWaiting />, // Set the component as the element
   },
   {
     path: "/profile",

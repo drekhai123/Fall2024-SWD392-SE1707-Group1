@@ -14,11 +14,11 @@ export async function GetAccountById(id) {
 
 export async function AddNewAccount(data) {
   try {
-    const response = await axios.post(`${baseAccount}/AddCustomer`,data, headers);
+    const response = await axios.post(`${baseAccount}/AddCustomer`, data, headers);
     return response;
   } catch (error) {
     console.error("Error adding Account:", error);
-    return error;
+    throw error;
   }
 }
 
