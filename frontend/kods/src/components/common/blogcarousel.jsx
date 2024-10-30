@@ -3,12 +3,12 @@ import "../../css/blogcarousel.css";
 
 export default function Blogcarousel() {
   const fishImageList = [
-    "/images/homepage1.png",
-    "/images/homepage1.png",
-    "/images/homepage1.png",
-    "/images/homepage1.png",
-    "/images/homepage1.png",
-    "/images/homepage1.png",
+    "/images/ourmemories/1.png",
+    "/images/ourmemories/2.png",
+    "/images/ourmemories/3.png",
+    "/images/ourmemories/4.png",
+    "/images/ourmemories/5.png",
+    "/images/ourmemories/5.png"
   ];
 
   return (

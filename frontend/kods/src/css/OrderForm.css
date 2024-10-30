@@ -223,17 +223,22 @@
     flex : 2;
   }
 
-  .total-amount{
-    font-size: 24px;
-    color: #3e19a4;
-    margin-top: 8px;
-  }
+  .total-amount {
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: flex-end; /* Căn dưới cùng theo chiều dọc */
+    margin-top: 10px;
+    gap: 20px;
+    font-size: 30px;
+    
+}
 
 
-  .label-total{
-    font-size: 18px;
-    font-weight: 600;
-  }
+.label-total {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: right; /* Căn trái */
+}
 
   .layout-total {
     margin: 32px auto 0 auto; 

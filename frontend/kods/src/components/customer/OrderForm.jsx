@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
-import {QRCodeSVG} from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-export default function OrderForm({onSuggestionClick, distance}) {
+export default function OrderForm({ onSuggestionClick, distance }) {
   const navigateToLogin = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
   const [modal, setOpenModal] = useState(false);
@@ -31,7 +31,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     addressCustomer: "",
     distance: 0,
   });
- //Hàm fecth API mới
+  //Hàm fecth API mới
   const getFishProfile = useCallback(async () => {
     setLoading(true);
     try {
@@ -77,7 +77,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     if (user?.customer?.customerId) {
       getFishProfile();
     }
-  }, [, getDistancePriceList]);
+  }, [getDistancePriceList]);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
@@ -267,18 +267,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
         }
       }, 500)
     );
-    setCustomerInfo({...customerInfo, [field]: value});
+    setCustomerInfo({ ...customerInfo, [field]: value });
   };
 
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
         setMarkerPositionFrom([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressSender: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressSender: suggestion?.display_name });
         setFromSuggestions(null);
       } else if ('addressCustomer') {
         setMarkerPositionTo([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressCustomer: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressCustomer: suggestion?.display_name });
         setToSuggestions(null);
       }
     }
@@ -286,7 +286,8 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate(-1);  // Quay lại trang trước đó
+    window.close();
+    navigate("/");  // Quay lại trang trước đó
   };
 
   // Hàm thêm dòng mới
@@ -317,13 +318,13 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
-      onSuggestionClick({form: markerPositionFrom, to: markerPositionTo});
+      onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
     }
   }, [markerPositionFrom, markerPositionTo])
 
   // Hàm của Distance (comment cái const ở trên của nó)
   useEffect(() => {
-    setCustomerInfo({...customerInfo, distance: distance});
+    setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
   const handleCheckboxChange = (fishProfileId) => {
@@ -338,17 +339,22 @@ export default function OrderForm({onSuggestionClick, distance}) {
     setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
   };
 
-  const FishTable = ({data}) => {
+  const FishTable = ({ data }) => {
     return (
       <table className="fixed-table">
         <thead>
           <tr>
             <th className="label-table">Index</th>
             <th className="label-table">Name</th>
+            <th className="label-table">Type</th>
             <th className="label-table">Weight (kg)</th>
             <th className="label-table">Gender</th>
-            {/* <th className="label-table">Price (VND/Kg)</th> */}
+            <th className="label-table">Note</th>
             <th className="label-table">Action</th>
+
+
+            {/* <th className="label-table">Price (VND/Kg)</th> */}
+            {/* <th className="label-table">Action</th> */}
           </tr>
         </thead>
         <tbody>
@@ -359,13 +365,16 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 {fish?.name}
               </td>
               <td>
+                {fish?.koiFish?.fishType}
+              </td>
+              <td>
                 {fish?.weight}
               </td>
               <td>
                 {fish?.gender}
               </td>
               <td>
-                {fish?.price}
+                {fish?.notes}
               </td>
               {/*<td>
                 <input
@@ -380,7 +389,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                     )
                   }
                   className="custom-dropdown"
-                  disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                  disabled // Vô hiệu hóa input người dùng (Tạm thi)
                 />
               </td>
               <td>
@@ -534,7 +543,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </div>
               </div>
 
-              <div style={{marginTop: 10}} className="customer-info">
+              <div style={{ marginTop: 10 }} className="customer-info">
                 <h3 className="label-customer">Distance (km)</h3>
                 <input
                   className="input-customer"
@@ -551,49 +560,60 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   }
                 />
 
+                <div class="total-amount">
+                  <div>
+                    <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
+                      className="layout-checkbox"
+                      style={{ marginBottom: '10px' }}
+                    >
+                      <p>
+                        <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
+                      </p>
 
-                <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
-                  className="layout-checkbox" style={{cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '10px'}} >  {/* lười css làm z cho lẹ */}
-                  <p>
-                    <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
-                  </p>
+                      <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND"
+                        className="checkbox-container"
+                      >
+                        {customerInfo?.distance <= 50 && (
+                          <label>
+                            <input
+                              style={{ cursor: 'pointer' }}
+                              type="checkbox"
+                              checked={check}
+                              onChange={(e) => setCheck(e.target.checked)}
+                            />
+                            If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
+                          </label>
+                        )}
+                      </div>
+                    </div>
 
-                  <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND" className="checkbox-container">
-                    {customerInfo?.distance <= 50 && ( // Nếu distance lớn hơn 50 thì checkbox biến mất
-                      <label>
-                        <input
-                          style={{cursor: 'pointer'}}
-                          type="checkbox"
-                          checked={check}
-                          onChange={(e) => setCheck(e.target.checked)}
+                    <div style={{ marginTop: '10px' }}>
+                      <p className="label-total">
+                        Shipping fee: {calculateShippingFee().toLocaleString('vi-VN') || 0} VND
+                      </p>
+                      <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
+                    </div>
+                  </div>
 
-                        />
-                        If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
-                      </label>
-                    )}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '100%'
+                  }}>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
-
-
-
-        <div className="layout-total">
-          <p className="label-total">
-            Shipping fee: {calculateShippingFee() || 0} VND
-          </p>
-          <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
-          <h3 className="total-amount">
-            Total Amount:{" "}
-            {getTotalAmount() +
-              parseInt(calculateVAT()) +
-              parseFloat(calculateShippingFee().toFixed(0))}{" "}
-            VND
-          </h3>
-        </div>
+        <div className="total-amount" style={{
+          margin: 0,
+          fontWeight: 'bold',
+          color: 'purple'
+        }}
+        >
+          Total Amount: {" "}
+          {(getTotalAmount() + parseInt(calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))).toLocaleString('vi-VN')} VND</div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>
@@ -680,6 +700,17 @@ export default function OrderForm({onSuggestionClick, distance}) {
               <div className="layout-btn">
                 <button onClick={() => addRow()} className="confirm-btn">
                   Confirm
+                </button>
+                <button
+                  onClick={() => navigate('/profile/addfish')}
+                  className="confirm-btn"
+                  style={{
+                    backgroundColor: '#4CAF50',  // màu xanh lá
+                    marginLeft: '10px',
+                    marginRight: '10px'
+                  }}
+                >
+                  Create Fish Profile
                 </button>
                 <button onClick={() => setOpenModal(false)} className="cancel-btn">
                   Cancel

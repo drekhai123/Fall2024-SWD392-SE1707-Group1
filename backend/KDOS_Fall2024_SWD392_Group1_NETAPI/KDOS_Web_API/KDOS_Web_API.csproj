@@ -28,7 +28,6 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Mappings\" />
-    <Folder Include="Services\" />
     <Folder Include="Services\MailingService\" />
     <Folder Include="Services\MailingService\MailModels\" />
   </ItemGroup>

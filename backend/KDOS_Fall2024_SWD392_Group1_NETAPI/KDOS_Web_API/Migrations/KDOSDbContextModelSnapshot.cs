@@ -302,6 +302,9 @@ namespace KDOS_Web_API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("LogTransportId"));
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -430,6 +433,34 @@ namespace KDOS_Web_API.Migrations
                     b.HasIndex("WeightPriceListId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Payment", b =>
+                {
+                    b.Property<int>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("PaymentId"));
+
+                    b.Property<long>("Amount")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("PaymentDesc")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TransactionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("PaymentId");
+
+                    b.ToTable("Payment");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Staff", b =>
@@ -617,11 +648,19 @@ namespace KDOS_Web_API.Migrations
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.LogTransport", b =>
                 {
+                    b.HasOne("KDOS_Web_API.Models.Domains.Customer", "Customer")
+                        .WithMany("LogTransport")
+                        .HasForeignKey("TransportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("KDOS_Web_API.Models.Domains.Transport", "Transport")
                         .WithMany("LogTransports")
                         .HasForeignKey("TransportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Transport");
                 });
@@ -737,6 +776,8 @@ namespace KDOS_Web_API.Migrations
                     b.Navigation("Feedback");
 
                     b.Navigation("FishProfiles");
+
+                    b.Navigation("LogTransport");
 
                     b.Navigation("Orders");
                 });

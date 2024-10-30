@@ -80,16 +80,17 @@ export default function AddFish() {
       try {
         if (!name) {  // Check if `name` is empty
           console.log("no search!")
-          setRefresh(()=>!refresh)
+          setRefresh(() => !refresh)
         } else {
           searchResult(name);
-      }} catch (error) {
+        }
+      } catch (error) {
         console.error("Search error:", error);
       }
     }, 500),
 
   );
-  const searchResult = async (name)=>{
+  const searchResult = async (name) => {
     const response = await findProfileByName(customerId, name);
     if (response.status >= 400) {
       toast.error("Fish not found", {
@@ -280,7 +281,7 @@ export default function AddFish() {
 
   return (
     <div>
-      {loadingScreen?? <LoadingScreen/>}
+      {loadingScreen ?? <LoadingScreen />}
       <ToastContainer />
       <p className="text-4xl font-semibold">Add your Fish</p>
       <p className="text-gray-600 text-lg my-2">

@@ -31,5 +31,10 @@ namespace KDOS_Web_API.Repositories
             return await logTransportContext.LogTransport.FindAsync(id);
         }
 
+        public async Task<List<LogTransport>> GetLogTransportByCustomerId(int id)
+        {
+            var logTransportList = await logTransportContext.LogTransport.Where(x => x.CustomerId == id).ToListAsync();
+            return logTransportList;
+        }
     }
 }
