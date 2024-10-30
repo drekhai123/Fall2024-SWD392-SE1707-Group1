@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { InputField, SelectField } from "../../form";
 
-const CustomerForm = ({onSubmit, methods }) => {
+const CustomerForm = ({ customerData, onSubmit, methods }) => {
+  const [customer, setCustomer] = useState(customerData)
+  useEffect(() => {
+    setCustomer(customerData)
+  }, [customerData])
+
   return (
     <>
       <div>
@@ -23,8 +28,10 @@ const CustomerForm = ({onSubmit, methods }) => {
               fullWidth
               rules={{ required: "Customer name is required" }}
               placeholder="Enter your customer name"
-              defaultValue={"Customer Name"}
-            
+              defaultValue={customer?.customerName || "Name"}
+              onChange={(e) =>
+                setCustomer((prev) => ({ ...prev, customerName: e.target.value }))
+              }
             />
           </div>
 
@@ -41,8 +48,10 @@ const CustomerForm = ({onSubmit, methods }) => {
                 min: { value: 1, message: "Age must be at least 1" },
               }}
               placeholder="Enter your age"
-              defaultValue={"0"}
-            
+              defaultValue={customer?.age || "0"}
+              onChange={(e) =>
+                setCustomer((prev) => ({ ...prev, age: e.target.value }))
+              }
             />
           </div>
 
@@ -58,8 +67,10 @@ const CustomerForm = ({onSubmit, methods }) => {
                 { value: "Female", label: "Female" },
                 { value: "Others", label: "Others" },
               ]}
-              value={"Gender"}
-             
+              value={customer?.gender || "Others"}
+              onChange={(e) =>
+                setCustomer((prev) => ({ ...prev, gender: e.target.value }))
+              }
             />
           </div>
 
@@ -78,8 +89,10 @@ const CustomerForm = ({onSubmit, methods }) => {
                 },
               }}
               placeholder="Enter your phone number"
-              defaultValue={"Phone Number"}
-             
+              defaultValue={customer?.phoneNumber || "0"}
+              onChange={(e) =>
+                setCustomer((prev) => ({ ...prev, phoneNumber: e.target.value }))
+              }
             />
           </div>
 
@@ -92,8 +105,10 @@ const CustomerForm = ({onSubmit, methods }) => {
               fullWidth
               rules={{ required: "Address is required" }}
               placeholder="Enter your address"
-              defaultValue={"Address"}
-             
+              defaultValue={customer?.address || "Address"}
+              onChange={(e) =>
+                setCustomer((prev) => ({ ...prev, address: e.target.value }))
+              }
             />
           </div>
 
@@ -105,7 +120,7 @@ const CustomerForm = ({onSubmit, methods }) => {
               label="Created At"
               fullWidth
               readOnly
-              defaultValue={"createdAt"}
+              defaultValue={customer?.createdAt || "Date"}
             />
           </div>
 
@@ -117,7 +132,7 @@ const CustomerForm = ({onSubmit, methods }) => {
               label="Updated At"
               fullWidth
               readOnly
-              defaultValue={"updatedAt"}
+              defaultValue={customer?.updatedAt || "Date"}
             />
           </div>
 

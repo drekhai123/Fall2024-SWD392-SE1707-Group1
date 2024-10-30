@@ -246,7 +246,6 @@ export default function AddFish() {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log("File available at", downloadURL);
             setImage(downloadURL); // Set the image URL to state
           });
         }

@@ -29,8 +29,7 @@ const LoginPage = () => {
       password: password,
     };
     const account = await LoginApi(login);
-    console.log(account)
-    if (account !== null && account.verified===true) {
+    if (account !== null) {
       sessionStorage.setItem('user', JSON.stringify(account));
       if (account.accessToken) {
         sessionStorage.setItem('accessToken', account.accessToken);

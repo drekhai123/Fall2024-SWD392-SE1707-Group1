@@ -1,9 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from "react";
 import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
 import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
+import { CreateOrder } from "../api/OrderApi"
+import { GetAllKoiFishes } from "../api/KoiFishApi";
 import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm({ onSuggestionClick, distance }) {
@@ -13,6 +16,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(false);
   const [check, setCheck] = useState(false)
+  const [koifishList, setKoiFishList] = useState([]);
   const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
@@ -20,7 +24,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [markerPositionTo, setMarkerPositionTo] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [days, setDays] = useState(null);
-  const [selectedFish, setSelectedFish] = useState([]);
 
   const [distancePriceList, setDistancePriceList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -65,11 +68,22 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   }, [getDistancePriceList]);
 
   useEffect(() => {
+    const getFishProfile = async () => {
+      setLoading(true)
+      axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user.customer.customerId}`)
+        .then(response => {
+          setKoiFishList(response.data); // Lưu dữ liệu cá Koi vào state koifishList
+          setLoading(false)
+        })
+        .catch(error => {
+          console.error("Error fetching fish data:", error);
+        });
+    }
     if (user !== null) {
-      getFishProfile();
+      //getFishProfile();
     } else {
-      alert("Please login to continue...");
-      navigateToLogin("/login");
+      alert("Please Login To Continue...")
+      navigateToLogin("/login")
     }
   }, []);
 
@@ -103,6 +117,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       return 10;
     }
   }
+
 
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
@@ -158,7 +173,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       );
       return;
     }
-
+    console.log(user)
     Swal.fire({
       title: "Confirm information",
       html: `
@@ -189,24 +204,33 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   useEffect(() => {
     sessionStorage.setItem("fishOrders", JSON.stringify(fishOrders));
   }, [fishOrders]);
-
   const confirmPay = () => {
     const request = {
-      customer: customerInfo,
-      status: "Wait for confirmation",
-      totalAmount:
+      senderName: customerInfo.nameSender,
+      senderAddress: customerInfo.addressSender,
+      senderPhoneNumber: customerInfo.phoneSender,
+      recipientName: customerInfo.nameCustomer,
+      recipientAddress: customerInfo.addressCustomer,
+      recipientPhoneNumber: customerInfo.phoneCustomer,
+      recipientEmail: user.email || null,
+      paymentMethod: "CASH",
+      paymentStatus: "PENDING",
+      deliveryStatus: "PENDING",
+      deliveryNote: check ? "Feed the fish" : 'There are no comment',
+      quantity: fishOrders.length,
+      totalWeight: fishOrders.reduce((acc, item) => acc + item.weight, 1),
+      totalCost:
         getTotalAmount() +
         parseInt(calculateVAT()) +
         parseFloat(calculateShippingFee().toFixed(0)),
-      ship: calculateShippingFee().toFixed(0),
-      VAT: calculateVAT(),
-      createTime: new Date(),
-      product: fishOrders,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      weightPriceListId: 1,
+      customerId: Number(user.customer.customerId),
+      distancePriceListId: 1,
+      transportId: 2,
     };
-    const storedCheckout = JSON.parse(localStorage.getItem("checkout")) || [];
-    const updatedCheckout = [...storedCheckout, request];
-    localStorage.setItem("checkout", JSON.stringify(updatedCheckout));
-
+    CreateOrder(request);
     localStorage.removeItem("fishOrders");
     setFishOrders([]);
     setCustomerInfo({
@@ -270,6 +294,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setCustomerInfo({ ...customerInfo, [field]: value });
   };
 
+
+
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
@@ -290,29 +316,32 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     navigate("/");  // Quay lại trang trước đó
   };
 
+  // Hàm updaterow
+  const updateRow = (index, field, value) => {
+    const updatedOrders = [...fishOrdersList];
+    updatedOrders[index][field] = value;
+    if (field === "name") {
+      const selectedFish = koifishList.find(fish => fish.fishType === value);
+      if (selectedFish) {
+        updatedOrders[index].quantity = selectedFish.weight; // Cập nhật weight từ API
+        updatedOrders[index].price = selectedFish.price;     // Cập nhật price từ API
+      }
+    }
+
+    setKoiFishList(updatedOrders);
+  };
+
   // Hàm thêm dòng mới
   const addRow = () => {
-    const selectedFishData = data.filter((fish) =>
-      selectedFish.includes(fish.fishProfileId)
-    );
-
-    setFishOrdersList((prevList) => {
-      const newFish = selectedFishData.filter(
-        (fish) => !prevList.some((item) => item.fishProfileId === fish.fishProfileId)
-      );
-      return [...prevList, ...newFish];
-    });
-
-    setOpenModal(false);
+    setFishOrdersList([...fishOrdersList]);
   };
 
   // Hàm xóa dòng
   const deleteRow = (index) => {
-    const updatedOrders = fishOrdersList?.filter((_, i) => i !== index);
-    const updatedOrdersCheckbox = selectedFish?.filter((_, i) => i !== index);
-    setFishOrdersList(updatedOrders);
-    setSelectedFish(updatedOrdersCheckbox)
+    const updatedOrders = fishOrdersList.filter((_, i) => i !== index);
+    setKoiFishList(updatedOrders);
   };
+
 
   //Hàm của mapping để nguyên (comment cái const ở trên của nó)
 
@@ -327,6 +356,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
+  const FishTable = () => {
   const handleCheckboxChange = (fishProfileId) => {
     setSelectedFish((prevSelected) =>
       prevSelected.includes(fishProfileId)
@@ -348,6 +378,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <th className="label-table">Name</th>
             <th className="label-table">Type</th>
             <th className="label-table">Weight (kg)</th>
+            <th className="label-table">Price (VND/Kg)</th>
+            <th className="label-table">Action</th>
             <th className="label-table">Gender</th>
             <th className="label-table">Note</th>
             <th className="label-table">Action</th>
@@ -358,8 +390,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           </tr>
         </thead>
         <tbody>
-          {data?.map((fish, index) => (
-            <tr key={index}>
+          {koifishList.map((fish, index) => (
+            <tr key={fish.fishProfileId}>
               <td>{index + 1}</td>
               <td>
                 {fish?.name}
@@ -403,7 +435,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   className="custom-dropdown"
                   disabled // Vô hiệu hóa input người dùng (Tạm thời)
                 />
-              </td>*/}
+              </td>
               <td>
                 <button
                   onClick={() => deleteRow(index)}
@@ -420,6 +452,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   }
 
   return (
+
     <div className="order-form">
       <div className="con">
         <button onClick={handleGoBack} className="go-back-button">
@@ -428,20 +461,20 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
         <div className="content">
           <h2 className="title">Order Form</h2>
-          {data ?
+          {koifishList ?
             <>
               {loading ? ( // Hiển thị thông báo đang tải
                 <p className="Fish-status-loading">Loading fish data...</p>
-              ) : data?.length === 0 ? ( // Hiển thị thông báo không có cá
+              ) : error ? ( // Hiển thị thông báo lỗi
+                <p className="Fish-status-error">There was an error fetching the fish data. Please try again later.</p>
+              ) : koifishList.length === 0 ? ( // Hiển thị thông báo không có cá
                 <p className="Fish-status-empty">There is no fish, you need to add more.</p>
-              ) :
-                <p className="Fish-status-empty">Ready to choose fish.</p>
+              ) : <FishTable />
               }
             </>
             : ""
           }
-          <FishTable data={fishOrdersList} />
-          <button onClick={() => setOpenModal(true)} className="add-button">
+          <button onClick={addRow} className="add-button">
             Add Fish
           </button>
 
