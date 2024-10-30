@@ -1,23 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
+
 import { Dialog } from "primereact/dialog";
-import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
-import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
 export const OrderListByCustomer = ({
-  customer,
+  orders,
   visible,
   onHide,
-  onConfirm,
 }) => {
-  const handleConfirm = () => {
-    onConfirm({
-      customerId: customer.id,
-    });
-    onHide();
-  };
 
   return (
     <Dialog
@@ -29,7 +20,7 @@ export const OrderListByCustomer = ({
     >
       <div className="space-y-4 p-8">
         <DataTable
-          value={customer.orders}
+          value={orders}
           showGridlines
           stripedRows
           tableStyle={{ minWidth: "50rem" }}

@@ -80,16 +80,17 @@ export default function AddFish() {
       try {
         if (!name) {  // Check if `name` is empty
           console.log("no search!")
-          setRefresh(()=>!refresh)
+          setRefresh(() => !refresh)
         } else {
           searchResult(name);
-      }} catch (error) {
+        }
+      } catch (error) {
         console.error("Search error:", error);
       }
     }, 500),
-    
+
   );
-  const searchResult = async (name)=>{
+  const searchResult = async (name) => {
     const response = await findProfileByName(customerId, name);
     if (response.status >= 400) {
       toast.error("Fish not found", {
@@ -100,7 +101,7 @@ export default function AddFish() {
     else
       setFishes(await response.data); // Update the fish list with the search results
     }
-  
+
   // Update search term and call the debounced search
   const handleSearchChange = (e) => {
     const term = e.target.value;
@@ -238,12 +239,13 @@ export default function AddFish() {
 
       uploadTask.on(
         "state_changed",
+        //có thiếu snapshot thì không lấy ảnh được
+        (snapshot) => {},
         (error) => {
           console.error("Error uploading image:", error);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log("File available at", downloadURL);
             setImage(downloadURL); // Set the image URL to state
           });
         }
@@ -278,7 +280,7 @@ export default function AddFish() {
 
   return (
     <div>
-      {loadingScreen?? <LoadingScreen/>}
+      {loadingScreen ?? <LoadingScreen />}
       <ToastContainer />
       <p className="text-4xl font-semibold">Add your Fish</p>
       <p className="text-gray-600 text-lg my-2">
@@ -404,9 +406,10 @@ export default function AddFish() {
               label="Notes"
               type="text"
               fullWidth
-              value={notes} // New input for notes
-              onChange={(e) => setNotes(e.target.value)} // Update state for notes
-              required
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              multiline
+              rows={4}
             />
             <input
               accept="image/*"

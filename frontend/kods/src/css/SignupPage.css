@@ -34,14 +34,6 @@
   margin: 0; /* Loại bỏ margin */
   box-sizing: border-box;
   overflow: hidden;
-  animation: expandContainer 0.2s 0.2s forwards; /* 0.5s delay, then apply animation */
-}
-@keyframes expandContainer {
-  to {
-    width: 100%;
-    margin: 0;
-    justify-self: center;
-  }
 }
 
 .signup-page-container .signup-container .signup-form {
