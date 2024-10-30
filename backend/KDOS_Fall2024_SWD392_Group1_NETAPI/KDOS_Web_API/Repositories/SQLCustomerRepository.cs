@@ -99,7 +99,7 @@ namespace KDOS_Web_API.Repositories
             else
             {
                 customerModel.CustomerName = customer.CustomerName;
-                customerModel.Age = customer.Age;
+                customerModel.Dob = customer.Dob;
                 customerModel.Address = customer.Address;
                 customerModel.Gender = customer.Gender;
                 customerModel.PhoneNumber = customer.PhoneNumber;

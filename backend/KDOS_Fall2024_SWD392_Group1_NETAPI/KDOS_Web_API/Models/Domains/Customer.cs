@@ -13,7 +13,7 @@ namespace KDOS_Web_API.Models.Domains
         public required string  CustomerName { get; set; }
 
         [Required]
-        public required int Age { get; set; }
+        public required DateOnly Dob { get; set; }
 
         [Required]
         public required string Gender { get; set; }
