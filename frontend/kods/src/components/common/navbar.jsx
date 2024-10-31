@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import "../../css/navbar.css";
 import 'react-toastify/dist/ReactToastify.css';
+import { googleLogout } from '@react-oauth/google';
 
 export default function Navbar() {
   const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
   const logout = () => {
+    googleLogout()
     sessionStorage.removeItem("user");
     toast.success("Logged out successfully!");
     navigate('/');
@@ -31,7 +33,7 @@ export default function Navbar() {
         {user ? (
           <div className="nav-right">
             <ul className="nav-list">
-              <li className="nav-item"><Link to="/profile">VIEW PROFILE</Link> { }</li>
+              <li className="nav-item"><Link to="/profile">VIEW PROFILE</Link></li>
               <li className="nav-item"> Hello, {user.userName}!</li>
               <li className="nav-item"><button className="btn-Logout" onClick={logout}>LOGOUT</button> { }</li>
             </ul>
@@ -39,7 +41,7 @@ export default function Navbar() {
         ) : ( // chưa đăng nhập, hiển thị LOGIN
           <div className="nav-right">
             <div className="nav-item-login">
-              <Link className="btn-login" to="/login">LOGIN</Link> { }
+              <Link className="btn-login" to="/login">LOGIN</Link>
             </div>
           </div>
         )}

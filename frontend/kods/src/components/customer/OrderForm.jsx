@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
 import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
 import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
 import { CreateOrder } from "../api/OrderApi"
-import { GetAllKoiFishes } from "../api/KoiFishApi";
 import { useNavigate } from 'react-router-dom';
 
 export default function OrderForm({ onSuggestionClick, distance }) {
@@ -18,12 +16,14 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [check, setCheck] = useState(false)
   const [koifishList, setKoiFishList] = useState([]);
   const [fishOrdersList, setFishOrdersList] = useState([]);
+  const [selectedFish, setSelectedFish] = useState(null);
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
   const [markerPositionFrom, setMarkerPositionFrom] = useState(null);
   const [markerPositionTo, setMarkerPositionTo] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [days, setDays] = useState(null);
+  const [error, setError] = useState(false);
 
   const [distancePriceList, setDistancePriceList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -357,402 +357,402 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   }, [distance])
 
   const FishTable = () => {
-  const handleCheckboxChange = (fishProfileId) => {
-    setSelectedFish((prevSelected) =>
-      prevSelected.includes(fishProfileId)
-        ? prevSelected.filter((id) => id !== fishProfileId) // Bỏ chọn nếu đã chọn trước đó
-        : [...prevSelected, fishProfileId] // Thêm vào danh sách nếu chưa chọn
-    );
-  };
+    const handleCheckboxChange = (fishProfileId) => {
+      setSelectedFish((prevSelected) =>
+        prevSelected.includes(fishProfileId)
+          ? prevSelected.filter((id) => id !== fishProfileId) // Bỏ chọn nếu đã chọn trước đó
+          : [...prevSelected, fishProfileId] // Thêm vào danh sách nếu chưa chọn
+      );
+    };
 
-  const handleSelectAll = (isChecked) => {
-    setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
-  };
+    const handleSelectAll = (isChecked) => {
+      setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
+    };
 
-  const FishTable = ({ data }) => {
-    return (
-      <table className="fixed-table">
-        <thead>
-          <tr>
-            <th className="label-table">Index</th>
-            <th className="label-table">Name</th>
-            <th className="label-table">Type</th>
-            <th className="label-table">Weight (kg)</th>
-            <th className="label-table">Price (VND/Kg)</th>
-            <th className="label-table">Action</th>
-            <th className="label-table">Gender</th>
-            <th className="label-table">Note</th>
-            <th className="label-table">Action</th>
+    const FishTable = ({ data }) => {
+      return (
+        <table className="fixed-table">
+          <thead>
+            <tr>
+              <th className="label-table">Index</th>
+              <th className="label-table">Name</th>
+              <th className="label-table">Type</th>
+              <th className="label-table">Weight (kg)</th>
+              <th className="label-table">Price (VND/Kg)</th>
+              <th className="label-table">Action</th>
+              <th className="label-table">Gender</th>
+              <th className="label-table">Note</th>
+              <th className="label-table">Action</th>
 
 
-            {/* <th className="label-table">Price (VND/Kg)</th> */}
-            {/* <th className="label-table">Action</th> */}
-          </tr>
-        </thead>
-        <tbody>
-          {koifishList.map((fish, index) => (
-            <tr key={fish.fishProfileId}>
-              <td>{index + 1}</td>
-              <td>
-                {fish?.name}
-              </td>
-              <td>
-                {fish?.koiFish?.fishType}
-              </td>
-              <td>
-                {fish?.weight}
-              </td>
-              <td>
-                {fish?.gender}
-              </td>
-              <td>
-                {fish?.notes}
-              </td>
-              {/*<td>
-                <input
-                  type="number"
-                  value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                  min=""
-                  onChange={(e) =>
-                    updateRow(
-                      index,
-                      "quantity",
-                      parseInt(e.target.value) || 0
-                    )
-                  }
-                  className="custom-dropdown"
-                  disabled // Vô hiệu hóa input người dùng (Tạm thi)
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  min="0"
-                  value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
-                  onChange={(e) =>
-                    updateRow(index, "price", parseInt(e.target.value) || 0)
-                  }
-                  className="custom-dropdown"
-                  disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                />
-              </td>
-              <td>
-                <button
-                  onClick={() => deleteRow(index)}
-                  className="delete-button"
-                >
-                  Delete
-                </button>
-              </td>
+              {/* <th className="label-table">Price (VND/Kg)</th> */}
+              {/* <th className="label-table">Action</th> */}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    )
-  }
+          </thead>
+          <tbody>
+            {koifishList.map((fish, index) => (
+              <tr key={fish.fishProfileId}>
+                <td>{index + 1}</td>
+                <td>
+                  {fish?.name}
+                </td>
+                <td>
+                  {fish?.koiFish?.fishType}
+                </td>
+                <td>
+                  {fish?.weight}
+                </td>
+                <td>
+                  {fish?.gender}
+                </td>
+                <td>
+                  {fish?.notes}
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
+                    min=""
+                    onChange={(e) =>
+                      updateRow(
+                        index,
+                        "quantity",
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                    className="custom-dropdown"
+                    disabled // Vô hiệu hóa input người dùng (Tạm thi)
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
+                    onChange={(e) =>
+                      updateRow(index, "price", parseInt(e.target.value) || 0)
+                    }
+                    className="custom-dropdown"
+                    disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                  />
+                </td>
+                <td>
+                  <button
+                    onClick={() => deleteRow(index)}
+                    className="delete-button"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )
+    }
 
-  return (
-
-    <div className="order-form">
-      <div className="con">
-        <button onClick={handleGoBack} className="go-back-button">
-          ⭠ Previous Page
-        </button>
-
-        <div className="content">
-          <h2 className="title">Order Form</h2>
-          {koifishList ?
-            <>
-              {loading ? ( // Hiển thị thông báo đang tải
-                <p className="Fish-status-loading">Loading fish data...</p>
-              ) : error ? ( // Hiển thị thông báo lỗi
-                <p className="Fish-status-error">There was an error fetching the fish data. Please try again later.</p>
-              ) : koifishList.length === 0 ? ( // Hiển thị thông báo không có cá
-                <p className="Fish-status-empty">There is no fish, you need to add more.</p>
-              ) : <FishTable />
-              }
-            </>
-            : ""
-          }
-          <button onClick={addRow} className="add-button">
-            Add Fish
+    return (
+      <div className="order-form">
+        <div className="con">
+          <button onClick={handleGoBack} className="go-back-button">
+            ⭠ Previous Page
           </button>
 
-          <div className="layout-customer">
-            <div className="sender-info">
-              <h3 className="label-customer">Sender Information</h3>
-              <input
-                require
-                className="input-customer"
-                type="text"
-                placeholder="Name"
-                onChange={(e) =>
-                  handleCustomerChange("nameSender", e.target.value)
+          <div className="content">
+            <h2 className="title">Order Form</h2>
+            {koifishList ?
+              <>
+                {loading ? ( // Hiển thị thông báo đang tải
+                  <p className="Fish-status-loading">Loading fish data...</p>
+                ) : error ? ( // Hiển thị thông báo lỗi
+                  <p className="Fish-status-error">There was an error fetching the fish data. Please try again later.</p>
+                ) : koifishList.length === 0 ? ( // Hiển thị thông báo không có cá
+                  <p className="Fish-status-empty">There is no fish, you need to add more.</p>
+                ) : <FishTable />
                 }
-              />
-              <input
-                className="input-customer"
-                type="text"
-                placeholder="Phone"
-                onChange={(e) =>
-                  handleCustomerChange("phoneSender", e.target.value)
-                }
-              />
-              <div className="layout-suggestions">
+              </>
+              : ""
+            }
+            <button onClick={addRow} className="add-button">
+              Add Fish
+            </button>
+
+            <div className="layout-customer">
+              <div className="sender-info">
+                <h3 className="label-customer">Sender Information</h3>
+                <input
+                  require
+                  className="input-customer"
+                  type="text"
+                  placeholder="Name"
+                  onChange={(e) =>
+                    handleCustomerChange("nameSender", e.target.value)
+                  }
+                />
                 <input
                   className="input-customer"
                   type="text"
-                  placeholder="Address"
-                  value={customerInfo?.addressSender}
+                  placeholder="Phone"
                   onChange={(e) =>
-                    handleCustomerChange("addressSender", e.target.value)
+                    handleCustomerChange("phoneSender", e.target.value)
                   }
                 />
-                <div>
-                  {fromSuggestions?.length > 0 && (
-                    <div className="suggestions">
-                      {fromSuggestions?.map((suggestion) => (
-                        <div
-                          key={suggestion.place_id}
-                          onClick={() =>
-                            handleSuggestionClick(suggestion, "addressSender")
-                          }
-                          className="suggestion-item"
-                        >
-                          {suggestion.display_name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="customer-info">
-              <h3 className="label-customer">Customer Information</h3>
-              <input
-                className="input-customer"
-                type="text"
-                placeholder="Name"
-                onChange={(e) =>
-                  handleCustomerChange("nameCustomer", e.target.value)
-                }
-              />
-              <input
-                className="input-customer"
-                type="text"
-                placeholder="Phone"
-                onChange={(e) =>
-                  handleCustomerChange("phoneCustomer", e.target.value)
-                }
-              />
-
-              <div className="layout-suggestions">
-                <input
-                  className="input-customer"
-                  type="text"
-                  placeholder="Address"
-                  value={customerInfo?.addressCustomer}
-                  onChange={(e) =>
-                    handleCustomerChange("addressCustomer", e.target.value)
-                  }
-                />
-                <div>
-                  {toSuggestions?.length > 0 && (
-                    <div className="suggestions">
-                      {toSuggestions?.map((suggestion) => (
-                        <div
-                          key={suggestion.place_id}
-                          onClick={() =>
-                            handleSuggestionClick(suggestion, "addressCustomer")
-                          }
-                          className="suggestion-item"
-                        >
-                          {suggestion.display_name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div style={{ marginTop: 10 }} className="customer-info">
-                <h3 className="label-customer">Distance (km)</h3>
-                <input
-                  className="input-customer"
-                  type="number"
-                  disabled
-                  value={customerInfo?.distance}
-                  placeholder="Distance (km)"
-                  min="0"
-                  onChange={(e) =>
-                    handleCustomerChange(
-                      "distance",
-                      parseInt(e.target.value) || 0
-                    )
-                  }
-                />
-
-                <div class="total-amount">
+                <div className="layout-suggestions">
+                  <input
+                    className="input-customer"
+                    type="text"
+                    placeholder="Address"
+                    value={customerInfo?.addressSender}
+                    onChange={(e) =>
+                      handleCustomerChange("addressSender", e.target.value)
+                    }
+                  />
                   <div>
-                    <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
-                      className="layout-checkbox"
-                      style={{ marginBottom: '10px' }}
-                    >
-                      <p>
-                        <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
-                      </p>
+                    {fromSuggestions?.length > 0 && (
+                      <div className="suggestions">
+                        {fromSuggestions?.map((suggestion) => (
+                          <div
+                            key={suggestion.place_id}
+                            onClick={() =>
+                              handleSuggestionClick(suggestion, "addressSender")
+                            }
+                            className="suggestion-item"
+                          >
+                            {suggestion.display_name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-                      <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND"
-                        className="checkbox-container"
+              <div className="customer-info">
+                <h3 className="label-customer">Customer Information</h3>
+                <input
+                  className="input-customer"
+                  type="text"
+                  placeholder="Name"
+                  onChange={(e) =>
+                    handleCustomerChange("nameCustomer", e.target.value)
+                  }
+                />
+                <input
+                  className="input-customer"
+                  type="text"
+                  placeholder="Phone"
+                  onChange={(e) =>
+                    handleCustomerChange("phoneCustomer", e.target.value)
+                  }
+                />
+
+                <div className="layout-suggestions">
+                  <input
+                    className="input-customer"
+                    type="text"
+                    placeholder="Address"
+                    value={customerInfo?.addressCustomer}
+                    onChange={(e) =>
+                      handleCustomerChange("addressCustomer", e.target.value)
+                    }
+                  />
+                  <div>
+                    {toSuggestions?.length > 0 && (
+                      <div className="suggestions">
+                        {toSuggestions?.map((suggestion) => (
+                          <div
+                            key={suggestion.place_id}
+                            onClick={() =>
+                              handleSuggestionClick(suggestion, "addressCustomer")
+                            }
+                            className="suggestion-item"
+                          >
+                            {suggestion.display_name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 10 }} className="customer-info">
+                  <h3 className="label-customer">Distance (km)</h3>
+                  <input
+                    className="input-customer"
+                    type="number"
+                    disabled
+                    value={customerInfo?.distance}
+                    placeholder="Distance (km)"
+                    min="0"
+                    onChange={(e) =>
+                      handleCustomerChange(
+                        "distance",
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                  />
+
+                  <div class="total-amount">
+                    <div>
+                      <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
+                        className="layout-checkbox"
+                        style={{ marginBottom: '10px' }}
                       >
-                        {customerInfo?.distance <= 50 && (
-                          <label>
-                            <input
-                              style={{ cursor: 'pointer' }}
-                              type="checkbox"
-                              checked={check}
-                              onChange={(e) => setCheck(e.target.checked)}
-                            />
-                            If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
-                          </label>
-                        )}
+                        <p>
+                          <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
+                        </p>
+
+                        <div title="If the transit is less than 1 day, if you want to feed the fish, the cost will be 25000 VND"
+                          className="checkbox-container"
+                        >
+                          {customerInfo?.distance <= 50 && (
+                            <label>
+                              <input
+                                style={{ cursor: 'pointer' }}
+                                type="checkbox"
+                                checked={check}
+                                onChange={(e) => setCheck(e.target.checked)}
+                              />
+                              If you want to feed the fish ({days === 1 ? 25000 : days * 20000} VND)
+                            </label>
+                          )}
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: '10px' }}>
+                        <p className="label-total">
+                          Shipping fee: {calculateShippingFee().toLocaleString('vi-VN') || 0} VND
+                        </p>
+                        <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
                       </div>
                     </div>
 
-                    <div style={{ marginTop: '10px' }}>
-                      <p className="label-total">
-                        Shipping fee: {calculateShippingFee().toLocaleString('vi-VN') || 0} VND
-                      </p>
-                      <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      height: '100%'
+                    }}>
                     </div>
                   </div>
-
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    height: '100%'
-                  }}>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="total-amount" style={{
-          margin: 0,
-          fontWeight: 'bold',
-          color: 'purple'
-        }}
-        >
-          Total Amount: {" "}
-          {(getTotalAmount() + parseInt(calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))).toLocaleString('vi-VN')} VND</div>
-        <button onClick={handleCheckout} className="checkout-button">
-          Checkout
-        </button>
+          <div className="total-amount" style={{
+            margin: 0,
+            fontWeight: 'bold',
+            color: 'purple'
+          }}
+          >
+            Total Amount: {" "}
+            {(getTotalAmount() + parseInt(calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))).toLocaleString('vi-VN')} VND</div>
+          <button onClick={handleCheckout} className="checkout-button">
+            Checkout
+          </button>
 
-        {showQRCode && (
-          <div className="popup">
-            <div className="container-popup">
-              <h3 className="title-popup">Please scan the QR code to pay!</h3>
-              <div className="layout-popup">
-                <div className="layout-qrcode">
-                  <p className="label-qrcode">Payment via VNPAY</p>
-                  <QRCodeSVG
-                    value="https://your-payment-url-1.com"
-                    size={256}
-                  />
-                </div>
-                <div className="layout-qrcode">
-                  <p className="label-qrcode">Payment via Momo</p>
-                  <QRCodeSVG
-                    value="https://your-payment-url-2.com"
-                    size={256}
-                  />
-                </div>
-              </div>
-              <div className="layout-btn">
-                <button onClick={() => confirmPay()} className="confirm-btn">
-                  Confirm payment
-                </button>
-                <button
-                  onClick={() => setShowQRCode(false)}
-                  className="cancel-btn"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {modal && (
-          <div className="popup">
-            <div className="container-popup">
-              <h3 className="title-popup">Choose fish</h3>
-
-              <div className="layout-checkbox">
-                <div className="fish-item">
-                  <label className="label-checkbox-0">
-                    <input
-                      name="checkbox-all"
-                      type="checkbox"
-                      onChange={(e) => handleSelectAll(e.target.checked)}
-                      checked={selectedFish.length === data.length}
+          {showQRCode && (
+            <div className="popup">
+              <div className="container-popup">
+                <h3 className="title-popup">Please scan the QR code to pay!</h3>
+                <div className="layout-popup">
+                  <div className="layout-qrcode">
+                    <p className="label-qrcode">Payment via VNPAY</p>
+                    <QRCodeSVG
+                      value="https://your-payment-url-1.com"
+                      size={256}
                     />
-                    <div className="layout-select">
-                      <span className="label">Name</span>
-                      <span className="label">Type</span>
-                      <span className="label">Gender</span>
-                      <span className="label">Weight</span>
-                      <span className="label">Notes</span>
-                    </div>
-                  </label>
+                  </div>
+                  <div className="layout-qrcode">
+                    <p className="label-qrcode">Payment via Momo</p>
+                    <QRCodeSVG
+                      value="https://your-payment-url-2.com"
+                      size={256}
+                    />
+                  </div>
+                </div>
+                <div className="layout-btn">
+                  <button onClick={() => confirmPay()} className="confirm-btn">
+                    Confirm payment
+                  </button>
+                  <button
+                    onClick={() => setShowQRCode(false)}
+                    className="cancel-btn"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
-              <div className="layout-checkbox">
-                {data?.map((fish) => (
-                  <div key={fish.fishProfileId} className="fish-item">
-                    <label className="label-checkbox">
+            </div>
+          )}
+
+          {modal && (
+            <div className="popup">
+              <div className="container-popup">
+                <h3 className="title-popup">Choose fish</h3>
+
+                <div className="layout-checkbox">
+                  <div className="fish-item">
+                    <label className="label-checkbox-0">
                       <input
+                        name="checkbox-all"
                         type="checkbox"
-                        checked={selectedFish.includes(fish.fishProfileId)}
-                        onChange={() => handleCheckboxChange(fish.fishProfileId)}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        checked={selectedFish.length === data.length}
                       />
                       <div className="layout-select">
-                        <span>{fish?.name}</span>
-                        <span>{fish?.koiFish?.fishType}</span>
-                        <span>{fish?.gender}</span>
-                        <span>{fish?.weight}</span>
-                        <span>{fish?.notes}</span>
+                        <span className="label">Name</span>
+                        <span className="label">Type</span>
+                        <span className="label">Gender</span>
+                        <span className="label">Weight</span>
+                        <span className="label">Notes</span>
                       </div>
                     </label>
                   </div>
-                ))}
-              </div>
-              <div className="layout-btn">
-                <button onClick={() => addRow()} className="confirm-btn">
-                  Confirm
-                </button>
-                <button
-                  onClick={() => navigate('/profile/addfish')}
-                  className="confirm-btn"
-                  style={{
-                    backgroundColor: '#4CAF50',  // màu xanh lá
-                    marginLeft: '10px',
-                    marginRight: '10px'
-                  }}
-                >
-                  Create Fish Profile
-                </button>
-                <button onClick={() => setOpenModal(false)} className="cancel-btn">
-                  Cancel
-                </button>
+                </div>
+                <div className="layout-checkbox">
+                  {data?.map((fish) => (
+                    <div key={fish.fishProfileId} className="fish-item">
+                      <label className="label-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectedFish.includes(fish.fishProfileId)}
+                          onChange={() => handleCheckboxChange(fish.fishProfileId)}
+                        />
+                        <div className="layout-select">
+                          <span>{fish?.name}</span>
+                          <span>{fish?.koiFish?.fishType}</span>
+                          <span>{fish?.gender}</span>
+                          <span>{fish?.weight}</span>
+                          <span>{fish?.notes}</span>
+                        </div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                <div className="layout-btn">
+                  <button onClick={() => addRow()} className="confirm-btn">
+                    Confirm
+                  </button>
+                  <button
+                    onClick={() => navigate('/profile/addfish')}
+                    className="confirm-btn"
+                    style={{
+                      backgroundColor: '#4CAF50',  // màu xanh lá
+                      marginLeft: '10px',
+                      marginRight: '10px'
+                    }}
+                  >
+                    Create Fish Profile
+                  </button>
+                  <button onClick={() => setOpenModal(false)} className="cancel-btn">
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }

@@ -26,6 +26,7 @@ const UserProfilePage = () => {
 
   const [userData, setUserData] = useState(null); // Dữ liệu tài khoản
   const [customerData, setCustomerData] = useState(null); // Dữ liệu khách hàng
+  const [loadingScreen, setLoadingScreen] = useState(false); //
   // const userId = 4; // Lấy ID của tài khoản
   const user = JSON.parse(sessionStorage.getItem("user"));
   const userId = user.accountId;
@@ -35,6 +36,7 @@ const UserProfilePage = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setLoadingScreen(true)
       try {
         const response = await GetAccountById(userId);
         setUserData(response.data);
@@ -44,6 +46,7 @@ const UserProfilePage = () => {
       } catch (error) {
         console.error("Error fetching user data: ", error);
       }
+      setLoadingScreen(false)
     };
     fetchUserData();
   }, [userId]); // Update dependency to userId

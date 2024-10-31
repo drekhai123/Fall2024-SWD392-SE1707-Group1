@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../../css/LoginPage.css";
-import { LoginApi } from "../api/LoginApi";
+import { GoogleLoginApi, LoginApi } from "../api/LoginApi";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingScreen from "../../utils/LoadingScreen";
+import { useGoogleLogin, useGoogleOneTapLogin } from "@react-oauth/google";
+import axios from "axios";
+
 
 const LoginPage = () => {
   const [usernameoremail, setUsernameoremail] = useState("");
   const [password, setPassword] = useState("");
-  const [loadingScreen,setLoadingScreen] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // Thêm state để điều khiển ẩn/hiện mật khẩu
   const navigate = useNavigate();
 
@@ -23,31 +26,58 @@ const LoginPage = () => {
 
   const handleLoginClick = async (e) => {
     setLoadingScreen(true)
-    e.preventDefault();
     const login = {
       usernameoremail: usernameoremail,
       password: password,
     };
-    const account = await LoginApi(login);
-    if (account !== null) {
-      sessionStorage.setItem('user', JSON.stringify(account));
-      if (account.accessToken) {
-        sessionStorage.setItem('accessToken', account.accessToken);
-      }
+    const response = await LoginApi(login);
+    if (response.status <= 300) {
+      sessionStorage.setItem('user', JSON.stringify(await response.data));
       toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
       setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
     } else {
       alert("Invalid credentials");
     }
+    setLoadingScreen(false)
   };
 
   const handleSignupClick = () => {
     navigate("/signup");
   };
-
-  const handleGoogleLoginClick = () => {
-    alert("Login with Google account is not implemented yet.");
-  };
+// Using Google Login API
+  useGoogleOneTapLogin({
+    onSuccess: credentialResponse => {
+      console.log(credentialResponse);
+    },
+    onError: () => {
+      console.log('Login Failed');
+    },
+  });
+// Login with Google API
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async tokenResponse => {
+      const googleResponse = await axios.get(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } })
+      var userInfo = await googleResponse.data
+      const login = {
+        usernameoremail: userInfo.email,
+        password: "",
+      };
+      const response = await GoogleLoginApi(login)
+      if(response.status === 200) {
+        sessionStorage.setItem('user', JSON.stringify(response.data));
+        toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
+        setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
+      }else{
+        alert("Can't Login With Google: ")
+      }
+  },
+   onError: (error) => {
+    console.log('Login Failed');
+    alert("Can't Login With Google: ",error)
+  },
+  });
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword); // Chuyển đổi trạng thái ẩn/hiện mật khẩu
@@ -63,12 +93,12 @@ const LoginPage = () => {
 
   return (
     <div className="login-page-container">
-      {loadingScreen? <LoadingScreen/>:""}
+      {loadingScreen ? <LoadingScreen /> : ""}
       <div className="brand-container">
         <img src="/images/coco.jpg" alt="Brand" className="brand-img" />
       </div>
       <div className="login-container">
-        <form className="login-form">
+        <div className="login-form">
           <p className="login-form-title">
             Welcome to Koi Transportation Service
           </p>
@@ -98,13 +128,13 @@ const LoginPage = () => {
               {/* Thay đổi icon */}
             </button>
           </div>
-          <button className="login-btn" onClick={handleLoginClick}>
+          <button className="login-btn" onClick={()=>handleLoginClick()}>
             Login
           </button>
           <div className="forgot-password-container">
             <button
               className="forgot-password-btn"
-              onClick={handleForgotPasswordClick}
+              onClick={()=>handleForgotPasswordClick()}
             >
               Forgot password?
             </button>
@@ -112,12 +142,13 @@ const LoginPage = () => {
           <div className="or-separator">
             <p>OR</p>
           </div>
-          <button className="google-login-btn" onClick={handleGoogleLoginClick}>
+          <button className="google-login-btn" onClick={()=>handleGoogleLogin()}>
             Login with Google
           </button>
+         
           <div className="to-signup-container">
             <p className="to-signup-text">Don't have an account?</p>
-            <button className="to-signup-btn" onClick={handleSignupClick}>
+            <button className="to-signup-btn" onClick={()=>handleSignupClick()}>
               Sign Up.
             </button>
           </div>
@@ -127,7 +158,7 @@ const LoginPage = () => {
               Back to Home
             </Link>
           </div>
-        </form>
+        </div>
       </div>
       <ToastContainer />
     </div>

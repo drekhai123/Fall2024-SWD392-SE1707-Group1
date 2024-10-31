@@ -1,21 +1,25 @@
 // eslint-disable-next-line
-import { localhostUrl,baseUrl,headers } from './Url';
+import { localhostUrl, baseUrl, headers } from './Url';
 import axios from 'axios';
 
-const loginUrl = baseUrl+"/Account/Login";
+const loginUrl = baseUrl + "/Account/Login";
+const googleLoginUrl = baseUrl + "/Account/GoogleLogin";
 
-export async function LoginApi(value)
-{
-    var account = null
-    await axios.post(loginUrl,value,headers)
-    .then(response => {
-        account = response.data;
-        // Save the entire account object to Local Storage
-        localStorage.setItem('user', JSON.stringify(account));
-    })
-    .catch(error => {
-        console.error(error)
-        alert('Error fetching Account data')
-    })
-    return account;
+export async function LoginApi(value) {
+    try {
+        const response = await axios.post(loginUrl, value, {headers})
+        return response
+    } catch (error) {
+        return error
+    }
 }
+
+export async function GoogleLoginApi(value) {
+    try { 
+        const response = await axios.post(googleLoginUrl,value,{headers})
+        return response
+    } catch (error) {
+        return error
+    }
+}
+

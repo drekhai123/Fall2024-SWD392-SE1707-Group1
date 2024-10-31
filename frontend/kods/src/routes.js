@@ -96,29 +96,15 @@ export const router = createBrowserRouter([
     path: "/trackingstaff",
     element: <TrackingStaff />,
   },
-<<<<<<< HEAD
   {
     path: "/orders/:id",
-    element: <ViewOrderDetail />,
+    element: <ViewOrderDetails />,
   },
   {
     path: "/orders",
     element: <ViewOrderHistory />,
   },
   {
-=======
-  // {
-  //   path: "/orders/:id",
-  //   element: <ViewOrderDetails />,
-  // },
-
-  // {
-  //   path: "/orders",
-  //   element: <ViewOrderHistory />,
-  // },
-
-  {
->>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
     path: "/staffDashBoard",
     element: <StaffDashBoard />,
   },

@@ -66,9 +66,9 @@ namespace KDOS_Web_API.Controllers
         }
         [HttpPost]
         [Route("GoogleLogin")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string UserNameOrEmail)
+        public async Task<IActionResult> GoogleLogin([FromBody] LoginDTO loginDTO)
         {
-            var accountModel = await accountRepository.Login(UserNameOrEmail); // Check account by email or username
+            var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
 
             if (accountModel != null)
             {
