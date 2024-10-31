@@ -108,6 +108,13 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Account?> VerificationMailing(Account account, Verification verification)
         {
+            // Incase of re-verification, delete the old verification
+            var verificationExist = await accountContext.Verification.FirstOrDefaultAsync(x => x.AccountId == verification.AccountId);
+            if (verificationExist!=null)
+            {
+                accountContext.Verification.Remove(verificationExist);
+                await accountContext.SaveChangesAsync();
+            }
             // Add a new verification
             await accountContext.Verification.AddAsync(verification);
             await accountContext.SaveChangesAsync();
