@@ -11,12 +11,12 @@ export default function NotFound() {
   return (
     <div className={styles.container}>
       <div className={styles.imageContainer}>
-        {[1, 2, 3].map((_, index) => {
+        {[1, 2, 3].map((index) => {
           const randomDuration = `${Math.random() * 3 + 2}s`;
           return (
             <img
               key={index}
-              style={{ animationDuration: randomDuration }}
+              style={{ animationDuration: randomDuration }} // Float random speed is more funny :>
               src="images/diedfish.png"
               alt="404"
               className={styles.image}
