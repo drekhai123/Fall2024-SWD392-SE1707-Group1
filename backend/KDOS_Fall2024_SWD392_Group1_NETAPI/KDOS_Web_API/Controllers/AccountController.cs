@@ -65,6 +65,24 @@ namespace KDOS_Web_API.Controllers
 
         }
         [HttpPost]
+        [Route("GoogleLogin")]
+        public async Task<IActionResult> GoogleLogin([FromBody] string UserNameOrEmail)
+        {
+            var accountModel = await accountRepository.Login(UserNameOrEmail); // Check account by email or username
+
+            if (accountModel != null)
+            {
+                    AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
+                    return Ok(accountDTO);
+            }
+            else
+            {
+                return NotFound("Error! Wrong Email Or Account Doesn't Exist");
+            }
+
+        }
+
+        [HttpPost]
         [Route("AddCustomer")]
         public async Task<IActionResult> AddNewCustomerAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
         {
