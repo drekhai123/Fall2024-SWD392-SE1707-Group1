@@ -364,7 +364,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           : [...prevSelected, fishProfileId] // Thêm vào danh sách nếu chưa chọn
       );
     };
-
     const handleSelectAll = (isChecked) => {
       setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
     };
@@ -383,8 +382,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
               <th className="label-table">Gender</th>
               <th className="label-table">Note</th>
               <th className="label-table">Action</th>
-
-
               {/* <th className="label-table">Price (VND/Kg)</th> */}
               {/* <th className="label-table">Action</th> */}
             </tr>
@@ -755,4 +752,5 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       </div>
     );
   }
+  return FishTable()
 }
