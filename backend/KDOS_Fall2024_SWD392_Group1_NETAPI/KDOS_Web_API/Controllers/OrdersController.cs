@@ -172,7 +172,8 @@ namespace KDOS_Web_API.Controllers
             // Retrieve the order by ID
             
                 // Update the order status
-               var orderModel = mapper.Map<Orders>(orderStatus);   
+               var orderModel = mapper.Map<Orders>(orderStatus);
+                orderModel.UpdatedAt = DateTime.Now;
                orderModel = await orderRepository.UpdateOnlyOrderStatus(orderId, orderModel);
 
                 // If the orderModel is still null after the update, something went wrong
@@ -182,7 +183,7 @@ namespace KDOS_Web_API.Controllers
                 }
 
             // Map the updated order back to a DTO for the response
-            var updatedOrderDto = mapper.Map<TransportDTO>(orderModel);
+            var updatedOrderDto = mapper.Map<OrdersDTO>(orderModel);
 
             // Return the updated order with a 200 OK status
             return Ok(updatedOrderDto);

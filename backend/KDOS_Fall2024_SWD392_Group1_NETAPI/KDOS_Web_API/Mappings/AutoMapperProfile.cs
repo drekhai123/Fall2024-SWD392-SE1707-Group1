@@ -58,8 +58,6 @@ namespace KDOS_Web_API.Mappings
                 .ForMember(dest => dest.Time, opt => opt.Ignore()).ReverseMap();
             CreateMap<LogTransport, LogTransportDTO>().ReverseMap();
             // Order
-            CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
-                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()).ReverseMap();
             CreateMap<Orders, OrdersDTO>().ReverseMap();
             CreateMap<Orders, UpdateOrderDTO>().ReverseMap();
             CreateMap<Orders, AddNewOrderDTO>()
@@ -67,10 +65,11 @@ namespace KDOS_Web_API.Mappings
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.DeliveryStatus, opt => opt.Ignore())
             .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore()).ReverseMap();
+            CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
+             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()).ReverseMap();
             // OrderDetails
             CreateMap<OrderDetails, OrderDetailsDTO>().ReverseMap();
             CreateMap<OrderDetails, AddNewOrderDetailsDTO>().ReverseMap();
-            
             // HealthUpdate
             CreateMap<HealthStatus, HealthStatusDTO>().ReverseMap();
             CreateMap<HealthStatus, UpdateHealthStatusDTO>().ReverseMap();
