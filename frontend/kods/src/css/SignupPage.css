@@ -11,7 +11,7 @@
 
 .signup-page-container .brand-container {
   height: 100%;
-  width: 150%; /* Đảm bảo kích thước phù hợp với nhu cầu */
+  width: 60%; /* Đảm bảo kích thước phù hợp với nhu cầu */
   display: flex;
   align-items: stretch;
 }
@@ -110,16 +110,22 @@
   width: 100%;
 }
 
-.icon-container {
+.toggle-password-btn {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
   position: absolute;
-  right: 10px;
+  right: 40px; /* Adjusted to create space between the button and the tooltip icon */
   top: 50%;
   transform: translateY(-50%);
 }
 
 .tooltip-icon {
-  cursor: pointer;
-  margin-left: 8px;
+  position: absolute;
+  right: 10px; /* Position it to the right of the toggle button */
+  top: 50%;
+  transform: translateY(-50%);
   color: white;
   background-color: #e50914;
   padding: 2px 6px;
@@ -137,14 +143,15 @@
   padding: 5px;
   position: absolute;
   z-index: 1;
-  bottom: 125%; /* Đặt tooltip phía trên */
-  right: 0; /* Căn chỉnh tooltip sang phải để không bị tràn ra ngoài */
-  margin-right: 0; /* Đảm bảo không có khoảng trắng không cần thiết */
+  bottom: 125%;
+  right: 0;
+  margin-right: 0;
   opacity: 0;
   transition: opacity 0.3s;
+  visibility: hidden; /* Initially hidden */
 }
 
-.icon-container:hover .tooltip-text {
+.tooltip-icon:hover + .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
@@ -155,4 +162,7 @@
   margin-top: 5px;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.signup-page-container input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }

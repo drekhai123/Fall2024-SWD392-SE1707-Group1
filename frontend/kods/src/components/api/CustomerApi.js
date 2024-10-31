@@ -35,14 +35,14 @@ export async function GetCustomerById(id) {
   }
 }
 
-export async function UpdateCustomer(id, Customer) {
+export async function UpdateCustomer(id, customerData) {
   try {
     const response = await axios.put(
       `${getAllCustomerURL}/${id}`,
-      Customer,
+      customerData,
       headers
     );
-    return response;
+    return await response.data;
   } catch (error) {
     console.error("Error updating Customer:", error);
     throw error;

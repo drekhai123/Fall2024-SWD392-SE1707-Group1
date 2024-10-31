@@ -1,12 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
-import { InputField, SelectField } from "../../form";
+import { Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { InputField } from "../../form";
+import { UpdateCustomer } from "../../api/CustomerApi";
 
 const CustomerForm = ({ customerData, onSubmit, methods }) => {
-  const [customer, setCustomer] = useState(customerData)
+  const [customer, setCustomer] = useState(customerData);
+  const [anchorEl, setAnchorEl] = useState(null);
+
   useEffect(() => {
-    setCustomer(customerData)
-  }, [customerData])
+    setCustomer(customerData);
+  }, [customerData]);
+
+  const handleChange = (field) => (e) => {
+    let value = e.target.value;
+
+    // Automatically prepend '+84 ' if the phone number starts with '84'
+    if (field === "phoneNumber" && value.startsWith('84') && !value.startsWith('+84 ')) {
+      value = `+84 ${value.slice(2)}`;
+    }
+
+    setCustomer((prev) => {
+      const updatedCustomer = { ...prev, [field]: value };
+      console.log('Updated Customer:', updatedCustomer);
+      return updatedCustomer;
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Submitting Customer:', customer);
+    try {
+      const updatedCustomer = await UpdateCustomer(customer.customerId, {
+        customerName: customer.customerName,
+        dob: customer.dob,
+        gender: customer.gender,
+        phoneNumber: customer.phoneNumber,
+        address: customer.address,
+      });
+      console.log('Customer updated successfully:', updatedCustomer);
+      onSubmit(updatedCustomer);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating customer:', error);
+    }
+  };
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // const handleMenuClose = (value) => {
+  //   setCustomer((prev) => ({ ...prev, gender: value }));
+  //   setAnchorEl(null);
+  // };
 
   return (
     <>
@@ -18,60 +64,46 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
         <div className="border-b border-gray-300 my-4"></div>
       </div>
       <div className="max-w-5xl">
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Customer Name Field */}
           <div>
             <label className="block mb-2">Customer Name</label>
             <InputField
               name="customerName"
-              label="Customer Name"
               fullWidth
-              rules={{ required: "Customer name is required" }}
               placeholder="Enter your customer name"
-              defaultValue={customer?.customerName || "Name"}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, customerName: e.target.value }))
-              }
+              value={customer?.customerName || ""}
+              onChange={handleChange("customerName")}
             />
           </div>
 
-          {/* Age Field */}
+          {/* Date of Birth Field */}
           <div>
-            <label className="block mb-2">Age</label>
+            <label className="block mb-2">Date of Birth</label>
             <InputField
-              name="age"
-              label="Age"
-              type="number"
+              name="dob"
+              type="date"
               fullWidth
-              rules={{
-                required: "Age is required",
-                min: { value: 1, message: "Age must be at least 1" },
-              }}
-              placeholder="Enter your age"
-              defaultValue={customer?.age || "0"}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, age: e.target.value }))
-              }
+              placeholder="Enter your date of birth"
+              value={customer?.dob || ""}
+              onChange={handleChange("dob")}
             />
           </div>
 
-          {/* Gender Field */}
+          {/* Gender Field as Select Dropdown */}
           <div>
-            <SelectField
-              name="gender"
-              label="Gender"
-              fullWidth
-              rules={{ required: "Gender is required" }}
-              options={[
-                { value: "Male", label: "Male" },
-                { value: "Female", label: "Female" },
-                { value: "Others", label: "Others" },
-              ]}
-              value={customer?.gender || "Others"}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, gender: e.target.value }))
-              }
-            />
+            <FormControl fullWidth>
+            <label className="block mb-2">Gender</label>
+              <Select
+                value={customer?.gender || ""}
+                onChange={handleChange("gender")}
+                fullWidth
+              >
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Others">Others</MenuItem>
+              </Select>
+            </FormControl>
           </div>
 
           {/* Phone Number Field */}
@@ -79,20 +111,17 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Phone Number</label>
             <InputField
               name="phoneNumber"
-              label="Phone Number"
+              type="tel"
               fullWidth
               rules={{
-                required: "Phone number is required",
                 pattern: {
-                  value: /^[0-9]{10,11}$/,
-                  message: "Enter a valid phone number",
+                  value: /^(\+?0\d{9}|\+?84\d{9})$/,
+                  message: "Enter a valid phone number starting with 0 or +84 and having 10 or 11 digits",
                 },
               }}
               placeholder="Enter your phone number"
-              defaultValue={customer?.phoneNumber || "0"}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, phoneNumber: e.target.value }))
-              }
+              value={customer?.phoneNumber || ""}
+              onChange={handleChange("phoneNumber")}
             />
           </div>
 
@@ -101,38 +130,11 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
             <label className="block mb-2">Address</label>
             <InputField
               name="address"
-              label="Address"
               fullWidth
               rules={{ required: "Address is required" }}
               placeholder="Enter your address"
-              defaultValue={customer?.address || "Address"}
-              onChange={(e) =>
-                setCustomer((prev) => ({ ...prev, address: e.target.value }))
-              }
-            />
-          </div>
-
-          {/* Created At Field (Read-Only) */}
-          <div>
-            <label className="block mb-2">Created At</label>
-            <InputField
-              name="createdAt"
-              label="Created At"
-              fullWidth
-              readOnly
-              defaultValue={customer?.createdAt || "Date"}
-            />
-          </div>
-
-          {/* Updated At Field (Read-Only) */}
-          <div>
-            <label className="block mb-2">Updated At</label>
-            <InputField
-              name="updatedAt"
-              label="Updated At"
-              fullWidth
-              readOnly
-              defaultValue={customer?.updatedAt || "Date"}
+              value={customer?.address || ""}
+              onChange={handleChange("address")}
             />
           </div>
 
@@ -147,6 +149,5 @@ const CustomerForm = ({ customerData, onSubmit, methods }) => {
     </>
   );
 };
-
 
 export default CustomerForm;
