@@ -1,39 +1,33 @@
 import React from 'react';
-import { Box, Button, Container, Typography } from '@mui/material';
-import { Home as HomeIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import styles from '../../css/NotFound.module.css';
 
 export default function NotFound() {
   const navigate = useNavigate();
+  const goBackHome = () => {
+    navigate('/');
+  };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: (theme) => theme.palette.background.default,
-      }}
-    >
-      <Container maxWidth="md">
-        <Box textAlign="center">
-          <Typography variant="h1" color="primary" gutterBottom>
-            404
-          </Typography>
-          <Typography variant="h5" color="text.secondary" paragraph>
-            Sorry, the page you are looking for does not exist.
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<HomeIcon />}
-            onClick={() => navigate('/')}
-            sx={{ mt: 3 }}
-          >
-            Go to Homepage
-          </Button>
-        </Box>
-      </Container>
-    </Box>
+    <div className={styles.container}>
+      <div className={styles.imageContainer}>
+        {[1, 2, 3].map((_, index) => {
+          const randomDuration = `${Math.random() * 3 + 2}s`;
+          return (
+            <img
+              key={index}
+              style={{ animationDuration: randomDuration }}
+              src="images/diedfish.png"
+              alt="404"
+              className={styles.image}
+            />
+          );
+        })}
+      </div>
+      <p className={styles.text}>Oops! Page not found.</p>
+      <button className={styles.homeButton} onClick={goBackHome}>
+        Back to Homepage
+      </button>
+    </div>
   );
 }

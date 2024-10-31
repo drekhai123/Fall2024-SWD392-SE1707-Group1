@@ -1,0 +1,55 @@
+/* NotFound.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+.imageContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.image {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  animation: float ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.text {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.homeButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.homeButton:hover {
+  background-color: #0056b3;
+}
