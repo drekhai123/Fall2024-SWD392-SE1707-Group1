@@ -68,10 +68,10 @@ export const router = createBrowserRouter([
     path: "/orderhistory",
     element: <OrderHistoryPage />,
   },
-  {
-    path: "/feedback",
-    element: <Feedback />,
-  },
+  // {
+  //   path: "/feedback",
+  //   element: <Feedback />,
+  // },
   {
     path: "/orderform",
     element: <PlaceOrder />,
@@ -85,9 +85,28 @@ export const router = createBrowserRouter([
     element: <FeedbackList />,
   },
   {
+    path: "/ordertracking",
+    element: (
+      // <PrivateRoute>
+        <OrderStatusTracking />
+      // </PrivateRoute>
+    ), // Wrapped with PrivateRoute
+  },
+  {
     path: "/trackingstaff",
     element: <TrackingStaff />,
   },
+<<<<<<< HEAD
+  {
+    path: "/orders/:id",
+    element: <ViewOrderDetail />,
+  },
+  {
+    path: "/orders",
+    element: <ViewOrderHistory />,
+  },
+  {
+=======
   // {
   //   path: "/orders/:id",
   //   element: <ViewOrderDetails />,
@@ -99,6 +118,7 @@ export const router = createBrowserRouter([
   // },
 
   {
+>>>>>>> 833a45ea05f73979b94c8f03ca952b3d79729523
     path: "/staffDashBoard",
     element: <StaffDashBoard />,
   },

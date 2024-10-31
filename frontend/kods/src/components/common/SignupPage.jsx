@@ -1,11 +1,13 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/SignupPage.css";
+
 import { AddNewAccount, VerifyAccount } from "../api/AccountApi";
 import { AddNewCustomer } from "../api/CustomerApi";
 import LoadingScreen from "../../utils/LoadingScreen";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +22,9 @@ const SignupPage = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [registerEmail, setRegisterEmail] = useState(false);
+
   const [loadingScreen, setLoadingScreen] = useState(false);
+
   const [emailError, setEmailError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   // const [confirmPasswordError, setConfirmPasswordError] = useState(false);
@@ -117,7 +121,9 @@ const SignupPage = () => {
   };
 
   const handleSignupClick = async (e) => {
+
     setLoadingScreen(true);
+
     e.preventDefault();
     setEmailError(!email);
     setUsernameError(!username);
@@ -174,6 +180,7 @@ const SignupPage = () => {
             };
             await AddNewCustomer(data);
             navigate("/email-confirmation-waiting");
+
           }
         }
       }
@@ -194,7 +201,9 @@ const SignupPage = () => {
 
   return (
     <div className="signup-page-container">
+
       {loadingScreen ? <LoadingScreen /> : ""}
+
       <div className="brand-container">
         <img src="/images/coco.jpg" alt="Brand" className="brand-img" />
       </div>
@@ -296,7 +305,7 @@ const SignupPage = () => {
               </option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Others">Others</option>
+              <option value="Others">Other</option>
             </select>
             {genderError && <p className="error-text">Gender is required</p>}
           </div>
@@ -310,7 +319,9 @@ const SignupPage = () => {
               value={phoneNumber}
               onChange={handleChangePhoneNumber}
             />
+
             {phoneError && <p className="error-text">Phone number is required</p>}
+
           </div>
 
           {/* Address field */}

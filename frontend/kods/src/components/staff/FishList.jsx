@@ -35,7 +35,6 @@ export function FishList() {
   };
 
   const handleConfirm = (confirmationData) => {
-    console.log("Fish edited:", confirmationData);
   };
 
   return (

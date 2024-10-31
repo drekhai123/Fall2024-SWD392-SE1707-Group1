@@ -1,31 +1,26 @@
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TransportAssignStaffDialog } from "./TransportAssignStaffDialog";
 import { Button } from "primereact/button";
 
-export function Transports() {
-  const transports = [
-    {
-      transportId: 1,
-      orderId: 1,
-      status: "Pending",
-      delivery_staff: "John Doe",
-    },
-    {
-      transportId: 2,
-      orderId: 2,
-      status: "Pending",
-      delivery_staff: "Jane Doe",
-    },
-    {
-      transportId: 3,
-      orderId: 3,
-      status: "Pending",
-      delivery_staff: "John Smith",
-    },
-  ];
+import axios from "axios";
+import { baseUrl } from "../api/Url";
 
+export function Transports() {
+  const [transports, setTransports] = useState([])
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/Orders`);
+        setTransports(response.data.filter(data => data.deliveryStatus === 'PROCESSING'));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchOrders();
+  }, []);
   const [selectedTranport, setSelectedTransport] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -35,7 +30,6 @@ export function Transports() {
   };
 
   const handleConfirm = (confirmationData) => {
-    console.log("Transport confirmed:", confirmationData);
   };
 
   return (
@@ -48,7 +42,7 @@ export function Transports() {
       >
         <Column field="transportId" header="Transport Id"></Column>
         <Column field="orderId" header="Order Id"></Column>
-        <Column field="status" header="Status"></Column>
+        <Column field="deliveryStatus" header="Status"></Column>
         <Column field="delivery_staff" header="Delivery Staff"></Column>
         <Column
           field="transportId"
