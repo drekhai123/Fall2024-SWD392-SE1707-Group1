@@ -18,8 +18,8 @@ export async function AddNewCustomer(data) {
   await axios.post(getAllCustomerURL,data,headers)
   .then(response =>{customer = response.data;})
   .catch(error => {
-    console.error(error)
-    alert('Error fetching Customer data')
+    console.error("Error fetching Customer:", error);
+    // alert('Error fetching Customer data')
   })
 return customer
 }
