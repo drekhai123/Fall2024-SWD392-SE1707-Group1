@@ -56,6 +56,7 @@ const LoginPage = () => {
 // Login with Google API
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async tokenResponse => {
+      setLoadingScreen(true)
       const googleResponse = await axios.get(
           'https://www.googleapis.com/oauth2/v3/userinfo',
           { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } })
@@ -72,6 +73,7 @@ const LoginPage = () => {
       }else{
         alert("Can't Login With Google: ")
       }
+      setLoadingScreen(false)
   },
    onError: (error) => {
     console.log('Login Failed');
