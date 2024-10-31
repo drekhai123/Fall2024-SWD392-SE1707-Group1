@@ -68,10 +68,10 @@ export const router = createBrowserRouter([
     path: "/orderhistory",
     element: <OrderHistoryPage />,
   },
-  // {
-  //   path: "/feedback",
-  //   element: <Feedback />,
-  // },
+  {
+    path: "/feedback",
+    element: <Feedback />,
+  },
   {
     path: "/orderform",
     element: <PlaceOrder />,
