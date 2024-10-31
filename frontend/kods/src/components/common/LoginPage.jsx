@@ -145,7 +145,7 @@ const LoginPage = () => {
           <button className="google-login-btn" onClick={()=>handleGoogleLogin()}>
             Login with Google
           </button>
-         
+
           <div className="to-signup-container">
             <p className="to-signup-text">Don't have an account?</p>
             <button className="to-signup-btn" onClick={()=>handleSignupClick()}>

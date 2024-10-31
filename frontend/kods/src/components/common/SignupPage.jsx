@@ -1,6 +1,9 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/SignupPage.css";
+import "../../css/LoginPage.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { AddNewAccount, VerifyAccount } from "../api/AccountApi";
 import { AddNewCustomer } from "../api/CustomerApi";
@@ -20,7 +23,7 @@ const SignupPage = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [name, setName] = useState("");
-  const [age, setAge] = useState("");
+  const [dob, setDob] = useState(null);
   const [registerEmail, setRegisterEmail] = useState(false);
 
   const [loadingScreen, setLoadingScreen] = useState(false);
@@ -28,12 +31,15 @@ const SignupPage = () => {
   const [emailError, setEmailError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   // const [confirmPasswordError, setConfirmPasswordError] = useState(false);
-  const [setConfirmPasswordError] = useState(false);
+  const [confirmPasswordError,setConfirmPasswordError] = useState(false);
   const [genderError, setGenderError] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [nameError, setNameError] = useState(false);
-  const [ageError, setAgeError] = useState(false);
+  const [dobError, setDobError] = useState(false);
   const [passwordMismatchError, setPasswordMismatchError] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -55,8 +61,8 @@ const SignupPage = () => {
   };
 
   const validatePhoneNumber = (phone) => {
-    const phoneRegex = /^(0\d{9}|84\d{8})$/;
-    return phoneRegex.test(phone);
+    const phoneRegex = /^(0\d{9}|84\d{9})$/; // Starts with 0 and has 10 digits or starts with 84 and has 11 digits
+    return phoneRegex.test(phone) && (phone.startsWith('0') || (phone.startsWith('84') && phone.length === 11));
   };
 
   const handleChangePassword = (e) => {
@@ -74,9 +80,15 @@ const SignupPage = () => {
   };
 
   const handleChangePhoneNumber = (e) => {
-    const newPhoneNumber = e.target.value;
+    let newPhoneNumber = e.target.value;
+
+    // Automatically prepend '+' if the number starts with '84'
+    if (newPhoneNumber.startsWith('84') && !newPhoneNumber.startsWith('+84 ')) {
+      newPhoneNumber = `+${newPhoneNumber}`;
+    }
+
     setPhoneNumber(newPhoneNumber);
-    setPhoneError(!newPhoneNumber || !validatePhoneNumber(newPhoneNumber));
+    setPhoneError(!newPhoneNumber || !validatePhoneNumber(newPhoneNumber.replace('+',  '')));
   };
 
   const validateEmail = (email) => {
@@ -114,10 +126,10 @@ const SignupPage = () => {
     setNameError(!newName);
   };
 
-  const handleChangeAge = (e) => {
-    const newAge = e.target.value;
-    setAge(newAge);
-    setAgeError(!newAge);
+  const handleChangeDob = (e) => {
+    const newDob = e.target.value;
+    setDob(newDob);
+    setDobError(!newDob);
   };
 
   const handleSignupClick = async (e) => {
@@ -131,7 +143,7 @@ const SignupPage = () => {
     setGenderError(!gender);
     setAddressError(!address);
     setNameError(!name);
-    setAgeError(!age);
+    setDobError(!dob);
     setPasswordMismatchError(password !== confirmPassword);
 
     if (passwordMismatchError) {
@@ -148,13 +160,14 @@ const SignupPage = () => {
       phoneNumber,
       address,
       name,
-      age
+      dob
     }));
 
     const data = {
       email: email,
       userName: username,
       password: password,
+      dob: dob,
     };
 
     try {
@@ -170,7 +183,7 @@ const SignupPage = () => {
             // alert("Check Your Email For Verification Code");
             const data = {
               customerName: name,
-              age: age,
+              dob: dob,
               accountId: res.data.accountId,
               gender: gender,
               phoneNumber: phoneNumber,
@@ -197,6 +210,10 @@ const SignupPage = () => {
 
   const handleLoginClick = () => {
     navigate("/login");
+  };
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -240,13 +257,20 @@ const SignupPage = () => {
           {/* Password field */}
           <div className="input-wrapper">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               className="password-input"
               placeholder="Enter Your Password"
               value={password}
               onChange={handleChangePassword}
             />
-            <div className="icon-container">
+            <div className="icon-container  ">
+              <button
+                type="button"
+                className="toggle-password-btn"
+                onClick={toggleShowPassword}
+              >
+                <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+              </button>
               <span className="tooltip-icon">?</span>
               <span className="tooltip-text">
                 Password must be at least 8 characters long, include 1 uppercase, 1 lowercase, 1 number, and 1 special character.
@@ -258,7 +282,7 @@ const SignupPage = () => {
           {/* Confirm Password field */}
           <div className="input-wrapper">
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               className="confirm-password-input"
               placeholder="Confirm Your Password"
               value={confirmPassword}
@@ -281,16 +305,20 @@ const SignupPage = () => {
             {nameError && <p className="error-text">Name is required</p>}
           </div>
 
-          {/* Age field */}
+          {/* Date of Birth field */}
           <div className="input-wrapper">
-            <input
-              type="number"
+            <DatePicker
+              selected={dob}
+              onChange={(date) => setDob(date)}
+              dateFormat="dd/MM/yyyy"
+              showMonthDropdown
+              showYearDropdown
+              yearDropdownItemNumber={100}
+              scrollableYearDropdown
+              minDate={new Date(1924, 0, 1)}
+              placeholderText="Enter Your Date of Birth"
               className="address-input"
-              placeholder="Enter Your Age"
-              value={age}
-              onChange={handleChangeAge}
             />
-            {ageError && <p className="error-text">Age is required</p>}
           </div>
 
           {/* Gender field */}

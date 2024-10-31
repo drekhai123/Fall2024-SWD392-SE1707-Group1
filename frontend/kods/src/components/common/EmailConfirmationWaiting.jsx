@@ -36,7 +36,7 @@ export default function EmailConfirmationWaiting() {
 
     if (countdown === 0) {
       setIsResendDisabled(false);
-      setCountdown(5);
+      setCountdown(60);
     }
 
     return () => clearInterval(timer);

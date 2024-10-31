@@ -49,7 +49,7 @@ const UserProfilePage = () => {
       setLoadingScreen(false)
     };
     fetchUserData();
-  }, [userId]); // Update dependency to userId
+  }, []); // Update dependency to userId
 
   const onSubmitProfile = async (data) => {
     try {
@@ -74,7 +74,11 @@ const UserProfilePage = () => {
 
   const onSubmitCustomer = async (data) => {
     try {
-      const response = await UpdateCustomer(userId, data);
+      // Retrieve customerId from the user object
+      const customerId = user.customer.customerId;
+
+      // Use customerId in the UpdateCustomer API call
+      const response = await UpdateCustomer(customerId, data);
       setCustomerData(response.data);
       enqueueSnackbar("Customer information updated successfully!", {
         variant: "success",
