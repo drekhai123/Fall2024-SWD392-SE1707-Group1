@@ -6,6 +6,10 @@ using KDOS_Web_API.Services.MailingService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity; // PasswordHasher<Account>
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 //Implimenting Password Hashing
 
@@ -15,6 +19,7 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly IConfiguration configuration;
         private readonly IAccountRepository accountRepository;
         private readonly IMapper mapper;
         private readonly IPasswordHasher<Account> passwordHasher;
@@ -22,13 +27,15 @@ namespace KDOS_Web_API.Controllers
 
         // Adding in the Repository Inject
         // Adding AutoMApper Service
-        public AccountController(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher, IMailingService mailingService)
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IPasswordHasher<Account> passwordHasher, IMailingService mailingService, IConfiguration configuration)
         {
             this.accountRepository = accountRepository;
             this.mapper = mapper;
             this.passwordHasher = passwordHasher;
             this.mailingService = mailingService;
+            this.configuration = configuration;
         }
+        [Authorize]
         [HttpGet]
         // Async Task!!! Async Task(IActionResult) -> Await... tolistAsync
         public async Task<IActionResult> GetALlAcount()
@@ -44,26 +51,27 @@ namespace KDOS_Web_API.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
-           
-            if(accountModel != null)
+            if (loginDTO == null)
             {
-                var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel,accountModel.Password, loginDTO.Password); //Validate the hased password vs the password from FE, Return 1 if correct, 0 if failed
-                if (verifyPassword == PasswordVerificationResult.Success) // =1 meaning success
-                {
-                    AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
-                    return Ok(accountDTO);
-                }
-                else
-                {
-                    return Unauthorized("Error! Wrong Email/UserName or Password");
-                }
-            }
-            else
-            {
-                return NotFound("Error! Wrong Email/UserName or Password");
+                return BadRequest("Invalid login request.");
             }
 
+            var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
+
+            if (accountModel == null)
+            {
+                return Unauthorized("Error! Wrong Email/UserName or Password");
+            }
+
+            var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel, accountModel.Password, loginDTO.Password); // Validate the hashed password
+            if (verifyPassword == PasswordVerificationResult.Success) // Password is correct
+            {
+                AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
+                var token = IssueToken(accountModel); // Generate a JWT token
+                return Ok(new { account = accountDTO, token = token });
+            }
+
+            return Unauthorized("Error! Wrong Email/UserName or Password");
         }
         [HttpPost]
         [Route("GoogleLogin")]
@@ -74,7 +82,8 @@ namespace KDOS_Web_API.Controllers
             if (accountModel != null)
             {
                     AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
-                    return Ok(accountDTO);
+                    var token = IssueToken(accountModel); // Generate a JWT token
+                    return Ok(new { account = accountDTO, token = token });
             }
             else
             {
@@ -259,6 +268,7 @@ namespace KDOS_Web_API.Controllers
             }
         }
         [HttpPut]
+        [Authorize]
         [Route("ban/{accountId}")]
         public async Task<IActionResult> BanAccount([FromRoute] int accountId, [FromBody] UpdateAccountStatus updateAccountStatus)
         {
@@ -276,6 +286,7 @@ namespace KDOS_Web_API.Controllers
             }
         }
         [HttpPut]
+        [Authorize]
         [Route("avatar/{accountId}")]
         public async Task<IActionResult> UpdateAccountAvatar([FromRoute] int accountId, [FromBody] UpdateAccountAvatarDTO updateAccountAvatarDTO)
         {
@@ -293,6 +304,7 @@ namespace KDOS_Web_API.Controllers
             }
         }
         [HttpDelete]
+        [Authorize]
         [Route("{accountId}")]
         public async Task<IActionResult> DeleteAccountById([FromRoute] int accountId)
         {
@@ -306,6 +318,39 @@ namespace KDOS_Web_API.Controllers
                 var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
+        }
+        // Private method to generate a JWT token using the user's data.
+        private string IssueToken(Account account)
+        {
+            // Creates a new symmetric security key from the JWT key specified in the app configuration.
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+            // Sets up the signing credentials using the above security key and specifying the HMAC SHA256 algorithm.
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            // Defines a set of claims to be included in the token.
+            var claims = new List<Claim>
+            {
+                // Custom claim using the user's ID.
+                new Claim("Myapp_User_Id", account.AccountId.ToString()),
+                // Standard claim for user identifier, using username.
+                new Claim(ClaimTypes.NameIdentifier, account.UserName),
+                // Standard claim for user's email.
+                new Claim(ClaimTypes.Email, account.Email),
+                // Standard JWT claim for subject, using user ID.
+                new Claim(JwtRegisteredClaimNames.Sub, account.AccountId.ToString())
+            };
+            // Adds a role claim for each role associated with the user.
+
+            //account.Roles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
+
+            // Creates a new JWT token with specified parameters including issuer, audience, claims, expiration time, and signing credentials.
+            var token = new JwtSecurityToken(
+                issuer: configuration["Jwt:Issuer"],
+                audience: configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(1), // Token expiration set to 1 hour from the current time.
+                signingCredentials: credentials);
+            // Serializes the JWT token to a string and returns it.
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
     
