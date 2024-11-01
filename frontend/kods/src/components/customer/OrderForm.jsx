@@ -588,10 +588,14 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                     </div>
 
                     <div style={{ marginTop: '10px' }}>
-                      <p className="label-total">
-                        Shipping fee: {calculateShippingFee().toLocaleString('vi-VN') || 0} VND
-                      </p>
-                      <p className="label-total">VAT (3%): {calculateVAT() || 0} VND</p>
+                      <div className="fee-line">
+                        <span className="fee-label">Shipping fee:</span>
+                        <span className="fee-amount">{calculateShippingFee().toLocaleString('vi-VN') || 0} VND</span>
+                      </div>
+                      <div className="fee-line">
+                        <span className="fee-label">VAT (3%):</span>
+                        <span className="fee-amount">{calculateVAT() || 0} VND</span>
+                      </div>
                     </div>
                   </div>
 
