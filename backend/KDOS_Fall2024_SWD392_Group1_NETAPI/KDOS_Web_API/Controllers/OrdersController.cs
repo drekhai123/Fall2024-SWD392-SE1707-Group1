@@ -5,11 +5,13 @@ using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using KDOS_Web_API.Models.Enum;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderRepository orderRepository;
