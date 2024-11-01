@@ -7,6 +7,7 @@ namespace KDOS_Web_API.Repositories
         Task<Payment> CreatePayment(Payment transaction);
         Task<Payment> GetPaymentById(int id);
         Task<List<Payment>> GetAllPayments();
-        Task UpdatePayment(Payment transaction);
+        Task UpdatePayment(int id, Payment transaction);
+        Task LogResponse(ResponsePayment response); 
     }
 }
