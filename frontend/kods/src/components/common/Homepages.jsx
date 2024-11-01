@@ -4,6 +4,7 @@ import Blogcarousel from './blogcarousel'
 import "../../css/Homepages.css"
 import Footer from "./footer";
 import CardHeader from "./cardHeader";
+import { GetAllAccount } from "../api/AccountApi";
 export default function Homepage() {
   const rowsRef = useRef([]);
   const imageList = [
@@ -11,6 +12,17 @@ export default function Homepage() {
     "/images/homepage2.png",
     "/images/homepage3.png"
   ];
+
+  useEffect(()=>{
+    const getAllAccount = async ()=>{
+      const token = sessionStorage.getItem("token")
+      if(token){
+        var response = await GetAllAccount()
+        console.log(response);
+      }
+    }
+    getAllAccount()
+  },[])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
