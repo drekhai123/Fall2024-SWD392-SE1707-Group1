@@ -243,6 +243,7 @@
   .layout-total {
     margin: 32px auto 0 auto; 
     width: 50%; 
+    padding: 0;
   }
 
   .popup {
@@ -420,4 +421,30 @@
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.fee-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 0;
+  padding: 0;
+  width: 100%;
+}
+
+.fee-label {
+  color: black;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
+}
+
+.fee-amount {
+  color: #28a745;
+  margin-left: auto;
+}
+
+.fee-amount::before {
+  content: "+";
+  margin-right: 4px;
 }
