@@ -68,7 +68,7 @@ const LoginPage = () => {
       const response = await GoogleLoginApi(login)
       if(response.status === 200) {
         sessionStorage.setItem('user', JSON.stringify(response.data.account));
-        sessionStorage.setItem('token', JSON.stringify(response.data.token));
+        sessionStorage.setItem('token', response.data.token);
         toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
         setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
       }else{

@@ -11,6 +11,7 @@ export default function Navbar() {
   const logout = () => {
     googleLogout()
     sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
     toast.success("Logged out successfully!");
     navigate('/');
     window.location.reload();

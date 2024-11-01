@@ -19,13 +19,14 @@ export async function GetAllAccount() {
     const response = await axios.get(`${baseAccount}`, 
       {
         headers:{
+          ...headers,
           'Authorization': `Bearer ${token}`
         }
       });
     return response;
   } catch (error) {
-    console.error("Error fetching Account:", error);
-    throw error;
+    alert("Error fetching Account:", error);
+    console.log(error)
   }
 }
 
