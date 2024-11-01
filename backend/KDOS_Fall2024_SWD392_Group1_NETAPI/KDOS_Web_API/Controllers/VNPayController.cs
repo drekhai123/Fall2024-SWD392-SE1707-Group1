@@ -1,9 +1,12 @@
-﻿using KDOS_Web_API.Services.VNPay;
+﻿using AutoMapper;
+using KDOS_Web_API.Models.Domains;
+using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
-using System.Web;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace KDOS_Web_API.Controllers
 {
@@ -11,85 +14,112 @@ namespace KDOS_Web_API.Controllers
     [ApiController]
     public class VNPayController : ControllerBase
     {
-        private const string VnPayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // Replace with production URL
-        private const string VnPayMerchantId = "X2VM8SWR"; // Your VNPAY merchant ID
-        private readonly string vnp_HashSecret = "Z7XFKBO2UR0V4GJ8VTGMBXJMP4G4IX0X"; // Get this from your configuration
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IMapper mapper;
 
-        [HttpGet]
-        public IActionResult Index()
+
+        public VNPayController(IPaymentRepository paymentRepository, IMapper mapper)
         {
-            return Ok();
+            this._paymentRepository = paymentRepository;
+            this.mapper = mapper;
         }
 
-        [HttpGet("payment/{amount}&{infor}&{orderinfor}")]
-        public IActionResult Payment(string amount, string infor, string orderinfor)
+        // POST: api/Payments/Create
+        [HttpPost("Create")]
+        public async Task<IActionResult> CreatePayment([FromBody] AddNewPaymentDTO addNewPayment)
         {
-            // Get client's IP address
-            var clientIPAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
-            PayLib pay = new PayLib();
-
-            pay.AddRequestData("vnp_Version", "2.1.0");
-            pay.AddRequestData("vnp_Command", "pay");
-            pay.AddRequestData("vnp_TmnCode", VnPayMerchantId);
-            pay.AddRequestData("vnp_Amount", (Convert.ToDecimal(amount) * 100).ToString()); // Ensure amount is in the correct format
-            pay.AddRequestData("vnp_BankCode", "");
-            pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
-            pay.AddRequestData("vnp_CurrCode", "VND");
-            pay.AddRequestData("vnp_IpAddr", clientIPAddress);
-            pay.AddRequestData("vnp_Locale", "vn");
-            pay.AddRequestData("vnp_OrderInfo", infor);
-            pay.AddRequestData("vnp_OrderType", "other");
-            pay.AddRequestData("vnp_ReturnUrl", "https://localhost:5001/api/vnpay/paymentconfirm"); // Update with your actual return URL
-            pay.AddRequestData("vnp_TxnRef", orderinfor);
-
-            string paymentUrl = pay.CreateRequestUrl(VnPayUrl, vnp_HashSecret);
-            return Redirect(paymentUrl);
-        }
-
-        [HttpGet("paymentconfirm")]
-        public IActionResult PaymentConfirm()
-        {
-            if (Request.QueryString.HasValue)
+            if (addNewPayment == null || addNewPayment.Amount <= 0)
             {
-                var queryString = Request.QueryString.Value;
-                var json = HttpUtility.ParseQueryString(queryString);
+                return BadRequest("Invalid payment information provided.");
+            }
 
-                long orderId = Convert.ToInt64(json["vnp_TxnRef"]);
-                string orderInfo = json["vnp_OrderInfo"];
-                long vnpayTranId = Convert.ToInt64(json["vnp_TransactionNo"]);
-                string vnp_ResponseCode = json["vnp_ResponseCode"];
-                string vnp_SecureHash = json["vnp_SecureHash"];
-                var pos = queryString.IndexOf("&vnp_SecureHash");
+            var paymentModel = mapper.Map<Payment>(addNewPayment);
+            try
+            {
+                // Generate payment URL for redirecting the user to VNPay
+                string paymentUrl = await _paymentRepository.CreatePayment(paymentModel, HttpContext);
 
-                bool checkSignature = ValidateSignature(queryString.Substring(1, pos - 1), vnp_SecureHash, vnp_HashSecret);
-                if (checkSignature && VnPayMerchantId == json["vnp_TmnCode"])
+                if (string.IsNullOrEmpty(paymentUrl))
                 {
-                    if (vnp_ResponseCode == "00")
-                    {
-                        // Successful payment
-                        return Redirect("YOUR_SUCCESS_URL"); // Replace with actual success URL
-                    }
-                    else
-                    {
-                        // Payment failed
-                        return Redirect($"YOUR_FAILURE_URL?code={vnp_ResponseCode}"); // Replace with actual failure URL
-                    }
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Failed to generate payment URL." });
+                }
+
+                var newPaymentDto = mapper.Map<PaymentDTO>(paymentModel);
+
+                return Ok(new { NewPayment = newPaymentDto, PaymentUrl = paymentUrl });
+            }
+            catch (Exception ex)
+            {
+                // Consider logging the exception here
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+
+        // GET: api/Payments/Execute
+        [HttpGet("Execute")]
+        public async Task<IActionResult> ExecutePayment([FromQuery] IQueryCollection query)
+        {
+            try
+            {
+                // Execute payment and get response data
+                var response = await _paymentRepository.PaymentExecute(query);
+
+                if (response.Success)
+                {
+                    return Ok(response);
                 }
                 else
                 {
-                    // Invalid signature
-                    return Redirect("YOUR_INVALID_SIGNATURE_URL"); // Replace with actual URL for invalid signature
+                    return BadRequest(new { Message = response.StatusMessage });
                 }
             }
-
-            // Invalid response
-            return Redirect("YOUR_INVALID_RESPONSE_URL"); // Replace with actual URL for invalid response
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+            }
         }
 
-        private bool ValidateSignature(string rspraw, string inputHash, string secretKey)
+
+
+        // POST: api/Payments/Ipn
+        [HttpPost("Ipn")]
+        public async Task<IActionResult> HandleIpn([FromQuery] IQueryCollection query)
         {
-            string myChecksum = PayLib.HmacSHA512(secretKey, rspraw);
-            return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
+            try
+            {
+                // Handle IPN request from VNPay
+                var result = await _paymentRepository.PaymentExecuteIpn(query);
+
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Failed to process IPN notification" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        // GET: api/Payments
+        [HttpGet]
+        public async Task<IActionResult> GetAllPayments()
+        {
+            try
+            {
+                var payments = await _paymentRepository.GetAllPayments();
+
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+            }
         }
     }
 }

@@ -11,6 +11,9 @@ namespace KDOS_Web_API.Models.Enum
         PENDING,
 
         [EnumMember(Value = "PAID")] //Da thanh toan
-        PAID
+        PAID,
+
+        [EnumMember(Value = "FAILED")] //Thanh toan that bai
+        FAILED
     }
 }

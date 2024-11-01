@@ -91,6 +91,9 @@ namespace KDOS_Web_API.Mappings
             CreateMap<Feedback, UpdateFeedBackDTO>().ReverseMap()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
             // BLog
+            // Payment
+            CreateMap<Payment, PaymentDTO>().ReverseMap();
+            CreateMap<Payment, AddNewPaymentDTO>().ReverseMap();
         }
     }
 }
