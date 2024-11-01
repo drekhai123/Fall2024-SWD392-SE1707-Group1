@@ -139,7 +139,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   };
 
   const calculateVAT = () => {
-    return (getTotalAmount() * 0.03).toFixed(0);
+    return (calculateEstimatedDeliveryDays() * 20000);
   };
 
   const handleCheckout = () => {
@@ -593,8 +593,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                         <span className="fee-amount">{calculateShippingFee().toLocaleString('vi-VN') || 0} VND</span>
                       </div>
                       <div className="fee-line">
-                        <span className="fee-label">VAT (3%):</span>
-                        <span className="fee-amount">{calculateVAT() || 0} VND</span>
+                        <span className="fee-label">Feeding Fee:</span>
+                        <span className="fee-amount">{calculateVAT().toLocaleString('vi-VN') || 0} VND</span>
                       </div>
                     </div>
                   </div>
