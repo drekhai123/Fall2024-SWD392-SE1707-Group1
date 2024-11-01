@@ -12,6 +12,7 @@ namespace KDOS_Web_API.Models.DTOs
         [MinLength(5, ErrorMessage ="Username is too short")]
         required public string UserName { get; set; }
         required public string Password { get; set; }
+
     }
 }
 

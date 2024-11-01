@@ -16,6 +16,8 @@ namespace KDOS_Web_API.Models.DTOs
         required public string Notes { get; set; }
         [Required]
         required public string Image { get; set; }
+        [Required]
+        required public string Certificate { get; set; }
     }
 }
 

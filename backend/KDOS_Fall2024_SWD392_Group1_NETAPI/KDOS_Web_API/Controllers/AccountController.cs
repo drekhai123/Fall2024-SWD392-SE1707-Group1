@@ -3,6 +3,7 @@ using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
 using KDOS_Web_API.Services.MailingService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity; // PasswordHasher<Account>
 using Microsoft.AspNetCore.Mvc;
 
@@ -145,7 +146,11 @@ namespace KDOS_Web_API.Controllers
             var verificationModel = await accountRepository.FindVerificationWithAccountId(int.Parse(accountId));
             if(accountModel==null || verificationModel == null)
             {
-                return NotFound("No account or No Verification are stored");
+                return NotFound("No Account or No Verification are stored");
+            }
+            else if (accountModel.Verified == true)
+            {
+                return NotFound("Account Is Already Verified!");
             }
             else
             {
@@ -259,6 +264,23 @@ namespace KDOS_Web_API.Controllers
         {
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountStatus);
+            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
+            if (accountModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var accountDto = mapper.Map<AccountDTO>(accountModel);
+                return Ok(accountDto);
+            }
+        }
+        [HttpPut]
+        [Route("avatar/{accountId}")]
+        public async Task<IActionResult> UpdateAccountAvatar([FromRoute] int accountId, [FromBody] UpdateAccountAvatarDTO updateAccountAvatarDTO)
+        {
+            // Map DTO to AccountModel
+            var accountModel = mapper.Map<Account>(updateAccountAvatarDTO);
             accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
             if (accountModel == null)
             {
