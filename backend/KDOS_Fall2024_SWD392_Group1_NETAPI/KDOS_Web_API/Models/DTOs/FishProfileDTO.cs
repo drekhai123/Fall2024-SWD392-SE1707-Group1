@@ -19,6 +19,8 @@ namespace KDOS_Web_API.Models.DTOs
         [Required]
         required public string Notes { get; set; }
         [Required]
+        required public string Certificate { get; set; }
+        [Required]
         public int KoiFishId { get; set; }
         public int CustomerId { get; set; }
         public KoiFishDTO KoiFish { get; set; } = null!;

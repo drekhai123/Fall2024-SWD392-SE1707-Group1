@@ -5,7 +5,7 @@ import styles from '../../css/NotFound.module.css';
 export default function NotFound() {
   const navigate = useNavigate();
   const goBackHome = () => {
-    navigate('/');
+    navigate(-1);
   };
 
   return (
@@ -17,14 +17,14 @@ export default function NotFound() {
             <img
               key={index}
               style={{ animationDuration: randomDuration }} // Float random speed is more funny :>
-              src="images/diedfish.png"
+              src="/images/diedfish.png"
               alt="404"
               className={styles.image}
             />
           );
         })}
       </div>
-      <p className={styles.text}>Oops! Page not found.</p>
+      <p className={styles.text}>Oops! Can Not Load Data: Network Error.</p>
       <button className={styles.homeButton} onClick={goBackHome}>
         Back to Homepage
       </button>

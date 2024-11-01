@@ -12,6 +12,7 @@ namespace KDOS_Web_API.Models.Domains
         required public string UserName { get; set; }
         required public string Password { get; set; }
         required public string Role { get; set; }
+        required public string Avatar { get; set; }
         public bool Verified { get; set; }
         public Verification? Verification { get; set; }
         public Customer? Customer { get; set; }

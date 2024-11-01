@@ -17,12 +17,14 @@ namespace KDOS_Web_API.Mappings
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
 			CreateMap<Account, AddNewAccountDTO>().ReverseMap()
-				.ForMember(x => x.Password, option => option.Ignore())
+                .ForMember(x => x.Avatar, option => option.Ignore())
+                .ForMember(x => x.Password, option => option.Ignore())
                 .ForMember(x => x.Role, option => option.Ignore())
                 .ForMember(x => x.Banned, option => option.Ignore())// Manually set the ban as false
 				.ForMember(x=>x.Role, option => option.Ignore());// Manually set the role dependent on the need
 			CreateMap<Account, UpdateAccountStatus>().ReverseMap();
-			CreateMap<UpdateAccountDTO, Account>().ReverseMap();
+            CreateMap<Account, UpdateAccountAvatarDTO>().ReverseMap();
+            CreateMap<Account,UpdateAccountDTO>().ReverseMap();
             CreateMap<Account, AccountCustomerViewDTO>().ReverseMap();
             // Customer Mapping
             CreateMap<Customer, CustomerDTO>();

@@ -7,6 +7,7 @@ namespace KDOS_Web_API.Models.DTOs
 	{
         required public string Email { get; set; }
         required public string UserName { get; set; }
+        required public string Avatar { get; set; }
     }
 }
 

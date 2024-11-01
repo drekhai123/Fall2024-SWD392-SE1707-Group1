@@ -18,6 +18,8 @@ namespace KDOS_Web_API.Models.Domains
         [Required]
         required public string Image { get; set; }
         [Required]
+        required public string Certificate { get; set; }
+        [Required]
         public int KoiFishId { get; set; } // Fish Species (Type)
         public int CustomerId { get; set; }
         public Customer Customer { get; set; } = null!;
