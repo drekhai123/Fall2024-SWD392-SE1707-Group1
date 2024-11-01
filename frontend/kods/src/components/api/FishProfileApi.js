@@ -1,4 +1,4 @@
-import { baseUrl, headers } from './Url'
+import { baseUrl, headers, getJwtToken} from './Url'
 import axios from 'axios'
 
 const addFishProfileURL = baseUrl + '/FishProfile/' // URL for adding fish profiles
@@ -48,9 +48,16 @@ export async function deleteFishProfile(id) {
 }
 
 // Function to get fish profiles by customer ID
-export async function getFishProfilebyCustomerid(id) {
+export async function getFishProfileByCustomerId(id) {
+    const token = getJwtToken();
+
     try {
-        const response = await axios.get(getFishProfileURL + id);
+        const response = await axios.get(getFishProfileURL + id, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
         return await response.data; // Return the fish profiles
     } catch (error) {
         console.error('Error fetching fish profiles:', error);

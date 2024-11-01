@@ -22,7 +22,7 @@ import {
 import _ from "lodash";
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
 import { GetAllKoiFishes } from '../../api/KoiFishApi';
-import { addFishProfile, updateFishProfile, getFishProfilebyCustomerid, deleteFishProfile, findProfileByName } from '../../api/FishProfileApi';
+import { addFishProfile, updateFishProfile, getFishProfileByCustomerId, deleteFishProfile, findProfileByName } from '../../api/FishProfileApi';
 import { storage } from '../../../config/ConfigFirebase';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast, ToastContainer } from 'react-toastify';
@@ -62,12 +62,17 @@ export default function AddFish() {
     const fetchFishes = async () => {
       try {
         setLoadingScreen(true);
-        const response = await getFishProfilebyCustomerid(customerId);
+        const token = sessionStorage.getItem('token');
+        const response = await getFishProfileByCustomerId(customerId, {
+          headers: {
+              'Authorization': `Bearer ${token}`
+          }
+        });
         setFishes(response);
       } catch (error) {
         console.error('Error fetching fishes:', error);
       }
-      setLoadingScreen(false)
+      setLoadingScreen(false);
     };
     getSpeciesList();
     fetchFishes();
