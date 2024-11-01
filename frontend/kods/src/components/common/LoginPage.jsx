@@ -32,7 +32,8 @@ const LoginPage = () => {
     };
     const response = await LoginApi(login);
     if (response.status <= 300) {
-      sessionStorage.setItem('user', JSON.stringify(await response.data));
+      sessionStorage.setItem('user', JSON.stringify(response.data.account));
+      sessionStorage.setItem('token', response.data.token);
       toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
       setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
     } else {
