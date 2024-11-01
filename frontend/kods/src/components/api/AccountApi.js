@@ -1,4 +1,4 @@
-import { baseUrl, headers,getJtwToken } from "./Url";
+import { baseUrl, headers,getJwtToken } from "./Url";
 import axios from "axios";
 const baseAccount = baseUrl + "/Account";
 const verifyAccount = baseAccount + "/AddVerification"
@@ -13,10 +13,10 @@ export async function GetAccountById(id) {
 }
 
 export async function GetAllAccount() {
-  const token = getJtwToken();
+  const token = getJwtToken();
   try {
     console.log(token)
-    const response = await axios.get(`${baseAccount}`, 
+    const response = await axios.get(`${baseAccount}`,
       {
         headers:{
           ...headers,
