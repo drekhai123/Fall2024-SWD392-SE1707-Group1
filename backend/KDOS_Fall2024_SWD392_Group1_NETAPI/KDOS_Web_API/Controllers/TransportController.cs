@@ -3,10 +3,12 @@ using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Models.Enum;
 using KDOS_Web_API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class TransportController : ControllerBase
 {
     private readonly ITransportRepository transportRepository;

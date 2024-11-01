@@ -9,6 +9,7 @@ using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using KDOS_Web_API.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,6 +17,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class KoiFishController : ControllerBase
     {
         private readonly KDOSDbContext koiFishContext;
