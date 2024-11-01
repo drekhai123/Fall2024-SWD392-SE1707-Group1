@@ -116,7 +116,7 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Age")
+                    b.Property<int>("Dob")
                         .HasColumnType("int");
 
                     b.Property<string>("Gender")
@@ -482,7 +482,7 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Age")
+                    b.Property<int>("Dob")
                         .HasColumnType("int");
 
                     b.Property<string>("Gender")

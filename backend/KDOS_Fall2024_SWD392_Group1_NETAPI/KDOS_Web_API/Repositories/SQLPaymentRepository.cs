@@ -29,7 +29,17 @@ namespace KDOS_Web_API.Repositories
             throw new NotImplementedException();
         }
 
+        public Task LogResponse(ResponsePayment response)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task UpdatePayment(Payment transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdatePayment(int id, Payment transaction)
         {
             throw new NotImplementedException();
         }

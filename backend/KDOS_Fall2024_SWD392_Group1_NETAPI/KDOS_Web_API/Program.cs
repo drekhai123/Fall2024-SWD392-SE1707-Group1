@@ -86,7 +86,6 @@ builder.Services.Configure<IdentityOptions>(options =>
 // Add Swagger and configure JWT Bearer authorization
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "KODS Api Service", Version = "v1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
