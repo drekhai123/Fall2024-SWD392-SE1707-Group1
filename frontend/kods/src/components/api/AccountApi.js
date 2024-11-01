@@ -1,4 +1,4 @@
-import { localhostUrl, baseUrl, headers } from "./Url";
+import { baseUrl, headers,getJwtToken } from "./Url";
 import axios from "axios";
 const baseAccount = baseUrl + "/Account";
 const verifyAccount = baseAccount + "/AddVerification"
@@ -9,6 +9,24 @@ export async function GetAccountById(id) {
   } catch (error) {
     console.error("Error fetching Account:", error);
     throw error;
+  }
+}
+
+export async function GetAllAccount() {
+  const token = getJwtToken();
+  try {
+    console.log(token)
+    const response = await axios.get(`${baseAccount}`,
+      {
+        headers:{
+          ...headers,
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    return response;
+  } catch (error) {
+    alert("Error fetching Account:", error);
+    console.log(error)
   }
 }
 

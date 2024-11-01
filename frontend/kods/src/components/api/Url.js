@@ -1,6 +1,10 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 const baseUrl = "https://kdosdreapiservice.azurewebsites.net/api";
 const localhostUrl = "http://localhost:2377/api";
+
+const getJwtToken = ()=>{
+  const token = sessionStorage.getItem("token")
+  return token
+}
 
 const headers = {
   "Content-Type": "application/json",
@@ -8,9 +12,5 @@ const headers = {
   // 'Authorization': 'Bearer your-token',
 };
 
-const axiosClient = axios.create({
-  baseURL: baseUrl,
-  timeout: 8000,
-});
 
-export { headers, baseUrl, localhostUrl , axiosClient};
+export { headers, baseUrl, localhostUrl ,getJwtToken};
