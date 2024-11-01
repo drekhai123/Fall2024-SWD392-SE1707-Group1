@@ -60,19 +60,15 @@ export default function AddFish() {
     };
     //Get API By CustomerID
     const fetchFishes = async () => {
-      setLoadingScreen(true);
       try {
-        const token = sessionStorage.getItem('token');
-        if (!token) {
-          console.error('Token not found in session storage.');
-          return;
-        }
-        const response = await getFishProfileByCustomerId(customerId);
+        setLoadingScreen(true);
+        const token = sessionStorage.getItem('token'); // Retrieve the token from session storage
+        const response = await getFishProfileByCustomerId(customerId, token);
         setFishes(response);
       } catch (error) {
         console.error('Error fetching fishes:', error);
       }
-      setLoadingScreen(false);
+      setLoadingScreen(false)
     };
     getSpeciesList();
     fetchFishes();
@@ -105,7 +101,7 @@ export default function AddFish() {
     }
     else
       setFishes(await response.data); // Update the fish list with the search results
-  }
+    }
 
   // Update search term and call the debounced search
   const handleSearchChange = (e) => {
@@ -245,7 +241,7 @@ export default function AddFish() {
       uploadTask.on(
         "state_changed",
         //có thiếu snapshot thì không lấy ảnh được
-        (snapshot) => { },
+        (snapshot) => {},
         (error) => {
           console.error("Error uploading image:", error);
         },
