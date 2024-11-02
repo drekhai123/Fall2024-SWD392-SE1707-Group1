@@ -23,6 +23,7 @@ import ViewOrderDetails from './components/customer/profile/ViewOrderDetail';
 import NotFound from "./components/common/404page";
 import ContactPage from "./components/common/Contact";
 import AboutPage from "./components/common/About";
+import PaymentSuccess from "./components/common/PaymentSuccess"; // Import PaymentSuccess component
 
 export const router = createBrowserRouter([
   {
@@ -119,5 +120,9 @@ export const router = createBrowserRouter([
   {
     path: "/about", // Define the path for the About page
     element: <AboutPage />, // Set the AboutPage component as the element
+  },
+  {
+    path: "/payment-success", // Define the path for the Payment Success page
+    element: <PaymentSuccess />, // Set the PaymentSuccess component as the element
   },
 ]);
