@@ -23,6 +23,10 @@ namespace KDOS_Web_API.Services.MailingService.MailModels
         required public float DistancePrice { get; set; }
         [JsonProperty("weightPrice")]
         required public float WeightPrice { get; set; }
+        [JsonProperty("totalDistancePrice")]
+        required public float TotalDistancePrice { get; set; }
+        [JsonProperty("totalWeightPrice")]
+        required public float TotalWeightPrice { get; set; }
         [JsonProperty("totalCost")]
         required public float TotalCost { get; set; }
 	}
