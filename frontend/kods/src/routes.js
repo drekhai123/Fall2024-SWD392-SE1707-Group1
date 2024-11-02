@@ -24,6 +24,7 @@ import NotFound from "./components/common/404page";
 import ContactPage from "./components/common/Contact";
 import AboutPage from "./components/common/About";
 import PaymentSuccess from "./components/common/PaymentSuccess"; // Import PaymentSuccess component
+import ForgotPassword from "./components/common/ForgotPassword"; // Import the ForgotPassword component
 
 export const router = createBrowserRouter([
   {
@@ -124,5 +125,9 @@ export const router = createBrowserRouter([
   {
     path: "/payment-success", // Define the path for the Payment Success page
     element: <PaymentSuccess />, // Set the PaymentSuccess component as the element
+  },
+  {
+    path: "/forgot-password", // Define the path for the Forgot Password page
+    element: <ForgotPassword />, // Set the ForgotPassword component as the element
   },
 ]);
