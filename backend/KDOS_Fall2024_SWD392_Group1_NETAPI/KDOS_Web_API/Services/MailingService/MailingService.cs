@@ -70,12 +70,35 @@ namespace KDOS_Web_API.Services.MailingService
             var response = await client.SendEmailAsync(msg);
             return response;
         }
-
-        public async Task SendResetPassword(Account account)
+        public async Task<Response> SendResetPassword(Account account, string resetLink)
         {
+            //var mailModel = new MailModel
+            //{
+            //    From = fromEmail,
+            //    To = new EmailAddress(account.Email, account.UserName),
+            //    TemplateId = "d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" // Replace with your actual reset password template Id
+            //};
+
+            //var msg = new SendGridMessage();
+            //msg.SetFrom(mailModel.From);
+            //msg.AddTo(mailModel.To);
+            //msg.SetTemplateId(mailModel.TemplateId);
+
+            //var dynamicTemplateData = new ResetPasswordMailModel
+            //{
+            //    UserName = account.UserName,
+            //    ResetLink = resetLink
+            //};
+
+            //msg.SetTemplateData(dynamicTemplateData);
+
+            //// Confirm code with SendGrid service - return the SendGrid client
+            //var client = new SendGridClient(apiKey);
+            //var response = await client.SendEmailAsync(msg);
+            //return response;
             throw new NotImplementedException();
         }
-        // Example Codes below
+
         private async Task SendMail()
         {
             var apiKey = Environment.GetEnvironmentVariable("kdosmailingsystem");
