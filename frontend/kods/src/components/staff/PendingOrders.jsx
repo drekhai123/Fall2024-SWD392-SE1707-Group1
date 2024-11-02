@@ -4,20 +4,25 @@ import axios from "axios";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { baseUrl } from "../api/Url";
+import { baseUrl,headers, getJwtToken } from "../api/Url";
 
 export function PendingOrders() {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const token = getJwtToken();
   useEffect(() => {
     const fetchOrders = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await axios.get(`${baseUrl}/Orders`);
+        const response = await axios.get(`${baseUrl}/Orders`, {
+          headers: {
+            ...headers,
+            'Authorization': `Bearer ${token}`
+          }
+        });
         setOrders(response.data.filter(data => data.deliveryStatus === 'PENDING'));
       } catch (err) {
         console.error(err);
@@ -69,4 +74,4 @@ export function PendingOrders() {
       </DataTable>
     </div>
   );
- }
+}
