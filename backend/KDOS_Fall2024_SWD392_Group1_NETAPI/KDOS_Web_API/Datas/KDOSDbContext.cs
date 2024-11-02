@@ -59,6 +59,10 @@ namespace KDOS_Web_API.Datas
                .HasOne(o => o.WeightPriceList) // One Price can have Many orders
                .WithMany(tr => tr.Orders)
                .HasForeignKey(o => o.WeightPriceListId);
+            modelBuilder.Entity<Payment>()
+             .HasOne(o => o.Orders) // One Price can have Many orders
+             .WithOne(p => p.Payment)
+             .HasForeignKey<Payment>(p => p.OrderId);
             modelBuilder.Entity<LogTransport>()
                .HasOne(o => o.Transport) // One Transport can have Many orders
                .WithMany(tr => tr.LogTransports)

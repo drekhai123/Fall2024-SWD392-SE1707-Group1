@@ -75,7 +75,7 @@ namespace KDOS_Web_API.Repositories
             else
             {
                 staffModel.StaffName = staff.StaffName;
-                staffModel.Age = staff.Age;
+                staffModel.Dob = staff.Dob;
                 staffModel.Gender = staff.Gender;
                 staffModel.PhoneNumber = staff.PhoneNumber;
                 await staffContext.SaveChangesAsync();

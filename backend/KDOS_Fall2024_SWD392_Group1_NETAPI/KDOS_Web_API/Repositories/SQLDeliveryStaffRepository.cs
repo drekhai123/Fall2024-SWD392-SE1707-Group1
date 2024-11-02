@@ -73,7 +73,7 @@ namespace KDOS_Web_API.Repositories
             else
             {
                 deliveryStaffModel.StaffName = deliveryStaff.StaffName;
-                deliveryStaffModel.Age = deliveryStaff.Age;
+                deliveryStaffModel.Dob = deliveryStaff.Dob;
                 deliveryStaffModel.Gender = deliveryStaff.Gender;
                 deliveryStaffModel.PhoneNumber = deliveryStaff.PhoneNumber;
                 await deliveryStaffContext.SaveChangesAsync();

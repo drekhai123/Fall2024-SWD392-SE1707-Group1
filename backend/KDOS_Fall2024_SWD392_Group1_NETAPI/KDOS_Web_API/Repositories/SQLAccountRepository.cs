@@ -58,7 +58,8 @@ namespace KDOS_Web_API.Repositories
         public async Task<Account?> UpdateAccount(int id, Account account)
         {
             var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
-            if(accountExist == null)
+            var emailorUsernameExist = await accountContext.Account.FirstOrDefaultAsync(x => x.Email == account.Email|| x.UserName == account.UserName);
+            if (accountExist == null || !accountExist.Equals(emailorUsernameExist))
             {
                 return null;
             }

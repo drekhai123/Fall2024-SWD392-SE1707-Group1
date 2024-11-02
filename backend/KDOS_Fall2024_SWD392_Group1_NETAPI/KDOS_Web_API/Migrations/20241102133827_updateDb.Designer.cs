@@ -4,6 +4,7 @@ using KDOS_Web_API.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KDOS_Web_API.Migrations
 {
     [DbContext(typeof(KDOSDbContext))]
-    partial class KDOSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241102133827_updateDb")]
+    partial class updateDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -375,6 +378,9 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("DeliveryStatus")
                         .HasColumnType("int");
 
+                    b.Property<double>("Distance")
+                        .HasColumnType("double");
+
                     b.Property<int>("DistancePriceListId")
                         .HasColumnType("int");
 
@@ -457,6 +463,12 @@ namespace KDOS_Web_API.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrdersOrderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -465,8 +477,7 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasKey("PaymentId");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("OrdersOrderId");
 
                     b.ToTable("Payment");
                 });
@@ -730,8 +741,8 @@ namespace KDOS_Web_API.Migrations
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Payment", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.Domains.Orders", "Orders")
-                        .WithOne("Payment")
-                        .HasForeignKey("KDOS_Web_API.Models.Domains.Payment", "OrderId")
+                        .WithMany()
+                        .HasForeignKey("OrdersOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -833,8 +844,6 @@ namespace KDOS_Web_API.Migrations
                         .IsRequired();
 
                     b.Navigation("OrderDetails");
-
-                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Staff", b =>
