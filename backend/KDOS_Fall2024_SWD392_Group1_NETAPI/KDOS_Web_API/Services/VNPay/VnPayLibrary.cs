@@ -1,5 +1,7 @@
-﻿using System.Globalization;
+﻿using Org.BouncyCastle.Asn1.Ocsp;
+using System.Globalization;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -8,6 +10,7 @@ namespace KDOS_Web_API.Services.VNPay
     public class PayLib
     {
         private SortedList<String, String> _requestData = new SortedList<String, String>(new VnPayCompare());
+        private readonly SortedList<string, string> _responseData = new SortedList<string, string>(new VnPayCompare());
         public void AddRequestData(string key, string value)
         {
             if (!String.IsNullOrEmpty(value))
@@ -15,10 +18,52 @@ namespace KDOS_Web_API.Services.VNPay
                 _requestData.Add(key, value);
             }
         }
+        public void AddResponseData(string key, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                _responseData.Add(key, value);
+            }
+        }
+        private string GetResponseData()
+        {
+            var data = new StringBuilder();
+            if (_responseData.ContainsKey("vnp_SecureHashType"))
+            {
+                _responseData.Remove("vnp_SecureHashType");
+            }
 
+            if (_responseData.ContainsKey("vnp_SecureHash"))
+            {
+                _responseData.Remove("vnp_SecureHash");
+            }
+
+            foreach (var (key, value) in _responseData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
+            {
+                data.Append(WebUtility.UrlEncode(key) + "=" + WebUtility.UrlEncode(value) + "&");
+            }
+
+            //remove last '&'
+            if (data.Length > 0)
+            {
+                data.Remove(data.Length - 1, 1);
+            }
+
+            return data.ToString();
+        }
+        public string GetResponseData(string key)
+        {
+            return _responseData.TryGetValue(key, out var retValue) ? retValue : string.Empty;
+        }
+        public bool ValidateSignature(string inputHash, string secretKey)
+        {
+            var rspRaw = GetResponseData();
+            var myChecksum = HmacSHA512(secretKey, rspRaw);
+            return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
+        }
         public string CreateRequestUrl(string baseUrl, string vnp_HashSecret)
         {
-            StringBuilder data = new StringBuilder();
+            var data = new StringBuilder();
             foreach (KeyValuePair<string, string> kv in _requestData)
             {
                 if (!String.IsNullOrEmpty(kv.Value))
@@ -26,21 +71,46 @@ namespace KDOS_Web_API.Services.VNPay
                     data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");
                 }
             }
-            string queryString = data.ToString();
+            var queryString = data.ToString();
 
             baseUrl += "?" + queryString;
-            String signData = queryString;
+            var signData = queryString;
             if (signData.Length > 0)
             {
 
                 signData = signData.Remove(data.Length - 1, 1);
             }
-            string vnp_SecureHash = HmacSHA512(vnp_HashSecret, signData);
+            var vnp_SecureHash = HmacSHA512(vnp_HashSecret, signData);
             baseUrl += "vnp_SecureHash=" + vnp_SecureHash;
 
             return baseUrl;
         }
+        public string GetIpAddress(HttpContext context)
+        {
+            var ipAddress = string.Empty;
+            try
+            {
+                var remoteIpAddress = context.Connection.RemoteIpAddress;
 
+                if (remoteIpAddress != null)
+                {
+                    if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        remoteIpAddress = Dns.GetHostEntry(remoteIpAddress).AddressList
+                            .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+                    }
+
+                    if (remoteIpAddress != null) ipAddress = remoteIpAddress.ToString();
+                    return ipAddress;
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return "127.0.0.1";
+        }
         public static String HmacSHA512(string key, String inputData)
         {
             var hash = new StringBuilder();
@@ -65,8 +135,7 @@ namespace KDOS_Web_API.Services.VNPay
             if (x == y) return 0;
             if (x == null) return -1;
             if (y == null) return 1;
-            var vnpCompare = CompareInfo.GetCompareInfo("en-US");
-            return vnpCompare.Compare(x, y, CompareOptions.Ordinal);
+            return string.Compare(x, y, StringComparison.Ordinal); // Use ordinal comparison
         }
     }
 }
