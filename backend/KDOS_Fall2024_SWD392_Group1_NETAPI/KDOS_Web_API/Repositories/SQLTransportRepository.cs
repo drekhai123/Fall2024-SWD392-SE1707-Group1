@@ -15,9 +15,14 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Transport?> AddNewTransport(Transport transport)
         {
-            await transportContext.Transport.AddAsync(transport);
-            await transportContext.SaveChangesAsync();
-            return transport;
+            var staffExist = await transportContext.Transport.FirstOrDefaultAsync(x=>x.HealthCareStaffId == transport.HealthCareStaffId || x.DeliveryStaffId == transport.DeliveryStaffId);
+            if (staffExist == null)
+            {
+                await transportContext.Transport.AddAsync(transport);
+                await transportContext.SaveChangesAsync();
+                return transport;
+            }
+            return null;
         }
 
         public async Task<Transport?> DeleteTransport(int id)
@@ -46,7 +51,9 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Transport?> GetTransportById(int id)
         {
-            return await transportContext.Transport.FindAsync(id);
+           var transport = await transportContext.Transport.Include(x => x.DeliveryStaff).Include(x=>x.Staff).FirstOrDefaultAsync(x => x.TransportId == id);
+            return transport;
+
         }
 
         public async Task<List<Transport>> GetTransportByStatus(TransportStatus status)
@@ -62,8 +69,10 @@ namespace KDOS_Web_API.Repositories
         public async Task<Transport?> UpdateTransport(int id, Transport transport)
         {
             var transportModel = await transportContext.Transport.FindAsync(id);
-            if (transportModel == null)
+            var staffExist = await transportContext.Transport.FirstOrDefaultAsync(x => x.HealthCareStaffId == transport.HealthCareStaffId || x.DeliveryStaffId == transport.DeliveryStaffId);
+            if (transportModel == null || !transportModel.Equals(staffExist))
             {
+                // Checking if the staff they wanted to change is free (not in other transport)
                 return null;
             }
             transportModel.StaffId = transport.StaffId; 

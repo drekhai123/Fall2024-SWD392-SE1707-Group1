@@ -22,7 +22,6 @@ namespace KDOS_Web_API.Models.Domains
         [Required]
         public Account? Account { get; set; }
         public ICollection<Transport>? Transports { get; set; }
-
     }
 }
 
