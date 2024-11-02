@@ -16,7 +16,8 @@ namespace KDOS_Web_API.Mappings
                 // CreateMap<Verification, VerificationDTO>().ReverseMap(); Don't think of using this
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
-			CreateMap<Account, AddNewAccountDTO>().ReverseMap()
+            CreateMap<Account, AccountResetPasswordDTO>().ReverseMap();
+            CreateMap<Account, AddNewAccountDTO>().ReverseMap()
                 .ForMember(x => x.Avatar, option => option.Ignore())
                 .ForMember(x => x.Password, option => option.Ignore())
                 .ForMember(x => x.Role, option => option.Ignore())

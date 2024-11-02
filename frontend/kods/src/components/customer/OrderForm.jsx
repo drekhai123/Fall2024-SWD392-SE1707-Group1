@@ -636,7 +636,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         }}
         >
           Total Amount: {" "}
-          {(getTotalAmount() + (calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0)))} VND</div>
+          {getTotalAmount() + (calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))} VND</div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>

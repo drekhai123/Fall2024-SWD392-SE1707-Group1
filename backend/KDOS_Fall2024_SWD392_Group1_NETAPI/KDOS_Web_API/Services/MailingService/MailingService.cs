@@ -13,12 +13,12 @@ namespace KDOS_Web_API.Services.MailingService
         // Get authentication code from Environment Variables
         readonly String? apiKey = Environment.GetEnvironmentVariable("kdosmailingsystem");
         
-        public async Task SendEnvoiceMail(Account account, Orders orders)
+        public async Task<Response> SendEnvoiceMail(Account account, Orders orders)
         {
             throw new NotImplementedException();
         }
 
-        public async Task SendOrderConfirmation(Account account, Orders orders)
+        public async Task<Response> SendOrderConfirmation(Account account, Orders orders)
         {
             throw new NotImplementedException();
         }
@@ -72,31 +72,29 @@ namespace KDOS_Web_API.Services.MailingService
         }
         public async Task<Response> SendResetPassword(Account account, string resetLink)
         {
-            //var mailModel = new MailModel
-            //{
-            //    From = fromEmail,
-            //    To = new EmailAddress(account.Email, account.UserName),
-            //    TemplateId = "d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" // Replace with your actual reset password template Id
-            //};
+            var mailModel = new MailModel
+            {
+                From = fromEmail,
+                To = new EmailAddress(account.Email, account.UserName),
+                TemplateId = "d-9d580e19f5d945248960c1c2c28388d1" // reset password template Id
+            };
 
-            //var msg = new SendGridMessage();
-            //msg.SetFrom(mailModel.From);
-            //msg.AddTo(mailModel.To);
-            //msg.SetTemplateId(mailModel.TemplateId);
+            var msg = new SendGridMessage();
+            msg.SetFrom(mailModel.From);
+            msg.AddTo(mailModel.To);
+            msg.SetTemplateId(mailModel.TemplateId);
 
-            //var dynamicTemplateData = new ResetPasswordMailModel
-            //{
-            //    UserName = account.UserName,
-            //    ResetLink = resetLink
-            //};
-
-            //msg.SetTemplateData(dynamicTemplateData);
-
-            //// Confirm code with SendGrid service - return the SendGrid client
-            //var client = new SendGridClient(apiKey);
-            //var response = await client.SendEmailAsync(msg);
-            //return response;
-            throw new NotImplementedException();
+            var dynamicTemplateData = new ResetPasswordMailModel
+            {
+                Email = account.Email,
+                PasswordResetLink = resetLink
+            };
+            msg.SetTemplateData(dynamicTemplateData);
+            // Confirm code with SendGrid service - return the SendGrid client
+            var client = new SendGridClient(apiKey);
+            var response = await client.SendEmailAsync(msg);
+            return response;
+           
         }
 
         private async Task SendMail()
