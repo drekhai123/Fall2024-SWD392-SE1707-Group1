@@ -1,4 +1,4 @@
-import { baseUrl, headers } from './Url'
+import { baseUrl, headers, getJwtToken } from './Url';
 import axios from 'axios'
 
 const addFeedbackURL = baseUrl + '/FeedBack/' // URL for adding feedback
@@ -10,8 +10,14 @@ const getFeedbackByOrderURL = baseUrl + '/FeedBack/order/' // URL for getting fe
 
 // Function to add feedback
 export async function addFeedback(feedback) {
+    const token = getJwtToken();
     try {
-        const response = await axios.post(addFeedbackURL, feedback); // Send POST request
+        const response = await axios.post(addFeedbackURL, feedback, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        }); // Send POST request );); // Send POST request
         return await response.data; // Return the added feedback data
     } catch (error) {
         console.error('Error adding feedback:', error);
@@ -21,8 +27,14 @@ export async function addFeedback(feedback) {
 
 // Function to update feedback
 export async function updateFeedback(id, feedback) {
+    const token = getJwtToken();
     try {
-        const response = await axios.put(updateFeedbackURL + id, feedback, headers); // Send PUT request
+        const response = await axios.put(updateFeedbackURL + id, feedback, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        }); // Send POST request );); // Send PUT request
         return response.data; // Return the updated feedback data
     } catch (error) {
         console.error('Error updating feedback:', error);
@@ -32,8 +44,14 @@ export async function updateFeedback(id, feedback) {
 
 // Function to delete feedback
 export async function deleteFeedback(feedbackId) {
+    const token = getJwtToken();
     try {
-        await axios.delete(deleteFeedbackURL + feedbackId); // Send DELETE request
+        await axios.delete(deleteFeedbackURL + feedbackId, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        }); // Send POST request );); // Send DELETE request
         console.log(`Feedback with ID ${feedbackId} deleted successfully.`);
     } catch (error) {
         console.error('Error deleting feedback:', error);
@@ -43,8 +61,14 @@ export async function deleteFeedback(feedbackId) {
 
 // Function to get feedback by ID
 export async function getFeedbackById(id) {
+    const token = getJwtToken();
     try {
-        const response = await axios.get(getFeedbackURL + id);
+        const response = await axios.get(getFeedbackURL + id, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        }); // Send POST request ););
         return response.data; // Return the feedback
     } catch (error) {
         console.error('Error fetching feedback:', error);
@@ -54,8 +78,14 @@ export async function getFeedbackById(id) {
 
 // Function to get feedback by customer ID
 export async function getFeedbackByCustomerId(customerId) {
+    const token = getJwtToken();
     try {
-        const response = await axios.get(getFeedbackByCustomerURL + customerId);
+        const response = await axios.get(getFeedbackByCustomerURL + customerId, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        }); // Send POST request ););
         return response.data; // Return the feedback
     } catch (error) {
         console.error('Error fetching feedback by customer ID:', error);
@@ -65,8 +95,14 @@ export async function getFeedbackByCustomerId(customerId) {
 
 // Function to get feedback by order ID
 export async function getFeedbackByOrderId(orderId) {
+    const token = getJwtToken();
     try {
-        const response = await axios.get(getFeedbackByOrderURL + orderId);
+        const response = await axios.get(getFeedbackByOrderURL + orderId, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        }); // Send POST request ););
         return response.data; // Return the feedback
     } catch (error) {
         console.error('Error fetching feedback by order ID:', error);
