@@ -5,6 +5,7 @@ import { QRCodeSVG } from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import { getJwtToken } from "../api/Url";
 
 export default function OrderForm({ onSuggestionClick, distance }) {
   const navigateToLogin = useNavigate();
@@ -31,11 +32,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     addressCustomer: "",
     distance: 0,
   });
+
+  const token = getJwtToken();
+  
   //Hàm fecth API mới
   const getFishProfile = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user?.customer?.customerId}`);
+      const response = await axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user?.customer?.customerId}`, {
+        headers:{
+          'Authorization': `Bearer ${token}`
+        }
+      });
       setData(response?.data);
     } catch (error) {
       console.error("Error fetching fish data:", error);
@@ -50,7 +58,12 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setLoading(true);
     try {
       const distanceResponse = await axios.get(
-        "https://kdosdreapiservice.azurewebsites.net/api/DistancePriceList"
+        "https://kdosdreapiservice.azurewebsites.net/api/DistancePriceList" , {
+          headers:{
+            
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
       setDistancePriceList(distanceResponse?.data); // Lưu dữ liệu từ API vào state
     } catch (error) {
@@ -139,7 +152,13 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   };
 
   const calculateVAT = () => {
-    return (calculateEstimatedDeliveryDays() * 20000);
+    if (estimatedDays === null ) {
+    return (estimatedDays === 0);
+  }else if (estimatedDays > 0 ) {
+      return (estimatedDays === 0); 
+  }else if (estimatedDays >= 1.1) {
+    return (estimatedDays * 20000);
+  }
   };
 
   const handleCheckout = () => {
@@ -171,7 +190,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         <p>Address customer: ${customerInfo.addressCustomer}</p>
         <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
         <p>Total amount: ${getTotalAmount() +
-        parseInt(calculateVAT()) +
+        (calculateVAT()) +
         parseFloat(calculateShippingFee().toFixed(0))
         } VND</p>
       `,
@@ -196,7 +215,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       status: "Wait for confirmation",
       totalAmount:
         getTotalAmount() +
-        parseInt(calculateVAT()) +
+        (calculateVAT()) +
         parseFloat(calculateShippingFee().toFixed(0)),
       ship: calculateShippingFee().toFixed(0),
       VAT: calculateVAT(),
@@ -590,11 +609,11 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                     <div style={{ marginTop: '10px' }}>
                       <div className="fee-line">
                         <span className="fee-label">Shipping fee:</span>
-                        <span className="fee-amount">{calculateShippingFee().toLocaleString('vi-VN') || 0} VND</span>
+                        <span className="fee-amount">{calculateShippingFee() || 0} VND</span>
                       </div>
                       <div className="fee-line">
                         <span className="fee-label">Feeding Fee:</span>
-                        <span className="fee-amount">{calculateVAT().toLocaleString('vi-VN') || 0} VND</span>
+                        <span className="fee-amount">{calculateVAT() || 0} VND</span>
                       </div>
                     </div>
                   </div>
@@ -617,7 +636,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         }}
         >
           Total Amount: {" "}
-          {(getTotalAmount() + parseInt(calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))).toLocaleString('vi-VN')} VND</div>
+          {(getTotalAmount() + (calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0)))} VND</div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>
