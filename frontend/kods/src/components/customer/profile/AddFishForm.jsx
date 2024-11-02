@@ -382,16 +382,16 @@ export default function AddFish() {
         position: 'relative',
       }}>
         <Divider />
+        {fishes.length > 5 && // Paging only if 5 or more fishes
         <div className="pagination">
-          {fishes.length > 5 ??
             <Pagination
               count={Math.ceil(fishes.length / itemsPerPage)}
               page={currentPage}
               onChange={handlePageChange}
               color="primary"
-            /> // Paging only if 5 or more fishes
-          }
+            /> 
         </div>
+          }
       </div>
       {/* Dialogs for form and delete confirmation */}
       <Dialog open={isFormOpen} onClose={() => setIsFormOpen(false)}>
