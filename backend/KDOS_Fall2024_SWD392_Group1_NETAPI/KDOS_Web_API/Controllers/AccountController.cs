@@ -186,7 +186,8 @@ namespace KDOS_Web_API.Controllers
                 }
                 else
                 {
-                    return Ok(accountModel);
+                    string redirectUrl = "https://kdos.vercel.app/login";
+                    return Redirect(redirectUrl);
                 }
             }
         }
