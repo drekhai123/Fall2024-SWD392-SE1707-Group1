@@ -35,10 +35,10 @@ namespace KDOS_Web_API.Models.DTOs
         public required string DeliveryNote { get; set; }
 
         [Required]
-        public int Quantity { get; set; }
-
-        public double TotalWeight { get; set; }
-        public double TotalCost { get; set; }
+        required public int Quantity { get; set; }
+        required public double Distance { get; set; }
+        required public double TotalWeight { get; set; }
+        required public double TotalCost { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

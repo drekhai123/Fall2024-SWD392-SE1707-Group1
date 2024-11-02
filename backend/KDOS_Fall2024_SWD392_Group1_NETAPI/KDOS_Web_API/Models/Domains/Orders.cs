@@ -24,6 +24,7 @@ namespace KDOS_Web_API.Models.Domains
         required public string DeliveryNote { get; set;}
         required public int Quantity { get; set; }
         required public double TotalWeight { get; set; }
+        required public double Distance { get; set; }
         required public double TotalCost { get; set; }
         required public DateTime CreatedAt { get; set; }
         required public DateTime UpdatedAt { get; set; }
