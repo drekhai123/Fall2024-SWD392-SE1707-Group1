@@ -19,94 +19,29 @@ import { useParams, Link } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-const orders = [
-  {
-    id: 1,
-    date: '2023-05-01',
-    total: 150.99,
-    status: 'Delivered',
-    items: [
-      {
-        id: 1,
-        name: 'Fish 1',
-        quantity: 2,
-        price: 49.99,
-        fishStatus: [
-          { time: '2024-10-01', status: 'OK' },
-          { time: '2024-10-02', status: 'OK' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Fish 2',
-        quantity: 1,
-        price: 51.01,
-        fishStatus: [
-          { time: '2024-10-01', status: 'Not OK' },
-          { time: '2024-10-02', status: 'OK' }
-        ]
-      },
-    ],
-    shippingAddress: '123 Main St, City, Country, 12345',
-    review: ''
-  },
-  {
-    id: 2,
-    date: '2023-05-15',
-    total: 89.99,
-    status: 'Processing',
-    items: [
-      {
-        id: 3,
-        name: 'Fish 3',
-        quantity: 1,
-        price: 89.99,
-        fishStatus: [
-          { time: '2024-10-01', status: 'Not OK' },
-          { time: '2024-10-02', status: 'OK' }
-        ]
-      },
-    ],
-    shippingAddress: '456 Elm St, City, Country, 67890',
-    review: ''
-  },
-  {
-    id: 3,
-    date: '2023-06-02',
-    total: 200.50,
-    status: 'Shipped',
-    items: [
-      {
-        id: 4,
-        name: 'Fish 4',
-        quantity: 2,
-        price: 100.25,
-        fishStatus: [
-          { time: '2024-10-01', status: 'OK' },
-          { time: '2024-10-02', status: 'Not OK' }
-        ]
-      },
-    ],
-    shippingAddress: '789 Oak St, City, Country, 11223',
-    review: ''
-  },
-];
-
 export default function ViewOrderDetail() {
   const { id } = useParams();
   const orderId = parseInt(id, 10);
-  const orderDetails = orders.find(order => order.id === orderId);
 
-  const allTimes = [...new Set(orderDetails.items.flatMap(item => item.fishStatus.map(status => status.time)))];
+  const [orderDetails, setOrderDetails] = useState(null);
+
+  useEffect(() => {
+    // Fetch order details from an API or state management store
+    // Example: fetchOrderDetails(orderId).then(data => setOrderDetails(data));
+  }, [orderId]);
+
+  const allTimes = orderDetails ? [...new Set(orderDetails.items.flatMap(item => item.fishStatus.map(status => status.time)))] : [];
   const [selectedDate, setSelectedDate] = useState(allTimes[0]);
 
   const [review, setReview] = useState('');
   const [isReviewSubmitted, setIsReviewSubmitted] = useState(false);
 
   useEffect(() => {
-    setReview(orderDetails.review || '');
-    setIsReviewSubmitted(!!orderDetails.review);
-  }, [orderId, orderDetails.review]);
+    if (orderDetails) {
+      setReview(orderDetails.review || '');
+      setIsReviewSubmitted(!!orderDetails.review);
+    }
+  }, [orderDetails]);
 
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
@@ -118,11 +53,12 @@ export default function ViewOrderDetail() {
 
   const handleSubmitReview = () => {
     setIsReviewSubmitted(true);
-    orderDetails.review = review;
+    // Update the review in the database or state management store
+    // Example: updateOrderReview(orderId, review);
   };
 
   if (!orderDetails) {
-    return <Typography variant="h6">Order not found</Typography>;
+    return <Typography variant="h6">Loading...</Typography>;
   }
 
   return (
