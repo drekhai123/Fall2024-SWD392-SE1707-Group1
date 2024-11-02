@@ -375,6 +375,9 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("DeliveryStatus")
                         .HasColumnType("int");
 
+                    b.Property<double>("Distance")
+                        .HasColumnType("double");
+
                     b.Property<int>("DistancePriceListId")
                         .HasColumnType("int");
 
@@ -456,6 +459,9 @@ namespace KDOS_Web_API.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

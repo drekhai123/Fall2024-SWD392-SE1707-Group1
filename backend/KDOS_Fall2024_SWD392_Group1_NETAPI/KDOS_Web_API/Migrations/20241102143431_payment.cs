@@ -7,17 +7,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KDOS_Web_API.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateLog : Migration
+    public partial class payment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "CustomerId",
-                table: "LogTransport",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            
 
             migrationBuilder.CreateTable(
                 name: "Payment",
@@ -25,41 +23,46 @@ namespace KDOS_Web_API.Migrations
                 {
                     PaymentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Amount = table.Column<long>(type: "bigint", nullable: false),
-                    PaymentDesc = table.Column<string>(type: "longtext", nullable: true)
+                    TransactionId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    TransactionId = table.Column<long>(type: "bigint", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payment", x => x.PaymentId);
+                    table.ForeignKey(
+                        name: "FK_Payment_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_LogTransport_Customer_TransportId",
-                table: "LogTransport",
-                column: "TransportId",
-                principalTable: "Customer",
-                principalColumn: "CustomerId",
-                onDelete: ReferentialAction.Cascade);
+
+           
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payment_OrderId",
+                table: "Payment",
+                column: "OrderId",
+                unique: true);
+
+           
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_LogTransport_Customer_TransportId",
-                table: "LogTransport");
+           
 
             migrationBuilder.DropTable(
                 name: "Payment");
 
-            migrationBuilder.DropColumn(
-                name: "CustomerId",
-                table: "LogTransport");
+           
         }
     }
 }
