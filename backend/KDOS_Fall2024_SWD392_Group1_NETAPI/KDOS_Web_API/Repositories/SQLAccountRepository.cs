@@ -111,15 +111,21 @@ namespace KDOS_Web_API.Repositories
         public async Task<Account?> VerificationAccount(Account account, Verification verification)
         {
             var verificationModel = await accountContext.Verification.FirstOrDefaultAsync(x=>x.AccountId== account.AccountId);
-            if (verificationModel==null||verificationModel.ExpiredDate < verification.ExpiredDate)
+            if (verificationModel==null) // check for darty little cheater
             {
+                return null;
+            }
+            else if(verificationModel.ExpiredDate < verification.ExpiredDate) //delete expired token too, because they are taking up space
+            {
+                accountContext.Verification.Remove(verification);
+                await accountContext.SaveChangesAsync();
                 return null;
             }
             accountContext.Verification.Remove(verification);
             var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == account.AccountId);
             // Account is guarantee in DB
-            accountExist!.Verified = account.Verified; 
-            await accountContext.SaveChangesAsync();
+            accountExist!.Verified = account.Verified;
+            await accountContext.SaveChangesAsync(); // Update account to "verified"
             return accountExist;
         }
 
