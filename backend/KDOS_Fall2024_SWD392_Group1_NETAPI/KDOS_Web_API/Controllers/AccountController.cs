@@ -63,6 +63,12 @@ namespace KDOS_Web_API.Controllers
                 return Unauthorized("Error! Wrong Email/UserName or Password");
             }
 
+            // Check if the account is banned
+            if (accountModel.Banned)
+            {
+                return BadRequest("Your account has been banned. Please contact support.");
+            }
+
             var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel, accountModel.Password, loginDTO.Password); // Validate the hashed password
             if (verifyPassword == PasswordVerificationResult.Success) // Password is correct
             {
@@ -79,16 +85,21 @@ namespace KDOS_Web_API.Controllers
         {
             var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
 
-            if (accountModel != null)
-            {
-                AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
-                var token = IssueToken(accountModel); // Generate a JWT token
-                return Ok(new { account = accountDTO, token = token });
-            }
-            else
+            if (accountModel == null)
             {
                 return NotFound("Error! Wrong Email Or Account Doesn't Exist");
             }
+
+            // Check if the account is banned
+            if (accountModel.Banned)
+            {
+                return BadRequest("Your account has been banned. Please contact support.");
+            }
+
+            // If account exists and is not banned, proceed to generate token
+            AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
+            var token = IssueToken(accountModel); // Generate a JWT token
+            return Ok(new { account = accountDTO, token = token });
 
         }
 
@@ -347,6 +358,19 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
+        [HttpPatch("ToggleBanned/{accountId}")]
+        public async Task<IActionResult> ToggleBanned(int accountId)
+        {
+            var success = await accountRepository.ToggleBannedStatusAsync(accountId);
+
+            if (!success)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            return Ok(new { Message = "Banned status toggled successfully" });
+        }
+
         [HttpDelete]
         [Authorize]
         [Route("{accountId}")]

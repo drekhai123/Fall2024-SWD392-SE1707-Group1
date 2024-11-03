@@ -1,7 +1,7 @@
 const baseUrl = "https://kdosdreapiservice.azurewebsites.net/api";
-const localhostUrl = "http://localhost:2377/api";
+const localhostUrl = "https://localhost:7250/api";
 
-const getJwtToken = ()=>{
+const getJwtToken = () => {
   const token = sessionStorage.getItem("token")
   return token
 }
@@ -13,4 +13,4 @@ const headers = {
 };
 
 
-export { headers, baseUrl, localhostUrl ,getJwtToken};
+export { headers, baseUrl, localhostUrl, getJwtToken };

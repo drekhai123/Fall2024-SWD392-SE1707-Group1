@@ -49,9 +49,9 @@ const OrderHistory = () => {
   const handleViewDetail = (orderId) => {
     navigate(`/profile/ViewOrderHistory/${orderId}`);
   };
-
+  
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <div style={{ padding: '20px', margin: '0 auto' }}>
       <Typography variant="h4" gutterBottom>
         Order History
       </Typography>
@@ -59,15 +59,22 @@ const OrderHistory = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ fontWeight: 'bold' }}>Order ID</TableCell>
+              <TableCell style={{fontWeight: 'bold'}}>Order ID</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Sender name</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Recipient name</TableCell>
+              <TableCell style={{fontWeight: 'bold'}}>Total weight</TableCell>
+              <TableCell style={{fontWeight: 'bold'}}>Total Price</TableCell>
+              <TableCell style={{fontWeight: 'bold'}}>Quantity</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Distance</TableCell>
+              
+              <TableCell style={{ fontWeight: 'bold' }}>Delivery Status</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Date Created</TableCell>
-              <TableCell style={{ fontWeight: 'bold' }}>Status</TableCell>
-              <TableCell style={{ fontWeight: 'bold' }}>Total Price</TableCell>
+              
               <TableCell style={{ fontWeight: 'bold' }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) => {
+            {orders?.map((order) => {
               const date = new Date(order.createdAt);
               const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
 
@@ -75,7 +82,7 @@ const OrderHistory = () => {
               const getStatusColor = (status) => {
                 switch (status) {
                   case 'PENDING':
-                    return 'orange';
+return 'orange';
                   case 'PROCESSING':
                     return 'blue';
                   case 'DELIVERED':
@@ -90,11 +97,17 @@ const OrderHistory = () => {
               return (
                 <TableRow key={order.id}>
                   <TableCell>{order.orderId}</TableCell>
-                  <TableCell>{formattedDate}</TableCell>
+                  <TableCell>{order.senderName}</TableCell>
+                  <TableCell>{order.recipientName}</TableCell>
+                  <TableCell>{order.totalWeight}</TableCell>
+                  <TableCell> {new Intl.NumberFormat('vi-VN').format(order.totalCost)} VND </TableCell>
+                  <TableCell>{order.quantity}</TableCell>
+                  <TableCell>{order.distance.toFixed(2)}</TableCell>
+                  
                   <TableCell style={{ color: getStatusColor(order.deliveryStatus) }}>
                     {order.deliveryStatus}
                   </TableCell>
-                  <TableCell>{order.totalCost}</TableCell>
+                  <TableCell>{formattedDate}</TableCell>
                   <TableCell>
                     <Button
                       variant="contained"

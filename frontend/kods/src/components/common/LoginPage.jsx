@@ -36,6 +36,8 @@ const LoginPage = () => {
       sessionStorage.setItem('token', response.data.token);
       toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
       setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
+    } else if (response.status === 400) {
+      alert("Your account has been banned. Please contact support.");
     } else {
       alert("Invalid credentials");
     }

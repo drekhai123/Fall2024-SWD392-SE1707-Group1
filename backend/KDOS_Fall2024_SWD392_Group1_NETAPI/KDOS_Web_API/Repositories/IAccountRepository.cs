@@ -17,6 +17,8 @@ namespace KDOS_Web_API.Repositories
         Task<Account?> UpdatePassword(int id, Account account);
         Task<Account?> BanAccount(int id, Account account);
         Task<Account?> Login(string userNameOrEmail);
-	}
+        Task<bool> ToggleBannedStatusAsync(int id);
+
+    }
 }
 

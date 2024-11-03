@@ -2,8 +2,10 @@
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
+using KDOS_Web_API.Services.VNPay;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,12 +18,15 @@ namespace KDOS_Web_API.Controllers
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IMapper mapper;
+        private readonly IConfiguration _configuration;
 
 
-        public VNPayController(IPaymentRepository paymentRepository, IMapper mapper)
+
+        public VNPayController(IPaymentRepository paymentRepository, IMapper mapper, IConfiguration configuration)
         {
             this._paymentRepository = paymentRepository;
             this.mapper = mapper;
+            _configuration = configuration;
         }
 
         // POST: api/Payments/Create
@@ -54,57 +59,86 @@ namespace KDOS_Web_API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
         }
-
-
-        // GET: api/Payments/Execute
-        [HttpGet("Execute")]
-        public async Task<IActionResult> ExecutePayment([FromQuery] IQueryCollection query)
+        
+        [HttpGet]
+        [Route("{transactionId}")]
+        public async Task<IActionResult> GetPaymentByTransactionIdAsync([FromRoute] string transactionId)
         {
-            try
-            {
-                // Execute payment and get response data
-                var response = await _paymentRepository.PaymentExecute(query);
+            var payment = await _paymentRepository.GetPaymentByTransactionIdAsync(transactionId);
 
-                if (response.Success)
-                {
-                    return Ok(response);
-                }
-                else
-                {
-                    return BadRequest(new { Message = response.StatusMessage });
-                }
-            }
-            catch (Exception ex)
+            if (payment == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+                return NotFound();
             }
+
+            var paymentDto = mapper.Map<PaymentDTO>(payment);
+
+            return Ok(paymentDto);
         }
 
 
 
-        // POST: api/Payments/Ipn
-        [HttpPost("Ipn")]
-        public async Task<IActionResult> HandleIpn([FromQuery] IQueryCollection query)
+        // POST: api/Payments/Execute
+        [HttpPost("Execute")]
+        public async Task<IActionResult> ExecutePayment([FromBody] PaymentExecuteRequest request)
         {
             try
             {
-                // Handle IPN request from VNPay
-                var result = await _paymentRepository.PaymentExecuteIpn(query);
+                var pay = new PayLib();
 
-                if (result != null)
+                // Validate the payment signature
+                bool isValidSignature = pay.ValidateSignature(request.VnpSecureHash, _configuration["Vnpay:HashSecret"]);
+
+                if (isValidSignature)
                 {
-                    return Ok(result);
+                    return BadRequest(new ResponsePayment
+                    {
+                        Success = false,
+                        StatusMessage = "Invalid payment signature" ,
+                        ResponseDate = DateTime.UtcNow
+                    });
                 }
-                else
+
+                // Retrieve the transaction ID and update payment status
+                var transactionId = request.VnpTxnRef;
+                var payment = await _paymentRepository.GetPaymentByTransactionIdAsync(transactionId);
+
+                if (payment == null)
                 {
-                    return BadRequest(new { Message = "Failed to process IPN notification" });
+                    return NotFound(new ResponsePayment
+                    {
+                        Success = false,
+                        StatusMessage = "Transaction not found",
+                        ResponseDate = DateTime.UtcNow
+                    });
                 }
+
+                // Update payment status based on VNPay's response
+                payment.Status = Models.Enum.PaymentStatus.PAID;
+
+                // Save the updated status
+                await _paymentRepository.UpdatePaymentStatusAsync(payment);
+
+                // Construct the response
+                var responsePayment = new ResponsePayment
+                {
+                    paymentId = payment.PaymentId,
+                    VnpTransactionId = transactionId,
+                    OrderId = payment.OrderId,
+                    Success = true,
+                    ResponseDate = DateTime.UtcNow,
+                    StatusMessage = "Payment successful"
+                };
+
+                return Ok(responsePayment);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+                // Log the error and return a 500 error
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred while processing the payment." });
             }
         }
+
 
         // GET: api/Payments
         [HttpGet]

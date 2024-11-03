@@ -448,3 +448,19 @@
   content: "+";
   margin-right: 4px;
 }
+
+.phone-input-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #ff0000;
+  font-size: 12px;
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 100%;
+}
