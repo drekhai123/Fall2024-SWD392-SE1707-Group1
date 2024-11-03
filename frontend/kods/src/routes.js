@@ -19,7 +19,7 @@ import UserProfilePage from "./components/customer/profile";
 import AddFishForm from "./components/customer/profile/AddFishForm"; // Import AddFishForm
 import { StaffDashBoard } from "./components/staff/StaffDashBoard";
 import ViewOrderHistory from "./components/customer/profile/ViewOrderHistory"; // Import ViewOrderHistory
-import ViewOrderDetails from './components/customer/profile/ViewOrderDetail';
+import ViewOrderDetails from "./components/customer/profile/ViewOrderDetail";
 import NotFound from "./components/common/404page";
 import ContactPage from "./components/common/Contact";
 import AboutPage from "./components/common/About";
@@ -88,7 +88,7 @@ export const router = createBrowserRouter([
     path: "/ordertracking",
     element: (
       // <PrivateRoute>
-        <OrderStatusTracking />
+      <OrderStatusTracking />
       // </PrivateRoute>
     ), // Wrapped with PrivateRoute
   },
@@ -106,7 +106,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/staffDashBoard",
-    element: <StaffDashBoard />,
+    element: (
+      // <PrivateRoute>
+        <StaffDashBoard />
+      // </PrivateRoute>
+    ),
   },
   {
     path: "/profile/ViewOrderHistory/:orderId", // Ensure this matches the path used in handleViewDetail

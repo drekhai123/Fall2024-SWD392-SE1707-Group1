@@ -24,6 +24,7 @@ export default function Navbar() {
             <li className="nav-item"><Link to={"/"}>HOME</Link></li>
             <li className="nav-item"><Link to={"/about"}>ABOUT</Link></li>
             <li className="nav-item"><Link to={"/orderform"}>DELIVERY</Link></li>
+            <li className="nav-item"><Link to={"/staffDashBoard"}>STAFF DASHBOARD</Link></li>
             <li className="nav-item">
               <Link to="/feedback">FEEDBACK</Link>
             </li>
