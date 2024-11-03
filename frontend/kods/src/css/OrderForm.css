@@ -36,6 +36,8 @@
 
 .content {
   padding: 10px;
+  background: linear-gradient(rgba(226, 230, 255, 0.7), rgba(226, 230, 255, 0.7)), 
+  url("../../public/images/koifish.png");
 }
 
 .fixed-table {
@@ -225,8 +227,8 @@
 
   .total-amount {
     display: flex;
-    justify-content: center; /* Căn giữa theo chiều ngang */
-    align-items: flex-end; /* Căn dưới cùng theo chiều dọc */
+    justify-content: center; 
+    align-items: flex-end; 
     margin-top: 10px;
     gap: 20px;
     font-size: 30px;
@@ -463,4 +465,102 @@
   transform: translateX(-50%);
   text-align: center;
   width: 100%;
+}
+
+.total-amount-container {
+  margin: 0;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-amount-text {
+  font-weight: bold;
+  color: purple;
+  font-size: 30px;
+}
+
+.payment-method-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.payment-label {
+  margin-right: 10px;
+  font-weight: normal;
+  color: purple;
+  font-size: 30px;
+}
+
+.payment-select {
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background-color: white;
+  min-width: 120px;
+  height: 35px;
+  font-size: 14px;
+}
+
+.payment-select:hover {
+  border-color: #888;
+}
+
+.payment-select:focus {
+  outline: none;
+  border-color: #555;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f8f8;
+  border-radius: 8px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+}
+
+.payment-option:hover {
+  background: #f0f0f0;
+}
+
+.payment-option input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.payment-option label {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Cập nhật style cho container-popup nếu cần */
+.container-popup {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  min-width: 300px;
+  text-align: center;
+}
+
+.title-popup {
+  margin-bottom: 20px;
+  color: #333;
 }
