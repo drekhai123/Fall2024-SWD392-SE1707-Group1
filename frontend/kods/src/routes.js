@@ -109,10 +109,8 @@ export const router = createBrowserRouter([
   },
   {
     path: "/staffDashBoard",
-    element: (
-      // <PrivateRoute>
-      <StaffDashBoard />
-      // </PrivateRoute>
+    element: (// <PrivateRoute>
+        <StaffDashBoard />
     ),
   },
   {
