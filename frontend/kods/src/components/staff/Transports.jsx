@@ -4,12 +4,15 @@ import { useState, useEffect } from "react";
 import { CheckHealStatusDialog } from "./CheckHealthStatusDialog";
 import { CreateTransportDialog } from "./CreateTransportDialog";
 import { Button } from "primereact/button";
+import { Calendar } from 'primereact/calendar';
 
 import axios from "axios";
 import { baseUrl, headers, getJwtToken } from "../api/Url";
+import LoadingScreen from "../../utils/LoadingScreen";
 
 export function Transports() {
   const token = getJwtToken();
+  const [isLoading, setIsLoading] = useState(true);
   const [transports, setTransports] = useState([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [staff, setStaff] = useState();
@@ -19,6 +22,7 @@ export function Transports() {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setIsLoading(true)
       try {
         const ordersResponse = await axios.get(`${baseUrl}/Orders`, {
           headers: {
@@ -67,10 +71,22 @@ export function Transports() {
       } catch (err) {
         console.error(err);
       }
+      setIsLoading(false)
     };
 
     fetchOrders();
   }, []);
+
+  // Pagingation
+  const [first, setFirst] = useState(0); // Track the first row for controlled pagination
+  const [rows, setRows] = useState(5); // Number of rows per page
+
+  const onPage = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+  //
+
 
   const buttonCreateTransport = () => (
     <Button
@@ -83,8 +99,13 @@ export function Transports() {
 
   return (
     <div>
+      {isLoading && <LoadingScreen/>}
       <DataTable
         value={transports}
+        paginator
+        rows={rows}
+        first={first}
+        onPage={onPage}
         showGridlines
         stripedRows
         tableStyle={{ minWidth: "50rem" }}
