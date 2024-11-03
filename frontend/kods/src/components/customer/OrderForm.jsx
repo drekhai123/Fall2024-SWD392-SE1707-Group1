@@ -38,6 +38,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const token = getJwtToken();
 
+  // Add new state for validation
+  const [phoneErrors, setPhoneErrors] = useState({
+    sender: '',
+    customer: ''
+  });
+
+  // Add phone validation function
+  const validateVietnamesePhone = (phone) => {
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    return phoneRegex.test(phone);
+  };
+
   //Hàm fecth API get FishProfile
   const getFishProfile = useCallback(async () => {
     setLoading(true);
@@ -153,8 +165,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
   };
   // phí shipping
   const calculateShippingFee = () => {
-    const {distance} = customerInfo;
-    const estimatedDays = calculateEstimatedDeliveryDays(distance);
+    const { distance } = customerInfo;
     var unitPrice = 0;
 
     // Tìm giá từ khoảng cách tương ứng trong distancePriceList
@@ -162,33 +173,25 @@ export default function OrderForm({onSuggestionClick, distance}) {
       (item) => distance >= item.minRange && distance <= item.maxRange
     );
 
-    // Nếu tìm thấy, sử dụng giá tương ứng từ API, nếu không tìm thấy thì gán giá trị mặc định
     if (range) {
-      unitPrice = range.price; // Gán giá từ range nếu tìm thấy
+      unitPrice = range.price;
     }
 
-    const baseFee = distance * parseFloat(unitPrice); // Tính toán baseFee
-
-    if (distance <= 5) {
-      return check ? 25000 : 0;
-    }
-
-    if (check && estimatedDays === 1) {
-      return baseFee + 25000;
-    } else if (!check && estimatedDays === 1) {
-      return baseFee;
-    } else {
-      return baseFee + 20000 * estimatedDays;
-    }
+    return distance * parseFloat(unitPrice); // Chỉ trả về phí shipping cơ bản
   };
 
-  const calculateVAT = () => {
-    if (estimatedDays === null) {
-      return (estimatedDays === 0);
-    } else if (estimatedDays > 0) {
-      return (estimatedDays === 0);
-    } else if (estimatedDays >= 1.1) {
-      return (estimatedDays * 20000);
+  // Rename the function
+  const FeedingFee = () => {
+    if (!customerInfo?.distance) return 0;
+    
+    const estimatedDays = calculateEstimatedDeliveryDays(customerInfo.distance);
+    
+    if (customerInfo.distance <= 50) {
+      // Nếu khoảng cách <= 50km và người dùng check box
+      return check ? 25000 : 0;
+    } else {
+      // Nếu khoảng cách > 50km, tự động tính phí theo số ngày
+      return estimatedDays * 20000;
     }
   };
 
@@ -236,7 +239,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
       quantity: fishOrdersList?.length,
       totalWeight: weightPriceTotal,
       distance: Number(customerInfo?.distance),
-      totalCost: (getTotalAmount() + (calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))),
+      totalCost: (getTotalAmount() + (FeedingFee()) + parseFloat(calculateShippingFee().toFixed(0))),
       createdAt: new Date(),
       updatedAt: new Date(),
       distancePriceListId: distancePriceListId,
@@ -256,11 +259,12 @@ export default function OrderForm({onSuggestionClick, distance}) {
         <p>Name customer: ${customerInfo.emailCustomer}</p>
         <p>Phone customer: ${customerInfo.phoneCustomer}</p>
         <p>Address customer: ${customerInfo.addressCustomer}</p>
-        <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
-        <p>Total amount: ${getTotalAmount() +
-        (calculateVAT()) +
-        parseFloat(calculateShippingFee().toFixed(0))
-        } VND</p>
+        <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${formatCurrency(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
+        <p>Total amount: ${formatCurrency(
+          getTotalAmount() +
+          FeedingFee() +
+          parseFloat(calculateShippingFee().toFixed(0))
+        )} VND</p>
       `,
       icon: "info",
       showCancelButton: true,
@@ -335,6 +339,21 @@ export default function OrderForm({onSuggestionClick, distance}) {
     : '--';
 
   const handleCustomerChange = async (field, value) => {
+    if (field === "phoneSender" || field === "phoneCustomer") {
+      // Only allow numbers
+      if (!/^\d*$/.test(value)) {
+        return;
+      }
+      
+      // Validate phone number
+      const isValid = validateVietnamesePhone(value);
+      setPhoneErrors(prev => ({
+        ...prev,
+        [field === "phoneSender" ? "sender" : "customer"]: 
+          value ? (isValid ? '' : 'Please enter a valid Vietnamese phone number') : ''
+      }));
+    }
+
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
@@ -518,6 +537,11 @@ export default function OrderForm({onSuggestionClick, distance}) {
     )
   }
 
+  // Thêm hàm format số tiền
+  const formatCurrency = (amount) => {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
   return (
     <div className="order-form">
       <div className="con">
@@ -556,14 +580,16 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   handleCustomerChange("nameSender", e.target.value)
                 }
               />
-              <input
-                className="input-customer"
-                type="text"
-                placeholder="Phone"
-                onChange={(e) =>
-                  handleCustomerChange("phoneSender", e.target.value)
-                }
-              />
+              <div className="phone-input-container">
+                <input
+                  className="input-customer"
+                  type="text"
+                  placeholder="Phone"
+                  value={customerInfo.phoneSender || ''}
+                  onChange={(e) => handleCustomerChange("phoneSender", e.target.value)}
+                />
+                {phoneErrors.sender && <span className="error-message">{phoneErrors.sender}</span>}
+              </div>
               <div className="layout-suggestions">
                 <input
                   className="input-customer"
@@ -612,14 +638,16 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   handleCustomerChange("emailCustomer", e.target.value)
                 }
               />
-              <input
-                className="input-customer"
-                type="text"
-                placeholder="Phone"
-                onChange={(e) =>
-                  handleCustomerChange("phoneCustomer", e.target.value)
-                }
-              />
+              <div className="phone-input-container">
+                <input
+                  className="input-customer"
+                  type="text"
+                  placeholder="Phone"
+                  value={customerInfo.phoneCustomer || ''}
+                  onChange={(e) => handleCustomerChange("phoneCustomer", e.target.value)}
+                />
+                {phoneErrors.customer && <span className="error-message">{phoneErrors.customer}</span>}
+              </div>
 
               <div className="layout-suggestions">
                 <input
@@ -697,11 +725,11 @@ export default function OrderForm({onSuggestionClick, distance}) {
                     <div style={{marginTop: '10px'}}>
                       <div className="fee-line">
                         <span className="fee-label">Shipping fee:</span>
-                        <span className="fee-amount">{calculateShippingFee() || 0} VND</span>
+                        <span className="fee-amount">{formatCurrency(calculateShippingFee() || 0)} VND</span>
                       </div>
                       <div className="fee-line">
                         <span className="fee-label">Feeding Fee:</span>
-                        <span className="fee-amount">{calculateVAT() || 0} VND</span>
+                        <span className="fee-amount">{formatCurrency(FeedingFee() || 0)} VND</span>
                       </div>
                     </div>
                   </div>
@@ -724,7 +752,12 @@ export default function OrderForm({onSuggestionClick, distance}) {
         }}
         >
           Total Amount: {" "}
-          {(getTotalAmount() + (calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0)))} VND</div>
+          {formatCurrency(
+            getTotalAmount() +
+            FeedingFee() +
+            parseFloat(calculateShippingFee().toFixed(0))
+          )} VND
+        </div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>
