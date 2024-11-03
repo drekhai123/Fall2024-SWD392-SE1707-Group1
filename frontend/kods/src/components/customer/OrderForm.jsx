@@ -1,18 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import Swal from "sweetalert2";
-import { QRCodeSVG } from "qrcode.react";
+import {QRCodeSVG} from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
-import { getJwtToken } from "../api/Url";
+import {useNavigate} from 'react-router-dom';
+import {getJwtToken} from "../api/Url";
+import {postOrders} from "../api/OrdersApi";
 
-export default function OrderForm({ onSuggestionClick, distance }) {
-  const navigateToLogin = useNavigate();
+export default function OrderForm({onSuggestionClick, distance}) {
+  const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
   const [modal, setOpenModal] = useState(false);
   const [data, setData] = useState(null);
-  const [showQRCode, setShowQRCode] = useState(false);
+  const [showQRCode, setShowQRCode] = useState(null);
   const [check, setCheck] = useState(false)
   const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
@@ -24,23 +25,25 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [selectedFish, setSelectedFish] = useState([]);
 
   const [distancePriceList, setDistancePriceList] = useState([]);
+  const [weightPriceList, setWeightPriceList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [customerInfo, setCustomerInfo] = useState({
     nameCustomer: "",
     phoneCustomer: "",
     addressCustomer: "",
+    EmailCustomer: "",
     distance: 0,
   });
 
   const token = getJwtToken();
-  
-  //Hàm fecth API mới
+
+  //Hàm fecth API get FishProfile
   const getFishProfile = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`https://kdosdreapiservice.azurewebsites.net/api/FishProfile/Customer/${user?.customer?.customerId}`, {
-        headers:{
+        headers: {
           'Authorization': `Bearer ${token}`
         }
       });
@@ -53,17 +56,17 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   }, [user?.customer?.customerId]); // Chỉ tạo lại khi user.customer.customerId thay đổi
 
 
-
+  //Hàm Fetch API DistancePriceList
   const getDistancePriceList = useCallback(async () => {
     setLoading(true);
     try {
       const distanceResponse = await axios.get(
-        "https://kdosdreapiservice.azurewebsites.net/api/DistancePriceList" , {
-          headers:{
-            
-            'Authorization': `Bearer ${token}`
-          }
+        "https://kdosdreapiservice.azurewebsites.net/api/DistancePriceList", {
+        headers: {
+
+          'Authorization': `Bearer ${token}`
         }
+      }
       );
       setDistancePriceList(distanceResponse?.data); // Lưu dữ liệu từ API vào state
     } catch (error) {
@@ -73,16 +76,45 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     }
   }, []);
 
+
+  //Hàm fetch API getWeightPriceList
+  const getWeightPriceList = useCallback(async () => {
+    setLoading(true);
+    try {
+      const weightPriceList = await axios.get(
+        "https://kdosdreapiservice.azurewebsites.net/api/WeightPriceList", {
+        headers: {
+
+          'Authorization': `Bearer ${token}`
+        }
+      }
+      );
+      setWeightPriceList(weightPriceList?.data); // Lưu dữ liệu từ API vào state
+    } catch (error) {
+      console.error("Error fetching distance data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     getDistancePriceList();
-  }, [getDistancePriceList]);
+    getWeightPriceList()
+  }, []);
+
+  useEffect(() => {
+    if (user !== null) {
+      getFishProfile();
+    } else {
+    }
+  }, []);
 
   useEffect(() => {
     if (user !== null) {
       getFishProfile();
     } else {
       alert("Please login to continue...");
-      navigateToLogin("/login");
+      navigate("/login");
     }
   }, []);
 
@@ -90,7 +122,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     if (user?.customer?.customerId) {
       getFishProfile();
     }
-  }, [getDistancePriceList]);
+  }, []);
 
   useEffect(() => {
     setDays(calculateEstimatedDeliveryDays(customerInfo?.distance))
@@ -116,13 +148,13 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       return 10;
     }
   }
-
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
   // phí shipping
   const calculateShippingFee = () => {
-    const { distance } = customerInfo;
+    const {distance} = customerInfo;
+    const estimatedDays = calculateEstimatedDeliveryDays(distance);
     var unitPrice = 0;
 
     // Tìm giá từ khoảng cách tương ứng trong distancePriceList
@@ -130,24 +162,33 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       (item) => distance >= item.minRange && distance <= item.maxRange
     );
 
+    // Nếu tìm thấy, sử dụng giá tương ứng từ API, nếu không tìm thấy thì gán giá trị mặc định
     if (range) {
-      unitPrice = range.price;
+      unitPrice = range.price; // Gán giá từ range nếu tìm thấy
     }
 
-    return distance * parseFloat(unitPrice); // Chỉ trả về phí shipping cơ bản
+    const baseFee = distance * parseFloat(unitPrice); // Tính toán baseFee
+
+    if (distance <= 5) {
+      return check ? 25000 : 0;
+    }
+
+    if (check && estimatedDays === 1) {
+      return baseFee + 25000;
+    } else if (!check && estimatedDays === 1) {
+      return baseFee;
+    } else {
+      return baseFee + 20000 * estimatedDays;
+    }
   };
 
   const calculateVAT = () => {
-    if (!customerInfo?.distance) return 0;
-    
-    const estimatedDays = calculateEstimatedDeliveryDays(customerInfo.distance);
-    
-    if (customerInfo.distance <= 50) {
-      // Nếu khoảng cách <= 50km và người dùng check box
-      return check ? 25000 : 0;
-    } else {
-      // Nếu khoảng cách > 50km, tự động tính phí theo số ngày
-      return estimatedDays * 20000;
+    if (estimatedDays === null) {
+      return (estimatedDays === 0);
+    } else if (estimatedDays > 0) {
+      return (estimatedDays === 0);
+    } else if (estimatedDays >= 1.1) {
+      return (estimatedDays * 20000);
     }
   };
 
@@ -156,6 +197,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       !customerInfo.nameCustomer ||
       !customerInfo.phoneCustomer ||
       !customerInfo.addressCustomer ||
+      !customerInfo.emailCustomer ||
       !customerInfo.nameSender ||
       !customerInfo.phoneSender ||
       !customerInfo.addressSender
@@ -168,15 +210,39 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       return;
     }
 
-    // Kiểm tra định dạng số điện thoại
-    if (!isValidVietnamesePhone(customerInfo.phoneSender) || 
-        !isValidVietnamesePhone(customerInfo.phoneCustomer)) {
-      Swal.fire(
-        "Invalid Phone Number",
-        "Please enter valid Vietnamese phone numbers (10 digits, starting with 0)",
-        "error"
-      );
-      return;
+    const userLogin = JSON.parse(sessionStorage.getItem("user"))
+    const weightPriceTotal = Number(data?.reduce((acc, fish) => acc + fish.weight, 0))
+    const distancePriceListId = distancePriceList?.find(item =>
+      customerInfo?.distance >= item.minRange && customerInfo?.distance <= item.maxRange
+    )?.distancePriceListId;
+
+    const weightPriceListId = weightPriceList?.find(item =>
+      weightPriceTotal >= item.minRange && weightPriceTotal <= item.maxRange
+    )?.weightPriceListId;
+
+
+    const request = {
+      senderName: customerInfo?.nameSender,
+      senderAddress: customerInfo?.addressSender,
+      senderPhoneNumber: customerInfo?.phoneSender,
+      recipientAddress: customerInfo?.addressCustomer,
+      recipientName: customerInfo?.nameCustomer,
+      recipientPhoneNumber: customerInfo?.phoneCustomer,
+      recipientEmail: customerInfo?.emailCustomer,
+      paymentMethod: 'BANK_TRANSFER',
+      paymentStatus: 'PENDING',
+      deliveryStatus: 'PENDING',
+      deliveryNote: "deliveryNote demo",
+      quantity: fishOrdersList?.length,
+      totalWeight: weightPriceTotal,
+      distance: Number(customerInfo?.distance),
+      totalCost: (getTotalAmount() + (calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0))),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      distancePriceListId: distancePriceListId,
+      weightPriceListId: weightPriceListId || 1,
+      customerId: userLogin?.customer?.customerId,
+      transportId: 2,
     }
 
     Swal.fire({
@@ -187,14 +253,14 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         <p>Address sender: ${customerInfo.addressSender}</p>
 
         <p>Name customer: ${customerInfo.nameCustomer}</p>
+        <p>Name customer: ${customerInfo.emailCustomer}</p>
         <p>Phone customer: ${customerInfo.phoneCustomer}</p>
         <p>Address customer: ${customerInfo.addressCustomer}</p>
-        <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${formatCurrency(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
-        <p>Total amount: ${formatCurrency(
-          getTotalAmount() +
-          calculateVAT() +
-          parseFloat(calculateShippingFee().toFixed(0))
-        )} VND</p>
+        <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
+        <p>Total amount: ${getTotalAmount() +
+        (calculateVAT()) +
+        parseFloat(calculateShippingFee().toFixed(0))
+        } VND</p>
       `,
       icon: "info",
       showCancelButton: true,
@@ -202,7 +268,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        setShowQRCode(true);
+        setShowQRCode(request);
       }
     });
   };
@@ -211,34 +277,47 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     sessionStorage.setItem("fishOrders", JSON.stringify(fishOrders));
   }, [fishOrders]);
 
-  const confirmPay = () => {
-    const request = {
-      customer: customerInfo,
-      status: "Wait for confirmation",
-      totalAmount:
-        getTotalAmount() +
-        (calculateVAT()) +
-        parseFloat(calculateShippingFee().toFixed(0)),
-      ship: calculateShippingFee().toFixed(0),
-      VAT: calculateVAT(),
-      createTime: new Date(),
-      product: fishOrders,
-    };
-    const storedCheckout = JSON.parse(localStorage.getItem("checkout")) || [];
-    const updatedCheckout = [...storedCheckout, request];
-    localStorage.setItem("checkout", JSON.stringify(updatedCheckout));
+  const confirmPay = async (data) => {
 
-    localStorage.removeItem("fishOrders");
-    setFishOrders([]);
-    setCustomerInfo({
-      nameCustomer: "",
-      phoneCustomer: "",
-      addressCustomer: "",
-      distance: 0,
-    });
+    try {
+      const orderResponse = await postOrders(data);
+      if (orderResponse) {
+        localStorage.removeItem("fishOrders");
+        setFishOrders([]);
+        setCustomerInfo({
+          nameCustomer: "",
+          phoneCustomer: "",
+          addressCustomer: "",
+          emailCustomer: "",
+          distance: 0,
+        });
+        Swal.fire("Success!", "Order confirmed!", "success");
+        setShowQRCode(null);
+        navigate("/OrderHistory")
+      }
 
-    Swal.fire("Success!", "Order confirmed!", "success");
-    setShowQRCode(false);
+    } catch (error) {
+      console.error("Failed to create order:", error);
+    }
+    
+    //Hàm request mà đang lỗi
+    //const request = {
+    //  customer: customerInfo,
+    //  status: "Wait for confirmation",
+    //  totalAmount:
+    //    getTotalAmount() +
+    //    (calculateVAT()) +
+    //    parseFloat(calculateShippingFee().toFixed(0)),
+    //  ship: calculateShippingFee().toFixed(0),
+    //  VAT: calculateVAT(),
+    //  createTime: new Date(),
+    //  product: fishOrders,
+    //};
+    //const storedCheckout = JSON.parse(localStorage.getItem("checkout")) || [];
+    //const updatedCheckout = [...storedCheckout, request];
+    //localStorage.setItem("checkout", JSON.stringify(updatedCheckout));
+
+
   };
 
   const calculateDeliveryDate = (days) => {
@@ -256,21 +335,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     : '--';
 
   const handleCustomerChange = async (field, value) => {
-    if (field === "phoneSender" || field === "phoneCustomer") {
-      // Chỉ cho phép nhập số
-      const numericValue = value.replace(/[^\d]/g, '');
-      
-      if (numericValue.length > 0 && !isValidVietnamesePhone(numericValue)) {
-        // Nếu số điện thoại không hợp lệ, hiển thị thông báo
-        document.getElementById(`${field}Error`).style.display = 'block';
-      } else {
-        document.getElementById(`${field}Error`).style.display = 'none';
-      }
-      
-      setCustomerInfo({ ...customerInfo, [field]: numericValue });
-      return;
-    }
-
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
@@ -303,24 +367,23 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         }
       }, 500)
     );
-    setCustomerInfo({ ...customerInfo, [field]: value });
+    setCustomerInfo({...customerInfo, [field]: value});
   };
 
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
         setMarkerPositionFrom([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({ ...customerInfo, addressSender: suggestion?.display_name });
+        setCustomerInfo({...customerInfo, addressSender: suggestion?.display_name});
         setFromSuggestions(null);
       } else if ('addressCustomer') {
         setMarkerPositionTo([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({ ...customerInfo, addressCustomer: suggestion?.display_name });
+        setCustomerInfo({...customerInfo, addressCustomer: suggestion?.display_name});
         setToSuggestions(null);
       }
     }
   };
 
-  const navigate = useNavigate();
   const handleGoBack = () => {
     window.close();
     navigate("/");  // Quay lại trang trước đó
@@ -328,8 +391,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Hàm thêm dòng mới
   const addRow = () => {
-    const selectedFishData = data.filter((fish) =>
-      selectedFish.includes(fish.fishProfileId)
+    const selectedFishData = data?.filter((fish) =>
+      selectedFish?.includes(fish.fishProfileId)
     );
 
     setFishOrdersList((prevList) => {
@@ -354,13 +417,13 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
-      onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
+      onSuggestionClick({form: markerPositionFrom, to: markerPositionTo});
     }
   }, [markerPositionFrom, markerPositionTo])
 
   // Hàm của Distance (comment cái const ở trên của nó)
   useEffect(() => {
-    setCustomerInfo({ ...customerInfo, distance: distance });
+    setCustomerInfo({...customerInfo, distance: distance});
   }, [distance])
 
   const handleCheckboxChange = (fishProfileId) => {
@@ -375,7 +438,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
   };
 
-  const FishTable = ({ data }) => {
+  const FishTable = ({data}) => {
     return (
       <table className="fixed-table">
         <thead>
@@ -455,21 +518,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     )
   }
 
-  // Thêm hàm kiểm tra định dạng số điện thoại Việt Nam
-  const isValidVietnamesePhone = (phone) => {
-    // Định dạng số điện thoại Việt Nam:
-    // - Bắt đầu bằng 0
-    // - Tiếp theo là 3,5,7,8,9
-    // - Tổng cộng 10 số
-    const vietnamesePhoneRegex = /^(0)[3|5|7|8|9][0-9]{8}$/;
-    return vietnamesePhoneRegex.test(phone);
-  };
-
-  // Thêm hàm format số tiền
-  const formatCurrency = (amount) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  };
-
   return (
     <div className="order-form">
       <div className="con">
@@ -508,22 +556,14 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   handleCustomerChange("nameSender", e.target.value)
                 }
               />
-              <div className="phone-input-container">
-                <input
-                  className="input-customer"
-                  type="text"
-                  placeholder="Phone (e.g., 0912345678)"
-                  value={customerInfo.phoneSender}
-                  onChange={(e) => handleCustomerChange("phoneSender", e.target.value)}
-                />
-                <span 
-                  id="phoneSenderError" 
-                  className="error-message" 
-                  style={{display: 'none', color: 'red', fontSize: '12px'}}
-                >
-                  Please enter a valid Vietnamese phone number
-                </span>
-              </div>
+              <input
+                className="input-customer"
+                type="text"
+                placeholder="Phone"
+                onChange={(e) =>
+                  handleCustomerChange("phoneSender", e.target.value)
+                }
+              />
               <div className="layout-suggestions">
                 <input
                   className="input-customer"
@@ -564,22 +604,22 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   handleCustomerChange("nameCustomer", e.target.value)
                 }
               />
-              <div className="phone-input-container">
-                <input
-                  className="input-customer"
-                  type="text"
-                  placeholder="Phone (e.g., 0912345678)"
-                  value={customerInfo.phoneCustomer}
-                  onChange={(e) => handleCustomerChange("phoneCustomer", e.target.value)}
-                />
-                <span 
-                  id="phoneCustomerError" 
-                  className="error-message" 
-                  style={{display: 'none', color: 'red', fontSize: '12px'}}
-                >
-                  Please enter a valid Vietnamese phone number
-                </span>
-              </div>
+              <input
+                className="input-customer"
+                type="text"
+                placeholder="Email"
+                onChange={(e) =>
+                  handleCustomerChange("emailCustomer", e.target.value)
+                }
+              />
+              <input
+                className="input-customer"
+                type="text"
+                placeholder="Phone"
+                onChange={(e) =>
+                  handleCustomerChange("phoneCustomer", e.target.value)
+                }
+              />
 
               <div className="layout-suggestions">
                 <input
@@ -610,7 +650,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 </div>
               </div>
 
-              <div style={{ marginTop: 10 }} className="customer-info">
+              <div style={{marginTop: 10}} className="customer-info">
                 <h3 className="label-customer">Distance (km)</h3>
                 <input
                   className="input-customer"
@@ -631,7 +671,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   <div>
                     <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
                       className="layout-checkbox"
-                      style={{ marginBottom: '10px' }}
+                      style={{marginBottom: '10px'}}
                     >
                       <p>
                         <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
@@ -643,7 +683,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                         {customerInfo?.distance <= 50 && (
                           <label>
                             <input
-                              style={{ cursor: 'pointer' }}
+                              style={{cursor: 'pointer'}}
                               type="checkbox"
                               checked={check}
                               onChange={(e) => setCheck(e.target.checked)}
@@ -654,14 +694,14 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                       </div>
                     </div>
 
-                    <div style={{ marginTop: '10px' }}>
+                    <div style={{marginTop: '10px'}}>
                       <div className="fee-line">
                         <span className="fee-label">Shipping fee:</span>
-                        <span className="fee-amount">{formatCurrency(calculateShippingFee() || 0)} VND</span>
+                        <span className="fee-amount">{calculateShippingFee() || 0} VND</span>
                       </div>
                       <div className="fee-line">
                         <span className="fee-label">Feeding Fee:</span>
-                        <span className="fee-amount">{formatCurrency(calculateVAT() || 0)} VND</span>
+                        <span className="fee-amount">{calculateVAT() || 0} VND</span>
                       </div>
                     </div>
                   </div>
@@ -684,12 +724,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         }}
         >
           Total Amount: {" "}
-          {formatCurrency(
-            getTotalAmount() + 
-            calculateVAT() + 
-            parseFloat(calculateShippingFee().toFixed(0))
-          )} VND
-        </div>
+          {(getTotalAmount() + (calculateVAT()) + parseFloat(calculateShippingFee().toFixed(0)))} VND</div>
         <button onClick={handleCheckout} className="checkout-button">
           Checkout
         </button>
@@ -715,11 +750,11 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                 </div>
               </div>
               <div className="layout-btn">
-                <button onClick={() => confirmPay()} className="confirm-btn">
+                <button onClick={() => confirmPay(showQRCode)} className="confirm-btn">
                   Confirm payment
                 </button>
                 <button
-                  onClick={() => setShowQRCode(false)}
+                  onClick={() => setShowQRCode(null)}
                   className="cancel-btn"
                 >
                   Cancel
@@ -741,7 +776,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                       name="checkbox-all"
                       type="checkbox"
                       onChange={(e) => handleSelectAll(e.target.checked)}
-                      checked={selectedFish.length === data.length}
+                      checked={selectedFish?.length === data?.length}
                     />
                     <div className="layout-select">
                       <span className="label">Name</span>
