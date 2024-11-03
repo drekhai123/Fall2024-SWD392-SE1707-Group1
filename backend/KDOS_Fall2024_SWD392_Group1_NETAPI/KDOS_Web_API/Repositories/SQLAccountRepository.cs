@@ -2,6 +2,7 @@
 using KDOS_Web_API.Datas;
 using KDOS_Web_API.Models.Domains;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Mail;
 
 namespace KDOS_Web_API.Repositories
 {
@@ -148,6 +149,24 @@ namespace KDOS_Web_API.Repositories
             {
                 return verificationExist;
             }
+        }
+        public async Task<bool> ToggleBannedStatusAsync(int userId)
+        {
+            // Find the user by ID
+            var user = await accountContext.Account.FindAsync(userId);
+
+            if (user == null)
+            {
+                return false; // User not found
+            }
+
+            // Toggle the Banned status (true becomes false, and false becomes true)
+            user.Banned = !user.Banned;
+
+            // Save changes to the database
+            await accountContext.SaveChangesAsync();
+
+            return true;
         }
     }
 }

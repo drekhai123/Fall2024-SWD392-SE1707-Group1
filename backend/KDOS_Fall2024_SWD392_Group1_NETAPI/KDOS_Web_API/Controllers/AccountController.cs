@@ -347,6 +347,19 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
+        [HttpPost("ToggleBanned/{accountId}")]
+        public async Task<IActionResult> ToggleBanned(int accountId)
+        {
+            var success = await accountRepository.ToggleBannedStatusAsync(accountId);
+
+            if (!success)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            return Ok(new { Message = "Banned status toggled successfully" });
+        }
+
         [HttpDelete]
         [Authorize]
         [Route("{accountId}")]
