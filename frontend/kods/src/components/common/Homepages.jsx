@@ -53,31 +53,6 @@ export default function Homepage() {
       });
     };
   }, []); // Empty dependency array so this runs only on mount
-
-  const handleBackToHome = () => {
-    window.location.href = '/';
-  };
-
-  const buttonStyles = {
-    backgroundColor: '#3498db',
-    color: 'white',
-    border: 'none',
-    borderRadius: '30px',
-    padding: '12px 30px',
-    fontSize: '18px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease, transform 0.1s ease',
-    outline: 'none',
-  };
-
-  const buttonHoverStyles = {
-    backgroundColor: '#2980b9',
-  };
-
-  const buttonActiveStyles = {
-    transform: 'scale(0.98)',
-  };
-
   return (
     <>
       <div>
@@ -128,24 +103,6 @@ export default function Homepage() {
           <div className="divider"></div>
           <Blogcarousel />
           <div className="divider" />
-          <button
-            onClick={handleBackToHome}
-            style={buttonStyles}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = buttonHoverStyles.backgroundColor;
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = buttonStyles.backgroundColor;
-            }}
-            onMouseDown={(e) => {
-              e.target.style.transform = buttonActiveStyles.transform;
-            }}
-            onMouseUp={(e) => {
-              e.target.style.transform = 'scale(1)';
-            }}
-          >
-            Back to Homepage
-          </button>
         </section>
         <Footer />
       </div>

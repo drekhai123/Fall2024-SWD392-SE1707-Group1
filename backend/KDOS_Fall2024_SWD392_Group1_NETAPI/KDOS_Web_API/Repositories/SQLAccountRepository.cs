@@ -58,7 +58,8 @@ namespace KDOS_Web_API.Repositories
         public async Task<Account?> UpdateAccount(int id, Account account)
         {
             var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
-            if(accountExist == null)
+            var emailorUsernameExist = await accountContext.Account.FirstOrDefaultAsync(x => x.Email == account.Email|| x.UserName == account.UserName);
+            if (accountExist == null || !accountExist.Equals(emailorUsernameExist))
             {
                 return null;
             }
@@ -71,7 +72,22 @@ namespace KDOS_Web_API.Repositories
             }
         }
 
-       public async Task<Account?> Login(string userNameOrEmail)
+        public async Task<Account?> UpdatePassword(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Password = account.Password;
+                await accountContext.SaveChangesAsync();
+                return accountExist;
+            }
+        }
+
+        public async Task<Account?> Login(string userNameOrEmail)
         {
             return await accountContext.Account.Include(x=>x.Customer).FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
         }

@@ -1,19 +1,69 @@
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { useState, useEffect } from "react";
-import { TransportAssignStaffDialog } from "./TransportAssignStaffDialog";
+import { CheckHealStatusDialog } from "./CheckHealthStatusDialog";
+import { CreateTransportDialog } from "./CreateTransportDialog";
 import { Button } from "primereact/button";
 
 import axios from "axios";
-import { baseUrl } from "../api/Url";
+import { baseUrl, headers, getJwtToken } from "../api/Url";
 
 export function Transports() {
-  const [transports, setTransports] = useState([])
+  const token = getJwtToken();
+  const [transports, setTransports] = useState([]);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [staff, setStaff] = useState();
+  const [isOpenHealthDialog, setIsOpenHealthDialog] = useState(false);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const userId = user.accountId;
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/Orders`);
-        setTransports(response.data.filter(data => data.deliveryStatus === 'PROCESSING'));
+        const ordersResponse = await axios.get(`${baseUrl}/Orders`, {
+          headers: {
+            ...headers,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const orders = ordersResponse.data.filter(
+          (data) => data.deliveryStatus === "PROCESSING"
+        );
+
+        const deliveryStaffResponse = await axios.get(`${baseUrl}/DeliveryStaff`, {
+          headers: {
+            ...headers,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const deliveryStaffList = deliveryStaffResponse.data;
+
+        const simplifiedOrders = await Promise.all(
+          orders.map(async (order) => {
+            const transportResponse = await axios.get(
+              `${baseUrl}/Transport/${order.transportId}`,
+              {
+                headers: {
+                  ...headers,
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            const transport = transportResponse.data;
+            const deliveryStaff = deliveryStaffList.find(
+              (delivery) => delivery.staffId === transport.deliveryStaffId
+            );
+
+            return {
+              orderId: order.orderId,
+              deliveryStatus: order.deliveryStatus,
+              transportId: transport.transportId,
+              delivery_staff: deliveryStaff?.staffName,
+              deliveryStaffId: deliveryStaff?.staffId,
+            };
+          })
+        );
+        setTransports(simplifiedOrders);
       } catch (err) {
         console.error(err);
       }
@@ -21,16 +71,15 @@ export function Transports() {
 
     fetchOrders();
   }, []);
-  const [selectedTranport, setSelectedTransport] = useState(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  const confirmTransport = (transport) => {
-    setSelectedTransport(transport);
-    setShowConfirmDialog(true);
-  };
-
-  const handleConfirm = (confirmationData) => {
-  };
+  const buttonCreateTransport = () => (
+    <Button
+      label="Create Transport"
+      severity="info"
+      className="text-black !bg-cyan-500 border border-black p-2"
+      onClick={() => setShowConfirmDialog(true)}
+    />
+  );
 
   return (
     <div>
@@ -39,33 +88,35 @@ export function Transports() {
         showGridlines
         stripedRows
         tableStyle={{ minWidth: "50rem" }}
+        header={buttonCreateTransport()}
       >
-        <Column field="transportId" header="Transport Id"></Column>
-        <Column field="orderId" header="Order Id"></Column>
-        <Column field="deliveryStatus" header="Status"></Column>
-        <Column field="delivery_staff" header="Delivery Staff"></Column>
+        <Column field="transportId" header="Transport Id" />
+        <Column field="orderId" header="Order Id" />
+        <Column field="deliveryStatus" header="Status" />
+        <Column field="delivery_staff" header="Delivery Staff" />
         <Column
-          field="transportId"
-          header="Action"
-          body={(rowData) => {
-            return (
-              <Button
-                label="Assign Staff"
-                severity="info"
-                className="text-black !bg-cyan-500 border border-black p-2"
-                onClick={() => confirmTransport(rowData)}
-              ></Button>
-            );
-          }}
-        ></Column>
+          header="Check health"
+          body={() => (
+            <Button
+              label="Health"
+              severity="info"
+              className="text-black !bg-cyan-500 border border-black p-2"
+              onClick={() => setIsOpenHealthDialog(true)}
+            />
+          )}
+        />
       </DataTable>
-
-      {selectedTranport && (
-        <TransportAssignStaffDialog
-          transport={selectedTranport}
+      {isOpenHealthDialog && (
+        <CheckHealStatusDialog
+          visible={isOpenHealthDialog}
+          onHide={() => setIsOpenHealthDialog(false)}
+          staff={staff}
+        />
+      )}
+      {showConfirmDialog && (
+        <CreateTransportDialog
           visible={showConfirmDialog}
           onHide={() => setShowConfirmDialog(false)}
-          onConfirm={handleConfirm}
         />
       )}
     </div>

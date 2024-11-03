@@ -88,8 +88,7 @@ const LoginPage = () => {
   };
 
   const handleForgotPasswordClick = () => {
-    // Điều hướng tới trang quên mật khẩu hoặc hiển thị thông báo
-    alert("Forgot password functionality not implemented yet.");
+    navigate("/forgot-password"); // Navigate to the Forgot Password page
   };
   // const handleBackToHomeClick = () => {
   //   navigate("/"); // Điều hướng về trang chủ

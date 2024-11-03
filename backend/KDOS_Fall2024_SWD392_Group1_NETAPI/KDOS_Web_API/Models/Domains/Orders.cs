@@ -21,7 +21,7 @@ namespace KDOS_Web_API.Models.Domains
         required public PaymentMethod PaymentMethod { get; set; }
         required public PaymentStatus PaymentStatus { get; set; }
         required public OrderStatus DeliveryStatus { get; set; }
-        required public string DeliveryNote { get; set;}
+        required public string DeliveryNote { get; set; }
         required public int Quantity { get; set; }
         required public double TotalWeight { get; set; }
         required public double Distance { get; set; }
@@ -40,5 +40,6 @@ namespace KDOS_Web_API.Models.Domains
         public Feedback Feedback { get; set; } = null!;
         public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
         public Transport? Transport { get; set; } // many-1 relationship with Tranport
-    }
+        public Payment? Payment { get; set; } // many-1 relationship with Tranport
+}
 }

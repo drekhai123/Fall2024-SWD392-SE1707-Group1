@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { CustomersList } from "./CustomersList";
-import { FishList } from "./FishList";
 import { PendingOrders } from "./PendingOrders";
 import { Transports } from "./Transports";
 
 export function StaffDashBoard() {
+  const navigation = useNavigate();
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const [selectedMenu, setSelectedMenu] = useState("Pending Orders");
 
+  useEffect(()=>{
+    if(!user){
+      alert("Please login to continue...");
+      navigation("/login");
+    }
+  },[user])
+  
   // Function to render the selected component
   const renderComponent = () => {
     switch (selectedMenu) {
@@ -14,8 +23,6 @@ export function StaffDashBoard() {
         return <PendingOrders />;
       case "Transports":
         return <Transports />;
-      case "Fish List":
-        return <FishList />;
       case "Customers List":
         return <CustomersList />;
       default:
@@ -40,12 +47,6 @@ export function StaffDashBoard() {
             onClick={() => setSelectedMenu("Transports")}
           >
             Transports
-          </li>
-          <li
-            className="hover:bg-gray-700 p-2 rounded cursor-pointer"
-            onClick={() => setSelectedMenu("Fish List")}
-          >
-            Fish List
           </li>
           <li
             className="hover:bg-gray-700 p-2 rounded cursor-pointer"
