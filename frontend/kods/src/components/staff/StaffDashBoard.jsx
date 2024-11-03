@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { CustomersList } from "./CustomersList";
 import { PendingOrders } from "./PendingOrders";
 import { Transports } from "./Transports";
 
 export function StaffDashBoard() {
+  const navigation = useNavigate();
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const [selectedMenu, setSelectedMenu] = useState("Pending Orders");
 
+  useEffect(()=>{
+    if(!user){
+      alert("Please login to continue...");
+      navigation("/login");
+    }
+  },[user])
+  
   // Function to render the selected component
   const renderComponent = () => {
     switch (selectedMenu) {
