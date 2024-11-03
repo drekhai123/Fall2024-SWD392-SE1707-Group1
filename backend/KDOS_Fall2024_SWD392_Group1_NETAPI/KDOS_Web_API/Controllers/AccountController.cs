@@ -359,6 +359,28 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
+
+        [HttpPatch("UpdateRole/{accountId}")]
+        public async Task<IActionResult> UpdateRole(int accountId, [FromBody] UpdateOnlyRoleDTO role)
+        {
+            // Map DTO to AccountModel for role update
+            var accountModel = mapper.Map<Account>(role);
+
+            var updatedAccount = await accountRepository.UpdateRole(accountId, accountModel);
+
+            if (updatedAccount == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+            else
+            {
+                var accountDto = mapper.Map<AccountDTO>(updatedAccount);
+                return Ok(accountDto);
+            }
+
+           
+        }
+
         [HttpPatch("ToggleBanned/{accountId}")]
         public async Task<IActionResult> ToggleBanned(int accountId)
         {
@@ -371,6 +393,8 @@ namespace KDOS_Web_API.Controllers
 
             return Ok(new { Message = "Banned status toggled successfully" });
         }
+
+        
 
         [HttpDelete]
         [Authorize]
@@ -388,6 +412,8 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
+
+
         // Private method to generate a JWT token using the user's data.
         private string IssueToken(Account account)
         {

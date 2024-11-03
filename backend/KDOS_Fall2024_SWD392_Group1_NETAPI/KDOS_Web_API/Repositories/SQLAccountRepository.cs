@@ -174,6 +174,20 @@ namespace KDOS_Web_API.Repositories
 
             return true;
         }
+        public async Task<Account?> UpdateRole(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Role = account.Role;
+                await accountContext.SaveChangesAsync();
+                return accountExist;
+            }   
+        }
     }
 }
 
