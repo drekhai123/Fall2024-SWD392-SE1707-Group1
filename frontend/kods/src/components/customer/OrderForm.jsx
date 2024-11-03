@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useCallback} from "react";
 import Swal from "sweetalert2";
-import {QRCodeSVG} from "qrcode.react";
+// import {QRCodeSVG} from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
 import {useNavigate} from 'react-router-dom';
@@ -562,6 +562,9 @@ export default function OrderForm({onSuggestionClick, distance}) {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
+  // Thêm state để quản lý payment method
+  const [selectedPayment, setSelectedPayment] = useState('CASH');
+
   return (
     <div className="order-form">
       <div className="con">
@@ -769,8 +772,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
           margin: 0,
           fontWeight: 'bold',
           color: 'purple'
-        }}
-        >
+        }}>
           Total Amount: {" "}
           {formatCurrency(
             getTotalAmount() +
@@ -785,25 +787,39 @@ export default function OrderForm({onSuggestionClick, distance}) {
         {showQRCode && (
           <div className="popup">
             <div className="container-popup">
-              <h3 className="title-popup">Please scan the QR code to pay!</h3>
-              <div className="layout-popup">
-                <div className="layout-qrcode">
-                  <p className="label-qrcode">Payment via VNPAY</p>
-                  <QRCodeSVG
-                    value="https://your-payment-url-1.com"
-                    size={256}
+              <h3 className="title-popup">Please select payment method!</h3>
+              
+              <div className="payment-options">
+                <div className="payment-option">
+                  <input
+                    type="radio"
+                    id="cash"
+                    name="payment"
+                    value="CASH"
+                    checked={selectedPayment === 'CASH'}
+                    onChange={(e) => setSelectedPayment(e.target.value)}
                   />
+                  <label htmlFor="cash">Cash</label>
                 </div>
-                <div className="layout-qrcode">
-                  <p className="label-qrcode">Payment via Momo</p>
-                  <QRCodeSVG
-                    value="https://your-payment-url-2.com"
-                    size={256}
+                
+                <div className="payment-option">
+                  <input
+                    type="radio"
+                    id="vnpay"
+                    name="payment"
+                    value="BANK_TRANSFER"
+                    checked={selectedPayment === 'BANK_TRANSFER'}
+                    onChange={(e) => setSelectedPayment(e.target.value)}
                   />
+                  <label htmlFor="vnpay">VNPay</label>
                 </div>
               </div>
+
               <div className="layout-btn">
-                <button onClick={() => confirmPay(showQRCode)} className="confirm-btn">
+                <button 
+                  onClick={() => confirmPay({...showQRCode, paymentMethod: selectedPayment})} 
+                  className="confirm-btn"
+                >
                   Confirm payment
                 </button>
                 <button
