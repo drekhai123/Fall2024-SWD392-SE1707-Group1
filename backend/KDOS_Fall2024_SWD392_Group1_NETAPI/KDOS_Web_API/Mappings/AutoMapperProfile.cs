@@ -64,8 +64,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<Orders, OrdersDTO>().ReverseMap();
             CreateMap<Orders, UpdateOrderDTO>().ReverseMap();
             CreateMap<Orders, AddNewOrderDTO>()
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) // Ignore if you're setting it manually
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.DeliveryStatus, opt => opt.Ignore())
             .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore()).ReverseMap();
             CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
@@ -94,7 +93,8 @@ namespace KDOS_Web_API.Mappings
             // BLog
             // Payment
             CreateMap<Payment, PaymentDTO>().ReverseMap();
-            CreateMap<Payment, AddNewPaymentDTO>().ReverseMap();
+            CreateMap<Payment, AddNewPaymentDTO>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore()).ReverseMap();
         }
     }
 }

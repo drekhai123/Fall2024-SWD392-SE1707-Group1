@@ -10,7 +10,7 @@ namespace KDOS_Web_API.Services.VNPay
     public class PayLib
     {
         private SortedList<String, String> _requestData = new SortedList<String, String>(new VnPayCompare());
-        private readonly SortedList<string, string> _responseData = new SortedList<string, string>(new VnPayCompare());
+        private SortedList<String, String> _responseData = new SortedList<String, String>(new VnPayCompare());
         public void AddRequestData(string key, string value)
         {
             if (!String.IsNullOrEmpty(value))
@@ -28,22 +28,20 @@ namespace KDOS_Web_API.Services.VNPay
         private string GetResponseData()
         {
             var data = new StringBuilder();
-            if (_responseData.ContainsKey("vnp_SecureHashType"))
-            {
-                _responseData.Remove("vnp_SecureHashType");
-            }
 
-            if (_responseData.ContainsKey("vnp_SecureHash"))
-            {
-                _responseData.Remove("vnp_SecureHash");
-            }
+            // Remove any keys that shouldn't be included in the signature
+            _responseData.Remove("vnp_SecureHashType");
+            _responseData.Remove("vnp_SecureHash");
 
-            foreach (var (key, value) in _responseData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
+            // Sort the dictionary by key
+            var sortedData = _responseData.OrderBy(kv => kv.Key);
+
+            foreach (var (key, value) in sortedData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
             {
                 data.Append(WebUtility.UrlEncode(key) + "=" + WebUtility.UrlEncode(value) + "&");
             }
 
-            //remove last '&'
+            // Remove the last '&' if it exists
             if (data.Length > 0)
             {
                 data.Remove(data.Length - 1, 1);
@@ -51,6 +49,7 @@ namespace KDOS_Web_API.Services.VNPay
 
             return data.ToString();
         }
+
         public string GetResponseData(string key)
         {
             return _responseData.TryGetValue(key, out var retValue) ? retValue : string.Empty;
@@ -87,7 +86,6 @@ namespace KDOS_Web_API.Services.VNPay
         }
         public string GetIpAddress(HttpContext context)
         {
-            var ipAddress = string.Empty;
             try
             {
                 var remoteIpAddress = context.Connection.RemoteIpAddress;
@@ -100,33 +98,31 @@ namespace KDOS_Web_API.Services.VNPay
                             .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
                     }
 
-                    if (remoteIpAddress != null) ipAddress = remoteIpAddress.ToString();
-                    return ipAddress;
+                    return remoteIpAddress?.ToString() ?? "127.0.0.1"; // Fallback to localhost
                 }
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                // Log the exception
+                Console.WriteLine($"Error getting IP address: {ex.Message}");
             }
 
-            return "127.0.0.1";
+            return "127.0.0.1"; // Return default if all else fails
         }
-        public static String HmacSHA512(string key, String inputData)
+        public static string HmacSHA512(string key, string inputData)
         {
-            var hash = new StringBuilder();
             byte[] keyBytes = Encoding.UTF8.GetBytes(key);
             byte[] inputBytes = Encoding.UTF8.GetBytes(inputData);
+
             using (var hmac = new HMACSHA512(keyBytes))
             {
                 byte[] hashValue = hmac.ComputeHash(inputBytes);
-                foreach (var theByte in hashValue)
-                {
-                    hash.Append(theByte.ToString("x2"));
-                }
-            }
 
-            return hash.ToString();
+                // Convert the hash to a lowercase hexadecimal string
+                return BitConverter.ToString(hashValue).Replace("-", "").ToLower();
+            }
         }
+
     }
     public class VnPayCompare : IComparer<string>
     {
