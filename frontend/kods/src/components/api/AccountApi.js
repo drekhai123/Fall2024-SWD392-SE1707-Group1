@@ -23,6 +23,7 @@ export async function GetAccountById(id) {
     throw error;
   }
 }
+
 export async function ToggleAccountBannedStatus(id, bannedStatus) {
   try {
     const response = await axios.patch(`${localhostAccount}/ToggleBanned/${id}`, { banned: bannedStatus }, { headers: getHeaders() });

@@ -31,11 +31,11 @@ const Feedback = ({ setFeedbacks }) => {
         setEmail(event.target.value);
     };
 
-    
-  const navigate = useNavigate();
-  const handleGoBack = () => {
-    navigate(-1);  // Quay lại trang trước đó
-  };
+
+    const navigate = useNavigate();
+    const handleGoBack = () => {
+        navigate(-1);  // Quay lại trang trước đó
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -70,54 +70,54 @@ const Feedback = ({ setFeedbacks }) => {
     };
 
     return (
-     //Thêm background cho đẹp hơn   
-    <div className="feedback-background"> 
-        <div className="feedback-container">
-            <button onClick={handleGoBack} className="go-back-button-feedback">
-            ⭠ Previous Page 
-            </button>
-            <div className="feedback-header">
-                <p>We are committed to providing you with the best dining experience possible, so we welcome your comments.</p>
-            </div>
-            <h2>Please fill out this questionnaire.</h2>
-            <form onSubmit={handleSubmit} className="feedback-form">
-                <div className="form-group">
-                    <label>Customer Name*</label>
-                    <input type="text" value={name} onChange={handleNameChange} placeholder="Your Name" required />
+        //Thêm background cho đẹp hơn   
+        <div className="feedback-background">
+            <div className="feedback-container">
+                <button onClick={handleGoBack} className="go-back-button-feedback">
+                    ⭠ Previous Page
+                </button>
+                <div className="feedback-header">
+                    <p>We are committed to providing you with the best dining experience possible, so we welcome your comments.</p>
                 </div>
-                <div className="form-group">
-                    <label>Email address*</label>
-                    <input type="email" value={email} onChange={handleEmailChange} placeholder="E.g. abc@gmail.com" required />
-                </div>
-                <div className="form-group">
-                    <label>Phone*</label>
-                    <input type="text" value={phone} onChange={handlePhoneChange} placeholder="0123456789" required />
-                </div>
-                <div className="form-group">
-                    <label>Your rating: </label>
-                    <div className="rating-stars">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <span key={star} onClick={() => handleRatingChange(star)} className="star">
-                                {star <= rating ? '⭐' : '☆'}
-                            </span>
-                        ))}
+                <h2>Please fill out this questionnaire.</h2>
+                <form onSubmit={handleSubmit} className="feedback-form">
+                    <div className="form-group">
+                        <label>Customer Name*</label>
+                        <input type="text" value={name} onChange={handleNameChange} placeholder="Your Name" required />
                     </div>
-                </div>
-                <div className="form-group">
-                    <label>Your Comment: </label>
-                    <textarea value={comment} onChange={handleCommentChange} rows="4" cols="50" />
-                </div>
-                <button type="submit" className="submit-button">Submit Feedback</button>
-            </form>
-            {submitted && <p style={{ color: 'green' }}>Thank you for your feedback!</p>}
+                    <div className="form-group">
+                        <label>Email address*</label>
+                        <input type="email" value={email} onChange={handleEmailChange} placeholder="E.g. abc@gmail.com" required />
+                    </div>
+                    <div className="form-group">
+                        <label>Phone*</label>
+                        <input type="text" value={phone} onChange={handlePhoneChange} placeholder="0123456789" required />
+                    </div>
+                    <div className="form-group">
+                        <label>Your rating: </label>
+                        <div className="rating-stars">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <span key={star} onClick={() => handleRatingChange(star)} className="star">
+                                    {star <= rating ? '⭐' : '☆'}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label>Your Comment: </label>
+                        <textarea value={comment} onChange={handleCommentChange} rows="4" cols="50" />
+                    </div>
+                    <button type="submit" className="submit-button">Submit Feedback</button>
+                </form>
+                {submitted && <p style={{ color: 'green' }}>Thank you for your feedback!</p>}
+            </div>
         </div>
-        </div> 
-    
+
     );
 };
 
 Feedback.propTypes = {
-    setFeedbacks: PropTypes.func.isRequired,
+    setFeedbacks: PropTypes.func,
 };
 
 export default Feedback;
