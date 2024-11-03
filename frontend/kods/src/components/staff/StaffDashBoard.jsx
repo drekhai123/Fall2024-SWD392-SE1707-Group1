@@ -8,14 +8,13 @@ export function StaffDashBoard() {
   const navigation = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
   const [selectedMenu, setSelectedMenu] = useState("Pending Orders");
-
   useEffect(()=>{
     if(!user){
       alert("Please login to continue...");
       navigation("/login");
     }
   },[user])
-  
+  console.log(user)
   // Function to render the selected component
   const renderComponent = () => {
     switch (selectedMenu) {

@@ -11,7 +11,7 @@ export const CreateTransportDialog = ({ visible, onHide }) => {
   const [selectedDeliveryStaff, setSelectedDeliveryStaff] = useState(null);
   const [deliveryStaff, setDeliveryStaff] = useState([]);
   const [staff, setStaff] = useState([]);
-
+  const [transports, setTransports] = useState([])
   const handleConfirm = async () => {
     const transportData = {
       status: "PROCESSING",
@@ -54,6 +54,23 @@ export const CreateTransportDialog = ({ visible, onHide }) => {
   }, []);
 
   useEffect(() => {
+    const fetchTransprt = async () => {
+      try {
+        const transportData = await axios.get(`${baseUrl}/Transport`, {
+          headers: {
+            ...headers,
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setTransports(transportData.data)
+      } catch (error) {
+        console.log("Error fetch transports: ", error)
+      }
+    }
+    fetchTransprt();
+  }, [])
+
+  useEffect(() => {
     const fetchStaff = async () => {
       try {
         const staffResponse = await axios.get(`${baseUrl}/Staff`, {
@@ -62,10 +79,12 @@ export const CreateTransportDialog = ({ visible, onHide }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        const staffList = staffResponse.data.map((staff) => ({
-          label: staff.staffName,
-          value: staff.staffId,
-        }));
+        const staffList = staffResponse.data
+          .filter((staff) => !transports.some(transport => transport.healthCareStaffId === staff.staffId))
+          .map((staff) => ({
+            label: staff.staffName,
+            value: staff.staffId,
+          }));
         setStaff(staffList);
       } catch (error) {
         console.error("Error fetching staff:", error);
