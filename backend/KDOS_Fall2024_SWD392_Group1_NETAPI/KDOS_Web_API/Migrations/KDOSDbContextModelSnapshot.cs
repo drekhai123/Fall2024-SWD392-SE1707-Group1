@@ -116,8 +116,8 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Dob")
-                        .HasColumnType("int");
+                    b.Property<DateOnly>("Dob")
+                        .HasColumnType("date");
 
                     b.Property<string>("Gender")
                         .IsRequired()
@@ -375,6 +375,9 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("DeliveryStatus")
                         .HasColumnType("int");
 
+                    b.Property<double>("Distance")
+                        .HasColumnType("double");
+
                     b.Property<int>("DistancePriceListId")
                         .HasColumnType("int");
 
@@ -451,22 +454,25 @@ namespace KDOS_Web_API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("PaymentId"));
 
-                    b.Property<long>("Amount")
-                        .HasColumnType("bigint");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("PaymentDesc")
-                        .HasColumnType("longtext");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<long>("TransactionId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("longtext");
 
                     b.HasKey("PaymentId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.ToTable("Payment");
                 });
@@ -482,8 +488,8 @@ namespace KDOS_Web_API.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Dob")
-                        .HasColumnType("int");
+                    b.Property<DateOnly>("Dob")
+                        .HasColumnType("date");
 
                     b.Property<string>("Gender")
                         .IsRequired()
@@ -727,6 +733,17 @@ namespace KDOS_Web_API.Migrations
                     b.Navigation("WeightPriceList");
                 });
 
+            modelBuilder.Entity("KDOS_Web_API.Models.Domains.Payment", b =>
+                {
+                    b.HasOne("KDOS_Web_API.Models.Domains.Orders", "Orders")
+                        .WithOne("Payment")
+                        .HasForeignKey("KDOS_Web_API.Models.Domains.Payment", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Staff", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.Domains.Account", "Account")
@@ -822,6 +839,8 @@ namespace KDOS_Web_API.Migrations
                         .IsRequired();
 
                     b.Navigation("OrderDetails");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Staff", b =>

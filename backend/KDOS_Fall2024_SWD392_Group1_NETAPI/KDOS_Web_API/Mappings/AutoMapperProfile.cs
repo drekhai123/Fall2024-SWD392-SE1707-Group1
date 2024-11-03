@@ -16,7 +16,8 @@ namespace KDOS_Web_API.Mappings
                 // CreateMap<Verification, VerificationDTO>().ReverseMap(); Don't think of using this
 			// Account Mapping
 			CreateMap<Account, AccountDTO>().ReverseMap();
-			CreateMap<Account, AddNewAccountDTO>().ReverseMap()
+            CreateMap<Account, AccountResetPasswordDTO>().ReverseMap();
+            CreateMap<Account, AddNewAccountDTO>().ReverseMap()
                 .ForMember(x => x.Avatar, option => option.Ignore())
                 .ForMember(x => x.Password, option => option.Ignore())
                 .ForMember(x => x.Role, option => option.Ignore())
@@ -63,8 +64,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<Orders, OrdersDTO>().ReverseMap();
             CreateMap<Orders, UpdateOrderDTO>().ReverseMap();
             CreateMap<Orders, AddNewOrderDTO>()
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) // Ignore if you're setting it manually
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.DeliveryStatus, opt => opt.Ignore())
             .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore()).ReverseMap();
             CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
@@ -93,7 +93,8 @@ namespace KDOS_Web_API.Mappings
             // BLog
             // Payment
             CreateMap<Payment, PaymentDTO>().ReverseMap();
-            CreateMap<Payment, AddNewPaymentDTO>().ReverseMap();
+            CreateMap<Payment, AddNewPaymentDTO>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore()).ReverseMap();
         }
     }
 }

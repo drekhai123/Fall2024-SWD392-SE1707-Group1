@@ -3,8 +3,7 @@
     public class ResponsePayment
     {
         public int paymentId { get; set; }
-        public long ResponseId { get; set; }
-        public long OrderId { get; set; }
+        public int OrderId { get; set; }
         public bool Success { get; set; }
         public string VnpTransactionId { get; set; }
         public DateTime ResponseDate { get; set; }

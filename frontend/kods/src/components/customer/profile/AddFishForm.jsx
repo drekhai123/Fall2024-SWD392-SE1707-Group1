@@ -49,6 +49,8 @@ export default function AddFish() {
   const [searchTerm, setSearchTerm] = useState(null);
   const [error, setError] = useState(false);
   const [loadingScreen, setLoadingScreen] = useState(false);
+  const [certificate, setCertificate] = useState(''); // New state for certificate
+  const [weightError, setWeightError] = useState(false); // New state for weight error
 
   const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
   const customerId = user?.customer?.customerId; // Lấy accountId
@@ -125,9 +127,10 @@ export default function AddFish() {
       notes: notes,
       image: image,
       koiFishId: koiFishId,
-      customerId: customerId
+      customerId: customerId,
+      certificate: certificate
     };
-    console.log('Adding new fish:', newFish);
+    console.log('Adding new fish with certificate:', certificate);
 
     try {
       await addFishProfile(newFish);
@@ -158,6 +161,7 @@ export default function AddFish() {
     setWeight(fish.weight);
     setGender(fish.gender);
     setNotes(fish.notes);
+    setCertificate(fish.certificate);
     setSelectedFishType(fish.koiFish.fishType);
     setIsFormOpen(true);
   };
@@ -181,8 +185,11 @@ export default function AddFish() {
       notes: notes,
       image: image, // Use the image URL from state
       koiFishId: koiFishId,
-      customerId: customerId
+      customerId: customerId,
+      certificate: certificate,
     };
+
+    console.log('Updating fish with certificate:', certificate);
 
     try {
       await updateFishProfile(selectedFish.fishProfileId, updatedFish);
@@ -208,12 +215,19 @@ export default function AddFish() {
       return;
     }
 
+    // Check if certificate is uploaded
+    if (!certificate) {
+      toast.error("Please upload a certificate.", {
+        autoClose: 2000 // Duration in milliseconds (10 seconds)
+      });
+      return;
+    }
+
     if (selectedFish) {
       handleUpdateFish(e);
     } else {
       handleAddFish(e);
     }
-
   };
 
   const handleDeleteConfirm = async () => {
@@ -273,11 +287,46 @@ export default function AddFish() {
     setGender('');
     setNotes('');
     setImage('');
+    setCertificate('');
     setSelectedFishType('');
     setSelectedFish(null);
     setIsFormOpen(true);
+
   };
 
+  const handleCertificateUpload = (e) => {
+    if (e.target.files[0]) {
+      const selectedCertificate = e.target.files[0];
+      const storageRef = ref(storage, `certificates/${selectedCertificate.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, selectedCertificate);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {},
+        (error) => {
+          console.error("Error uploading certificate:", error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            setCertificate(downloadURL); // Set the certificate URL to state
+            console.log('Certificate uploaded:', downloadURL);
+          });
+        }
+      );
+    }
+  };
+
+  const handleWeightChange = (e) => {
+    const value = e.target.value;
+
+    // Ensure the value is a positive number
+    if (isNaN(value) || value <= 0) {
+      setWeightError(true);
+    } else {
+      setWeightError(false);
+      setWeight(value); // Update weight only if it's valid
+    }
+  };
 
   return (
     <div>
@@ -333,16 +382,16 @@ export default function AddFish() {
         position: 'relative',
       }}>
         <Divider />
+        {fishes.length > 5 && // Paging only if 5 or more fishes
         <div className="pagination">
-          {fishes.length > 5 ??
             <Pagination
               count={Math.ceil(fishes.length / itemsPerPage)}
               page={currentPage}
               onChange={handlePageChange}
               color="primary"
-            /> // Paging only if 5 or more fishes
-          }
+            /> 
         </div>
+          }
       </div>
       {/* Dialogs for form and delete confirmation */}
       <Dialog open={isFormOpen} onClose={() => setIsFormOpen(false)}>
@@ -363,10 +412,12 @@ export default function AddFish() {
             <TextField
               margin="dense"
               label="Weight"
-              type="text"
+              type="number"
               fullWidth
               value={weight}
-              onChange={(e) => setWeight(e.target.value)}
+              onChange={handleWeightChange}
+              error={weightError}
+              helperText={weightError ? "Please enter a valid number greater than 0" : ""}
               required
             />
             <FormControl required aria-selected fullWidth margin="dense">
@@ -412,25 +463,55 @@ export default function AddFish() {
               multiline
               rows={4}
             />
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="image-upload"
-              type="file"
-              onChange={handleImageUpload}
-            />
-            <label htmlFor="image-upload">
-              <Button variant="contained" component="span">
-                Upload Image
-              </Button>
-            </label>
-            {image && (
-              <Avatar
-                src={image}
-                alt="Fish"
-                sx={{ width: 100, height: 100, marginTop: 2 }}
-              />
-            )}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', marginTop: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="image-upload"
+                  type="file"
+                  onChange={handleImageUpload}
+                />
+                <label htmlFor="image-upload">
+                  <Button variant="contained" component="span">
+                    Upload Image
+                  </Button>
+                </label>
+                {image && (
+                  <Avatar
+                    src={image}
+                    alt="Fish"
+                    sx={{ width: 100, height: 100, marginTop: 2 }}
+                  />
+                )}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <input
+                  accept=".pdf,.doc,.docx"
+                  style={{ display: 'none' }}
+                  id="certificate-upload"
+                  type="file"
+                  onChange={handleCertificateUpload}
+                />
+                <label htmlFor="certificate-upload">
+                  <Button variant="contained" component="span">
+                    Upload Certificate
+                  </Button>
+                </label>
+                {certificate && (
+                  <Typography variant="body2" color="textSecondary" style={{ marginTop: '8px' }}>
+                    <a
+                      href={certificate}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'blue', textDecoration: 'underline' }}
+                    >
+                      View Certificate
+                    </a>
+                  </Typography>
+                )}
+              </div>
+            </div>
           </form>
         </DialogContent>
         <DialogActions>
@@ -461,16 +542,27 @@ export default function AddFish() {
               <Avatar
                 src={selectedFish.image}
                 alt={selectedFish.name}
-                sx={{ width: 100, height: 100, cursor: 'pointer' }} // Add cursor pointer
-                onClick={handleImageZoomOpen} // Open zoom on click
+                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                onClick={handleImageZoomOpen}
               />
               <Typography variant="body1"><strong>Weight:</strong> {selectedFish.weight} kg</Typography>
               <Typography variant="body1"><strong>Species:</strong> {selectedFish.koiFish.fishType}</Typography>
               <Typography variant="body1"><strong>Description:</strong> {selectedFish.koiFish.description}</Typography>
               <Typography variant="body1"><strong>Gender:</strong> {selectedFish.gender}</Typography>
               <Typography variant="body1"><strong>Notes:</strong> {selectedFish.notes}</Typography>
-              {/* <Typography variant="body1">Customer ID: {selectedFish.customerId}</Typography>
-              <Typography variant="body1">Fish Profile ID: {selectedFish.fishProfileId}</Typography> */}
+              {selectedFish.certificate && (
+                <Typography variant="body1">
+                  <strong>Certificate: </strong>
+                  <a
+                    href={selectedFish.certificate}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'blue', textDecoration: 'underline' }}
+                  >
+                    View Certificate
+                  </a>
+                </Typography>
+              )}
             </div>
           )}
         </DialogContent>

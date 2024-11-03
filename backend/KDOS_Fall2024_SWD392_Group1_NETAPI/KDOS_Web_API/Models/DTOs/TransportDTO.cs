@@ -1,4 +1,5 @@
-﻿using KDOS_Web_API.Models.Enum;
+﻿using KDOS_Web_API.Models.Domains;
+using KDOS_Web_API.Models.Enum;
 
 namespace KDOS_Web_API.Models.DTOs
 {
@@ -9,5 +10,7 @@ namespace KDOS_Web_API.Models.DTOs
         public int StaffId { get; set; } // FK to Staff table
         public int HealthCareStaffId { get; set; } // FK to Staff table that check Fish Health
         public int DeliveryStaffId { get; set; } // FK to DeliveryStaff table
+        public DeliveryStaffDTO? DeliveryStaff { get; set; } // 1-1 relation
+        public StaffDTO? Staff { get; set; } // 1-1 relation
     }
 }

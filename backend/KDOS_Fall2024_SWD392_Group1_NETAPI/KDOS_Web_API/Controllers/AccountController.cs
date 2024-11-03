@@ -42,7 +42,7 @@ namespace KDOS_Web_API.Controllers
         {
             // Now we don't call the DB directly but through the Repository
             // var accountList = await accountContext.Account.ToListAsync();
-            var accountList = await accountRepository.GetAllAccountAsync();            
+            var accountList = await accountRepository.GetAllAccountAsync();
             //Use AutoMapper Turn Model to DTO
             var accountDto = mapper.Map<List<AccountDTO>>(accountList);
             return Ok(accountDto);
@@ -63,6 +63,12 @@ namespace KDOS_Web_API.Controllers
                 return Unauthorized("Error! Wrong Email/UserName or Password");
             }
 
+            // Check if the account is banned
+            if (accountModel.Banned)
+            {
+                return BadRequest("Your account has been banned. Please contact support.");
+            }
+
             var verifyPassword = passwordHasher.VerifyHashedPassword(accountModel, accountModel.Password, loginDTO.Password); // Validate the hashed password
             if (verifyPassword == PasswordVerificationResult.Success) // Password is correct
             {
@@ -79,16 +85,21 @@ namespace KDOS_Web_API.Controllers
         {
             var accountModel = await accountRepository.Login(loginDTO.UserNameOrEmail); // Check account by email or username
 
-            if (accountModel != null)
-            {
-                    AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
-                    var token = IssueToken(accountModel); // Generate a JWT token
-                    return Ok(new { account = accountDTO, token = token });
-            }
-            else
+            if (accountModel == null)
             {
                 return NotFound("Error! Wrong Email Or Account Doesn't Exist");
             }
+
+            // Check if the account is banned
+            if (accountModel.Banned)
+            {
+                return BadRequest("Your account has been banned. Please contact support.");
+            }
+
+            // If account exists and is not banned, proceed to generate token
+            AccountDTO accountDTO = mapper.Map<AccountDTO>(accountModel);
+            var token = IssueToken(accountModel); // Generate a JWT token
+            return Ok(new { account = accountDTO, token = token });
 
         }
 
@@ -113,7 +124,7 @@ namespace KDOS_Web_API.Controllers
                 return BadRequest("Email or username already in use.");
             }
             var accountDto = mapper.Map<AccountDTO>(accountModel);
-            return CreatedAtAction(nameof(GetAccountById),new { accountId = accountModel.AccountId}, accountDto);
+            return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
         }
         [HttpPost]
         [Route("AddVerification/{accountId}")]
@@ -131,7 +142,7 @@ namespace KDOS_Web_API.Controllers
                 Token = token,
                 ExpiredDate = DateTime.Now.AddHours(1), // One hour to verify
             };
-            accountModel=await accountRepository.VerificationMailing(accountModel, verificationModel);
+            accountModel = await accountRepository.VerificationMailing(accountModel, verificationModel);
             if (accountModel == null)
             {
                 return NotFound("Can't Create a Verification Data");
@@ -147,13 +158,57 @@ namespace KDOS_Web_API.Controllers
             var response = await mailingService.SendVerificationLink(accountModel, verificationLink);
             return Ok(response);
         }
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> AddNewVerifyPassword([FromBody] AccountResetPasswordDTO accountResetPasswordDTO)
+        {
+            var accountModel = mapper.Map<Account>(accountResetPasswordDTO);
+            accountModel = await accountRepository.Login(accountModel.Email);
+            if (accountModel == null)
+            {
+                return NotFound("Account Not Exist");
+            }
+
+            var verificationLink = Url.Action("PasswordVerification", "Account", new { password = accountResetPasswordDTO.Password, accountId = accountModel.AccountId }, Request.Scheme);
+            if (verificationLink == null)
+            {
+                return NotFound("Can't Generate A Verification Link");
+            }
+            var response = await mailingService.SendResetPassword(accountModel, verificationLink);
+            return Ok(response);
+        }
+        [HttpGet]
+        [Route("PasswordVerification")]
+        public async Task<IActionResult> PasswordVerification([FromQuery] string password, string accountId)
+        {
+            var accountModel = await accountRepository.GetAccountById(int.Parse(accountId));
+
+            if (accountModel == null)
+            {
+                return NotFound("No Account are stored");
+            }
+            else
+            {
+                accountModel.Password = passwordHasher.HashPassword(accountModel, password); // Hashing the password sent back
+                accountModel = await accountRepository.UpdatePassword(accountModel.AccountId, accountModel);
+                if (accountModel==null)
+                {
+                    return BadRequest("Cannot Change Password");
+                }
+                else
+                {
+                    string redirectUrl = "https://kdos.vercel.app/login";
+                    return Redirect(redirectUrl);
+                }
+            }
+        }
         [HttpGet]
         [Route("Verification")]
-        public async Task<IActionResult> Verification([FromQuery] string accountId,string token)
+        public async Task<IActionResult> Verification([FromQuery] string accountId, string token)
         {
             var accountModel = await accountRepository.GetAccountById(int.Parse(accountId));
             var verificationModel = await accountRepository.FindVerificationWithAccountId(int.Parse(accountId));
-            if(accountModel==null || verificationModel == null)
+            if (accountModel == null || verificationModel == null)
             {
                 return NotFound("No Account or No Verification are stored");
             }
@@ -177,7 +232,7 @@ namespace KDOS_Web_API.Controllers
                         string redirectUrl = "https://kdos.vercel.app/login";
                         return Redirect(redirectUrl);
                     }
-                } 
+                }
                 else
                 {
                     return BadRequest("Wrong Token");
@@ -234,7 +289,7 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> GetAccountById([FromRoute] int accountId)
         {
             var accountModel = await accountRepository.GetAccountById(accountId);
-            if(accountModel == null)
+            if (accountModel == null)
             {
                 return NotFound();
             }
@@ -244,7 +299,7 @@ namespace KDOS_Web_API.Controllers
                 var accountDto = mapper.Map<AccountDTO>(accountModel);
                 return Ok(accountDto);
             }
-            
+
         }
         [HttpPut]
         [Route("{accountId}")]
@@ -303,6 +358,19 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
+        [HttpPatch("ToggleBanned/{accountId}")]
+        public async Task<IActionResult> ToggleBanned(int accountId)
+        {
+            var success = await accountRepository.ToggleBannedStatusAsync(accountId);
+
+            if (!success)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            return Ok(new { Message = "Banned status toggled successfully" });
+        }
+
         [HttpDelete]
         [Authorize]
         [Route("{accountId}")]
@@ -353,6 +421,6 @@ namespace KDOS_Web_API.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
-    
+
 }
 

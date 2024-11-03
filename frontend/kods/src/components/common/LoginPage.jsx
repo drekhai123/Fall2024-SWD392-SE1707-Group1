@@ -36,6 +36,8 @@ const LoginPage = () => {
       sessionStorage.setItem('token', response.data.token);
       toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
       setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
+    } else if (response.status === 400) {
+      alert("Your account has been banned. Please contact support.");
     } else {
       alert("Invalid credentials");
     }
@@ -45,7 +47,7 @@ const LoginPage = () => {
   const handleSignupClick = () => {
     navigate("/signup");
   };
-// Using Google Login API
+  // Using Google Login API
   useGoogleOneTapLogin({
     onSuccess: credentialResponse => {
       console.log(credentialResponse);
@@ -54,33 +56,33 @@ const LoginPage = () => {
       console.log('Login Failed');
     },
   });
-// Login with Google API
+  // Login with Google API
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async tokenResponse => {
       setLoadingScreen(true)
       const googleResponse = await axios.get(
-          'https://www.googleapis.com/oauth2/v3/userinfo',
-          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } })
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } })
       var userInfo = await googleResponse.data
       const login = {
         usernameoremail: userInfo.email,
         password: "",
       };
       const response = await GoogleLoginApi(login)
-      if(response.status === 200) {
+      if (response.status === 200) {
         sessionStorage.setItem('user', JSON.stringify(response.data.account));
         sessionStorage.setItem('token', response.data.token);
         toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
         setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
-      }else{
+      } else {
         alert("Can't Login With Google: ")
       }
       setLoadingScreen(false)
-  },
-   onError: (error) => {
-    console.log('Login Failed');
-    alert("Can't Login With Google: ",error)
-  },
+    },
+    onError: (error) => {
+      console.log('Login Failed');
+      alert("Can't Login With Google: ", error)
+    },
   });
 
   const toggleShowPassword = () => {
@@ -88,8 +90,7 @@ const LoginPage = () => {
   };
 
   const handleForgotPasswordClick = () => {
-    // Điều hướng tới trang quên mật khẩu hoặc hiển thị thông báo
-    alert("Forgot password functionality not implemented yet.");
+    navigate("/forgot-password"); // Navigate to the Forgot Password page
   };
   // const handleBackToHomeClick = () => {
   //   navigate("/"); // Điều hướng về trang chủ
@@ -132,13 +133,13 @@ const LoginPage = () => {
               {/* Thay đổi icon */}
             </button>
           </div>
-          <button className="login-btn" onClick={()=>handleLoginClick()}>
+          <button className="login-btn" onClick={() => handleLoginClick()}>
             Login
           </button>
           <div className="forgot-password-container">
             <button
               className="forgot-password-btn"
-              onClick={()=>handleForgotPasswordClick()}
+              onClick={() => handleForgotPasswordClick()}
             >
               Forgot password?
             </button>
@@ -146,13 +147,13 @@ const LoginPage = () => {
           <div className="or-separator">
             <p>OR</p>
           </div>
-          <button className="google-login-btn" onClick={()=>handleGoogleLogin()}>
+          <button className="google-login-btn" onClick={() => handleGoogleLogin()}>
             Login with Google
           </button>
 
           <div className="to-signup-container">
             <p className="to-signup-text">Don't have an account?</p>
-            <button className="to-signup-btn" onClick={()=>handleSignupClick()}>
+            <button className="to-signup-btn" onClick={() => handleSignupClick()}>
               Sign Up.
             </button>
           </div>
