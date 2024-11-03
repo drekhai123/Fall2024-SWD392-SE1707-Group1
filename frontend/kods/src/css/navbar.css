@@ -28,7 +28,7 @@
   }
 .nav-item {
   color: white;
-  cursor: pointer;
+  /* cursor: pointer; */
   transition: all 0.3s ease-in-out;
   font-size: 21px;
 }

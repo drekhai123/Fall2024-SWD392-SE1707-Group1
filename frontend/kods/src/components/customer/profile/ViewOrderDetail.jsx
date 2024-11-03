@@ -16,10 +16,43 @@ import {
 } from '@mui/material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getOrderbyOrderId, getOrderDetailsByOrderId } from '../../api/OrdersApi'; // Import the API function
+import { getOrderbyOrderId, getOrderDetailsByOrderId, updateOrderStatus } from '../../api/OrdersApi'; // Import the API function
 import { addFeedback } from '../../api/FeedbackApi'; // Import the API function
 import { getFeedbackByOrderId, deleteFeedback } from '../../api/FeedbackApi'; // Import the delete API function
 import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
+import { Star, StarBorder } from '@mui/icons-material'; // Import star icons
+
+// Define an enum-like object for order statuses
+const OrderStatus = {
+  PENDING: 'PENDING',
+  DELIVERED: 'DELIVERED',
+  PROCESSING: 'PROCESSING',
+  CANCELLED: 'CANCELLED',
+  // Add other statuses as needed
+};
+
+function getStatusColor(status) {
+  switch (status) {
+    case 'PENDING':
+      return 'orange';
+    case 'DELIVERED':
+      return 'green';
+    case 'PROCESSING':
+      return 'blue';
+    case 'CANCEL':
+      return 'red';
+    case 'HEALTHY':
+      return 'green';
+    case 'UNHEALTHY':
+      return 'yellow';
+    case 'SICK':
+      return 'orange';
+    case 'DECEASED':
+      return 'red';
+    default:
+      return 'black';
+  }
+}
 
 export default function OrderDetail({ onBack }) {
   const { orderId } = useParams();
@@ -119,6 +152,19 @@ export default function OrderDetail({ onBack }) {
     setOpen(false);
   };
 
+  //Cancel button to cancel orders
+
+  const handleCancelOrder = async () => {
+    try {
+      console.log('Cancelling order with ID:', orderId); // Log the orderId
+      await updateOrderStatus(orderId, OrderStatus.CANCELLED); // Use the enum-like object
+      console.log('Order status updated to CANCELLED');
+      // window.location.reload();
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+    }
+  };
+
   if (!orderDetail) {
     return <Typography variant="h6">Order not found</Typography>;
   }
@@ -126,14 +172,24 @@ export default function OrderDetail({ onBack }) {
   return (
     <div className="full-page-background">
       <div className="order-detail-container">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate('/profile/ViewOrderHistory')}
-          style={{ marginBottom: '20px' }}
-        >
-          Go Back
-        </Button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/profile/ViewOrderHistory')}
+          >
+            Go Back
+          </Button>
+          {orderDetail.deliveryStatus === 'PENDING' && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleCancelOrder}
+            >
+              Cancel Order
+            </Button>
+          )}
+        </div>
         <Typography variant="h4" gutterBottom>
           Order Details {orderDetail.code}
         </Typography>
@@ -144,7 +200,19 @@ export default function OrderDetail({ onBack }) {
               <Typography><strong>Name:</strong> {orderDetail.senderName}</Typography>
               <Typography><strong>Address:</strong> {orderDetail.senderAddress}</Typography>
               <Typography><strong>Phone:</strong> {orderDetail.senderPhoneNumber}</Typography>
-              <Typography><strong>Order Created At:</strong> {orderDetail.createdAt}</Typography>
+              <Typography>
+                <strong>Order Created: </strong>
+                {new Date(orderDetail.createdAt).toLocaleString('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: false,
+                  timeZone: 'Asia/Bangkok'
+                })}
+              </Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -160,8 +228,18 @@ export default function OrderDetail({ onBack }) {
             <Paper style={{ padding: '20px' }}>
               <Typography variant="h6" gutterBottom><strong>Order Information</strong></Typography>
               <Typography><strong>Payment Method:</strong> {orderDetail.paymentMethod}</Typography>
-              <Typography><strong>Payment Status:</strong> {orderDetail.paymentStatus}</Typography>
-              <Typography><strong>Delivery Status:</strong> {orderDetail.deliveryStatus}</Typography>
+              <Typography>
+                <strong>Payment Status:</strong>
+                <span style={{ color: getStatusColor(orderDetail.paymentStatus) }}>
+                  <strong>{orderDetail.paymentStatus}</strong>
+                </span>
+              </Typography>
+              <Typography>
+                <strong>Delivery Status:</strong>
+                <span style={{ color: getStatusColor(orderDetail.deliveryStatus) }}>
+                  <strong>{orderDetail.deliveryStatus}</strong>
+                </span>
+              </Typography>
               <Typography><strong>Total Weight:</strong> {orderDetail.totalWeight} kg</Typography>
               <Typography><strong>Total Cost:</strong> {orderDetail.totalCost.toLocaleString('vi-VN')} VND</Typography>
             </Paper>
@@ -182,15 +260,19 @@ export default function OrderDetail({ onBack }) {
                       <TableCell>{item.fishProfile.name}</TableCell>
                       <TableCell>
                         {item.healthStatus.length > 0 ? (
-                          item.healthStatus.map((status, index) => {
-                            const date = new Date(status.date);
+                          (() => {
+                            const latestStatus = item.healthStatus[item.healthStatus.length - 1];
+                            const date = new Date(latestStatus.date);
                             const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
                             return (
-                              <div key={index}>
-                                {formattedDate}: {status.status}
+                              <div>
+                                {formattedDate}:
+                                <span style={{ color: getStatusColor(latestStatus.status) }}>
+                                  {latestStatus.status}
+                                </span>
                               </div>
                             );
-                          })
+                          })()
                         ) : (
                           <div>No health status available</div>
                         )}
@@ -213,15 +295,17 @@ export default function OrderDetail({ onBack }) {
           {orderDetail.deliveryStatus === 'DELIVERED' && (
             <Grid item xs={12}>
               <Paper style={{ padding: '20px' }}>
-                <Typography variant="h6" gutterBottom>Feedback and Rating</Typography>
+                <Typography variant="h6" gutterBottom><strong>Feedback and Rating</strong></Typography>
                 {feedbackData ? (
                   <div>
-                    <Typography>Comment: {feedbackData.comment}</Typography>
+                    <Typography><strong>Comment: </strong> {feedbackData.comment}</Typography>
                     <div style={{ marginBottom: '20px' }}>
                       <Rating
                         name="read-only"
                         value={feedbackData.rating}
                         readOnly
+                        icon={<Star fontSize="large" />} // Use larger star icon
+                        emptyIcon={<StarBorder fontSize="large" />} // Use larger empty star icon
                       />
                     </div>
                     <Button
@@ -239,8 +323,14 @@ export default function OrderDetail({ onBack }) {
                       value={rating}
                       onChange={(event, newValue) => setRating(newValue)}
                       style={{ marginBottom: '20px' }}
+                      icon={<Star fontSize="large" />} // Use larger star icon
+                      emptyIcon={<StarBorder fontSize="large" />} // Use larger empty star icon
                     />
-                    <ReactQuill value={feedback} onChange={(content) => setFeedback(content)} />
+                    <ReactQuill
+                      value={feedback}
+                      onChange={(content) => setFeedback(content)}
+                      style={{ height: '150px', marginBottom: '20px' }}
+                    />
                     <Button
                       variant="contained"
                       color="primary"
@@ -293,7 +383,10 @@ export default function OrderDetail({ onBack }) {
                       return (
                         <TableRow key={index}>
                           <TableCell>{formattedDate}</TableCell>
-                          <TableCell>{status.status}</TableCell>
+                          <TableCell><strong><span style={{ color: getStatusColor(status.status) }}>
+                              {status.status}
+                            </span></strong>
+                          </TableCell>
                           <TableCell>{status.temperature}</TableCell>
                           <TableCell>{status.oxygenLevel}</TableCell>
                           <TableCell>{status.phLevel}</TableCell>
@@ -303,7 +396,7 @@ export default function OrderDetail({ onBack }) {
                     })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={2}>No health status available</TableCell>
+                      <TableCell colSpan={6}>No health status available</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
