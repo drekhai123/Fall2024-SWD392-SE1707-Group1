@@ -25,6 +25,7 @@ import ContactPage from "./components/common/Contact";
 import AboutPage from "./components/common/About";
 import PaymentSuccess from "./components/common/PaymentSuccess"; // Import PaymentSuccess component
 import ForgotPassword from "./components/common/ForgotPassword"; // Import the ForgotPassword component
+import AdminPage from "./components/admin/adminpage";
 
 export const router = createBrowserRouter([
   {
@@ -110,7 +111,7 @@ export const router = createBrowserRouter([
     path: "/staffDashBoard",
     element: (
       // <PrivateRoute>
-        <StaffDashBoard />
+      <StaffDashBoard />
       // </PrivateRoute>
     ),
   },
@@ -133,5 +134,9 @@ export const router = createBrowserRouter([
   {
     path: "/forgot-password", // Define the path for the Forgot Password page
     element: <ForgotPassword />, // Set the ForgotPassword component as the element
+  },
+  {
+    path: "/admin",
+    element: <AdminPage />,
   },
 ]);

@@ -1,0 +1,59 @@
+.account-management {
+  display: flex;
+  min-height: 100vh;
+  font-family: "Noto Sans Variable", system-ui, sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: bold;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li button {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  outline: 0;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+}
+
+.sidebar ul li button.active {
+  border-left: 2px solid rgb(241, 102, 34);
+  background-color: rgba(241, 102, 34, 0.1);
+}
+.sidebar ul li button:hover {
+  border-left: 2px solid rgb(241, 102, 34);
+  background-color: rgba(241, 102, 34, 0.1);
+}
+
+.content {
+  flex-grow: 1;
+  padding: 40px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin-left: 20px;
+}

@@ -1,10 +1,22 @@
-import { baseUrl, headers,getJwtToken } from "./Url";
+import { localhostUrl, baseUrl, headers, getJwtToken } from "./Url";
 import axios from "axios";
+
 const baseAccount = baseUrl + "/Account";
-const verifyAccount = baseAccount + "/AddVerification"
+const localhostAccount = localhostUrl + "/Account";
+const verifyAccount = baseAccount + "/AddVerification";
+
+// Function to get headers with token
+const getHeaders = () => {
+  const token = getJwtToken(); // Retrieve the token
+  return {
+    ...headers,
+    'Authorization': `Bearer ${token}`, // Add the token to the headers
+  };
+};
+
 export async function GetAccountById(id) {
   try {
-    const response = await axios.get(`${baseAccount}/${id}`, headers);
+    const response = await axios.get(`${baseAccount}/${id}`, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.error("Error fetching Account:", error);
@@ -12,27 +24,29 @@ export async function GetAccountById(id) {
   }
 }
 
-export async function GetAllAccount() {
-  const token = getJwtToken();
+export async function ToggleAccountBannedStatus(id, bannedStatus) {
   try {
-    console.log(token)
-    const response = await axios.get(`${baseAccount}`,
-      {
-        headers:{
-          ...headers,
-          'Authorization': `Bearer ${token}`
-        }
-      });
+    const response = await axios.patch(`${localhostAccount}/ToggleBanned/${id}`, { banned: bannedStatus }, { headers: getHeaders() });
     return response;
   } catch (error) {
-    alert("Error fetching Account:", error);
-    console.log(error)
+    console.log(localhostAccount);
+    console.error("Error toggling banned status:", error);
+    throw error; // Ensure the error is thrown to be caught in the calling function
+  }
+}
+export async function GetAllAccount() {
+  try {
+    const response = await axios.get(`${baseAccount}`, { headers: getHeaders() }); // Use the getHeaders function
+    return response;
+  } catch (error) {
+    console.error("Error fetching Account:", error);
+    throw error; // Throw error to be handled in the calling function
   }
 }
 
 export async function AddNewAccount(data) {
   try {
-    const response = await axios.post(`${baseAccount}/AddCustomer`, data, headers);
+    const response = await axios.post(`${baseAccount}/AddCustomer`, data, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.error("Error adding Account:", error);
