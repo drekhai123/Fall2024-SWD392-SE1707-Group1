@@ -73,8 +73,14 @@ const LoginPage = () => {
         sessionStorage.setItem('user', JSON.stringify(response.data.account));
         sessionStorage.setItem('token', response.data.token);
         toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
-        setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
-      } else {
+        if (response.data.account.role === 'staff') {
+          setTimeout(() => navigate('/staffDashBoard'), 2000);
+        } else {
+          setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds}
+
+        }
+      }
+      else {
         alert("Can't Login With Google: ")
       }
       setLoadingScreen(false)
