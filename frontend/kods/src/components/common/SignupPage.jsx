@@ -188,8 +188,8 @@ const SignupPage = () => {
               gender: gender,
               phoneNumber: phoneNumber,
               address: address,
-              createdAt: "2024-10-16T16:20:36.482Z",
-              updatedAt: "2024-10-16T16:20:36.482Z",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
             };
             await AddNewCustomer(data);
             navigate("/email-confirmation-waiting");

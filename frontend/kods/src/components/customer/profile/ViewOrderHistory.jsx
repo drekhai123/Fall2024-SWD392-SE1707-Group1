@@ -9,13 +9,39 @@ import {
   TableRow,
   Paper,
   Button,
-  Typography
+  Typography,
+  Pagination
 } from '@mui/material';
 import { getOrderByCustomerId } from '../../api/OrdersApi'; // Import the API function
 
 const OrderHistory = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const [page, setPage] = useState(1); // State for current page
+  const rowsPerPage = 5; // Number of orders per page
+  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'asc' });
+
+  const sortedOrders = React.useMemo(() => {
+    const sortableOrders = [...orders];
+    sortableOrders.sort((a, b) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (a[sortConfig.key] > b[sortConfig.key]) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+    return sortableOrders;
+  }, [orders, sortConfig]);
+
+  const requestSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -49,7 +75,11 @@ const OrderHistory = () => {
   const handleViewDetail = (orderId) => {
     navigate(`/profile/ViewOrderHistory/${orderId}`);
   };
-  
+
+  const handleChangePage = (event, value) => {
+    setPage(value);
+  };
+
   return (
     <div style={{ padding: '20px', margin: '0 auto' }}>
       <Typography variant="h4" gutterBottom>
@@ -59,30 +89,37 @@ const OrderHistory = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{fontWeight: 'bold'}}>Order ID</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Order ID</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Sender name</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Recipient name</TableCell>
-              <TableCell style={{fontWeight: 'bold'}}>Total weight</TableCell>
-              <TableCell style={{fontWeight: 'bold'}}>Total Price</TableCell>
-              <TableCell style={{fontWeight: 'bold'}}>Quantity</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Total weight</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Total Price</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Quantity</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Distance</TableCell>
-              
-              <TableCell style={{ fontWeight: 'bold' }}>Delivery Status</TableCell>
-              <TableCell style={{ fontWeight: 'bold' }}>Date Created</TableCell>
-              
+              <TableCell
+                style={{ fontWeight: 'bold', cursor: 'pointer' }}
+                onClick={() => requestSort('deliveryStatus')}
+              >
+                Delivery Status
+              </TableCell>
+              <TableCell
+                style={{ fontWeight: 'bold', cursor: 'pointer' }}
+                onClick={() => requestSort('createdAt')}
+              >
+                Date Created
+              </TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders?.map((order) => {
+            {sortedOrders.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((order) => {
               const date = new Date(order.createdAt);
-              const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+              const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
 
-              // Define a function to get the color based on the status
               const getStatusColor = (status) => {
                 switch (status) {
                   case 'PENDING':
-return 'orange';
+                    return 'orange';
                   case 'PROCESSING':
                     return 'blue';
                   case 'DELIVERED':
@@ -100,10 +137,9 @@ return 'orange';
                   <TableCell>{order.senderName}</TableCell>
                   <TableCell>{order.recipientName}</TableCell>
                   <TableCell>{order.totalWeight}</TableCell>
-                  <TableCell> {new Intl.NumberFormat('vi-VN').format(order.totalCost)} VND </TableCell>
+                  <TableCell>{new Intl.NumberFormat('vi-VN').format(order.totalCost)} VND</TableCell>
                   <TableCell>{order.quantity}</TableCell>
                   <TableCell>{order.distance.toFixed(2)}</TableCell>
-                  
                   <TableCell style={{ color: getStatusColor(order.deliveryStatus) }}>
                     {order.deliveryStatus}
                   </TableCell>
@@ -122,6 +158,13 @@ return 'orange';
             })}
           </TableBody>
         </Table>
+        <Pagination
+          count={Math.ceil(orders.length / rowsPerPage)}
+          page={page}
+          onChange={handleChangePage}
+          color="primary"
+          style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
+        />
       </TableContainer>
     </div>
   );

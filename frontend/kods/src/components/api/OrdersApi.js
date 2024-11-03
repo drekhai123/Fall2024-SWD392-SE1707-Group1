@@ -4,10 +4,12 @@ import axios from 'axios'
 const getOrderByCustomerIdUrl = baseUrl+'/Orders/customer/'
 const getOrderbyOrderIdUrl = baseUrl+'/Orders/'
 const getOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/Order/'
+// const getAllOrderDetailsByCustomerIdURl= baseUrl+'/OrderDetails/'
+const postOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/'
 const postOrdersUrl = baseUrl+'/Orders/'
+const updateOrderStatusUrl = baseUrl + '/Orders/';
 
-
-
+// Function to postOrders
 export async function postOrders(orderData) {
     const token = getJwtToken();
     try {
@@ -24,6 +26,7 @@ export async function postOrders(orderData) {
     }
 }
 
+// Function to getOrderByCustomerId
 export async function getOrderByCustomerId(customerId) {
     const token = getJwtToken();
 
@@ -40,6 +43,8 @@ export async function getOrderByCustomerId(customerId) {
         throw error;
     }
 }
+
+// Function to getOrderbyOrderId
 export async function getOrderbyOrderId(orderId) {
     const token = getJwtToken();
     try {
@@ -56,6 +61,24 @@ export async function getOrderbyOrderId(orderId) {
     }
 }
 
+// Function to postOrderDetailsByOrderId
+export async function postOrderDetailsByOrderId(orderData) {
+    const token = getJwtToken();
+    try {
+        const response = await axios.post(postOrderDetailsByOrderIdUrl, orderData, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        }); // Send POST request ););
+        return await response.data;
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+    }
+}
+
+// Function to getOrderDetailsByOrderId
 export async function getOrderDetailsByOrderId(orderId) {
     const token = getJwtToken();
     try {
@@ -71,3 +94,36 @@ export async function getOrderDetailsByOrderId(orderId) {
         throw error;
     }
 }
+
+// Function to update order status
+export async function updateOrderStatus(orderId, status) {
+    const token = getJwtToken();
+    try {
+        const response = await axios.put(`${updateOrderStatusUrl}${orderId}/status`, { status }, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return await response.data;
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        throw error;
+    }
+}
+
+// export async function getAllOrderDetailsByCustomerId(fishProfileId) {
+//     const token = getJwtToken();
+//     try {
+//         const response = await axios.get(getAllOrderDetailsByCustomerIdURl + fishProfileId, {
+//             headers: {
+//                 ...headers,
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         }); // Send POST request );
+//         return await response.data;
+//     } catch (error) {
+//         console.error('Error fetching fish profiles:', error);
+//         throw error;
+//     }
+// }
