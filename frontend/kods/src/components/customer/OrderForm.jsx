@@ -38,13 +38,13 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const token = getJwtToken();
 
-  // Add new state for validation
+  // Hàm validation
   const [phoneErrors, setPhoneErrors] = useState({
     sender: '',
     customer: ''
   });
 
-  // Add phone validation function
+  // Hàm validate sđt Việt Nam
   const validateVietnamesePhone = (phone) => {
     const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
     return phoneRegex.test(phone);
@@ -297,7 +297,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
         });
         Swal.fire("Success!", "Order confirmed!", "success");
         setShowQRCode(null);
-        navigate("/OrderHistory")
+        navigate("/profile/ViewOrderHistory")
       }
 
     } catch (error) {
@@ -849,7 +849,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   onClick={() => navigate('/profile/addfish')}
                   className="confirm-btn"
                   style={{
-                    backgroundColor: '#4CAF50',  // màu xanh lá
+                    backgroundColor: '#4CAF50', 
                     marginLeft: '10px',
                     marginRight: '10px'
                   }}
