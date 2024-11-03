@@ -214,15 +214,13 @@ export default function OrderForm({onSuggestionClick, distance}) {
     }
 
     const userLogin = JSON.parse(sessionStorage.getItem("user"))
-    const weightPriceTotal = Number(data?.reduce((acc, fish) => acc + fish.weight, 0))
+    const weightPriceListId = weightPriceList?.find(item =>
+      totalWeight >= item.minRange && totalWeight <= item.maxRange
+    )?.weightPriceListId;
+
     const distancePriceListId = distancePriceList?.find(item =>
       customerInfo?.distance >= item.minRange && customerInfo?.distance <= item.maxRange
     )?.distancePriceListId;
-
-    const weightPriceListId = weightPriceList?.find(item =>
-      weightPriceTotal >= item.minRange && weightPriceTotal <= item.maxRange
-    )?.weightPriceListId;
-
 
     const request = {
       senderName: customerInfo?.nameSender,
@@ -237,7 +235,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
       deliveryStatus: 'PENDING',
       deliveryNote: "deliveryNote demo",
       quantity: fishOrdersList?.length,
-      totalWeight: weightPriceTotal,
+      totalWeight: totalWeight,
       distance: Number(customerInfo?.distance),
       totalCost: (getTotalAmount() + (FeedingFee()) + parseFloat(calculateShippingFee().toFixed(0))),
       createdAt: new Date(),
@@ -405,10 +403,17 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const handleGoBack = () => {
     window.close();
-    navigate("/");  // Quay lại trang trước đó
+    navigate("/");  
   };
 
-  // Hàm thêm dòng mới
+  
+  const [totalWeight, setTotalWeight] = useState(0);
+
+  // Hàm tính totalWeight
+  const calculateTotalWeight = (selectedFishList) => {
+    return selectedFishList.reduce((total, fish) => total + fish.weight, 0);
+  };
+
   const addRow = () => {
     const selectedFishData = data?.filter((fish) =>
       selectedFish?.includes(fish.fishProfileId)
@@ -418,18 +423,22 @@ export default function OrderForm({onSuggestionClick, distance}) {
       const newFish = selectedFishData.filter(
         (fish) => !prevList.some((item) => item.fishProfileId === fish.fishProfileId)
       );
-      return [...prevList, ...newFish];
+      const updatedList = [...prevList, ...newFish];
+      setTotalWeight(calculateTotalWeight(updatedList));
+      return updatedList;
     });
 
     setOpenModal(false);
   };
 
-  // Hàm xóa dòng
+  // Cập nhật hàm deleteRow để tính lại totalWeight khi xóa cá
   const deleteRow = (index) => {
     const updatedOrders = fishOrdersList?.filter((_, i) => i !== index);
     const updatedOrdersCheckbox = selectedFish?.filter((_, i) => i !== index);
     setFishOrdersList(updatedOrders);
-    setSelectedFish(updatedOrdersCheckbox)
+    setSelectedFish(updatedOrdersCheckbox);
+    // Cập nhật lại totalWeight khi xóa cá
+    setTotalWeight(calculateTotalWeight(updatedOrders));
   };
 
   //Hàm của mapping để nguyên (comment cái const ở trên của nó)
@@ -459,81 +468,92 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const FishTable = ({data}) => {
     return (
-      <table className="fixed-table">
-        <thead>
-          <tr>
-            <th className="label-table">Index</th>
-            <th className="label-table">Name</th>
-            <th className="label-table">Type</th>
-            <th className="label-table">Weight (kg)</th>
-            <th className="label-table">Gender</th>
-            <th className="label-table">Note</th>
-            <th className="label-table">Action</th>
+      <>
+        <table className="fixed-table">
+          <thead>
+            <tr>
+              <th className="label-table">Index</th>
+              <th className="label-table">Name</th>
+              <th className="label-table">Type</th>
+              <th className="label-table">Weight (kg)</th>
+              <th className="label-table">Gender</th>
+              <th className="label-table">Note</th>
+              <th className="label-table">Action</th>
 
 
-            {/* <th className="label-table">Price (VND/Kg)</th> */}
-            {/* <th className="label-table">Action</th> */}
-          </tr>
-        </thead>
-        <tbody>
-          {data?.map((fish, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>
-                {fish?.name}
-              </td>
-              <td>
-                {fish?.koiFish?.fishType}
-              </td>
-              <td>
-                {fish?.weight}
-              </td>
-              <td>
-                {fish?.gender}
-              </td>
-              <td>
-                {fish?.notes}
-              </td>
-              {/*<td>
-                <input
-                  type="number"
-                  value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                  min=""
-                  onChange={(e) =>
-                    updateRow(
-                      index,
-                      "quantity",
-                      parseInt(e.target.value) || 0
-                    )
-                  }
-                  className="custom-dropdown"
-                  disabled // Vô hiệu hóa input người dùng (Tạm thi)
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  min="0"
-                  value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
-                  onChange={(e) =>
-                    updateRow(index, "price", parseInt(e.target.value) || 0)
-                  }
-                  className="custom-dropdown"
-                  disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                />
-              </td>*/}
-              <td>
-                <button
-                  onClick={() => deleteRow(index)}
-                  className="delete-button"
-                >
-                  Delete
-                </button>
-              </td>
+              {/* <th className="label-table">Price (VND/Kg)</th> */}
+              {/* <th className="label-table">Action</th> */}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data?.map((fish, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>
+                  {fish?.name}
+                </td>
+                <td>
+                  {fish?.koiFish?.fishType}
+                </td>
+                <td>
+                  {fish?.weight}
+                </td>
+                <td>
+                  {fish?.gender}
+                </td>
+                <td>
+                  {fish?.notes}
+                </td>
+                {/*<td>
+                  <input
+                    type="number"
+                    value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
+                    min=""
+                    onChange={(e) =>
+                      updateRow(
+                        index,
+                        "quantity",
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                    className="custom-dropdown"
+                    disabled // Vô hiệu hóa input người dùng (Tạm thi)
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
+                    onChange={(e) =>
+                      updateRow(index, "price", parseInt(e.target.value) || 0)
+                    }
+                    className="custom-dropdown"
+                    disabled // Vô hiệu hóa input người dùng (Tạm thời)
+                  />
+                </td>*/}
+                <td>
+                  <button
+                    onClick={() => deleteRow(index)}
+                    className="delete-button"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {data?.length > 0 && (
+          <div style={{
+            marginTop: '10px',
+            textAlign: 'right',
+            fontWeight: 'bold'    // Hiển thị totalWeight
+          }}>
+            Total Weight: {totalWeight.toFixed(2)} kg
+          </div>
+        )}
+      </>
     )
   }
 
