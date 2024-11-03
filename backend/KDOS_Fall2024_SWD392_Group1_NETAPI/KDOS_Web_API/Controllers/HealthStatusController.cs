@@ -70,10 +70,10 @@ namespace KDOS_Web_API.Controllers
             return Ok(healthStatusDto);
         }
         [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> GetHealthStatusById([FromRoute]int id)
+        [Route("{healthStatusId}")]
+        public async Task<IActionResult> GetHealthStatusById([FromRoute]int healthStatusId)
         {
-            var healthModel = await healthStatusRespository.GetHealthStatusById(id);
+            var healthModel = await healthStatusRespository.GetHealthStatusById(healthStatusId);
             if (healthModel == null)
             {
                 return NotFound();
