@@ -37,7 +37,12 @@ export function PendingOrders() {
   const updateOrderStatus = (order) => {
     const updatedOrder = { deliveryStatus: "PROCESSING", updateAt: Date.now() };
     axios
-      .put(`${baseUrl}/Orders/${order.orderId}/status`, updatedOrder)
+      .put(`${baseUrl}/Orders/${order.orderId}/status`, updatedOrder,{
+        headers: {
+          ...headers,
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then(() => {
         alert("Update order status success!");
       })
