@@ -24,9 +24,24 @@ export async function GetAccountById(id) {
   }
 }
 
+export async function UpdateRole(id, role) {
+  try {
+    const response = await axios.patch(`${baseAccount}/UpdateRole/${id}`, { role: role }, { headers: getHeaders() });
+
+    if (response.status !== 200) {
+      throw new Error('Failed to update role');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating role:", error);
+    throw new Error(error.response?.data?.message || 'Failed to update role');
+  }
+}
+
 export async function ToggleAccountBannedStatus(id, bannedStatus) {
   try {
-    const response = await axios.patch(`${localhostAccount}/ToggleBanned/${id}`, { banned: bannedStatus }, { headers: getHeaders() });
+    const response = await axios.patch(`${baseAccount}/ToggleBanned/${id}`, { banned: bannedStatus }, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.log(localhostAccount);

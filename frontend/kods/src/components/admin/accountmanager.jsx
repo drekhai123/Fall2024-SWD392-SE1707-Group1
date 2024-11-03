@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input } from 'antd';
+import { Button, Table, Modal, Form, Input, Select } from 'antd';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import {
   GetAllAccount,
-  AddNewAccount,
-  UpdateAccount,
+  UpdateRole,
   ToggleAccountBannedStatus,
 } from '../api/AccountApi'; // Adjust the import path as necessary
 import 'react-toastify/dist/ReactToastify.css';
 import { getJwtToken } from '../api/Url';
 
+const { Option } = Select; // Destructure Option from Select
+
 function AccountManager() {
   const [data, setData] = useState([]); // State to hold account data
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isToggling, setIsToggling] = useState(false);
   const [form] = Form.useForm();
@@ -22,6 +22,9 @@ function AccountManager() {
   const [filteredData, setFilteredData] = useState([]); // State for filtere
   const navigate = useNavigate(); // Initialize navigate for navigation
 
+
+  // Define roles for the dropdown
+  const roles = ['delivery staff', 'staff', 'customer', 'admin']; // Add your roles here
   // Function to check if the user is authorized
   const isAuthorized = () => {
     const token = getJwtToken();
@@ -52,11 +55,14 @@ function AccountManager() {
       setLoading(false); // Set loading to false after fetching
     }
   };
+
+  // Handle search input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     searchAccountsByUsername(value); // Call search function
   };
+
   const searchAccountsByUsername = async (username) => {
     setLoading(true);
     try {
@@ -75,38 +81,11 @@ function AccountManager() {
     }
   };
 
-  const openAddModal = () => {
-    form.resetFields();
-    setFormData(null);
-    setShowForm(true);
-  };
-
-  const openEditModal = (record) => {
-    setFormData(record);
-    form.setFieldsValue(record);
-    setShowForm(true);
-  };
-
-  const handleCreate = async (values) => {
-    try {
-      const response = await AddNewAccount(values); // Use the API function
-      if (response && response.status === 201) {
-        toast.success("Account created successfully!");
-        setShowForm(false);
-        fetchData(); // Refresh data after creating
-      } else {
-        toast.error("Failed to create account.");
-      }
-    } catch (error) {
-      console.error('Error creating account:', error);
-      toast.error("Error creating account: " + error.message);
-    }
-  };
 
   const handleEdit = async (values) => {
     try {
-      const response = await UpdateAccount(formData.accountId, values); // Pass accountId
-      if (response && response.status === 200) {
+      const response = await UpdateRole(values.accountId, values.role); // Update role
+      if (response) {
         toast.success("Account updated successfully!");
         setShowForm(false);
         fetchData(); // Refresh data after editing
@@ -119,16 +98,7 @@ function AccountManager() {
     }
   };
 
-  const handleSubmit = async (values) => {
-    if (formData) {
-      await handleEdit(values);
-    } else {
-      await handleCreate(values);
-    }
-  };
-
   const toggleBannedStatus = async (record) => {
-
     if (isToggling || !record) return; // Prevent duplicate calls
     setIsToggling(true); // Disable further calls
 
@@ -137,7 +107,16 @@ function AccountManager() {
       const response = await ToggleAccountBannedStatus(record.accountId, newBannedStatus);
       if (response && response.status === 200) {
         toast.success(`Account ${newBannedStatus ? 'banned' : 'unbanned'} successfully!`);
-        fetchData();
+        const updatedData = data.map(item =>
+          item.accountId === record.accountId ? { ...item, banned: newBannedStatus } : item
+        );
+        setData(updatedData); // Update the state with the new data
+        if (searchTerm) {
+          const updatedFilteredData = filteredData.map(item =>
+            item.accountId === record.accountId ? { ...item, banned: newBannedStatus } : item
+          );
+          setFilteredData(updatedFilteredData); // Update filtered data if searching
+        }
       } else {
         toast.error("Failed to update banned status.");
       }
@@ -159,7 +138,18 @@ function AccountManager() {
       title: 'Actions',
       render: (text, record) => (
         <>
-          <Button onClick={() => openEditModal(record)}>Edit</Button>
+          <Select
+            defaultValue={record.role}
+            style={{ width: 120 }}
+            onChange={(value) => {
+              // Update the role in the record and save changes
+              handleEdit({ ...record, role: value }); // Ensure the role is updated
+            }}
+          >
+            {roles.map(role => (
+              <Option key={role} value={role}>{role}</Option>
+            ))}
+          </Select>
           <Button
             onClick={() => toggleBannedStatus(record)}
             disabled={isToggling}
@@ -185,13 +175,6 @@ function AccountManager() {
         onChange={handleSearchChange}
         style={{ marginBottom: '16px' }}
       />
-      <Button
-        onClick={openAddModal}
-        type="primary"
-        style={{ marginBottom: '16px', backgroundColor: '#ff7700', borderColor: '#ff7700' }}
-      >
-        Add Account
-      </Button>
       <Table
         columns={columns}
         dataSource={searchTerm ? filteredData : data} // Use filtered data if searchTerm exists
@@ -202,7 +185,7 @@ function AccountManager() {
           showSizeChanger: false,
         }}
       />
-      <Modal
+      {/* <Modal
         title={formData ? "Edit Account" : "Add Account"}
         open={showForm}
         onCancel={() => setShowForm(false)}
@@ -232,7 +215,7 @@ function AccountManager() {
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }
