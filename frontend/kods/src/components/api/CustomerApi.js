@@ -12,22 +12,39 @@ const getHeaders = () => {
   };
 };
 
+// export async function GetAllCustomers() {
+//   var allCustomers = null;
+
+//   await axios.get(getAllCustomerURL, { headers: getHeaders() })
+//     .then(response => { allCustomers = response.data; })
+//     .catch(error => {
+//       console.error(error);
+//       alert('Error fetching Customer data');
+//     });
+//   return allCustomers;
+// }
 export async function GetAllCustomers() {
-  var allCustomers = null;
-
-  await axios.get(getAllCustomerURL, { headers: getHeaders() })
-    .then(response => { allCustomers = response.data; })
-    .catch(error => {
-      console.error(error);
-      alert('Error fetching Customer data');
-    });
-  return allCustomers;
+  try {
+    const response = await axios.get(`${getAllCustomerURL}`, { headers: getHeaders() }); // Use the getHeaders function
+    return response;
+  } catch (error) {
+    console.error("Error fetching Customer:", error);
+    throw error; // Throw error to be handled in the calling function
+  }
 }
-
+export async function UpdateCustomer(id, data) {
+  try {
+    const response = await axios.put(`${getAllCustomerURL}/${id}`, data, { headers: getHeaders() }); // Use the getHeaders function
+    return response;
+  } catch (error) {
+    console.error("Error fetching Customer:", error);
+    throw error; // Throw error to be handled in the calling function
+  }
+}
 export async function AddNewCustomer(data) {
 
   var customer = null;
-      await axios.post(getAllCustomerURL, data, { headers: getHeaders() })
+  await axios.post(getAllCustomerURL, data, { headers: getHeaders() })
     .then(response => { customer = response.data; })
     .catch(error => {
       console.error("Error fetching Customer:", error);
@@ -49,16 +66,16 @@ export async function GetCustomerById(id) {
   }
 }
 
-export async function UpdateCustomer(id, customerData) {
-  try {
-    const response = await axios.put(
-      `${getAllCustomerURL}/${id}`,
-      customerData,
-      { headers: getHeaders() }
-    );
-    return await response.data;
-  } catch (error) {
-    console.error("Error updating Customer:", error);
-    throw error;
-  }
-}
+// export async function UpdateCustomer(id, customerData) {
+//   try {
+//     const response = await axios.put(
+//       `${getAllCustomerURL}/${id}`,
+//       customerData,
+//       { headers: getHeaders() }
+//     );
+//     return await response.data;
+//   } catch (error) {
+//     console.error("Error updating Customer:", error);
+//     throw error;
+//   }
+// }

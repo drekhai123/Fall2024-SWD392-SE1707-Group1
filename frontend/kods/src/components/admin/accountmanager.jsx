@@ -277,7 +277,7 @@ function AccountManager() {
         Create a New Account
       </Button>
       <Input
-        placeholder="Search by username"
+        placeholder="Search by username..."
         value={searchTerm}
         onChange={handleSearchChange}
         style={{ marginBottom: '16px' }}

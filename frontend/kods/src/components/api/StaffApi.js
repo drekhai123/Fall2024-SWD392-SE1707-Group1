@@ -17,19 +17,38 @@ export async function checkStaffAccountIdExists(accountId) {
     toast('Staff account already exists.');
   }
 }
-export async function GetAllStaffs() {
-  var allStaff = null;
-  await axios
-    .get(getAllStaffURL, { headers: getHeaders() })
-    .then((response) => {
-      allStaff = response.data;
-    })
-    .catch((error) => {
-      console.error(error);
-      alert("Error fetching Staff data");
-    });
-  return allStaff;
+export async function UpdateStaff(id, data) {
+  try {
+    const response = await axios.put(`${getAllStaffURL}/${id}`, data, { headers: getHeaders() }); // Use the getHeaders function
+    return response;
+  } catch (error) {
+    console.error("Error fetching Staff:", error);
+    throw error; // Throw error to be handled in the calling function
+  }
 }
+export async function GetAllStaff() {
+  try {
+    const response = await axios.get(`${getAllStaffURL}`, { headers: getHeaders() }); // Use the getHeaders function
+    return response;
+  } catch (error) {
+    console.error("Error fetching Staff:", error);
+    throw error; // Throw error to be handled in the calling function
+  }
+}
+
+// export async function GetAllStaffs() {
+//   var allStaff = null;
+//   await axios
+//     .get(getAllStaffURL, { headers: getHeaders() })
+//     .then((response) => {
+//       allStaff = response.data;
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//       alert("Error fetching Staff data");
+//     });
+//   return allStaff;
+// }
 // Function to create a new staff member
 export async function createNewStaff(staffData) {
   try {
