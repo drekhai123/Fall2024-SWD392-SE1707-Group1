@@ -516,12 +516,50 @@
 
 .payment-options {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  justify-content: center;
+  gap: 40px;
   margin: 20px 0;
-  padding: 20px;
-  background: #f8f8f8;
+}
+
+.payment-method-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  border: 1px solid #ddd;
   border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-method-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.payment-icon {
+  width: 240px;
+  height: 160px;
+  object-fit: contain;
+}
+
+.radio-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.radio-container input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #4CAF50;
+}
+
+.payment-method-card.selected {
+  border-color: #4CAF50;
+  background-color: #f0f9f0;
 }
 
 .payment-option {
@@ -556,7 +594,7 @@
   background: white;
   padding: 30px;
   border-radius: 8px;
-  min-width: 300px;
+  width: 100px;
   text-align: center;
 }
 
