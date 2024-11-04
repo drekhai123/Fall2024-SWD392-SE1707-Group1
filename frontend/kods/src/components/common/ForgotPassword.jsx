@@ -83,7 +83,7 @@ function ForgotPassword() {
    
     //Hàm Fetch API forgot password 
     const requestData = {
-      email: email,
+      email: email, 
       password: password
     };
 

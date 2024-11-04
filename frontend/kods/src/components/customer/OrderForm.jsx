@@ -443,7 +443,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     }
   }, [markerPositionFrom, markerPositionTo])
 
-  // Hàm của Distance (comment cái const ở trên của nó)
+  // Hàm của Distance
   useEffect(() => {
     setCustomerInfo({...customerInfo, distance: distance});
   }, [distance])
@@ -473,10 +473,6 @@ export default function OrderForm({onSuggestionClick, distance}) {
               <th className="label-table">Gender</th>
               <th className="label-table">Note</th>
               <th className="label-table">Action</th>
-
-
-              {/* <th className="label-table">Price (VND/Kg)</th> */}
-              {/* <th className="label-table">Action</th> */}
             </tr>
           </thead>
           <tbody>
@@ -497,35 +493,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </td>
                 <td>
                   {fish?.notes}
-                </td>
-                {/*<td>
-                  <input
-                    type="number"
-                    value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                    min=""
-                    onChange={(e) =>
-                      updateRow(
-                        index,
-                        "quantity",
-                        parseInt(e.target.value) || 0
-                      )
-                    }
-                    className="custom-dropdown"
-                    disabled // Vô hiệu hóa input người dùng (Tạm thi)
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    min="0"
-                    value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
-                    onChange={(e) =>
-                      updateRow(index, "price", parseInt(e.target.value) || 0)
-                    }
-                    className="custom-dropdown"
-                    disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                  />
-                </td>*/}
+                </td> 
                 <td>
                   <button
                     onClick={() => deleteRow(index)}
