@@ -4,7 +4,7 @@ import { AddTransport } from './AddTransport';
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { baseUrl, headers, getJwtToken } from "../api/Url";
+import { baseUrl,headers, getJwtToken } from "../api/Url";
 
 export function PendingOrders() {
   const [orders, setOrders] = useState([]);
@@ -37,7 +37,6 @@ export function PendingOrders() {
 
     fetchOrders();
   }, []);
-
   const updateOrderStatus = (order) => {
     const updatedOrder = { deliveryStatus: "PROCESSING", updateAt: Date.now() };
     axios
@@ -55,11 +54,6 @@ export function PendingOrders() {
       });
   };
 
-  const openAddTransportDialog = (order) => {
-    setSelectedOrder(order);
-    setIsAddTransport(true);
-  };
-
   return (
     <div>
       <DataTable
@@ -74,26 +68,17 @@ export function PendingOrders() {
         <Column field="deliveryStatus" header="Status" />
         <Column
           header="Action"
-          body={(rowData) => (
-            <Button
-              label="Update to Processing"
-              severity="info"
-              className="text-black !bg-cyan-500 border border-black p-2"
-              onClick={() => updateOrderStatus(rowData)}
-            />
-          )}
-        />
-        <Column
-          header="Add transport"
-          body={(rowData) => (
-            <Button
-              label="Transport"
-              severity="info"
-              className="text-black !bg-cyan-500 border border-black p-2"
-              onClick={() => openAddTransportDialog(rowData)}
-            />
-          )}
-        />
+          body={(rowData) => {
+            return (
+              <Button
+                label="Update to Processing"
+                severity="info"
+                className="text-black !bg-cyan-500 border border-black p-2"
+                onClick={() => updateOrderStatus(rowData)}
+              ></Button>
+            );
+          }}
+        ></Column>
       </DataTable>
 
       {isAddTransport &&

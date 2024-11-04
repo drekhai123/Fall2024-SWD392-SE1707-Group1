@@ -1,32 +1,59 @@
 
-import { useState } from 'react';
-import HistoryIcon from '@mui/icons-material/History';
+import { useRef, useState } from 'react';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import "../../css/DeliveryStaffMenu.css"
-import { ExitToAppSharp, Person } from '@mui/icons-material';
-import { Panel } from 'primereact/panel';
-import { Divider } from 'primereact/divider';
+import { ExitToAppSharp, NoteAdd, Person } from '@mui/icons-material';
 import { googleLogout } from '@react-oauth/google';
-import { toast } from 'react-toastify';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
         
 export default function DeliveryStaffMenu({ setSelectedMenu }) {
     const navigate = useNavigate()
+    const toast = useRef(null);
+
+    const accept = () => {
+        toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have logged out', life: 3000 });
+        logout()
+    }
+
+    const reject = () => {
+        toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You stay logged in', life: 3000 });
+       
+    }
+
+    const confirmLogout = () => {
+        confirmDialog({
+            message: 'Do you want to Log Out',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            defaultFocus: 'reject',
+            acceptClassName: 'p-button-danger',
+            accept,
+            reject
+        });
+    };
+
     const logout = () => {
         googleLogout()
         sessionStorage.removeItem("user");
         sessionStorage.removeItem("token");
-        toast.success("Logged out successfully!");
         navigate('/');
       };
+    const leaveHover=()=>{
+            setHoveredItem(null);
+        }
     const [hoveredItem, setHoveredItem] = useState(null);
     return (
-        <div class="deliveryNavbar">
+        <div className="deliveryNavbar">
+            <Toast ref={toast} />
+            <ConfirmDialog />
             <h2 className="deliveryNavHeader">Delivery Staff</h2>
             <a
                 className="deliveryNavItem"
                 onMouseEnter={() => setHoveredItem("transport")}
                 onClick={() => setSelectedMenu("transport")}
+                onMouseLeave={() => leaveHover()}
             >
                 <LocalShippingIcon />
                 {hoveredItem === "transport" && (
@@ -36,18 +63,20 @@ export default function DeliveryStaffMenu({ setSelectedMenu }) {
 
             <a
                 className="deliveryNavItem"
-                onMouseEnter={() => setHoveredItem("history")}
-                onClick={() => setSelectedMenu("history")}
+                onMouseEnter={() => setHoveredItem("log")}
+                onClick={() => setSelectedMenu("log")}
+                onMouseLeave={() => leaveHover()}
             >
-                <HistoryIcon />
-                {hoveredItem === "history" && (
-                    <span className="nav-description">View All Of Your Transport </span>
+                <NoteAdd />
+                {hoveredItem === "log" && (
+                    <span className="nav-description">Record Your Transport Log</span>
                 )}
             </a>
             <a
                 className="deliveryNavItem"
                 onMouseEnter={() => setHoveredItem("profile")}
                 onClick={() => setSelectedMenu("profile")}
+                onMouseLeave={() => leaveHover()}
             >
                 <Person />
                 {hoveredItem === "profile" && (
@@ -55,9 +84,10 @@ export default function DeliveryStaffMenu({ setSelectedMenu }) {
                 )}
             </a>
             <a
-                onClick={()=>logout()}
+                onClick={()=>confirmLogout()}
                 className="deliveryNavItem"
                 onMouseEnter={() => setHoveredItem("exist")}
+                onMouseLeave={() => leaveHover()}
             >
                 <ExitToAppSharp />
                 {hoveredItem === "exist" && (
