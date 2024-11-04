@@ -377,9 +377,24 @@ namespace KDOS_Web_API.Controllers
                 var accountDto = mapper.Map<AccountDTO>(updatedAccount);
                 return Ok(accountDto);
             }
-
-           
         }
+
+        [HttpGet]
+        [Route("Existed/{accountId}")]
+        public async Task<IActionResult> CheckAccountExisted([FromRoute] int accountId)
+        {
+            var accountModel = await accountRepository.GetAccountById(accountId);
+            if (accountModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok();
+            }
+        }   
+
+
 
         [HttpPatch("ToggleBanned/{accountId}")]
         public async Task<IActionResult> ToggleBanned(int accountId)

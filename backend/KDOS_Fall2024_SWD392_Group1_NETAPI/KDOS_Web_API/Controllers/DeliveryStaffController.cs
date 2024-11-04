@@ -50,8 +50,8 @@ namespace KDOS_Web_API.Controllers
             else
             {
                 var deliveryStaffDto = mapper.Map<DeliveryStaffDTO>(deliveryStaffModel);
-                 return CreatedAtAction(nameof(GetDeliveryStaffById), new { staffId = deliveryStaffModel.StaffId }, deliveryStaffDto);
-                
+                return CreatedAtAction(nameof(GetDeliveryStaffById), new { staffId = deliveryStaffModel.StaffId }, deliveryStaffDto);
+
             }
         }
         [HttpDelete]
@@ -90,7 +90,22 @@ namespace KDOS_Web_API.Controllers
             }
             else
             {
-               var deliveryStaffDto = mapper.Map<DeliveryStaffDTO>(deliveryStaffModel);
+                var deliveryStaffDto = mapper.Map<DeliveryStaffDTO>(deliveryStaffModel);
+                return Ok(deliveryStaffDto);
+            }
+        }
+        [HttpGet]
+        [Route("/DeliveryStaffAccount/{accountId}")]
+        public async Task<IActionResult> GetDeliveryStaffByAcountId([FromRoute] int accountId)
+        {
+            var deliveryStaff = await deliveryStaffRepository.GetDeliveryStaffByAccountId(accountId);
+            if (deliveryStaff == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var deliveryStaffDto = mapper.Map<DeliveryStaffDTO>(deliveryStaff);
                 return Ok(deliveryStaffDto);
             }
         }
