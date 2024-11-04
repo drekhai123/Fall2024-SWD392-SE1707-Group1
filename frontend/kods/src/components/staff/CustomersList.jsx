@@ -47,24 +47,10 @@ export function CustomersList() {
     console.log("Fish edited:", confirmationData);
   };
 
-   // Pagingation
-   const [first, setFirst] = useState(0); // Track the first row for controlled pagination
-   const [rows, setRows] = useState(5); // Number of rows per page
- 
-   const onPage = (event) => {
-     setFirst(event.first);
-     setRows(event.rows);
-   };
-   //
-
   return (
     <div>
       <DataTable
         value={customers}
-        paginator
-        rows={rows}
-        first={first}
-        onPage={onPage}
         showGridlines
         stripedRows
         tableStyle={{ minWidth: "50rem" }}
