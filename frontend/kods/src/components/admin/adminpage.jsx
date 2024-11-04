@@ -15,8 +15,9 @@ function AdminPage() {
 
   useEffect(() => {
     // Retrieve user role from sessionStorage
-    const role = sessionStorage.getItem('userRole'); // Adjust the key based on your implementation
-    if (role !== 'admin') {
+    const user = JSON.parse(sessionStorage.getItem('user')); // Adjust the key based on your implementation
+    console.log("The role is: ", user.role);
+    if (user.role !== 'admin') {
       // If the role is not admin, redirect to homepage
       navigate('/');
     }

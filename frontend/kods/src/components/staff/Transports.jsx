@@ -16,6 +16,7 @@ export function Transports() {
   const [isOpenHealthDialog, setIdOpenHealDialog] = useState(false)
   const user = JSON.parse(sessionStorage.getItem("user"));
   const userId = user.accountId;
+  const ordersResponse = null;
   useEffect(() => {
     const fetchOrders = async () => {
       try {
