@@ -453,7 +453,7 @@
 
 .phone-input-container {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .error-message {
@@ -551,7 +551,7 @@
   font-weight: 500;
 }
 
-/* Cập nhật style cho container-popup nếu cần */
+
 .container-popup {
   background: white;
   padding: 30px;
@@ -563,4 +563,62 @@
 .title-popup {
   margin-bottom: 20px;
   color: #333;
+}
+
+.error-message-email {
+  color: #ff0000;
+  font-size: 16px;
+  display: block;
+  text-align: center;  
+  width: 100%;         
+  position: absolute; 
+  left: 50%;          
+  transform: translateX(-50%); 
+}
+
+.phone-input-container {
+  position: relative;  
+  margin-bottom: 30px; 
+}
+
+.error-input {
+  border-color: #ff4d4f !important;
+}
+
+.sender-info, .customer-info {
+  margin-bottom: 30px;
+}
+
+.label-customer {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+
+.input-customer {
+  margin-bottom: 15px; 
+  height: 40px;         
+  padding: 8px 12px;    
+}
+
+
+.phone-input-container {
+  margin-bottom: 15px;  
+}
+
+
+.layout-suggestions {
+  margin-bottom: 15px;
+}
+
+.error-message { 
+  margin-top: 4px;
+  margin-bottom: 8px;
+  font-size: 19px;
+}
+
+.error-message-email { 
+  margin-top: -10px;
+  margin-bottom: 8px;
+  font-size: 20px;
 }

@@ -51,6 +51,17 @@ export default function OrderForm({onSuggestionClick, distance}) {
     return phoneRegex.test(phone);
   };
 
+  // Thêm state cho email error
+  const [emailError, setEmailError] = useState('');
+
+
+
+  // Thêm hàm validate email
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   //Hàm fecth API get FishProfile
   const getFishProfile = useCallback(async () => {
     setLoading(true);
@@ -169,7 +180,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     const { distance } = customerInfo;
     var unitPrice = 0;
 
-    // T��m giá từ khoảng cách tương ứng trong distancePriceList
+    // Tm giá từ khoảng cách tương ứng trong distancePriceList
     const range = distancePriceList.find(
       (item) => distance >= item.minRange && distance <= item.maxRange
     );
@@ -344,6 +355,17 @@ export default function OrderForm({onSuggestionClick, distance}) {
         [field === "phoneSender" ? "sender" : "customer"]:
           value ? (isValid ? '' : 'Please enter a valid Vietnamese phone number') : ''
       }));
+    }
+
+    // Thêm validation cho email
+    if (field === "emailCustomer") {
+      if (!value) {
+        setEmailError('Email is required');
+      } else if (!validateEmail(value)) {
+        setEmailError('Please enter a valid email address');
+      } else {
+        setEmailError('');
+      }
     }
 
     if (typingTimeout) {
@@ -567,7 +589,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
               />
               <div className="phone-input-container">
                 <input
-                  className="input-customer"
+                  className={`input-customer ${phoneErrors.sender ? 'error-input' : ''}`}
                   type="text"
                   placeholder="Phone"
                   value={customerInfo.phoneSender || ''}
@@ -615,17 +637,19 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   handleCustomerChange("nameCustomer", e.target.value)
                 }
               />
-              <input
-                className="input-customer"
-                type="text"
-                placeholder="Email"
-                onChange={(e) =>
-                  handleCustomerChange("emailCustomer", e.target.value)
-                }
-              />
               <div className="phone-input-container">
                 <input
-                  className="input-customer"
+                  className={`input-customer ${emailError ? 'error-input' : ''}`}
+                  type="text"
+                  placeholder="Email"
+                  value={customerInfo.emailCustomer || ''}
+                  onChange={(e) => handleCustomerChange("emailCustomer", e.target.value)}
+                />
+                {emailError && <span className="error-message-email">{emailError}</span>}
+              </div>
+              <div className="phone-input-container">
+                <input
+                  className={`input-customer ${phoneErrors.customer ? 'error-input' : ''}`}
                   type="text"
                   placeholder="Phone"
                   value={customerInfo.phoneCustomer || ''}
