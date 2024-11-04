@@ -252,6 +252,7 @@ namespace KDOS_Web_API.Controllers
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Role = "staff"; //Set Role fixed as staff
+            accountModel.Verified = true; //Set Role fixed as staff
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             if (accountModel == null)
@@ -274,6 +275,7 @@ namespace KDOS_Web_API.Controllers
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Role = "delivery"; //Set Role fixed as deliverystaff
+            accountModel.Verified = true; //Set Role fixed as staff
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             if (accountModel == null)
