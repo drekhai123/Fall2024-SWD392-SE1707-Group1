@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
 // import {QRCodeSVG} from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
-import {getJwtToken} from "../api/Url";
-import {postOrders} from "../api/OrdersApi";
-import {postOrderDetailsByOrderId} from "../api/OrdersApi";
+import { useNavigate } from 'react-router-dom';
+import { getJwtToken } from "../api/Url";
+import { postOrders } from "../api/OrdersApi";
+import { postOrderDetailsByOrderId } from "../api/OrdersApi";
 
-export default function OrderForm({onSuggestionClick, distance}) {
+export default function OrderForm({ onSuggestionClick, distance }) {
   const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
   const [modal, setOpenModal] = useState(false);
@@ -271,10 +271,10 @@ export default function OrderForm({onSuggestionClick, distance}) {
         <p>Address customer: ${customerInfo.addressCustomer}</p>
         <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${formatCurrency(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
         <p>Total amount: ${formatCurrency(
-          getTotalAmount() +
-          FeedingFee() +
-          parseFloat(calculateShippingFee().toFixed(0))
-        )} VND</p>
+        getTotalAmount() +
+        FeedingFee() +
+        parseFloat(calculateShippingFee().toFixed(0))
+      )} VND</p>
       `,
       icon: "info",
       showCancelButton: true,
@@ -302,6 +302,20 @@ export default function OrderForm({onSuggestionClick, distance}) {
       console.log("Order response received:", orderResponse);
 
       if (orderResponse) {
+        // Call the API to create a new payment request
+        const paymentResponse = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Create', {
+          orderId: orderResponse.orderId, // Use the orderId from the orderResponse
+          amount: orderResponse.totalCost, // Assuming totalCost is part of the orderResponse
+        });
+        console.log("Payment response received:", paymentResponse.data);
+
+        // Check if the payment response contains a URL
+        if (paymentResponse.data && paymentResponse.data.paymentUrl) {
+          // Redirect to the payment URL provided in the response
+          window.location.href = paymentResponse.data.paymentUrl; // Redirect to the payment URL
+          return; // Exit the function after redirecting
+        }
+
         for (const fish of fishOrdersList) {
           const orderDetailsData = {
             fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
@@ -406,18 +420,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
         }
       }, 500)
     );
-    setCustomerInfo({...customerInfo, [field]: value});
+    setCustomerInfo({ ...customerInfo, [field]: value });
   };
 
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
         setMarkerPositionFrom([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressSender: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressSender: suggestion?.display_name });
         setFromSuggestions(null);
       } else if ('addressCustomer') {
         setMarkerPositionTo([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressCustomer: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressCustomer: suggestion?.display_name });
         setToSuggestions(null);
       }
     }
@@ -467,13 +481,13 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
-      onSuggestionClick({form: markerPositionFrom, to: markerPositionTo});
+      onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
     }
   }, [markerPositionFrom, markerPositionTo])
 
   // Hàm của Distance
   useEffect(() => {
-    setCustomerInfo({...customerInfo, distance: distance});
+    setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
   const handleCheckboxChange = (fishProfileId) => {
@@ -488,7 +502,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
   };
 
-  const FishTable = ({data}) => {
+  const FishTable = ({ data }) => {
     return (
       <>
         <table className="fixed-table">
@@ -521,7 +535,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </td>
                 <td>
                   {fish?.notes}
-                </td> 
+                </td>
                 <td>
                   <button
                     onClick={() => deleteRow(index)}
@@ -693,7 +707,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </div>
               </div>
 
-              <div style={{marginTop: 10}} className="customer-info">
+              <div style={{ marginTop: 10 }} className="customer-info">
                 <h3 className="label-customer">Distance (km)</h3>
                 <input
                   className="input-customer"
@@ -714,7 +728,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   <div>
                     <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
                       className="layout-checkbox"
-                      style={{marginBottom: '10px'}}
+                      style={{ marginBottom: '10px' }}
                     >
                       <p>
                         <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
@@ -726,7 +740,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                         {customerInfo?.distance <= 50 && (
                           <label>
                             <input
-                              style={{cursor: 'pointer'}}
+                              style={{ cursor: 'pointer' }}
                               type="checkbox"
                               checked={check}
                               onChange={(e) => setCheck(e.target.checked)}
@@ -737,7 +751,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                       </div>
                     </div>
 
-                    <div style={{marginTop: '10px'}}>
+                    <div style={{ marginTop: '10px' }}>
                       <div className="fee-line">
                         <span className="fee-label">Shipping fee:</span>
                         <span className="fee-amount">{formatCurrency(calculateShippingFee() || 0)} VND</span>
@@ -813,7 +827,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
               <div className="layout-btn">
                 <button
-                  onClick={() => confirmPay({...showQRCode, paymentMethod: selectedPayment})}
+                  onClick={() => confirmPay({ ...showQRCode, paymentMethod: selectedPayment })}
                   className="confirm-btn"
                   disabled={isConfirmDisabled}
                 >
