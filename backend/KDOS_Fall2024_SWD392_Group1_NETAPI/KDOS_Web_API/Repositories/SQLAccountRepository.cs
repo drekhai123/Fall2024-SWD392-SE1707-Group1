@@ -90,7 +90,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Account?> Login(string userNameOrEmail)
         {
-            return await accountContext.Account.Include(x=>x.Customer).FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
+            return await accountContext.Account.Include(x=>x.Customer).Include(x=>x.Staff).Include(x=>x.DeliveryStaff).FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
         }
 
         public async Task<Account?> BanAccount(int id, Account account)

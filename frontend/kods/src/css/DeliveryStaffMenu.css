@@ -1,0 +1,62 @@
+/* Main navigation dock styling */
+.deliveryNavbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 10%; /* default width */
+    height: 100%;
+    background-color: #243c5a; /* dark background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    z-index: 1000;
+}
+.deliveryNavHeader {
+    color: #fff; /* Text color */
+    font-size: 1.5rem; /* Font size */
+    margin-bottom: 20px; /* Space below the header */
+    text-align: center; /* Center align the header */
+    font-weight: bold; /* Make the text bold */
+    text-transform: uppercase; /* Uppercase letters for emphasis */
+}
+/* Individual navigation item styling */
+.deliveryNavItem {
+    color: #fff;
+    font-size: 1rem;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    position: relative; /* Change to relative to position child elements */
+    text-decoration: none;
+}
+
+/* Hover effect for the navigation item */
+.deliveryNavItem:hover {
+    padding: 30px 0;
+    background-color: rgb(51, 78, 112); /* lighter background */
+}
+/* Styling for the navigation item description */
+.deliveryNavItem .nav-description {
+    color: #fff;
+    font-size: 1rem;
+    background-color: rgb(51, 78, 112);
+    padding: 10px 0;
+    position: absolute;
+    left: 100%; /* Align it to the right of the nav-item */
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    opacity: 0; /* Initially hidden */
+    transition: all 0.3s ease-in-out; /* Smooth transition for visibility */
+}
+
+/* Show description on hover */
+.deliveryNavItem:hover .nav-description {
+    opacity: 1; /* Make it visible on hover */
+    display: block; /* Ensure it's displayed */
+    padding: 33px 0;
+    padding-right: 10px;
+}
