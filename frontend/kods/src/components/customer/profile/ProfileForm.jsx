@@ -7,6 +7,7 @@ import { UpdateAccount } from "../../api/AccountApi";
 const UserProfileForm = ({ onSubmit, methods }) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { formState: { isDirty } } = methods;
 
   const handleOpen = (data) => {
@@ -33,6 +34,11 @@ const UserProfileForm = ({ onSubmit, methods }) => {
     handleOpen(data);
   };
 
+  const handleDeleteConfirm = () => {
+    console.log("Account deleted");
+    setDeleteConfirmOpen(false);
+  };
+
   return (
     <>
       <div>
@@ -46,7 +52,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
         <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-6">
           {/* User Name Field */}
           <div>
-            <label className="block mb-2">Change your user name here</label>
+            <label className="block mb-2">UserName</label>
             <InputField
               defaultValue="userName"
               name="userName"
@@ -58,7 +64,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
 
           {/* Email Field */}
           <div>
-            <label className="block mb-2">Change your email here</label>
+            <label className="block mb-2">Email</label>
             <InputField
               defaultValue="email"
               name="email"
@@ -103,15 +109,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
             <Button
               variant="outlined"
               color="secondary"
-              onClick={() => {
-                if (
-                  window.confirm(
-                    "Are you sure you want to delete your account?"
-                  )
-                ) {
-                  // Handle account deletion
-                }
-              }}
+              onClick={() => setDeleteConfirmOpen(true)}
             >
               Delete Account
             </Button>
@@ -133,6 +131,24 @@ const UserProfileForm = ({ onSubmit, methods }) => {
           </Button>
           <Button onClick={handleConfirm} color="primary" autoFocus>
             Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog for Deletion */}
+      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete your account?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="secondary" autoFocus>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
