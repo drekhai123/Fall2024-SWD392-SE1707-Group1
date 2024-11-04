@@ -776,28 +776,32 @@ export default function OrderForm({onSuggestionClick, distance}) {
               <h3 className="title-popup">Please select payment method!</h3>
 
               <div className="payment-options">
-                <div className="payment-option">
-                  <input
-                    type="radio"
-                    id="cash"
-                    name="payment"
-                    value="CASH"
-                    checked={selectedPayment === 'CASH'}
-                    onChange={(e) => setSelectedPayment(e.target.value)}
-                  />
-                  <label htmlFor="cash">Cash</label>
+                <div className="payment-method-card">
+                  <img src="/images/ourmemories/cash.png" alt="Cash payment" className="payment-icon" />
+                  <div className="radio-container">
+                    <input
+                      type="radio"
+                      id="cash"
+                      name="payment"
+                      value="CASH"
+                      checked={selectedPayment === 'CASH'}
+                      onChange={(e) => setSelectedPayment(e.target.value)}
+                    />
+                  </div>
                 </div>
 
-                <div className="payment-option">
-                  <input
-                    type="radio"
-                    id="vnpay"
-                    name="payment"
-                    value="BANK_TRANSFER"
-                    checked={selectedPayment === 'BANK_TRANSFER'}
-                    onChange={(e) => setSelectedPayment(e.target.value)}
-                  />
-                  <label htmlFor="vnpay">VNPay</label>
+                <div className="payment-method-card">
+                  <img src="/images/ourmemories/vnpay.png" alt="VNPay payment" className="payment-icon" />
+                  <div className="radio-container">
+                    <input
+                      type="radio"
+                      id="vnpay"
+                      name="payment"
+                      value="BANK_TRANSFER"
+                      checked={selectedPayment === 'BANK_TRANSFER'}
+                      onChange={(e) => setSelectedPayment(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
 
