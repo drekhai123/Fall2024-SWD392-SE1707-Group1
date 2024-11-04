@@ -52,6 +52,27 @@ public class TransportController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
+    [HttpGet]
+    [Route("DeliveryStaff/{id}")]
+    public async Task<IActionResult> GetByDeliveryStaff([FromRoute] int id)
+    {
+        try
+        {
+            var transportModel = await transportRepository.GetByDeliveryStaff(id);
+            if (transportModel == null)
+            {
+                return NotFound("Transport not existed !!!");
+            }
+
+            var transportDto = mapper.Map<TransportDTO>(transportModel);
+            return Ok(transportDto);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving transport with ID {Id}", id);
+            return StatusCode(500, "Internal server error");
+        }
+    }
 
     [HttpPost]
     public async Task<IActionResult> AddNewTransport([FromBody] AddNewTransportDTO addNewTransportDTO)

@@ -10,10 +10,10 @@ import { Divider } from 'primereact/divider';
 export default function DeliveryStaffMenu({ setSelectedMenu }) {
     const [hoveredItem, setHoveredItem] = useState(null);
     return (
-        <div class="nav-dock">
-            <h2 className="nav-header">Delivery Staff</h2>
+        <div class="deliveryNavbar">
+            <h2 className="deliveryNavHeader">Delivery Staff</h2>
             <a
-                className="nav-item"
+                className="deliveryNavItem"
                 onMouseEnter={() => setHoveredItem("transport")}
                 onClick={() => setSelectedMenu("transport")}
             >
@@ -24,7 +24,7 @@ export default function DeliveryStaffMenu({ setSelectedMenu }) {
             </a>
 
             <a
-                className="nav-item"
+                className="deliveryNavItem"
                 onMouseEnter={() => setHoveredItem("history")}
                 onClick={() => setSelectedMenu("history")}
             >
@@ -34,7 +34,7 @@ export default function DeliveryStaffMenu({ setSelectedMenu }) {
                 )}
             </a>
             <a
-                className="nav-item"
+                className="deliveryNavItem"
                 onMouseEnter={() => setHoveredItem("profile")}
                 onClick={() => setSelectedMenu("profile")}
             >

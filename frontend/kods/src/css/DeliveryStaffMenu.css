@@ -1,5 +1,5 @@
 /* Main navigation dock styling */
-.nav-dock {
+.deliveryNavbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -12,7 +12,7 @@
     padding-top: 20px;
     z-index: 1000;
 }
-.nav-header {
+.deliveryNavHeader {
     color: #fff; /* Text color */
     font-size: 1.5rem; /* Font size */
     margin-bottom: 20px; /* Space below the header */
@@ -21,7 +21,7 @@
     text-transform: uppercase; /* Uppercase letters for emphasis */
 }
 /* Individual navigation item styling */
-.nav-item {
+.deliveryNavItem {
     color: #fff;
     font-size: 1rem;
     width: 100%;
@@ -34,12 +34,12 @@
 }
 
 /* Hover effect for the navigation item */
-.nav-item:hover {
+.deliveryNavItem:hover {
     padding: 30px 0;
     background-color: rgb(51, 78, 112); /* lighter background */
 }
 /* Styling for the navigation item description */
-.nav-item .nav-description {
+.deliveryNavItem .nav-description {
     color: #fff;
     font-size: 1rem;
     background-color: rgb(51, 78, 112);
@@ -54,7 +54,7 @@
 }
 
 /* Show description on hover */
-.nav-item:hover .nav-description {
+.deliveryNavItem:hover .nav-description {
     opacity: 1; /* Make it visible on hover */
     display: block; /* Ensure it's displayed */
     padding: 33px 0;
