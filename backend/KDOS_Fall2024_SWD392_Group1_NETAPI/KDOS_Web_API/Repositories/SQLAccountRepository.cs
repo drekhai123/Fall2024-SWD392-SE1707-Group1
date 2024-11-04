@@ -73,6 +73,21 @@ namespace KDOS_Web_API.Repositories
             }
         }
 
+        public async Task<Account?> UpdateAvatar(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Avatar = account.Avatar;
+                await accountContext.SaveChangesAsync();
+                return accountExist;
+            }
+        }
+
         public async Task<Account?> UpdatePassword(int id, Account account)
         {
             var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);

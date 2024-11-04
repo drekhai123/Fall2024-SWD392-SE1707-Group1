@@ -350,7 +350,7 @@ namespace KDOS_Web_API.Controllers
         {
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountAvatarDTO);
-            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
+            accountModel = await accountRepository.UpdateAvatar(accountId, accountModel);
             if (accountModel == null)
             {
                 return NotFound();
