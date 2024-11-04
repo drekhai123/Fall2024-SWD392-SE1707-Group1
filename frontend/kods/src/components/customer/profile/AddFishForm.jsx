@@ -389,7 +389,7 @@ export default function AddFish() {
               page={currentPage}
               onChange={handlePageChange}
               color="primary"
-            /> 
+            />
         </div>
           }
       </div>

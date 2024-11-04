@@ -113,59 +113,71 @@ const OrderHistory = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedOrders.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((order) => {
-              const date = new Date(order.createdAt);
-              const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+            {sortedOrders.length > 0 ? (
+              sortedOrders.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((order) => {
+                const date = new Date(order.createdAt);
+                const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
 
-              const getStatusColor = (status) => {
-                switch (status) {
-                  case 'PENDING':
-                    return 'orange';
-                  case 'PROCESSING':
-                    return 'blue';
-                  case 'DELIVERED':
-                    return 'green';
-                  case 'CANCELLED':
-                    return 'red';
-                  default:
-                    return 'black';
-                }
-              };
+                const getStatusColor = (status) => {
+                  switch (status) {
+                    case 'PENDING':
+                      return 'orange';
+                    case 'PROCESSING':
+                      return 'blue';
+                    case 'DELIVERED':
+                      return 'green';
+                    case 'CANCELLED':
+                      return 'red';
+                    default:
+                      return 'black';
+                  }
+                };
 
-              return (
-                <TableRow key={order.id}>
-                  <TableCell>{order.orderId}</TableCell>
-                  <TableCell>{order.senderName}</TableCell>
-                  <TableCell>{order.recipientName}</TableCell>
-                  <TableCell>{order.totalWeight}</TableCell>
-                  <TableCell>{new Intl.NumberFormat('vi-VN').format(order.totalCost)} VND</TableCell>
-                  <TableCell>{order.quantity}</TableCell>
-                  <TableCell>{order.distance.toFixed(2)}</TableCell>
-                  <TableCell style={{ color: getStatusColor(order.deliveryStatus) }}>
-                    {order.deliveryStatus}
-                  </TableCell>
-                  <TableCell>{formattedDate}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleViewDetail(order.orderId)}
-                    >
-                      View Details
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                return (
+                  <TableRow key={order.id}>
+                    <TableCell>{order.orderId}</TableCell>
+                    <TableCell>{order.senderName}</TableCell>
+                    <TableCell>{order.recipientName}</TableCell>
+                    <TableCell>{order.totalWeight}</TableCell>
+                    <TableCell>{new Intl.NumberFormat('vi-VN').format(order.totalCost)} VND</TableCell>
+                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>{order.distance.toFixed(2)}</TableCell>
+                    <TableCell style={{ color: getStatusColor(order.deliveryStatus) }}>
+                      {order.deliveryStatus}
+                    </TableCell>
+                    <TableCell>{formattedDate}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleViewDetail(order.orderId)}
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={10} align="center">
+                  <Typography variant="h6">
+                    Please create a new order
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
-        <Pagination
-          count={Math.ceil(orders.length / rowsPerPage)}
-          page={page}
-          onChange={handleChangePage}
-          color="primary"
-          style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
-        />
+        {orders.length > 0 && (
+          <Pagination
+            count={Math.ceil(orders.length / rowsPerPage)}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+            style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
+          />
+        )}
       </TableContainer>
     </div>
   );
