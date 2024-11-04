@@ -7,6 +7,7 @@ import AccountManager from './accountmanager';
 import DeliveryStaffManager from './deliverystaffmanager';
 import StaffManager from './staffmanager';
 import CustomerManager from './customermanager';
+import Reports from './reports';
 
 function AdminPage() {
   const [activeComponent, setActiveComponent] = useState('accountmanagement');
@@ -19,6 +20,8 @@ function AdminPage() {
 
   const renderContent = () => {
     switch (activeComponent) {
+      case 'reports': // New case for reports
+        return <Reports selectedAccountId={selectedAccountId} />;
       case 'accountmanagement': // New case for account management
         return <AccountManager selectedAccountId={selectedAccountId} />;
       case 'deliverystaffmanagement': // New case for delivery staff management
@@ -43,6 +46,11 @@ function AdminPage() {
         <div className="sidebar">
           <h3>Manager</h3>
           <ul>
+            <li>
+              <button onClick={() => handleAccountClick('reports')} className={activeComponent === 'reports' ? 'active' : ''}>
+                Reports
+              </button>
+            </li>
             <li>
               <button onClick={() => handleAccountClick('accountmanagement')} className={activeComponent === 'accountmanagement' ? 'active' : ''}>
                 Manage Accounts
