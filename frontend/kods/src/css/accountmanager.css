@@ -8,3 +8,14 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
   background-color: rgb(63, 135, 230);
 }
+.custom-modal-title {
+  text-align: center; /* Center the text */
+  width: 100%; /* Ensure it takes the full width */
+}
+.ban-button {
+  transition: transform 0.2s; /* Smooth transition for the transform effect */
+}
+
+.ban-button:hover {
+  transform: scale(1.1); /* Slightly enlarge the button on hover */
+}
