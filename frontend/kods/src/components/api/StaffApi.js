@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { baseUrl, headers, getJwtToken } from "./Url";
 import axios from "axios";
 const getAllStaffURL = baseUrl + "/Staff";
@@ -9,14 +10,11 @@ const getHeaders = () => {
     'Authorization': `Bearer ${token}`, // Add the token to the headers
   };
 };
-export async function checkAccountIdExists(accountId) {
-  try {
-    // Function to check if the accountId exists in the database
-    const response = await axios.get(`${getAllStaffURL}/${accountId}`, { headers: getHeaders() });
-    return response.data.exists; // Assuming the API returns { exists: true/false }
-  } catch (error) {
-    console.error('Error checking account existence:', error);
-    return false; // Default to false if the request fails
+export async function checkStaffAccountIdExists(accountId) {
+  // Function to check if the accountId exists in the database
+  const response = await axios.get(`${getAllStaffURL}/StaffAccount/${accountId}`, { headers: getHeaders() });
+  if (response.data !== null) {
+    toast('Staff account already exists.');
   }
 }
 export async function GetAllStaffs() {

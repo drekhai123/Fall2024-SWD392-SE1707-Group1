@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { baseUrl, headers, getJwtToken } from "./Url";
 import axios from "axios";
 const getAllDeliveryStaffURL = baseUrl + "/DeliveryStaff";
@@ -10,14 +11,11 @@ const getHeaders = () => {
     'Authorization': `Bearer ${token}`, // Add the token to the headers
   };
 };
-export async function checkAccountIdExists(accountId) {
-  try {
-    // Function to check if the accountId exists in the database
-    const response = await axios.get(`${getAllDeliveryStaffURL}/${accountId}`, { headers: getHeaders() });
-    return response.data.exists; // Assuming the API returns { exists: true/false }
-  } catch (error) {
-    console.error('Error checking account existence:', error);
-    return false; // Default to false if the request fails
+export async function checkDeliveryStaffAccountIdExists(accountId) {
+  // Function to check if the accountId exists in the database
+  const response = await axios.get(`${getAllDeliveryStaffURL}/DeliveryStaffAccount/${accountId}`, { headers: getHeaders() });
+  if (response.data !== null) {
+    toast('Delivery staff account already exists.');
   }
 }
 // Function to create a new delivery staff member

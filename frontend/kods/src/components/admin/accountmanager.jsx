@@ -1,34 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input, Select, DatePicker } from 'antd';
+import { Button, Table, Modal, Form, Input, Select, message, Card } from 'antd';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import {
-  checkAccountExists,
   GetAllAccount,
-  UpdateRole,
   ToggleAccountBannedStatus,
+  AddNewDeliveryStaff,
+  AddNewStaff
 } from '../api/AccountApi'; // Adjust the import path as necessary
-import { createNewStaff, checkAccountIdExists } from '../api/StaffApi';
-import { createNewDeliveryStaff } from '../api/DeliveryStaffApi';
-import 'react-toastify/dist/ReactToastify.css';
 import { getJwtToken } from '../api/Url';
 
-const { Option } = Select; // Destructure Option from Select
+const { Option } = Select;
+const roles = ['staff', 'delivery']; // Define roles for the dropdown
 
 function AccountManager() {
   const [data, setData] = useState([]); // State to hold account data
-  const [showForm, setShowForm] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false); // State for role selection modal
+  const [showForm, setShowForm] = useState(false); // State for account creation form
   const [loading, setLoading] = useState(true);
   const [isToggling, setIsToggling] = useState(false);
   const [form] = Form.useForm();
+  const [selectedRole, setSelectedRole] = useState(null); // State to hold selected role
   const [searchTerm, setSearchTerm] = useState(''); // State for search term
-  const [filteredData, setFilteredData] = useState([]); // State for filtere
+  const [filteredData, setFilteredData] = useState([]); // State for filtered data
   const navigate = useNavigate(); // Initialize navigate for navigation
-  const [formData, setFormData] = useState(null); // State to hold form data
-  const [originalRole, setOriginalRole] = useState(null); // State to hold the original role
 
-  // Define roles for the dropdown
-  const roles = ['delivery staff', 'staff', 'admin']; // Add your roles here
   // Function to check if the user is authorized
   const isAuthorized = () => {
     const token = getJwtToken();
@@ -51,6 +47,7 @@ function AccountManager() {
       const response = await GetAllAccount(); // Use the API function
       if (response && response.status === 200) {
         setData(response.data || []); // Set the fetched data directly
+        setFilteredData(response.data || []); // Initialize filtered data
       }
     } catch (error) {
       console.error('Error fetching accounts:', error);
@@ -85,48 +82,50 @@ function AccountManager() {
     }
   };
 
-  const handleRoleChange = async (value, record) => {
-    if (value === record.role) {
-      // Do not show the form if the role hasn't changed
+  // Handle account creation
+  const handleOpenRoleModal = () => {
+    setShowRoleModal(true);
+  };
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+    setShowRoleModal(false);
+    setShowForm(true); // Show the form after selecting a role
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    form.resetFields(); // Reset form fields when closing
+    setSelectedRole(null); // Reset selected role
+  };
+
+  const handleSubmit = async (values) => {
+    const { username, password, confirmPassword, email } = values;
+
+    // Validate password and confirm password
+    if (password !== confirmPassword) {
+      message.error("Passwords do not match!");
       return;
     }
-    if (value === 'admin') {
-      // Change role to admin immediately
-      try {
-        const updateResponse = await UpdateRole(record.accountId, value); // Update role in DB
-        if (updateResponse) {
-          const updatedData = data.map(item =>
-            item.accountId === record.accountId ? { ...item, role: value } : item
-          );
-          setData(updatedData); // Update the data state
-          toast.success("Role updated to admin successfully!"); // Notify the user
-        } else {
-          toast.error("Failed to update role in the database.");
-        }
-      } catch (error) {
-        console.error('Error updating role to admin:', error);
-        toast.error("Error updating role: " + error.message);
+
+    try {
+      // Call the appropriate API based on the selected role
+      if (selectedRole === 'staff') {
+        await AddNewStaff({ username, password, email });
+      } else if (selectedRole === 'delivery') {
+        await AddNewDeliveryStaff({ username, password, email });
       }
-    } else {
-      // Store the original role and show the form
-      setOriginalRole(record.role);
-      setFormData({ ...record, role: value }); // Set form data with the new role
-      setShowForm(true); // Show the form modal
+
+      message.success("Account created successfully!");
+      handleCloseForm(); // Close the form after successful creation
+      fetchData(); // Refresh the account data
+    } catch (error) {
+      console.error('Error creating new account:', error);
+      message.error(error.message); // Display the error message
     }
   };
 
-  // Function to handle closing the form
-  const handleCloseForm = () => {
-    setShowForm(false); // Close the form
-    if (originalRole) {
-      // Reset the role back to the original if it exists
-      const updatedData = data.map(item =>
-        item.accountId === formData.accountId ? { ...item, role: originalRole } : item
-      );
-      setData(updatedData); // Update the data state
-    }
-  };
-
+  // Toggle banned status
   const toggleBannedStatus = async (record) => {
     if (isToggling || !record) return; // Prevent duplicate calls
     setIsToggling(true); // Disable further calls
@@ -157,86 +156,6 @@ function AccountManager() {
     }
   };
 
-  // Define the form fields based on the selected roleY
-  const renderFormFields = () => {
-    const role = formData?.role;
-    switch (role) {
-      case 'staff':
-        return (
-          <>
-            <Form.Item label="Staff Name" name="staffName" rules={[{ required: true, message: 'Please input staff name!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Staff Gender" name="staffGender" rules={[{ required: true, message: 'Please select staff gender!' }]}>
-              <Select>
-                <Option value="Male">Male</Option>
-                <Option value="Female">Female</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Staff Phone Number" name="staffPhoneNum" rules={[{ required: true, message: 'Please input staff phone number!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Staff DOB" name="staffDOB" rules={[{ required: true, message: 'Please select staff DOB!' }]}>
-              <DatePicker />
-            </Form.Item>
-          </>
-        );
-      case 'delivery staff':
-        return (
-          <>
-            <Form.Item label="Delivery Staff Name" name="deliveryStaffName" rules={[{ required: true, message: 'Please input delivery staff name!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Delivery Staff Gender" name="deliveryStaffGender" rules={[{ required: true, message: 'Please select delivery staff gender!' }]}>
-              <Select>
-                <Option value="male">Male</Option>
-                <Option value="female">Female</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Delivery Staff Phone Number" name="deliveryStaffPhoneNum" rules={[{ required: true, message: 'Please input delivery staff phone number!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Delivery Staff DOB" name="deliveryStaffDOB" rules={[{ required: true, message: 'Please select delivery staff DOB!' }]}>
-              <DatePicker />
-            </Form.Item>
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const handleSubmit = async (values) => {
-    try {
-      // Check if the accountId already exists in either Staff or Delivery Staff
-      const accountExists = await checkAccountIdExists(values.accountId);
-      if (accountExists) {
-        toast.error("Account ID already exists in Staff or Delivery Staff.");
-        return; // Prevent form submission
-      }
-
-      // Update the role first
-      const updateResponse = await UpdateRole(values.accountId, values.role); // Update role
-      if (updateResponse) {
-        // Logic to create new staff in the database based on the role
-        if (values.role === 'staff') {
-          await createNewStaff(values); // Create new staff
-        } else if (values.role === 'delivery staff') {
-          await createNewDeliveryStaff(values); // Create new delivery staff
-        }
-
-        toast.success("New staff created successfully!");
-        setShowForm(false); // Close the form after submission
-        fetchData(); // Refresh data after creating new staff
-      } else {
-        toast.error("Failed to update account.");
-      }
-    } catch (error) {
-      console.error('Error creating new staff:', error);
-      toast.error("Error creating new staff: " + error.message);
-    }
-  };
-
   const columns = [
     { title: 'Account ID', dataIndex: 'accountId' },
     { title: 'Username', dataIndex: 'userName' },
@@ -250,7 +169,10 @@ function AccountManager() {
           <Select
             defaultValue={record.role}
             style={{ width: 120 }}
-            onChange={(value) => handleRoleChange(value, record)} // Call the new handler
+            onChange={(value) => {
+              // Handle role change if needed
+              console.log(`Role changed to: ${value} for account ID: ${record.accountId}`);
+            }}
           >
             {roles.map(role => (
               <Option key={role} value={role}>{role}</Option>
@@ -271,9 +193,29 @@ function AccountManager() {
     },
   ];
 
+  const renderRoleSelection = () => {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        {roles.map(role => (
+          <Card
+            key={role}
+            title={role.charAt(0).toUpperCase() + role.slice(1)}
+            style={{ width: 200, cursor: 'pointer' }}
+            onClick={() => handleRoleSelect(role)}
+          >
+            <p>Select this role</p>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div>
       <h2>Manage Accounts</h2>
+      <Button type="primary" onClick={handleOpenRoleModal} style={{ marginBottom: '16px' }}>
+        Create a New Account
+      </Button>
       <Input
         placeholder="Search by username"
         value={searchTerm}
@@ -282,7 +224,7 @@ function AccountManager() {
       />
       <Table
         columns={columns}
-        dataSource={searchTerm ? filteredData : data} // Use filtered data if searchTerm exists
+        dataSource={filteredData} // Use filtered data
         loading={loading} // Show loading state
         rowKey="accountId"
         pagination={{
@@ -291,18 +233,36 @@ function AccountManager() {
         }}
       />
       <Modal
-        title="Create New Info"
+        title="Select Role"
+        open={showRoleModal}
+        onCancel={() => setShowRoleModal(false)}
+        footer={null}
+      >
+        {renderRoleSelection()}
+      </Modal>
+      <Modal
+        title="Create New Account"
         open={showForm}
         onCancel={handleCloseForm} // Use the new close handler
         footer={null}
       >
         <Form
           form={form}
-          initialValues={formData || {}}
           onFinish={handleSubmit} // Call handleSubmit on form submission
           layout="horizontal"
         >
-          {renderFormFields()} {/* Render fields based on role */}
+          <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Please input your username!' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Please input your email!' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Please input your password!' }]}>
+            <Input.Password />
+          </Form.Item>
+          <Form.Item name="confirmPassword" label="Confirm Password" rules={[{ required: true, message: 'Please confirm your password!' }]}>
+            <Input.Password />
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" style={{ backgroundColor: '#ff7700', borderColor: '#ff7700' }}>
               Save
