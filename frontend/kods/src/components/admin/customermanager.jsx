@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form, Input, Select, message } from 'antd';
 import { GetAllCustomers, UpdateCustomer } from '../api/CustomerApi'; // Adjust the import path as necessary
+import '../../css/accountmanager.css';
 
 const { Option } = Select;
 
@@ -85,7 +86,13 @@ function StaffManager() {
     {
       title: 'Actions',
       render: (text, record) => (
-        <Button onClick={() => handleEdit(record)}>Edit</Button>
+        <Button
+          className="ban-button"
+          onClick={() => handleEdit(record)
+          }
+        >
+          Edit
+        </Button>
       ),
     },
   ];
