@@ -28,7 +28,6 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingScreen from '../../../utils/LoadingScreen';
-import { checkFishInOrder } from '../../api/OrderApi'; // Import the new API function
 
 
 
@@ -234,17 +233,7 @@ export default function AddFish() {
   const handleDeleteConfirm = async () => {
     if (selectedFish) {
       try {
-        // Check if the fish is part of an order
-        const isInOrder = await checkFishInOrder(selectedFish.fishProfileId);
-        if (isInOrder) {
-          toast.error("Fish is currently in an order and cannot be deleted.", {
-            autoClose: 2000 // Duration in milliseconds (2 seconds)
-          });
-          return;
-        }
-
-        // Proceed with deletion if not in an order
-        await deleteFishProfile(selectedFish.fishProfileId);
+        await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
         toast.error("Delete fish success", {
           autoClose: 2000 // Duration in milliseconds (2 seconds)
         });
