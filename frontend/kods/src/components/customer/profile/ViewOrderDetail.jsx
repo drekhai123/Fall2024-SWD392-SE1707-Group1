@@ -12,18 +12,25 @@ import {
   TableRow,
   Button,
   Rating,
-  Modal
+  Modal,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from '@mui/material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getOrderbyOrderId, getOrderDetailsByOrderId, updateOrderStatus } from '../../api/OrdersApi'; // Import the API function
+import { getOrderbyOrderId, getOrderDetailsByOrderId, updateDeliveryStatus } from '../../api/OrdersApi'; // Import the API function
 import { addFeedback } from '../../api/FeedbackApi'; // Import the API function
 import { getFeedbackByOrderId, deleteFeedback } from '../../api/FeedbackApi'; // Import the delete API function
 import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
 import { Star, StarBorder } from '@mui/icons-material'; // Import star icons
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
+import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 
 // Define an enum-like object for order statuses
-const OrderStatus = {
+const deliveryStatus = {
   PENDING: 'PENDING',
   DELIVERED: 'DELIVERED',
   PROCESSING: 'PROCESSING',
@@ -39,7 +46,7 @@ function getStatusColor(status) {
       return 'green';
     case 'PROCESSING':
       return 'blue';
-    case 'CANCEL':
+    case 'CANCELLED':
       return 'red';
     case 'HEALTHY':
       return 'green';
@@ -65,6 +72,7 @@ export default function OrderDetail({ onBack }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
 
   useEffect(() => {
     async function fetchOrderDetail() {
@@ -152,16 +160,28 @@ export default function OrderDetail({ onBack }) {
     setOpen(false);
   };
 
-  //Cancel button to cancel orders
+  const handleOpenDialog = () => {
+    setIsDialogOpen(true);
+  };
 
-  const handleCancelOrder = async () => {
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleConfirmCancelOrder = async () => {
     try {
       console.log('Cancelling order with ID:', orderId); // Log the orderId
-      await updateOrderStatus(orderId, OrderStatus.CANCELLED); // Use the enum-like object
+      await updateDeliveryStatus(orderId, deliveryStatus.CANCELLED); // Use the correct function and enum-like object
       console.log('Order status updated to CANCELLED');
-      // window.location.reload();
+      toast.success('Order cancelled successfully!'); // Show success toast
+
+      // Navigate to the current order detail page
+      navigate(`/profile/ViewOrderHistory/${orderId}`);
     } catch (error) {
       console.error('Error cancelling order:', error);
+      toast.error('Failed to cancel order. Please try again.'); // Show error toast
+    } finally {
+      handleCloseDialog(); // Close the dialog after the operation
     }
   };
 
@@ -171,6 +191,7 @@ export default function OrderDetail({ onBack }) {
 
   return (
     <div className="full-page-background">
+      <ToastContainer /> {/* Add ToastContainer to render toasts */}
       <div className="order-detail-container">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
           <Button
@@ -184,12 +205,36 @@ export default function OrderDetail({ onBack }) {
             <Button
               variant="contained"
               color="secondary"
-              onClick={handleCancelOrder}
+              onClick={handleOpenDialog} // Open the dialog on button click
             >
               Cancel Order
             </Button>
           )}
         </div>
+
+        {/* Confirmation Dialog */}
+        <Dialog
+          open={isDialogOpen}
+          onClose={handleCloseDialog}
+          aria-labelledby="confirm-dialog-title"
+          aria-describedby="confirm-dialog-description"
+        >
+          <DialogTitle id="confirm-dialog-title">Confirm Cancellation</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="confirm-dialog-description">
+              Are you sure you want to cancel this order?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+              No
+            </Button>
+            <Button onClick={handleConfirmCancelOrder} color="secondary" autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         <Typography variant="h4" gutterBottom>
           Order Details {orderDetail.code}
         </Typography>

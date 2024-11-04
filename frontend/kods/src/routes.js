@@ -99,14 +99,14 @@ export const router = createBrowserRouter([
     path: "/trackingstaff",
     element: <TrackingStaff />,
   },
-  {
-    path: "/orders/:id",
-    element: <ViewOrderDetails />,
-  },
-  {
-    path: "/orders",
-    element: <ViewOrderHistory />,
-  },
+  // {
+  //   path: "/orders/:id",
+  //   element: <ViewOrderDetails />,
+  // },
+  // {
+  //   path: "/orders",
+  //   element: <ViewOrderHistory />,
+  // },
   {
     path: "/staffDashBoard",
     element: (// <PrivateRoute>
