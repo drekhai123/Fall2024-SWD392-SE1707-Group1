@@ -18,14 +18,16 @@ export async function checkDeliveryStaffAccountIdExists(accountId) {
     toast('Delivery staff account already exists.');
   }
 }
-// Function to create a new delivery staff member
-export const createNewDeliveryStaff = async (deliveryStaffData) => {
-  const response = await axios.post(getAllDeliveryStaffURL, deliveryStaffData, { headers: getHeaders() })
-  if (!response.ok) {
-    throw new Error('Failed to create delivery staff');
+
+export async function createNewDeliveryStaff(deliveryStaffData) {
+  try {
+    const response = await axios.post(getAllDeliveryStaffURL, deliveryStaffData, { headers: getHeaders() });
+    return response.data; // Assuming the API returns the created staff data
+  } catch (error) {
+    console.error('Error creating new staff:', error);
+    throw error; // Rethrow the error for handling in the calling function
   }
-  return await response.json();
-};
+}
 // Function to get all delivery staff members
 export const getAllDeliveryStaff = async () => {
   const response = await axios.get(getAllDeliveryStaffURL, { headers: getHeaders() });

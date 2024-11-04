@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input, Select, message, Card } from 'antd';
+import { Button, Table, Modal, Form, Input, Select, message, Card, DatePicker } from 'antd';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import '../../css/accountmanager.css';
 import {
   GetAllAccount,
   ToggleAccountBannedStatus,
   AddNewDeliveryStaff,
   AddNewStaff
 } from '../api/AccountApi'; // Adjust the import path as necessary
+import { createNewStaff } from '../api/StaffApi';
+import { createNewDeliveryStaff } from '../api/DeliveryStaffApi';
 import { getJwtToken } from '../api/Url';
 
 const { Option } = Select;
@@ -99,8 +102,10 @@ function AccountManager() {
     setSelectedRole(null); // Reset selected role
   };
 
+
+  // Handle form submission
   const handleSubmit = async (values) => {
-    const { username, password, confirmPassword, email } = values;
+    const { username, password, confirmPassword, email, staffName, dob, gender, phoneNumber } = values;
 
     // Validate password and confirm password
     if (password !== confirmPassword) {
@@ -109,11 +114,44 @@ function AccountManager() {
     }
 
     try {
-      // Call the appropriate API based on the selected role
+      let accountId;
+
+      // Format the date of birth to 'YYYY-MM-DD'
+      const formattedDob = dob.format('YYYY-MM-DD'); // Ensure dob is a moment object
+
+      // Step 1: Call the appropriate API based on the selected role
       if (selectedRole === 'staff') {
-        await AddNewStaff({ username, password, email });
+        const addStaffResponse = await AddNewStaff({ username, password, email });
+        if (addStaffResponse.status !== 201) {
+          throw new Error('Failed to add staff');
+        }
+        accountId = addStaffResponse.data.accountId; // Get the account ID from the response
+        const newStaff = {
+          accountId: accountId,
+          staffName: staffName,
+          dob: formattedDob,
+          gender: gender,
+          phoneNumber: phoneNumber,
+        };
+        console.log(newStaff);
+        // Step 2: Call createNewStaff with the additional details
+        await createNewStaff(newStaff);
       } else if (selectedRole === 'delivery') {
-        await AddNewDeliveryStaff({ username, password, email });
+        const addDeliveryResponse = await AddNewDeliveryStaff({ username, password, email });
+        if (addDeliveryResponse.status !== 201) {
+          throw new Error('Failed to add delivery staff');
+        }
+        accountId = addDeliveryResponse.data.accountId; // Get the account ID from the response
+        const newDeliveryStaff = {
+          accountId: accountId,
+          staffName: staffName,
+          dob: formattedDob,
+          gender: gender,
+          phoneNumber: phoneNumber,
+        };
+        console.log(newDeliveryStaff);
+        // Step 2: Call createNewDeliveryStaff with the additional details
+        await createNewDeliveryStaff(newDeliveryStaff);
       }
 
       message.success("Account created successfully!");
@@ -135,6 +173,7 @@ function AccountManager() {
       const response = await ToggleAccountBannedStatus(record.accountId, newBannedStatus);
       if (response && response.status === 200) {
         toast.success(`Account ${newBannedStatus ? 'banned' : 'unbanned'} successfully!`);
+        fetchData();
         const updatedData = data.map(item =>
           item.accountId === record.accountId ? { ...item, banned: newBannedStatus } : item
         );
@@ -160,30 +199,49 @@ function AccountManager() {
     { title: 'Account ID', dataIndex: 'accountId' },
     { title: 'Username', dataIndex: 'userName' },
     { title: 'Email', dataIndex: 'email' },
-    { title: 'Role', dataIndex: 'role' },
+    {
+      title: 'Role', dataIndex: 'role', render: (role) => (
+        <span style={{
+          display: 'inline-block', // Ensure it behaves like a block element
+          width: '100px', // Set a fixed width for uniformity
+          textAlign: 'center', // Center the text
+          backgroundColor: role === 'staff' ? '#FF8C00' :
+            role === 'delivery' ? '#4169E1' :
+              role === 'customer' ? '#3CB371' :
+                role === 'admin' ? '#87CEEB' : 'transparent',
+          color: 'white',
+          padding: '4px 0', // Adjust padding for vertical centering
+          borderRadius: '4px'
+        }}>
+          {role.charAt(0).toUpperCase() + role.slice(1)} {/* Capitalize the first letter */}
+        </span>
+      )
+    },
     { title: 'Verified', dataIndex: 'verified', render: (verified) => (verified ? 'Yes' : 'No') },
     {
       title: 'Actions',
       render: (text, record) => (
         <>
-          <Select
-            defaultValue={record.role}
-            style={{ width: 120 }}
-            onChange={(value) => {
-              // Handle role change if needed
-              console.log(`Role changed to: ${value} for account ID: ${record.accountId}`);
-            }}
-          >
-            {roles.map(role => (
-              <Option key={role} value={role}>{role}</Option>
-            ))}
-          </Select>
+          <span style={{
+            display: 'inline-block', // Ensure it behaves like a block element
+            width: '100px', // Set a fixed width for uniformity
+            textAlign: 'center', // Center the text
+            backgroundColor: record.role === 'staff' ? '#FF8C00' :
+              record.role === 'delivery' ? '#4169E1' :
+                record.role === 'customer' ? '#3CB371' :
+                  record.role === 'admin' ? '#87CEEB' : 'transparent',
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '4px',
+          }}>
+            {record.role.charAt(0).toUpperCase() + record.role.slice(1)} {/* Capitalize the first letter */}
+          </span>
           <Button
             onClick={() => toggleBannedStatus(record)}
             disabled={isToggling}
             style={{
               marginLeft: '8px',
-              backgroundColor: record.banned ? 'orange' : undefined,
+              backgroundColor: record.banned ? 'red' : (record.banned ? 'orange' : undefined),
             }}
           >
             {record.banned ? 'Unban' : 'Ban'}
@@ -200,6 +258,7 @@ function AccountManager() {
           <Card
             key={role}
             title={role.charAt(0).toUpperCase() + role.slice(1)}
+            className="role-card"
             style={{ width: 200, cursor: 'pointer' }}
             onClick={() => handleRoleSelect(role)}
           >
@@ -255,6 +314,21 @@ function AccountManager() {
             <Input />
           </Form.Item>
           <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Please input your email!' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="staffName" label="Staff Name" rules={[{ required: true, message: 'Please input the staff name!' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="dob" label="Date of Birth" rules={[{ required: true, message: 'Please select your date of birth!' }]}>
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="gender" label="Gender" rules={[{ required: true, message: 'Please select your gender!' }]}>
+            <Select placeholder="Select your gender">
+              <Option value="Male">Male</Option>
+              <Option value="Female">Female</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="phoneNumber" label="Phone Number" rules={[{ required: true, message: 'Please input your phone number!' }]}>
             <Input />
           </Form.Item>
           <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Please input your password!' }]}>
