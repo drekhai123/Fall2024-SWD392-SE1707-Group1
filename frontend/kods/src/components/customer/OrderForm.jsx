@@ -7,6 +7,7 @@ import axios from "axios";
 import {useNavigate} from 'react-router-dom';
 import {getJwtToken} from "../api/Url";
 import {postOrders} from "../api/OrdersApi";
+import {postOrderDetailsByOrderId} from "../api/OrdersApi";
 
 export default function OrderForm({onSuggestionClick, distance}) {
   const navigate = useNavigate();
@@ -168,7 +169,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     const { distance } = customerInfo;
     var unitPrice = 0;
 
-    // Tìm giá từ khoảng cách tương ứng trong distancePriceList
+    // T��m giá từ khoảng cách tương ứng trong distancePriceList
     const range = distancePriceList.find(
       (item) => distance >= item.minRange && distance <= item.maxRange
     );
@@ -183,11 +184,11 @@ export default function OrderForm({onSuggestionClick, distance}) {
   // Rename the function
   const FeedingFee = () => {
     if (!customerInfo?.distance) return 0;
-    
+
     const estimatedDays = calculateEstimatedDeliveryDays(customerInfo.distance);
-    
+
     if (customerInfo.distance <= 50) {
-      // Nếu khoảng cách <= 50km và người dùng check box
+      // Nếu kho cách <= 50km và người dùng check box
       return check ? 25000 : 0;
     } else {
       // Nếu khoảng cách > 50km, tự động tính phí theo số ngày
@@ -280,10 +281,23 @@ export default function OrderForm({onSuggestionClick, distance}) {
   }, [fishOrders]);
 
   const confirmPay = async (data) => {
-
     try {
+      console.log("Order data being sent:", data);
       const orderResponse = await postOrders(data);
+      console.log("Order response received:", orderResponse);
+
       if (orderResponse) {
+        for (const fish of fishOrdersList) {
+          const orderDetailsData = {
+            fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
+            orderId: orderResponse.orderId
+          };
+
+          console.log("Order details data being sent:", orderDetailsData);
+          const orderDetailsResponse = await postOrderDetailsByOrderId(orderDetailsData);
+          console.log("Order details response received:", orderDetailsResponse);
+        }
+
         localStorage.removeItem("fishOrders");
         setFishOrders([]);
         setCustomerInfo({
@@ -295,31 +309,11 @@ export default function OrderForm({onSuggestionClick, distance}) {
         });
         Swal.fire("Success!", "Order confirmed!", "success");
         setShowQRCode(null);
-        navigate("/profile/ViewOrderHistory")
+        navigate("/profile/ViewOrderHistory");
       }
-
     } catch (error) {
       console.error("Failed to create order:", error);
     }
-    
-    //Hàm request mà đang lỗi
-    //const request = {
-    //  customer: customerInfo,
-    //  status: "Wait for confirmation",
-    //  totalAmount:
-    //    getTotalAmount() +
-    //    (calculateVAT()) +
-    //    parseFloat(calculateShippingFee().toFixed(0)),
-    //  ship: calculateShippingFee().toFixed(0),
-    //  VAT: calculateVAT(),
-    //  createTime: new Date(),
-    //  product: fishOrders,
-    //};
-    //const storedCheckout = JSON.parse(localStorage.getItem("checkout")) || [];
-    //const updatedCheckout = [...storedCheckout, request];
-    //localStorage.setItem("checkout", JSON.stringify(updatedCheckout));
-
-
   };
 
   const calculateDeliveryDate = (days) => {
@@ -342,12 +336,12 @@ export default function OrderForm({onSuggestionClick, distance}) {
       if (!/^\d*$/.test(value)) {
         return;
       }
-      
+
       // Validate phone number
       const isValid = validateVietnamesePhone(value);
       setPhoneErrors(prev => ({
         ...prev,
-        [field === "phoneSender" ? "sender" : "customer"]: 
+        [field === "phoneSender" ? "sender" : "customer"]:
           value ? (isValid ? '' : 'Please enter a valid Vietnamese phone number') : ''
       }));
     }
@@ -403,10 +397,10 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const handleGoBack = () => {
     window.close();
-    navigate("/");  
+    navigate("/");
   };
 
-  
+
   const [totalWeight, setTotalWeight] = useState(0);
 
   // Hàm tính totalWeight
@@ -416,7 +410,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const addRow = () => {
     const selectedFishData = data?.filter((fish) =>
-      selectedFish?.includes(fish.fishProfileId)
+      selectedFish.includes(fish.fishProfileId)
     );
 
     setFishOrdersList((prevList) => {
@@ -449,7 +443,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     }
   }, [markerPositionFrom, markerPositionTo])
 
-  // Hàm của Distance (comment cái const ở trên của nó)
+  // Hàm của Distance
   useEffect(() => {
     setCustomerInfo({...customerInfo, distance: distance});
   }, [distance])
@@ -479,10 +473,6 @@ export default function OrderForm({onSuggestionClick, distance}) {
               <th className="label-table">Gender</th>
               <th className="label-table">Note</th>
               <th className="label-table">Action</th>
-
-
-              {/* <th className="label-table">Price (VND/Kg)</th> */}
-              {/* <th className="label-table">Action</th> */}
             </tr>
           </thead>
           <tbody>
@@ -503,35 +493,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </td>
                 <td>
                   {fish?.notes}
-                </td>
-                {/*<td>
-                  <input
-                    type="number"
-                    value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                    min=""
-                    onChange={(e) =>
-                      updateRow(
-                        index,
-                        "quantity",
-                        parseInt(e.target.value) || 0
-                      )
-                    }
-                    className="custom-dropdown"
-                    disabled // Vô hiệu hóa input người dùng (Tạm thi)
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    min="0"
-                    value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
-                    onChange={(e) =>
-                      updateRow(index, "price", parseInt(e.target.value) || 0)
-                    }
-                    className="custom-dropdown"
-                    disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                  />
-                </td>*/}
+                </td> 
                 <td>
                   <button
                     onClick={() => deleteRow(index)}
@@ -788,7 +750,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
           <div className="popup">
             <div className="container-popup">
               <h3 className="title-popup">Please select payment method!</h3>
-              
+
               <div className="payment-options">
                 <div className="payment-option">
                   <input
@@ -801,7 +763,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   />
                   <label htmlFor="cash">Cash</label>
                 </div>
-                
+
                 <div className="payment-option">
                   <input
                     type="radio"
@@ -816,8 +778,8 @@ export default function OrderForm({onSuggestionClick, distance}) {
               </div>
 
               <div className="layout-btn">
-                <button 
-                  onClick={() => confirmPay({...showQRCode, paymentMethod: selectedPayment})} 
+                <button
+                  onClick={() => confirmPay({...showQRCode, paymentMethod: selectedPayment})}
                   className="confirm-btn"
                 >
                   Confirm payment
@@ -885,7 +847,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   onClick={() => navigate('/profile/addfish')}
                   className="confirm-btn"
                   style={{
-                    backgroundColor: '#4CAF50', 
+                    backgroundColor: '#4CAF50',
                     marginLeft: '10px',
                     marginRight: '10px'
                   }}

@@ -63,7 +63,7 @@ const OrderHistoryPage = () => {
   const token = getJwtToken();
   const userLogin = JSON.parse(sessionStorage.getItem("user"))
   const [listOrder, setListOrder] = useState([]);
-  const paginationModel = { page: 0, pageSize: 5 };
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
 
   useEffect(() => {
     getOrderByCustomer();
@@ -86,10 +86,10 @@ const OrderHistoryPage = () => {
   }, []);
 
   const handleViewOrder = (order) => {
-    
+
   };
 
-  
+
   return (
     <div className='order-history-page-container'>
       <p className='order-history-title'>Your Order History</p>
@@ -98,7 +98,9 @@ const OrderHistoryPage = () => {
           rows={listOrder}
           columns={columns}
           getRowId={(row) => row.orderId}
-          initialState={{ pagination: { paginationModel } }}
+          pagination
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[5, 10]}
         />
       </div>

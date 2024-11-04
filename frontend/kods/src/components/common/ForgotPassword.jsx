@@ -68,7 +68,7 @@ function ForgotPassword() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!email || !password || !confirmPassword) {
@@ -80,12 +80,39 @@ function ForgotPassword() {
       showToast('error', 'Passwords do not match.');
       return;
     }
+   
+    //Hàm Fetch API forgot password 
+    const requestData = {
+      email: email, 
+      password: password
+    };
 
-    console.log('Password reset for:', email);
-    showToast('success', 'Password reset email sent successfully!');
+    console.log('Request payload:', requestData);
 
-    // Redirect to login page after successful password reset
-    setTimeout(() => navigate('/login'), 2000); // Adjust the timeout as needed
+    try {
+      const response = await fetch('https://kdosdreapiservice.azurewebsites.net/api/Account/ResetPassword', {
+        method: 'POST',
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      console.log('Response status:', response.status);
+
+      if (response.ok) {
+        showToast('success', 'Password reset successfully!');
+        setTimeout(() => navigate('/login'), 2000);
+      } else {
+        const errorData = await response.json();
+        console.log('Error response:', errorData);
+        showToast('error', errorData.message || 'Failed to reset password');
+      }
+    } catch (error) {
+      console.error('Reset password error:', error);
+      showToast('error', 'An error occurred while resetting password');
+    }
   };
 
   const handleTogglePasswordVisibility = () => {
@@ -93,7 +120,7 @@ function ForgotPassword() {
   };
 
   const handleForgotPasswordClick = () => {
-    navigate('/login'); // Navigate back to the login page
+    navigate('/login'); 
   };
 
   return (
