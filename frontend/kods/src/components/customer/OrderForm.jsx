@@ -51,6 +51,17 @@ export default function OrderForm({onSuggestionClick, distance}) {
     return phoneRegex.test(phone);
   };
 
+  // Thêm state cho email error
+  const [emailError, setEmailError] = useState('');
+
+
+
+  // Thêm hàm validate email
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   //Hàm fecth API get FishProfile
   const getFishProfile = useCallback(async () => {
     setLoading(true);
@@ -169,7 +180,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     const { distance } = customerInfo;
     var unitPrice = 0;
 
-    // T��m giá từ khoảng cách tương ứng trong distancePriceList
+    // Tm giá từ khoảng cách tương ứng trong distancePriceList
     const range = distancePriceList.find(
       (item) => distance >= item.minRange && distance <= item.maxRange
     );
@@ -346,6 +357,17 @@ export default function OrderForm({onSuggestionClick, distance}) {
       }));
     }
 
+    // Thêm validation cho email
+    if (field === "emailCustomer") {
+      if (!value) {
+        setEmailError('Email is required');
+      } else if (!validateEmail(value)) {
+        setEmailError('Please enter a valid email address');
+      } else {
+        setEmailError('');
+      }
+    }
+
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
@@ -443,7 +465,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     }
   }, [markerPositionFrom, markerPositionTo])
 
-  // Hàm của Distance (comment cái const ở trên của nó)
+  // Hàm của Distance
   useEffect(() => {
     setCustomerInfo({...customerInfo, distance: distance});
   }, [distance])
@@ -473,10 +495,6 @@ export default function OrderForm({onSuggestionClick, distance}) {
               <th className="label-table">Gender</th>
               <th className="label-table">Note</th>
               <th className="label-table">Action</th>
-
-
-              {/* <th className="label-table">Price (VND/Kg)</th> */}
-              {/* <th className="label-table">Action</th> */}
             </tr>
           </thead>
           <tbody>
@@ -497,35 +515,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </td>
                 <td>
                   {fish?.notes}
-                </td>
-                {/*<td>
-                  <input
-                    type="number"
-                    value={fish.quantity === 1 ? "" : fish.quantity} // Nếu giá trị là 1, thì để trống (Vì cái này tự nhiên lỗi addfish auto 1)
-                    min=""
-                    onChange={(e) =>
-                      updateRow(
-                        index,
-                        "quantity",
-                        parseInt(e.target.value) || 0
-                      )
-                    }
-                    className="custom-dropdown"
-                    disabled // Vô hiệu hóa input người dùng (Tạm thi)
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    min="0"
-                    value={fish.price === 0 ? "" : fish.price} // Nếu giá trị là 0, thì để trống
-                    onChange={(e) =>
-                      updateRow(index, "price", parseInt(e.target.value) || 0)
-                    }
-                    className="custom-dropdown"
-                    disabled // Vô hiệu hóa input người dùng (Tạm thời)
-                  />
-                </td>*/}
+                </td> 
                 <td>
                   <button
                     onClick={() => deleteRow(index)}
@@ -599,7 +589,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
               />
               <div className="phone-input-container">
                 <input
-                  className="input-customer"
+                  className={`input-customer ${phoneErrors.sender ? 'error-input' : ''}`}
                   type="text"
                   placeholder="Phone"
                   value={customerInfo.phoneSender || ''}
@@ -647,17 +637,19 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   handleCustomerChange("nameCustomer", e.target.value)
                 }
               />
-              <input
-                className="input-customer"
-                type="text"
-                placeholder="Email"
-                onChange={(e) =>
-                  handleCustomerChange("emailCustomer", e.target.value)
-                }
-              />
               <div className="phone-input-container">
                 <input
-                  className="input-customer"
+                  className={`input-customer ${emailError ? 'error-input' : ''}`}
+                  type="text"
+                  placeholder="Email"
+                  value={customerInfo.emailCustomer || ''}
+                  onChange={(e) => handleCustomerChange("emailCustomer", e.target.value)}
+                />
+                {emailError && <span className="error-message-email">{emailError}</span>}
+              </div>
+              <div className="phone-input-container">
+                <input
+                  className={`input-customer ${phoneErrors.customer ? 'error-input' : ''}`}
                   type="text"
                   placeholder="Phone"
                   value={customerInfo.phoneCustomer || ''}
@@ -784,28 +776,32 @@ export default function OrderForm({onSuggestionClick, distance}) {
               <h3 className="title-popup">Please select payment method!</h3>
 
               <div className="payment-options">
-                <div className="payment-option">
-                  <input
-                    type="radio"
-                    id="cash"
-                    name="payment"
-                    value="CASH"
-                    checked={selectedPayment === 'CASH'}
-                    onChange={(e) => setSelectedPayment(e.target.value)}
-                  />
-                  <label htmlFor="cash">Cash</label>
+                <div className="payment-method-card">
+                  <img src="/images/ourmemories/cash.png" alt="Cash payment" className="payment-icon" />
+                  <div className="radio-container">
+                    <input
+                      type="radio"
+                      id="cash"
+                      name="payment"
+                      value="CASH"
+                      checked={selectedPayment === 'CASH'}
+                      onChange={(e) => setSelectedPayment(e.target.value)}
+                    />
+                  </div>
                 </div>
 
-                <div className="payment-option">
-                  <input
-                    type="radio"
-                    id="vnpay"
-                    name="payment"
-                    value="BANK_TRANSFER"
-                    checked={selectedPayment === 'BANK_TRANSFER'}
-                    onChange={(e) => setSelectedPayment(e.target.value)}
-                  />
-                  <label htmlFor="vnpay">VNPay</label>
+                <div className="payment-method-card">
+                  <img src="/images/ourmemories/vnpay.png" alt="VNPay payment" className="payment-icon" />
+                  <div className="radio-container">
+                    <input
+                      type="radio"
+                      id="vnpay"
+                      name="payment"
+                      value="BANK_TRANSFER"
+                      checked={selectedPayment === 'BANK_TRANSFER'}
+                      onChange={(e) => setSelectedPayment(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
 

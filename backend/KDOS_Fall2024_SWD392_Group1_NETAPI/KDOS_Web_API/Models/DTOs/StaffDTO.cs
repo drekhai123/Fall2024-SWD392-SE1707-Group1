@@ -19,7 +19,7 @@ namespace KDOS_Web_API.Models.DTOs
         required public string Gender { get; set; }
         [Required]
         required public string PhoneNumber { get; set; }
-        public Account Account { get; set; } = null!;
+        public AccountCustomerViewDTO Account { get; set; } = null!;
     }
 }
 

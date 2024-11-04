@@ -11,7 +11,7 @@ namespace KDOS_Web_API.Models.DTOs
         [MaxLength(50, ErrorMessage = "Username is too long")]
         [MinLength(5, ErrorMessage = "Username is too short")]
         required public string UserName { get; set; }
-        required public string Avatar { get; set; }
+        public string? Avatar { get; set; }
 
 
     }

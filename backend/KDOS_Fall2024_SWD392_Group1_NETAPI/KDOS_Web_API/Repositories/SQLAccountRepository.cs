@@ -60,7 +60,7 @@ namespace KDOS_Web_API.Repositories
         {
             var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
             var emailorUsernameExist = await accountContext.Account.FirstOrDefaultAsync(x => x.Email == account.Email|| x.UserName == account.UserName);
-            if (accountExist == null || !accountExist.Equals(emailorUsernameExist))
+            if (accountExist == null || emailorUsernameExist!=null)
             {
                 return null;
             }
@@ -68,6 +68,21 @@ namespace KDOS_Web_API.Repositories
             {
                 accountExist.UserName = account.UserName;
                 accountExist.Email = account.Email;
+                await accountContext.SaveChangesAsync();
+                return accountExist;
+            }
+        }
+
+        public async Task<Account?> UpdateAvatar(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Avatar = account.Avatar;
                 await accountContext.SaveChangesAsync();
                 return accountExist;
             }
@@ -90,7 +105,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Account?> Login(string userNameOrEmail)
         {
-            return await accountContext.Account.Include(x=>x.Customer).FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
+            return await accountContext.Account.Include(x=>x.Customer).Include(x=>x.Staff).Include(x=>x.DeliveryStaff).FirstOrDefaultAsync(x => x.UserName == userNameOrEmail || x.Email == userNameOrEmail);
         }
 
         public async Task<Account?> BanAccount(int id, Account account)
@@ -173,6 +188,32 @@ namespace KDOS_Web_API.Repositories
             await accountContext.SaveChangesAsync();
 
             return true;
+        }
+        public async Task<Account?> UpdateRole(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Role = account.Role;
+                await accountContext.SaveChangesAsync();
+                return accountExist;
+            }   
+        }
+        public async Task<bool> CheckExistedAccountId(int id)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

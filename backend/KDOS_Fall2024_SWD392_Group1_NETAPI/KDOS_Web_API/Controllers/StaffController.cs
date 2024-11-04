@@ -17,7 +17,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class StaffController : ControllerBase
     {
         private readonly KDOSDbContext staffContext;
@@ -30,6 +30,7 @@ namespace KDOS_Web_API.Controllers
             this.staffRepository = staffRepository;
             this.mapper = mapper;
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllStaff()
         {
@@ -43,8 +44,8 @@ namespace KDOS_Web_API.Controllers
         {
 
             var staffModel = mapper.Map<Staff>(addNewStaffDTO);
-            var newStaff = await staffRepository.AddNewStaff(staffModel);
-            if(newStaff == null)
+             staffModel = await staffRepository.AddNewStaff(staffModel);
+            if(staffModel == null)
             {
                 return NotFound();
             }
@@ -54,9 +55,10 @@ namespace KDOS_Web_API.Controllers
             return CreatedAtAction(nameof(GetStaffById),new { staffId = staffModel.StaffId }, staffDto);
             // nameof() run the fucntion inside (GetStaffById) => return the new staff id, and return the properties of the staff we added
         }
+        [Authorize]
         [HttpPost]
         [Route("searchbyname")]
-        public async Task<IActionResult> FindStaffByName([FromBody] String staffName)
+        public async Task<IActionResult> FindStaffByName([FromBody] string staffName)
         {
             //Find by name
             var staffModel = await staffRepository.GetStaffByName(staffName);
@@ -71,7 +73,7 @@ namespace KDOS_Web_API.Controllers
                 return Ok(staffDto);
             }
         }
-
+        [Authorize]
         [HttpGet]
         [Route("{staffId}")]
         public async Task<IActionResult> GetStaffById([FromRoute] int staffId)
@@ -89,6 +91,7 @@ namespace KDOS_Web_API.Controllers
                 return Ok(staffDto);
             }
         }
+        [Authorize]
         [HttpPut]
         [Route("{staffId}")]
         public async Task<IActionResult> UpdateStaffById([FromRoute] int staffId, [FromBody] UpdateStaffDTO updateStaffDTO)
@@ -107,7 +110,7 @@ namespace KDOS_Web_API.Controllers
                 return Ok(staffDto);
             }
         }
-
+        [Authorize]
         [HttpDelete]
         [Route("{staffId}")]
         public async Task<IActionResult> DeleteStaffById([FromRoute] int staffId)
@@ -125,6 +128,24 @@ namespace KDOS_Web_API.Controllers
                 return Ok(deletedstaffDto);
             }
         }
+        [Authorize]
+        [HttpGet]
+        [Route("/StaffAccount/{accountId}")]
+        public async Task<IActionResult> GetStaffByAccountId([FromRoute] int accountId)
+        {
+            //Find StaffModel in db
+            var staffModel = await staffRepository.GetStaffByAccountId(accountId);
+            if (staffModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                //Convert Model to DTO
+                var staffDto = mapper.Map<StaffDTO>(staffModel);
+                return Ok(staffDto);
+            }
+        }   
     }
 }
 

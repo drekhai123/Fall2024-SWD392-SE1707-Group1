@@ -63,6 +63,12 @@ namespace KDOS_Web_API.Repositories
             return deliveryStaff;
         }
 
+        public async Task<DeliveryStaff?> GetDeliveryStaffByAccountId(int id)
+        { 
+            var deliveryStaff = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.AccountId == id);
+            return deliveryStaff;
+        }
+
         public async Task<DeliveryStaff?> UpdateDeliveryStaff(int id, DeliveryStaff deliveryStaff)
         {
             var deliveryStaffModel = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.StaffId == id);

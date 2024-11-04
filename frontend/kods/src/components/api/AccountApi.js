@@ -24,10 +24,35 @@ export async function GetAccountById(id) {
     throw error;
   }
 }
+export async function checkAccountExists(accountId) {
+  try {
+    // Function to check if the accountId exists in the database
+    const response = await axios.get(`${localhostAccount}/${accountId}`);
+    return response.data.exists; // Assuming the API returns { exists: true/false }
+  } catch (error) {
+    console.error('Error checking account existence:', error);
+    return false; // Default to false if the request fails
+  }
+}
+
+export async function UpdateRole(id, role) {
+  try {
+    const response = await axios.patch(`${baseAccount}/UpdateRole/${id}`, { role: role }, { headers: getHeaders() });
+
+    if (response.status !== 200) {
+      throw new Error('Failed to update role');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating role:", error);
+    throw new Error(error.response?.data?.message || 'Failed to update role');
+  }
+}
 
 export async function ToggleAccountBannedStatus(id, bannedStatus) {
   try {
-    const response = await axios.patch(`${localhostAccount}/ToggleBanned/${id}`, { banned: bannedStatus }, { headers: getHeaders() });
+    const response = await axios.patch(`${baseAccount}/ToggleBanned/${id}`, { banned: bannedStatus }, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.log(localhostAccount);
@@ -35,6 +60,7 @@ export async function ToggleAccountBannedStatus(id, bannedStatus) {
     throw error; // Ensure the error is thrown to be caught in the calling function
   }
 }
+
 export async function GetAllAccount() {
   try {
     const response = await axios.get(`${baseAccount}`, { headers: getHeaders() }); // Use the getHeaders function
@@ -45,9 +71,28 @@ export async function GetAllAccount() {
   }
 }
 
+
 export async function AddNewAccount(data) {
   try {
     const response = await axios.post(`${baseAccount}/AddCustomer`, data, { headers: getHeaders() });
+    return response;
+  } catch (error) {
+    console.error("Error adding Account:", error);
+    throw error;
+  }
+}
+export async function AddNewStaff(data) {
+  try {
+    const response = await axios.post(`${baseAccount}/AddStaff`, data, { headers: getHeaders() });
+    return response;
+  } catch (error) {
+    console.error("Error adding Account:", error);
+    throw error;
+  }
+}
+export async function AddNewDeliveryStaff(data) {
+  try {
+    const response = await axios.post(`${baseAccount}/AddDeliveryStaff`, data, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.error("Error adding Account:", error);
@@ -100,3 +145,4 @@ export async function updateAvatar(accountId, avatar) {
     throw error; // Rethrow the error for handling in the calling function
   }
 }
+

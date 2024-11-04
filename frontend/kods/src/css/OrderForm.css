@@ -453,12 +453,12 @@
 
 .phone-input-container {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .error-message {
   color: #ff0000;
-  font-size: 12px;
+  font-size: 16px;
   position: absolute;
   bottom: -18px;
   left: 50%;
@@ -516,12 +516,50 @@
 
 .payment-options {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  justify-content: center;
+  gap: 40px;
   margin: 20px 0;
-  padding: 20px;
-  background: #f8f8f8;
+}
+
+.payment-method-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  border: 1px solid #ddd;
   border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-method-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.payment-icon {
+  width: 240px;
+  height: 160px;
+  object-fit: contain;
+}
+
+.radio-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.radio-container input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #4CAF50;
+}
+
+.payment-method-card.selected {
+  border-color: #4CAF50;
+  background-color: #f0f9f0;
 }
 
 .payment-option {
@@ -551,16 +589,74 @@
   font-weight: 500;
 }
 
-/* Cập nhật style cho container-popup nếu cần */
+
 .container-popup {
   background: white;
   padding: 30px;
   border-radius: 8px;
-  min-width: 300px;
+  width: 100px;
   text-align: center;
 }
 
 .title-popup {
   margin-bottom: 20px;
   color: #333;
+}
+
+.error-message-email {
+  color: #ff0000;
+  font-size: 16px;
+  display: block;
+  text-align: center;  
+  width: 100%;         
+  position: absolute; 
+  left: 50%;          
+  transform: translateX(-50%); 
+}
+
+.phone-input-container {
+  position: relative;  
+  margin-bottom: 30px; 
+}
+
+.error-input {
+  border-color: #ff4d4f !important;
+}
+
+.sender-info, .customer-info {
+  margin-bottom: 30px;
+}
+
+.label-customer {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+
+.input-customer {
+  margin-bottom: 15px; 
+  height: 40px;         
+  padding: 8px 12px;    
+}
+
+
+.phone-input-container {
+  margin-bottom: 15px;  
+}
+
+
+.layout-suggestions {
+  margin-bottom: 15px;
+}
+
+.error-message { 
+  margin-top: 4px;
+  margin-bottom: 8px;
+  font-size: 19px;
+}
+
+.error-message-email { 
+  margin-top: -10px;
+  margin-bottom: 8px;
+  font-size: 20px;
 }

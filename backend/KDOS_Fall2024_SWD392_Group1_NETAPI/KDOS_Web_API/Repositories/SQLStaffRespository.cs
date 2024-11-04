@@ -89,6 +89,15 @@ namespace KDOS_Web_API.Repositories
             var staffModelList = await staffContext.Staff.Where(x => x.StaffName.Contains(name)).ToListAsync();
             return staffModelList;
         }
+        public async Task<Staff?> GetStaffByAccountId(int id)
+        {
+            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (staffModel == null)
+            {
+                return null;
+            }
+            return staffModel;
+        }   
     }
 }
 

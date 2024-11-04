@@ -27,6 +27,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<Account, UpdateAccountAvatarDTO>().ReverseMap();
             CreateMap<Account,UpdateAccountDTO>().ReverseMap();
             CreateMap<Account, AccountCustomerViewDTO>().ReverseMap();
+            CreateMap<Account, UpdateOnlyRoleDTO>().ReverseMap();
             // Customer Mapping
             CreateMap<Customer, CustomerDTO>();
 			CreateMap<UpdateCustomerDTO, Customer>().ReverseMap()

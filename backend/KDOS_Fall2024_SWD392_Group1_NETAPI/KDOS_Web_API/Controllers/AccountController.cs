@@ -252,6 +252,7 @@ namespace KDOS_Web_API.Controllers
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Role = "staff"; //Set Role fixed as staff
+            accountModel.Verified = true; //Set Role fixed as staff
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             if (accountModel == null)
@@ -274,6 +275,7 @@ namespace KDOS_Web_API.Controllers
             var accountModel = mapper.Map<Account>(addNewAccountDTO);
             accountModel.Banned = false; // Default Not Banned... duh
             accountModel.Role = "delivery"; //Set Role fixed as deliverystaff
+            accountModel.Verified = true; //Set Role fixed as staff
             accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
             accountModel = await accountRepository.AddNewAccount(accountModel);
             if (accountModel == null)
@@ -348,7 +350,7 @@ namespace KDOS_Web_API.Controllers
         {
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountAvatarDTO);
-            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
+            accountModel = await accountRepository.UpdateAvatar(accountId, accountModel);
             if (accountModel == null)
             {
                 return NotFound();
@@ -359,6 +361,43 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
+
+        [HttpPatch("UpdateRole/{accountId}")]
+        public async Task<IActionResult> UpdateRole(int accountId, [FromBody] UpdateOnlyRoleDTO role)
+        {
+            // Map DTO to AccountModel for role update
+            var accountModel = mapper.Map<Account>(role);
+
+            var updatedAccount = await accountRepository.UpdateRole(accountId, accountModel);
+
+            if (updatedAccount == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+            else
+            {
+                var accountDto = mapper.Map<AccountDTO>(updatedAccount);
+                return Ok(accountDto);
+            }
+        }
+
+        [HttpGet]
+        [Route("Existed/{accountId}")]
+        public async Task<IActionResult> CheckAccountExisted([FromRoute] int accountId)
+        {
+            var accountModel = await accountRepository.GetAccountById(accountId);
+            if (accountModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok();
+            }
+        }   
+
+
+
         [HttpPatch("ToggleBanned/{accountId}")]
         public async Task<IActionResult> ToggleBanned(int accountId)
         {
@@ -371,6 +410,8 @@ namespace KDOS_Web_API.Controllers
 
             return Ok(new { Message = "Banned status toggled successfully" });
         }
+
+        
 
         [HttpDelete]
         [Authorize]
@@ -388,6 +429,8 @@ namespace KDOS_Web_API.Controllers
                 return Ok(accountDto);
             }
         }
+
+
         // Private method to generate a JWT token using the user's data.
         private string IssueToken(Account account)
         {

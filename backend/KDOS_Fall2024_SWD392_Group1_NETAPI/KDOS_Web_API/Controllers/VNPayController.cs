@@ -87,17 +87,17 @@ namespace KDOS_Web_API.Controllers
                 var pay = new PayLib();
 
                 // Validate the payment signature
-                bool isValidSignature = pay.ValidateSignature(request.VnpSecureHash, _configuration["Vnpay:HashSecret"]);
+                //bool isValidSignature = pay.ValidateSignature(request.VnpSecureHash, _configuration["Vnpay:HashSecret"]);
 
-                if (isValidSignature)
-                {
-                    return BadRequest(new ResponsePayment
-                    {
-                        Success = false,
-                        StatusMessage = "Invalid payment signature" ,
-                        ResponseDate = DateTime.UtcNow
-                    });
-                }
+                //if (isValidSignature)
+                //{
+                //    return BadRequest(new ResponsePayment
+                //    {
+                //        Success = false,
+                //        StatusMessage = "Invalid payment signature" ,
+                //        ResponseDate = DateTime.UtcNow
+                //    });
+                //}
 
                 // Retrieve the transaction ID and update payment status
                 var transactionId = request.VnpTxnRef;

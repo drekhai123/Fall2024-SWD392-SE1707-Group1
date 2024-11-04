@@ -3,7 +3,6 @@ import { baseUrl, localhostUrl, headers, getJwtToken } from './Url';
 import axios from 'axios';
 
 const getAllCustomerURL = baseUrl + '/Customer';
-
 // Function to get headers with token
 const getHeaders = () => {
   const token = getJwtToken(); // Retrieve the token
@@ -15,6 +14,7 @@ const getHeaders = () => {
 
 export async function GetAllCustomers() {
   var allCustomers = null;
+
   await axios.get(getAllCustomerURL, { headers: getHeaders() })
     .then(response => { allCustomers = response.data; })
     .catch(error => {
@@ -25,14 +25,16 @@ export async function GetAllCustomers() {
 }
 
 export async function AddNewCustomer(data) {
+
   var customer = null;
-  await axios.post(getAllCustomerURL, data, { headers: getHeaders() })
+      await axios.post(getAllCustomerURL, data, { headers: getHeaders() })
     .then(response => { customer = response.data; })
     .catch(error => {
       console.error("Error fetching Customer:", error);
       // alert('Error fetching Customer data')
     });
   return customer;
+
 }
 
 export async function GetCustomerById(id) {

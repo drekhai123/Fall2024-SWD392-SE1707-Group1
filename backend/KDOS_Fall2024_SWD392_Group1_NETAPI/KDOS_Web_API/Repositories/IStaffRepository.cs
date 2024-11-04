@@ -11,6 +11,7 @@ namespace KDOS_Web_API.Repositories
         Task<Staff?> UpdateStaff(int id, Staff staff);
         Task<Staff?> DeleteStaff(int id);
         Task<List<Staff>> GetStaffByName(String name);
+        Task<Staff?> GetStaffByAccountId(int id);
     }
 }
 
