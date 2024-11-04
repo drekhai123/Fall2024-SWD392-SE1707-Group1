@@ -4,6 +4,7 @@ import "../../css/SignupPage.css";
 import "../../css/LoginPage.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { format } from 'date-fns';
 
 import { AddNewAccount, VerifyAccount } from "../api/AccountApi";
 import { AddNewCustomer } from "../api/CustomerApi";
@@ -133,7 +134,6 @@ const SignupPage = () => {
   };
 
   const handleSignupClick = async (e) => {
-
     setLoadingScreen(true);
 
     e.preventDefault();
@@ -151,7 +151,9 @@ const SignupPage = () => {
       return;
     }
 
-    sessionStorage.setItem('signupData', JSON.stringify({
+    const formattedDob = dob ? format(dob, 'yyyy-MM-dd') : null;
+
+    const signupData = {
       email,
       username,
       password,
@@ -160,14 +162,18 @@ const SignupPage = () => {
       phoneNumber,
       address,
       name,
-      dob
-    }));
+      dob: formattedDob
+    };
+
+    console.log('Signup Data:', signupData);
+
+    sessionStorage.setItem('signupData', JSON.stringify(signupData));
 
     const data = {
       email: email,
       userName: username,
       password: password,
-      dob: dob,
+      dob: formattedDob,
     };
 
     try {
@@ -180,20 +186,16 @@ const SignupPage = () => {
           const verification = await VerifyAccount(account.accountId);
           if (verification.status >= 200 && verification.status < 300) {
             setRegisterEmail(true);
-            // alert("Check Your Email For Verification Code");
-            const data = {
+            const customerData = {
               customerName: name,
-              dob: dob,
+              dob: formattedDob,
               accountId: res.data.accountId,
               gender: gender,
               phoneNumber: phoneNumber,
               address: address,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
             };
-            await AddNewCustomer(data);
+            await AddNewCustomer(customerData);
             navigate("/email-confirmation-waiting");
-
           }
         }
       }
