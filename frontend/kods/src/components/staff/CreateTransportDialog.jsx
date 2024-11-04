@@ -5,28 +5,31 @@ import { Button } from "primereact/button";
 import axios from "axios";
 import { baseUrl, headers, getJwtToken } from "../api/Url";
 
-export const CreateTransportDialog = ({ visible, onHide }) => {
-  const token = getJwtToken();
+export const CreateTransportDialog = ({
+  visible,
+  onHide,
+}) => {
+  const token = getJwtToken()
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedDeliveryStaff, setSelectedDeliveryStaff] = useState(null);
   const [deliveryStaff, setDeliveryStaff] = useState([]);
   const [staff, setStaff] = useState([]);
-  const [transports, setTransports] = useState([])
+
   const handleConfirm = async () => {
     const transportData = {
       status: "PROCESSING",
       deliveryStaffId: selectedDeliveryStaff,
       healthCareStaffId: selectedDeliveryStaff,
-      staffId: selectedStaff,
+      staffId: selectedStaff
     };
     try {
-      await axios.post(`${baseUrl}/Transport`, transportData, {
+      await axios.post("https://kdosdreapiservice.azurewebsites.net/api/Transport", transportData, {
         headers: {
           ...headers,
-          Authorization: `Bearer ${token}`,
-        },
+          'Authorization': `Bearer ${token}`
+        }
       });
-      onHide(); // Close the dialog after successful submission
+      onHide();
     } catch (error) {
       console.error(error);
     }
@@ -38,12 +41,12 @@ export const CreateTransportDialog = ({ visible, onHide }) => {
         const deliveryStaffResponse = await axios.get(`${baseUrl}/DeliveryStaff`, {
           headers: {
             ...headers,
-            Authorization: `Bearer ${token}`,
-          },
+            'Authorization': `Bearer ${token}`
+          }
         });
-        const deliveryStaffList = deliveryStaffResponse.data.map((staff) => ({
-          label: staff.staffName,
-          value: staff.staffId,
+        const deliveryStaffList = deliveryStaffResponse.data.map(staff => ({
+          label: staff.staffName, // or whatever field represents the name
+          value: staff.staffId    // or whatever unique identifier
         }));
         setDeliveryStaff(deliveryStaffList);
       } catch (error) {
@@ -54,37 +57,18 @@ export const CreateTransportDialog = ({ visible, onHide }) => {
   }, []);
 
   useEffect(() => {
-    const fetchTransprt = async () => {
-      try {
-        const transportData = await axios.get(`${baseUrl}/Transport`, {
-          headers: {
-            ...headers,
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        setTransports(transportData.data)
-      } catch (error) {
-        console.log("Error fetch transports: ", error)
-      }
-    }
-    fetchTransprt();
-  }, [])
-
-  useEffect(() => {
     const fetchStaff = async () => {
       try {
         const staffResponse = await axios.get(`${baseUrl}/Staff`, {
           headers: {
             ...headers,
-            Authorization: `Bearer ${token}`,
-          },
+            'Authorization': `Bearer ${token}`
+          }
         });
-        const staffList = staffResponse.data
-          .filter((staff) => !transports.some(transport => transport.healthCareStaffId === staff.staffId))
-          .map((staff) => ({
-            label: staff.staffName,
-            value: staff.staffId,
-          }));
+        const staffList = staffResponse.data.map(staff => ({
+          label: staff.staffName, // or whatever field represents the name
+          value: staff.staffId    // or whatever unique identifier
+        }));
         setStaff(staffList);
       } catch (error) {
         console.error("Error fetching staff:", error);
