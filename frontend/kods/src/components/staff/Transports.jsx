@@ -19,7 +19,7 @@ export function Transports() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const ordersResponse = await axios.get(`${baseUrl}/Orders`, {
+        const transportResponse = await axios.get(`${baseUrl}/Transport`, {
           headers: {
             ...headers,
             'Authorization': `Bearer ${token}`

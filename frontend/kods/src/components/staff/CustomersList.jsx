@@ -33,7 +33,12 @@ export function CustomersList() {
     setSelectedCustomer(order);
 
     try {
-      const response = await axios.get(`${baseUrl}/Orders/customer/${selectedCustomer.customerId}`);
+      const response = await axios.get(`${baseUrl}/Orders/customer/${selectedCustomer.customerId}`,{
+        headers: {
+          ...headers,
+          'Authorization': `Bearer ${token}`
+        }
+      });
       console.log(response.data);
       setOrders(response.data);
     } catch (err) {

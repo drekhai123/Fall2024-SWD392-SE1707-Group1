@@ -38,6 +38,7 @@ const LoginPage = () => {
   };
 
   const handleLoginClick = async (e) => {
+    debugger
     setLoadingScreen(true);
     const login = {
       usernameoremail: usernameoremail,
@@ -48,6 +49,10 @@ const LoginPage = () => {
       sessionStorage.setItem('user', JSON.stringify(response.data.account));
       sessionStorage.setItem('token', response.data.token);
       showToast('success', "Login successful!");
+      if(response.data.account.role === "staff" ){
+        setTimeout(() => navigate('/staffDashboard'), 2000);
+
+      }
       setTimeout(() => navigate('/'), 2000);
     } else if (response.status === 400) {
       showToast('error', "Your account has been banned. Please contact support.");
