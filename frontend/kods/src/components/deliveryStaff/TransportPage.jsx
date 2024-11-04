@@ -11,13 +11,13 @@ import LoadingScreen from '../../utils/LoadingScreen';
 import { useNavigate } from 'react-router-dom';
 
 export default function TransportPage() {
-    const [products, setProducts] = useState([1, 2, 4]);
-    const [transport, setTransport] = useState([]);
+    const [products, setProducts] = useState([1,2,3]); //backup
+    const [transport, setTransport] = useState();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
-    const user = sessionStorage.getItem('user');
-    console.log(user)
-     if(user===null||user.role !== "delivery"){
+    const userStorage = sessionStorage.getItem('user');
+    const userData = JSON.parse(userStorage)
+     if(userData===null||userData.role !== "delivery"){
         alert("You are not authorize for this page")
         navigate("/")
      }
@@ -25,10 +25,13 @@ export default function TransportPage() {
     useEffect(() => {
         const getTransport = async () => {
             setLoading(true)
-            const response = await GetTransportByDeliveryStaffId(1);
+            const response = await GetTransportByDeliveryStaffId(userData.deliveryStaff.staffId);
+            console.log(response.data.orders)
             if (response.status === 200) {
-                setTransport(await response.data)
-                console.log(transport)
+                setTransport(response.data.orders)
+                if(transport===null){
+                    setTransport([])
+                }
             } else {
                 toast.error("!", { autoClose: 2000 }); // Show toast for 2 seconds
                 console.log("Error fetching transport:", response);
@@ -39,8 +42,8 @@ export default function TransportPage() {
     }, []);
 
     const trackRoute = (currentData) => {
-        const start = "Thành phố Hồ Chí Minh, Việt Nam";
-        const des = "Quận 7, Ho Chi Minh City, Việt Nam";
+        const start = currentData.senderAddress;
+        const des = currentData.recipientAddress;
         const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(start)}&destination=${encodeURIComponent(des)}&travelmode=driving&dir_action=navigate`;
         window.open(url, '_blank');
     }
@@ -63,11 +66,12 @@ export default function TransportPage() {
                 onPage={onPage}
                 showGridlines
                 stripedRows
-                value={products} tableStyle={{ minWidth: '50rem' }}>
-                <Column field="code" header="Code"></Column>
-                <Column field="name" header="Name"></Column>
-                <Column field="category" header="Category"></Column>
-                <Column
+                value={transport} tableStyle={{ minWidth: '50rem' }}>
+                <Column field="orderId" header="Order Id"></Column>
+                <Column field="senderAddress" header="From"></Column>
+                <Column field="recipientAddress" header="To"></Column>
+                <Column field="createdAt" filter header="Date Added"></Column>
+                <Column 
                     field="id"
                     header="Action"
                     body={(rowData) => {

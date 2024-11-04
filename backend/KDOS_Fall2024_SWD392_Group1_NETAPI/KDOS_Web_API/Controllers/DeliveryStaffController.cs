@@ -17,7 +17,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class DeliveryStaffController : ControllerBase
     {
         private readonly KDOSDbContext deliveryStaffContext;
@@ -30,7 +30,7 @@ namespace KDOS_Web_API.Controllers
             this.deliveryStaffRepository = deliveryStaffRepository;
             this.mapper = mapper;
         }
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllDeliveryStaff()
         {
@@ -54,6 +54,7 @@ namespace KDOS_Web_API.Controllers
 
             }
         }
+        [Authorize]
         [HttpDelete]
         [Route("{staffId}")]
         public async Task<IActionResult?> DeleteDeliveryStaff([FromRoute] int staffId)
@@ -69,7 +70,7 @@ namespace KDOS_Web_API.Controllers
                 return Ok(deliveryStaffDeleted);
             }
         }
-
+        [Authorize]
         [HttpGet]
         [Route("{staffId}")]
         public async Task<IActionResult?> GetDeliveryStaffById([FromRoute] int staffId)
@@ -78,6 +79,7 @@ namespace KDOS_Web_API.Controllers
             var deliveryStaffDto = mapper.Map<DeliveryStaffDTO>(deliveryStaff);
             return Ok(deliveryStaffDto);
         }
+        [Authorize]
         [HttpPut]
         [Route("{staffId}")]
         public async Task<IActionResult> UpdateDeliveryStaff([FromRoute] int staffId, [FromBody] UpdateDeliveryStaffDTO updateDeliveryStaffDTO)
@@ -94,6 +96,7 @@ namespace KDOS_Web_API.Controllers
                 return Ok(deliveryStaffDto);
             }
         }
+        [Authorize]
         [HttpGet]
         [Route("/DeliveryStaffAccount/{accountId}")]
         public async Task<IActionResult> GetDeliveryStaffByAcountId([FromRoute] int accountId)

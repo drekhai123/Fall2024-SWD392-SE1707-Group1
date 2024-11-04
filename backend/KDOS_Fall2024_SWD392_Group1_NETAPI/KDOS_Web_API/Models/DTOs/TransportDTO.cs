@@ -12,5 +12,6 @@ namespace KDOS_Web_API.Models.DTOs
         public int DeliveryStaffId { get; set; } // FK to DeliveryStaff table
         public DeliveryStaffDTO? DeliveryStaff { get; set; } // 1-1 relation
         public StaffDTO? Staff { get; set; } // 1-1 relation
+        public ICollection<OrdersDTO>? Orders { get; set; }
     }
 }

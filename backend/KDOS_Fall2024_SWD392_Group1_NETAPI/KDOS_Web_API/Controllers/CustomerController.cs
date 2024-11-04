@@ -12,7 +12,6 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class CustomerController : ControllerBase    {
         private readonly ICustomerRepository customerRepository;
         private readonly IMapper mapper;
@@ -24,6 +23,7 @@ namespace KDOS_Web_API.Controllers
             this.mapper = mapper;
             this.mailingService = mailingService;
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllCustomer()
         {
@@ -59,6 +59,7 @@ namespace KDOS_Web_API.Controllers
             }
             return NotFound(); //return 404
         }
+        [Authorize]
         [HttpPost]
         [Route("searchbyname")]
         public async Task<IActionResult> FindCustomerByName([FromBody] String customerName)
@@ -80,6 +81,7 @@ namespace KDOS_Web_API.Controllers
 
 
         // GET 1 customer by ID
+        [Authorize]
         [HttpGet]
         [Route("{customerId}")] // get the "value" from the parameter
         public async Task<IActionResult> GetCustomerById([FromRoute]int customerId) //Identify this value is get from Route -> ALL NAMING form route and parameter must match
@@ -102,6 +104,7 @@ namespace KDOS_Web_API.Controllers
             }
         }
         // PUT - Update a customer through their Id
+        [Authorize]
         [HttpPut]
         [Route("{customerId}")]
         public async Task<IActionResult> UpdateCustomer([FromRoute] int customerId, [FromBody] UpdateCustomerDTO updateCustomerDto)
@@ -121,6 +124,7 @@ namespace KDOS_Web_API.Controllers
                 return Ok(customerDto);
             }
         }
+        [Authorize]
         [HttpDelete]
         [Route("{customerId}")]
         public async Task<IActionResult> DeleteCustomer([FromRoute] int customerId)
