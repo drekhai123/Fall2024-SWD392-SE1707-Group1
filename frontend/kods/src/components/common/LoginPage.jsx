@@ -105,9 +105,10 @@ const LoginPage = () => {
   const handleForgotPasswordClick = () => {
     navigate("/forgot-password"); // Navigate to the Forgot Password page
   };
-  // const handleBackToHomeClick = () => {
-  //   navigate("/"); // Điều hướng về trang chủ
-  // };
+
+  const handleBackToHomeClick = () => {
+    navigate("/"); // Navigate to the home page
+  };
 
   return (
     <div className="login-page-container">
@@ -170,11 +171,11 @@ const LoginPage = () => {
               Sign Up.
             </button>
           </div>
-          {/* Nút Back to Home */}
+          {/* Back to Home Button */}
           <div className='back-to-home-container'>
-            <Link to='/' className='back-to-home-link'>
+            <button className='back-to-home-btn' onClick={handleBackToHomeClick}>
               Back to Home
-            </Link>
+            </button>
           </div>
         </div>
       </div>

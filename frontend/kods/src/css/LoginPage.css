@@ -20,6 +20,7 @@
 }
 
 .login-page-container .login-container {
+  position: relative;
   width: 40%;
   background-color: black;
   display: flex;
@@ -32,7 +33,7 @@
 .login-page-container .login-container .login-form {
   display: flex;
   flex-direction: column;
-  gap: 16px; 
+  gap: 16px;
   width: 100%;
   max-width: 400px;
   padding: 20px;
@@ -43,13 +44,13 @@
   color: white;
   font-size: 32px;
   text-align: center;
-  margin-bottom: 16px; 
+  margin-bottom: 16px;
 }
 
 .login-page-container .login-container .login-form .username-input,
 .login-page-container .login-container .login-form .password-input {
   font-size: 18px;
-  padding: 12px 8px; 
+  padding: 12px 8px;
   width: 100%;
   border: 1px solid #5e5e5f;
   border-radius: 5px;
@@ -58,24 +59,24 @@
 }
 
 .login-page-container .login-container .login-form .password-field {
-  position: relative; 
+  position: relative;
 }
 
 .login-page-container .login-container .login-form .toggle-password-btn {
-  position: absolute; 
-  right: 10px; 
-  top: 50%; 
-  transform: translateY(-50%); 
-  background: transparent; 
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
   border: none;
-  cursor: pointer; 
-  color: white; 
+  cursor: pointer;
+  color: white;
   font-size: 18px;
 }
 
 .login-page-container .login-container .login-form .login-btn {
   font-size: 18px;
-  padding: 12px 8px; 
+  padding: 12px 8px;
   width: 100%;
   border: none;
   border-radius: 5px;
@@ -87,7 +88,7 @@
 }
 
 .login-page-container .login-container .login-form .login-btn:hover {
-  background-color: #c50b10; 
+  background-color: #c50b10;
 }
 
 .login-page-container .login-container .login-form .or-separator {
@@ -106,11 +107,11 @@
   color: white;
   background-color: #4285F4;
   cursor: pointer;
-  transition: background-color 0.3s; 
+  transition: background-color 0.3s;
 }
 
 .login-page-container .login-container .login-form .google-login-btn:hover {
-  background-color: #357AE8; 
+  background-color: #357AE8;
 }
 
 .login-page-container .login-container .login-form .to-signup-container {
@@ -136,21 +137,21 @@
 
 
 .login-page-container .login-container .login-form .forgot-password-container {
-  text-align: center; 
-  margin-top: 10px; 
+  text-align: center;
+  margin-top: 10px;
 }
 
 .login-page-container .login-container .login-form .forgot-password-btn {
-  color: #e50914; 
-  background-color: transparent; 
-  border: none; 
-  font-size: 16px; 
-  cursor: pointer; 
-  text-decoration: underline; 
+  color: #e50914;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .login-page-container .login-container .login-form .forgot-password-btn:hover {
-  color: #c50b10; 
+  color: #c50b10;
 }
 
 .back-to-home-link {
@@ -167,3 +168,20 @@
 }
 
 
+.back-to-home-btn {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  color: white;
+  background-color: rgb(51, 51, 253);
+  border: 2px solid rgb(51, 51, 253);
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.back-to-home-btn:hover {
+  background-color: #00008b;
+  color: white;
+}
