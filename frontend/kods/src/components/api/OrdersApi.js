@@ -4,6 +4,7 @@ import axios from 'axios'
 const getOrderByCustomerIdUrl = baseUrl+'/Orders/customer/'
 const getOrderbyOrderIdUrl = baseUrl+'/Orders/'
 const getOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/Order/'
+
 // const getAllOrderDetailsByCustomerIdURl= baseUrl+'/OrderDetails/'
 const postOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/'
 const postOrdersUrl = baseUrl+'/Orders/'
@@ -108,6 +109,21 @@ export async function updateDeliveryStatus(orderId, deliveryStatus) {
         return await response.data;
     } catch (error) {
         console.error('Error updating order status:', error);
+        throw error;
+    }
+}
+
+export async function getAllOrderDetails(token) {
+    try {
+        const response = await axios.get(`${baseUrl}/OrderDetails`, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching order details:', error);
         throw error;
     }
 }

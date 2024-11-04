@@ -6,6 +6,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from '../../../config/ConfigFirebase';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PropTypes from 'prop-types';
 
 const Sidebar = ({ items, userData }) => {
   const location = useLocation();
@@ -189,6 +190,29 @@ const Sidebar = ({ items, userData }) => {
       </aside>
     </>
   );
+};
+
+Sidebar.defaultProps = {
+  items: [],
+  userData: {
+    accountId: null,
+    userName: "User Name",
+    role: "unknown",
+  },
+};
+
+Sidebar.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      link: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    })
+  ),
+  userData: PropTypes.shape({
+    accountId: PropTypes.string,
+    userName: PropTypes.string,
+    role: PropTypes.string,
+  }),
 };
 
 export default Sidebar;
