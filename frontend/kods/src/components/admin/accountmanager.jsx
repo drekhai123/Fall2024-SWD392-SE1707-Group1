@@ -159,7 +159,7 @@ function AccountManager() {
       fetchData(); // Refresh the account data
     } catch (error) {
       console.error('Error creating new account:', error);
-      message.error(error.message); // Display the error message
+      message.error("Email or Username already exists!"); // Display the error message
     }
   };
 
@@ -237,6 +237,7 @@ function AccountManager() {
             {record.role.charAt(0).toUpperCase() + record.role.slice(1)} {/* Capitalize the first letter */}
           </span>
           <Button
+            className="ban-button" // Apply the custom class here
             onClick={() => toggleBannedStatus(record)}
             disabled={isToggling}
             style={{
@@ -292,7 +293,7 @@ function AccountManager() {
         }}
       />
       <Modal
-        title="Select Role"
+        title={<div className="custom-modal-title">Select Role</div>} // Use a div with custom class for centering
         open={showRoleModal}
         onCancel={() => setShowRoleModal(false)}
         footer={null}
@@ -313,25 +314,51 @@ function AccountManager() {
           <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Please input your username!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Please input your email!' }]}>
+          <Form.Item name="email" label="Email" rules={[{ type: 'email', required: true, message: 'Please input your email!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="staffName" label="Staff Name" rules={[{ required: true, message: 'Please input the staff name!' }]}>
+          <Form.Item
+            name="staffName"
+            label="Staff Name"
+            rules={[{ required: true, message: 'Please input the staff name!' }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="dob" label="Date of Birth" rules={[{ required: true, message: 'Please select your date of birth!' }]}>
+          <Form.Item
+            name="dob"
+            label="Date of Birth"
+            rules={[{ required: true, message: 'Please select your date of birth!' }]}
+          >
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item name="gender" label="Gender" rules={[{ required: true, message: 'Please select your gender!' }]}>
+          <Form.Item
+            name="gender"
+            label="Gender"
+            rules={[{ required: true, message: 'Please select your gender!' }]}
+          >
             <Select placeholder="Select your gender">
               <Option value="Male">Male</Option>
               <Option value="Female">Female</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="phoneNumber" label="Phone Number" rules={[{ required: true, message: 'Please input your phone number!' }]}>
+          <Form.Item
+            name="phoneNumber"
+            label="Phone Number"
+            rules={[
+              { required: true, message: 'Please input your phone number!' },
+              { pattern: /^[0-9]{10}$/, message: 'Please enter a valid 10-digit phone number!' }
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Please input your password!' }]}>
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[
+              { required: true, message: 'Please input your password!' },
+              { min: 6, message: 'Password must be at least 6 characters long!' }
+            ]}
+          >
             <Input.Password />
           </Form.Item>
           <Form.Item name="confirmPassword" label="Confirm Password" rules={[{ required: true, message: 'Please confirm your password!' }]}>
