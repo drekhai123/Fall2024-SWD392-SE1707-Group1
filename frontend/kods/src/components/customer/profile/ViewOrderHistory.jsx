@@ -160,7 +160,9 @@ const OrderHistory = () => {
             ) : (
               <TableRow>
                 <TableCell colSpan={10} align="center">
-                  Please create a new order
+                  <Typography variant="h6">
+                    Please create a new order
+                  </Typography>
                 </TableCell>
               </TableRow>
             )}
