@@ -1,0 +1,10 @@
+/* Add this to your CSS file */
+.role-card {
+  transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition */
+}
+
+.role-card:hover {
+  transform: scale(1.05); /* Slightly enlarge the card */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  background-color: rgb(63, 135, 230);
+}
