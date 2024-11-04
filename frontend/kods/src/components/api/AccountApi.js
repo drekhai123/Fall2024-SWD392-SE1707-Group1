@@ -1,7 +1,5 @@
 import { localhostUrl, baseUrl, headers, getJwtToken } from "./Url";
 import axios from "axios";
-import { checkAccountIdExists as checkStaffExists } from './StaffApi';
-import { checkAccountIdExists as checkDeliveryStaffExists } from './DeliveryStaffApi';
 
 const baseAccount = baseUrl + "/Account";
 const localhostAccount = localhostUrl + "/Account";
@@ -82,6 +80,24 @@ export async function AddNewAccount(data) {
     throw error;
   }
 }
+export async function AddNewStaff(data) {
+  try {
+    const response = await axios.post(`${baseAccount}/AddStaff`, data, { headers: getHeaders() });
+    return response;
+  } catch (error) {
+    console.error("Error adding Account:", error);
+    throw error;
+  }
+}
+export async function AddNewDeliveryStaff(data) {
+  try {
+    const response = await axios.post(`${baseAccount}/AddDeliveryStaff`, data, { headers: getHeaders() });
+    return response;
+  } catch (error) {
+    console.error("Error adding Account:", error);
+    throw error;
+  }
+}
 
 export async function VerifyAccount(id) {
   try {
@@ -113,9 +129,3 @@ export async function DeleteAccount(id) {
   }
 }
 
-export async function checkAccountIdExists(accountId) {
-  const staffExists = await checkStaffExists(accountId);
-  const deliveryStaffExists = await checkDeliveryStaffExists(accountId);
-
-  return staffExists || deliveryStaffExists; // Return true if exists in either
-}

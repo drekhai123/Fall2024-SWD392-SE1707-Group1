@@ -9,7 +9,7 @@ namespace KDOS_Web_API.Models.DTOs
         [Required]
         required public string StaffName { get; set; }
         [Required]
-        required public int Age { get; set; }
+        required public DateOnly Dob { get; set; }
         [Required]
         required public int AccountId { get; set; }
         [Required]
