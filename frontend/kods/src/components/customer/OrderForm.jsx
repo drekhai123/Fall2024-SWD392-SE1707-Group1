@@ -291,7 +291,11 @@ export default function OrderForm({onSuggestionClick, distance}) {
     sessionStorage.setItem("fishOrders", JSON.stringify(fishOrders));
   }, [fishOrders]);
 
+  const [isConfirmDisabled, setIsConfirmDisabled] = useState(false);
+
   const confirmPay = async (data) => {
+    setIsConfirmDisabled(true); // Disable the button
+
     try {
       console.log("Order data being sent:", data);
       const orderResponse = await postOrders(data);
@@ -324,6 +328,8 @@ export default function OrderForm({onSuggestionClick, distance}) {
       }
     } catch (error) {
       console.error("Failed to create order:", error);
+    } finally {
+      setIsConfirmDisabled(false); // Re-enable the button after operation
     }
   };
 
@@ -809,6 +815,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 <button
                   onClick={() => confirmPay({...showQRCode, paymentMethod: selectedPayment})}
                   className="confirm-btn"
+                  disabled={isConfirmDisabled}
                 >
                   Confirm payment
                 </button>
