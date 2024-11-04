@@ -6,22 +6,21 @@ import {
   Typography,
   Button,
   CircularProgress,
-  Snackbar,
-  Alert,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle
 } from '@mui/material';
-import { Email as EmailIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
+import { Email as EmailIcon } from '@mui/icons-material';
 import { VerifyAccount } from '../api/AccountApi';
 import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function EmailConfirmationWaiting() {
   const [countdown, setCountdown] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
   const navigate = useNavigate();
@@ -50,19 +49,12 @@ export default function EmailConfirmationWaiting() {
       console.log("Response from VerifyAccount:", response);
       if (response.status >= 200 && response.status < 300) {
         console.log("Verification email resent successfully!");
-        setOpenSnackbar(true);
+        toast.success("Verification email resent successfully!");
       }
     } catch (error) {
       console.error("Error resending verification email:", error);
     }
     setIsResendDisabled(true);
-  };
-
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnackbar(false);
   };
 
   const handleGoBackToLogin = () => {
@@ -101,12 +93,6 @@ export default function EmailConfirmationWaiting() {
             Please check your email and click on the verification link to complete your registration.
           </Typography>
 
-        {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-            <CheckCircleIcon color="success" sx={{ mr: 1 }} />
-            <Typography variant="body2" color="success.main">
-              Registration successful
-            </Typography>
-          </Box> */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
             <Button
               variant="outlined"
@@ -134,17 +120,13 @@ export default function EmailConfirmationWaiting() {
           </Button>
         </CardContent>
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.9rem' }}>
-            Didn't receive the email? Check your spam folder or{' '}
-            <Link to="/contact" style={{ color: 'inherit', textDecoration: 'underline' }}>
-              contact support
-            </Link>.
-          </Typography>
+          Didn't receive the email? Check your spam folder or{' '}
+          <Link to="/contact" style={{ color: 'inherit', textDecoration: 'underline' }}>
+            contact support
+          </Link>.
+        </Typography>
       </Card>
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          Verification email resent successfully!
-        </Alert>
-      </Snackbar>
+      <ToastContainer />
       <Dialog
         open={openDialog}
         onClose={() => handleDialogClose(false)}

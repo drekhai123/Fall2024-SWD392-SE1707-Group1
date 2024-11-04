@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../../css/LoginPage.css";
 import { GoogleLoginApi, LoginApi } from "../api/LoginApi";
@@ -15,6 +15,7 @@ const LoginPage = () => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // Thêm state để điều khiển ẩn/hiện mật khẩu
   const navigate = useNavigate();
+  const lastToastTimeRef = useRef(0); // Ref to store the last toast time
 
   const handleChangeUsername = (e) => {
     setUsernameoremail(e.target.value);
@@ -24,8 +25,20 @@ const LoginPage = () => {
     setPassword(e.target.value);
   };
 
+  const showToast = (type, message) => {
+    const now = Date.now();
+    if (now - lastToastTimeRef.current > 5000) { // 2 seconds interval
+      lastToastTimeRef.current = now;
+      if (type === 'success') {
+        toast.success(message, { autoClose: 5000 });
+      } else if (type === 'error') {
+        toast.error(message);
+      }
+    }
+  };
+
   const handleLoginClick = async (e) => {
-    setLoadingScreen(true)
+    setLoadingScreen(true);
     const login = {
       usernameoremail: usernameoremail,
       password: password,
@@ -34,14 +47,14 @@ const LoginPage = () => {
     if (response.status <= 300) {
       sessionStorage.setItem('user', JSON.stringify(response.data.account));
       sessionStorage.setItem('token', response.data.token);
-      toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
-      setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
+      showToast('success', "Login successful!");
+      setTimeout(() => navigate('/'), 2000);
     } else if (response.status === 400) {
-      alert("Your account has been banned. Please contact support.");
+      showToast('error', "Your account has been banned. Please contact support.");
     } else {
-      alert("Invalid credentials");
+      showToast('error', "Check your username or password.");
     }
-    setLoadingScreen(false)
+    setLoadingScreen(false);
   };
 
   const handleSignupClick = () => {
@@ -59,7 +72,7 @@ const LoginPage = () => {
   // Login with Google API
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async tokenResponse => {
-      setLoadingScreen(true)
+      setLoadingScreen(true);
       const googleResponse = await axios.get(
         'https://www.googleapis.com/oauth2/v3/userinfo',
         { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } })
@@ -72,16 +85,16 @@ const LoginPage = () => {
       if (response.status === 200) {
         sessionStorage.setItem('user', JSON.stringify(response.data.account));
         sessionStorage.setItem('token', response.data.token);
-        toast.success("Login successful!", { autoClose: 2000 }); // Show toast for 2 seconds
-        setTimeout(() => navigate('/'), 2000); // Navigate after 2 seconds
+        showToast('success', "Login successful!");
+        setTimeout(() => navigate('/'), 2000);
       } else {
-        alert("Can't Login With Google: ")
+        showToast('error', "Can't Login With Google");
       }
-      setLoadingScreen(false)
+      setLoadingScreen(false);
     },
     onError: (error) => {
       console.log('Login Failed');
-      alert("Can't Login With Google: ", error)
+      showToast('error', `Can't Login With Google: ${error}`);
     },
   });
 
