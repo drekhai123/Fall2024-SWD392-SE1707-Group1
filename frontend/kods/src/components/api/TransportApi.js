@@ -18,7 +18,7 @@ const getHeaders = () => {
       return response;
     } catch (error) {
       console.error("Error fetching Transport:", error);
-      throw error;
+      return error;
     }
   }
   

@@ -11,29 +11,29 @@ import LoadingScreen from '../../utils/LoadingScreen';
 import { useNavigate } from 'react-router-dom';
 
 export default function TransportPage() {
-    const [products, setProducts] = useState([1,2,3]); //backup
+    const [products, setProducts] = useState([1, 2, 3]); //backup
     const [transport, setTransport] = useState();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
     const userStorage = sessionStorage.getItem('user');
     const userData = JSON.parse(userStorage)
-     if(userData===null||userData.role !== "delivery"){
+    if (userData === null || userData.role !== "delivery") {
         alert("You are not authorize for this page")
         navigate("/")
-     }
+    }
 
     useEffect(() => {
         const getTransport = async () => {
             setLoading(true)
             const response = await GetTransportByDeliveryStaffId(userData.deliveryStaff.staffId);
-            console.log(response.data.orders)
             if (response.status === 200) {
                 setTransport(response.data.orders)
-                if(transport===null){
+                if (transport === null) {
+                    toast.info("There Are No Transport For Today", { autoClose: 2000 }); // Show toast for 2 seconds
                     setTransport([])
                 }
             } else {
-                toast.error("!", { autoClose: 2000 }); // Show toast for 2 seconds
+                toast.error("Error Getting transport, Plz refresh the page or Login again!", { autoClose: 2000 }); // Show toast for 2 seconds
                 console.log("Error fetching transport:", response);
             }
             setLoading(false)
@@ -60,6 +60,7 @@ export default function TransportPage() {
         <div className="card">
             {loading && <LoadingScreen />}
             <DataTable
+                resizableColumns
                 paginator
                 rows={rows}
                 first={first}
@@ -67,11 +68,13 @@ export default function TransportPage() {
                 showGridlines
                 stripedRows
                 value={transport} tableStyle={{ minWidth: '50rem' }}>
-                <Column field="orderId" header="Order Id"></Column>
+                <Column field="orderId" sortable header="Order Id"></Column>
                 <Column field="senderAddress" header="From"></Column>
                 <Column field="recipientAddress" header="To"></Column>
-                <Column field="createdAt" filter header="Date Added"></Column>
-                <Column 
+                <Column field="createdAt" sortable header="Date Added"></Column>
+                <Column
+                    alignFrozen="right"
+                    frozen={true}
                     field="id"
                     header="Action"
                     body={(rowData) => {

@@ -14,7 +14,6 @@ export default function Navbar() {
     sessionStorage.removeItem("token");
     toast.success("Logged out successfully!");
     navigate('/');
-    window.location.reload();
   };
   return (
     <header className="header-container">
