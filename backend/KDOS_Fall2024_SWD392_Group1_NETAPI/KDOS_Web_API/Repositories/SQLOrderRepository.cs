@@ -109,6 +109,15 @@ namespace KDOS_Web_API.Repositories
 
             return orders ?? new List<Orders>();// Return an empty list if no orders are found
         }
+        public async Task<List<Orders>> GetOrderByTransportId(int id)
+        {
+            // Find all orders associated with the specified customer ID
+            var orders = await orderContext.Orders
+                .Where(o => o.TransportId == id)
+                .ToListAsync();
+
+            return orders ?? new List<Orders>();// Return an empty list if no orders are found
+        }
         public async Task<List<Orders>> GetOrderByStatus(OrderStatus status)
         {
             // Find all orders with the specified status

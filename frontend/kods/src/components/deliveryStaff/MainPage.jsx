@@ -1,15 +1,21 @@
 import React from 'react'
-import HistoryPage from './HistoryPage';
 import TransportPage from './TransportPage';
 import Profile from './Profile';
+import LogPage from './LogPage';
 
-export default function MainPage({currentPage}) {
+export default function MainPage({currentPage,userData}) {
     switch(currentPage){
-        case "history":
-            return <HistoryPage/>
+        case "log":
+            return <LogPage
+                userData={userData}
+            />
         case "transport":
-            return <TransportPage/>
+            return <TransportPage
+                userData={userData}
+            />
         case "profile":
-            return <Profile/>
+            return <Profile
+                userData={userData}
+            />
     }
 }

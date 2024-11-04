@@ -85,6 +85,18 @@ namespace KDOS_Web_API.Controllers
             var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
             return Ok(orderDto);
         }
+        [HttpGet]
+        [Route("transport/{transportId}")]
+        public async Task<IActionResult> GetOrdersByTransportId([FromRoute] int transportId)
+        {
+            var ordersList = await orderRepository.GetOrderByTransportId(transportId);
+            if (ordersList == null)
+            {
+                return NotFound();
+            }
+            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            return Ok(orderDto);
+        }
 
         [HttpPut]
         [Route("{orderId}")]
