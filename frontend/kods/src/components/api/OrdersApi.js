@@ -7,7 +7,7 @@ const getOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/Order/'
 // const getAllOrderDetailsByCustomerIdURl= baseUrl+'/OrderDetails/'
 const postOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/'
 const postOrdersUrl = baseUrl+'/Orders/'
-const updateOrderStatusUrl = baseUrl + '/Orders/';
+const updateDeliveryStatusUrl = baseUrl + '/Orders/';
 
 // Function to postOrders
 export async function postOrders(orderData) {
@@ -96,10 +96,10 @@ export async function getOrderDetailsByOrderId(orderId) {
 }
 
 // Function to update order status
-export async function updateOrderStatus(orderId, status) {
+export async function updateDeliveryStatus(orderId, deliveryStatus) {
     const token = getJwtToken();
     try {
-        const response = await axios.put(`${updateOrderStatusUrl}${orderId}/status`, { status }, {
+        const response = await axios.put(`${updateDeliveryStatusUrl}${orderId}/status`, { deliveryStatus }, {
             headers: {
                 ...headers,
                 'Authorization': `Bearer ${token}`
