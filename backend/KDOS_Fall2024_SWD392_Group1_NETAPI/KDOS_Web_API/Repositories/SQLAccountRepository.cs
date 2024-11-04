@@ -60,7 +60,7 @@ namespace KDOS_Web_API.Repositories
         {
             var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
             var emailorUsernameExist = await accountContext.Account.FirstOrDefaultAsync(x => x.Email == account.Email|| x.UserName == account.UserName);
-            if (accountExist == null || !accountExist.Equals(emailorUsernameExist))
+            if (accountExist == null || emailorUsernameExist!=null)
             {
                 return null;
             }

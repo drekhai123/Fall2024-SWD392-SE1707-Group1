@@ -44,8 +44,8 @@ namespace KDOS_Web_API.Controllers
         {
 
             var staffModel = mapper.Map<Staff>(addNewStaffDTO);
-            var newStaff = await staffRepository.AddNewStaff(staffModel);
-            if(newStaff == null)
+             staffModel = await staffRepository.AddNewStaff(staffModel);
+            if(staffModel == null)
             {
                 return NotFound();
             }
@@ -58,7 +58,7 @@ namespace KDOS_Web_API.Controllers
         [Authorize]
         [HttpPost]
         [Route("searchbyname")]
-        public async Task<IActionResult> FindStaffByName([FromBody] String staffName)
+        public async Task<IActionResult> FindStaffByName([FromBody] string staffName)
         {
             //Find by name
             var staffModel = await staffRepository.GetStaffByName(staffName);
