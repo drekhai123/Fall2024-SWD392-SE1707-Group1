@@ -16,6 +16,8 @@ namespace KDOS_Web_API.Models.DTOs
         public string? Avatar { get; set; }
         required public bool Verified { get; set; }
         public CustomerDTO? Customer { get; set; }
+        public StaffDTO? Staff { get; set; }
+        public DeliveryStaffDTO? DeliveryStaff { get; set; }
     }
 }
 
