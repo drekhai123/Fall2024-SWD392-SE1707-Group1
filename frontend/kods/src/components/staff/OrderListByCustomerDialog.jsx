@@ -9,7 +9,7 @@ export const OrderListByCustomer = ({
   visible,
   onHide,
 }) => {
-
+  console.log(orders)
   return (
     <Dialog
       header="Confirm Order"
@@ -26,9 +26,10 @@ export const OrderListByCustomer = ({
           tableStyle={{ minWidth: "50rem" }}
         >
           <Column field="orderId" header="Order ID"></Column>
-          <Column field="date" header="Date"></Column>
-          <Column field="products" header="Products"></Column>
-          <Column field="status" header="Status"></Column>
+          <Column field="senderName" header="Sender"></Column>
+          <Column field="senderPhoneNumber" header="Sender PhoneNumber"></Column>
+          <Column field="senderAddress" header="Sender address"/>
+          <Column field="totalCost" header="Total Costs"></Column>
         </DataTable>
       </div>
     </Dialog>

@@ -33,7 +33,10 @@ export default function Navbar() {
         {user ? (
           <div className="nav-right">
             <ul className="nav-list">
-              <li className="nav-item"><Link to="/profile">VIEW PROFILE</Link></li>
+              {user.role==="customer" &&<li className="nav-item"><Link to="/profile">VIEW PROFILE</Link></li>}
+              {user.role==="delivery" &&  <li className="nav-item"><Link to="/delivery-staff">TRANSPORT</Link></li>}
+              {user.role==="admin" &&<li className="nav-item"><Link to="/admin">ADMIN DASHBOARD</Link></li>}
+              {user.role==="staff" &&<li className="nav-item"><Link to="/staffDashBoard">STAFF DASHBOARD</Link></li>}
               <li className="nav-item"> Hello, {user.userName}!</li>
               <li className="nav-item"><button className="btn-Logout" onClick={logout}>LOGOUT</button> { }</li>
             </ul>

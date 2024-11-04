@@ -46,7 +46,8 @@ const OrderHistory = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const userData = sessionStorage.getItem('user');
+        const userResponse = sessionStorage.getItem('user');
+        const userData = JSON.parse(userResponse)
         console.log('User data from session storage:', userData);
 
         if (userData) {
