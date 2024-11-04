@@ -6,7 +6,7 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
+  // CardMedia,
   Avatar,
   List,
   ListItem,
@@ -24,13 +24,11 @@ import {
 import { Star as StarIcon } from '@mui/icons-material';
 
 const teamMembers = [
-
-  { name: 'Đoàn Tuấn Khải', role: 'Backend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
-  { name: 'Nguyễn Dương Gia Bảo', role: 'Backend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
-  { name: 'Võ Việt Dũng', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
-  // Adding 2 Backend Engineers
-  { name: 'Phan Anh Hoàng', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
-  { name: 'Nguyễn Tuấn Khải', role: 'Frontend Engineer', avatar: '/placeholder.svg?height=100&width=100' },
+  { name: 'Đoàn Tuấn Khải', role: 'Backend Engineer', avatar: '/images/ourmemories/khaidoan.png' },
+  { name: 'Nguyễn Dương Gia Bảo', role: 'Backend Engineer', avatar: '/images/ourmemories/baobao.png' },
+  { name: 'Võ Việt Dũng', role: 'Frontend Engineer', avatar: '/images/ourmemories/dung.png' },
+  { name: 'Phan Anh Hoàng', role: 'Frontend Engineer', avatar: '/images/ourmemories/hoang.png' },
+  { name: 'Nguyễn Tuấn Khải', role: 'Frontend Engineer', avatar: '/images/ourmemories/khaidoan.png' },
 ];
 
 const milestones = [
