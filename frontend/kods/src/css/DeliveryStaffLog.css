@@ -1,0 +1,35 @@
+.create-entry-form {
+    float: right;
+    width: 90%;
+    padding: 20px;
+}
+
+.p-field label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #4a4a4a; /* Dark grey for readability */
+}
+
+.p-field input,
+.p-field .p-calendar,
+.p-field .p-inputnumber {
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.p-calendar .p-button {
+    color: #007bff; /* Light blue icon for date picker */
+}
+
+.p-button-info {
+    background-color: #0056b3; /* Darker blue for button */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+}

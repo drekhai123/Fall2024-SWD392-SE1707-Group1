@@ -4,11 +4,9 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import '../../css/DeliveryStaffTransport.css'
-import { Divider } from 'primereact/divider';
 import { GetTransportByDeliveryStaffId } from '../api/TransportApi';
 import { toast } from 'react-toastify';
 import LoadingScreen from '../../utils/LoadingScreen';
-import { useNavigate } from 'react-router-dom';
 
 export default function TransportPage({userData}) {
     const [products, setProducts] = useState([1, 2, 3]); //backup
@@ -61,10 +59,10 @@ export default function TransportPage({userData}) {
                 rows={rows}
                 first={first}
                 onPage={onPage}
-                showGridlines
-                stripedRows
                 value={transport} tableStyle={{ minWidth: '50rem' }}>
                 <Column
+                    frozen
+                    alignFrozen='left'
                     field="id"
                     header="Action"
                     body={(rowData) => {
