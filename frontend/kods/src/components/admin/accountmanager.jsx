@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input, Select } from 'antd';
+import { Button, Table, Modal, Form, Input, Select, DatePicker } from 'antd';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import {
+  checkAccountExists,
   GetAllAccount,
   UpdateRole,
   ToggleAccountBannedStatus,
 } from '../api/AccountApi'; // Adjust the import path as necessary
+import { createNewStaff, checkAccountIdExists } from '../api/StaffApi';
+import { createNewDeliveryStaff } from '../api/DeliveryStaffApi';
 import 'react-toastify/dist/ReactToastify.css';
 import { getJwtToken } from '../api/Url';
 
@@ -21,10 +24,11 @@ function AccountManager() {
   const [searchTerm, setSearchTerm] = useState(''); // State for search term
   const [filteredData, setFilteredData] = useState([]); // State for filtere
   const navigate = useNavigate(); // Initialize navigate for navigation
-
+  const [formData, setFormData] = useState(null); // State to hold form data
+  const [originalRole, setOriginalRole] = useState(null); // State to hold the original role
 
   // Define roles for the dropdown
-  const roles = ['delivery staff', 'staff', 'customer', 'admin']; // Add your roles here
+  const roles = ['delivery staff', 'staff', 'admin']; // Add your roles here
   // Function to check if the user is authorized
   const isAuthorized = () => {
     const token = getJwtToken();
@@ -81,20 +85,45 @@ function AccountManager() {
     }
   };
 
-
-  const handleEdit = async (values) => {
-    try {
-      const response = await UpdateRole(values.accountId, values.role); // Update role
-      if (response) {
-        toast.success("Account updated successfully!");
-        setShowForm(false);
-        fetchData(); // Refresh data after editing
-      } else {
-        toast.error("Failed to update account.");
+  const handleRoleChange = async (value, record) => {
+    if (value === record.role) {
+      // Do not show the form if the role hasn't changed
+      return;
+    }
+    if (value === 'admin') {
+      // Change role to admin immediately
+      try {
+        const updateResponse = await UpdateRole(record.accountId, value); // Update role in DB
+        if (updateResponse) {
+          const updatedData = data.map(item =>
+            item.accountId === record.accountId ? { ...item, role: value } : item
+          );
+          setData(updatedData); // Update the data state
+          toast.success("Role updated to admin successfully!"); // Notify the user
+        } else {
+          toast.error("Failed to update role in the database.");
+        }
+      } catch (error) {
+        console.error('Error updating role to admin:', error);
+        toast.error("Error updating role: " + error.message);
       }
-    } catch (error) {
-      console.error('Error updating account:', error);
-      toast.error("Error updating account: " + error.message);
+    } else {
+      // Store the original role and show the form
+      setOriginalRole(record.role);
+      setFormData({ ...record, role: value }); // Set form data with the new role
+      setShowForm(true); // Show the form modal
+    }
+  };
+
+  // Function to handle closing the form
+  const handleCloseForm = () => {
+    setShowForm(false); // Close the form
+    if (originalRole) {
+      // Reset the role back to the original if it exists
+      const updatedData = data.map(item =>
+        item.accountId === formData.accountId ? { ...item, role: originalRole } : item
+      );
+      setData(updatedData); // Update the data state
     }
   };
 
@@ -128,6 +157,86 @@ function AccountManager() {
     }
   };
 
+  // Define the form fields based on the selected roleY
+  const renderFormFields = () => {
+    const role = formData?.role;
+    switch (role) {
+      case 'staff':
+        return (
+          <>
+            <Form.Item label="Staff Name" name="staffName" rules={[{ required: true, message: 'Please input staff name!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Staff Gender" name="staffGender" rules={[{ required: true, message: 'Please select staff gender!' }]}>
+              <Select>
+                <Option value="Male">Male</Option>
+                <Option value="Female">Female</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Staff Phone Number" name="staffPhoneNum" rules={[{ required: true, message: 'Please input staff phone number!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Staff DOB" name="staffDOB" rules={[{ required: true, message: 'Please select staff DOB!' }]}>
+              <DatePicker />
+            </Form.Item>
+          </>
+        );
+      case 'delivery staff':
+        return (
+          <>
+            <Form.Item label="Delivery Staff Name" name="deliveryStaffName" rules={[{ required: true, message: 'Please input delivery staff name!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Delivery Staff Gender" name="deliveryStaffGender" rules={[{ required: true, message: 'Please select delivery staff gender!' }]}>
+              <Select>
+                <Option value="male">Male</Option>
+                <Option value="female">Female</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Delivery Staff Phone Number" name="deliveryStaffPhoneNum" rules={[{ required: true, message: 'Please input delivery staff phone number!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Delivery Staff DOB" name="deliveryStaffDOB" rules={[{ required: true, message: 'Please select delivery staff DOB!' }]}>
+              <DatePicker />
+            </Form.Item>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const handleSubmit = async (values) => {
+    try {
+      // Check if the accountId already exists in either Staff or Delivery Staff
+      const accountExists = await checkAccountIdExists(values.accountId);
+      if (accountExists) {
+        toast.error("Account ID already exists in Staff or Delivery Staff.");
+        return; // Prevent form submission
+      }
+
+      // Update the role first
+      const updateResponse = await UpdateRole(values.accountId, values.role); // Update role
+      if (updateResponse) {
+        // Logic to create new staff in the database based on the role
+        if (values.role === 'staff') {
+          await createNewStaff(values); // Create new staff
+        } else if (values.role === 'delivery staff') {
+          await createNewDeliveryStaff(values); // Create new delivery staff
+        }
+
+        toast.success("New staff created successfully!");
+        setShowForm(false); // Close the form after submission
+        fetchData(); // Refresh data after creating new staff
+      } else {
+        toast.error("Failed to update account.");
+      }
+    } catch (error) {
+      console.error('Error creating new staff:', error);
+      toast.error("Error creating new staff: " + error.message);
+    }
+  };
+
   const columns = [
     { title: 'Account ID', dataIndex: 'accountId' },
     { title: 'Username', dataIndex: 'userName' },
@@ -141,10 +250,7 @@ function AccountManager() {
           <Select
             defaultValue={record.role}
             style={{ width: 120 }}
-            onChange={(value) => {
-              // Update the role in the record and save changes
-              handleEdit({ ...record, role: value }); // Ensure the role is updated
-            }}
+            onChange={(value) => handleRoleChange(value, record)} // Call the new handler
           >
             {roles.map(role => (
               <Option key={role} value={role}>{role}</Option>
@@ -166,7 +272,6 @@ function AccountManager() {
   ];
 
   return (
-
     <div>
       <h2>Manage Accounts</h2>
       <Input
@@ -185,37 +290,26 @@ function AccountManager() {
           showSizeChanger: false,
         }}
       />
-      {/* <Modal
-        title={formData ? "Edit Account" : "Add Account"}
+      <Modal
+        title="Create New Info"
         open={showForm}
-        onCancel={() => setShowForm(false)}
+        onCancel={handleCloseForm} // Use the new close handler
         footer={null}
       >
         <Form
           form={form}
           initialValues={formData || {}}
-          onFinish={handleSubmit}
+          onFinish={handleSubmit} // Call handleSubmit on form submission
           layout="horizontal"
         >
-          <Form.Item name="username" style={{ display: 'none' }} >
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item label="Phone" name="phone" rules={[{ required: true, message: 'Please input phone number!' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Email" name="email" rules={[{ required: true, message: 'Please input email!' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Address" name="address" rules={[{ required: true, message: 'Please input address!' }]}>
-            <Input />
-          </Form.Item>
+          {renderFormFields()} {/* Render fields based on role */}
           <Form.Item>
             <Button type="primary" htmlType="submit" style={{ backgroundColor: '#ff7700', borderColor: '#ff7700' }}>
               Save
             </Button>
           </Form.Item>
         </Form>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

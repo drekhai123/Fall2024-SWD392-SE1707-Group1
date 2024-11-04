@@ -125,6 +125,24 @@ namespace KDOS_Web_API.Controllers
                 return Ok(deletedstaffDto);
             }
         }
+
+        [HttpGet]
+        [Route("/StaffAccount/{accountId}")]
+        public async Task<IActionResult> GetStaffByAccountId([FromRoute] int accountId)
+        {
+            //Find StaffModel in db
+            var staffModel = await staffRepository.GetStaffByAccountId(accountId);
+            if (staffModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                //Convert Model to DTO
+                var staffDto = mapper.Map<StaffDTO>(staffModel);
+                return Ok(staffDto);
+            }
+        }   
     }
 }
 

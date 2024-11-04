@@ -188,6 +188,18 @@ namespace KDOS_Web_API.Repositories
                 return accountExist;
             }   
         }
+        public async Task<bool> CheckExistedAccountId(int id)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }
 
