@@ -9754,6 +9754,7 @@ klona@^2.0.4, klona@^2.0.5:
     react-toastify "^10.0.5"
     sweetalert2 "^11.14.3"
     swiper "^11.1.14"
+    tailwind-merge "^2.5.4"
     web-vitals "^2.1.4"
 
 language-subtag-registry@^0.3.20:

@@ -57,6 +57,6 @@
 .deliveryNavItem:hover .nav-description {
     opacity: 1; /* Make it visible on hover */
     display: block; /* Ensure it's displayed */
-    padding: 33px 0;
+    padding: 37px 0;
     padding-right: 10px;
 }
