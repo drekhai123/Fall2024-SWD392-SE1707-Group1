@@ -7,11 +7,13 @@ import { DataTable } from "primereact/datatable";
 import { OrderListByCustomer } from "./OrderListByCustomerDialog";
 
 export function CustomersList() {
-  const token = getJwtToken()
-  const [customers, setCustomers] = useState([])
+  const token = getJwtToken();
+  const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -29,23 +31,24 @@ export function CustomersList() {
 
     fetchOrders();
   }, []);
+
   const confirmOrder = async (order) => {
     setSelectedCustomer(order);
-
+    setLoading(true); // Start loading
     try {
-      const response = await axios.get(`${baseUrl}/Orders/customer/${selectedCustomer.customerId}`,{
+      const response = await axios.get(`${baseUrl}/Orders/customer/${order.customerId}`, {
         headers: {
           ...headers,
           'Authorization': `Bearer ${token}`
         }
       });
-      console.log(response.data);
       setOrders(response.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false); // End loading
     }
     setShowConfirmDialog(true);
-
   };
 
   const handleConfirm = (confirmationData) => {
@@ -59,6 +62,8 @@ export function CustomersList() {
         showGridlines
         stripedRows
         tableStyle={{ minWidth: "50rem" }}
+        paginator
+        rows={5}
       >
         <Column field="customerId" header="Id"></Column>
         <Column field="customerName" header="Name"></Column>
@@ -84,6 +89,7 @@ export function CustomersList() {
           orders={orders}
           visible={showConfirmDialog}
           onHide={() => setShowConfirmDialog(false)}
+          loading={loading} // Pass loading state to the dialog
           onConfirm={handleConfirm}
         />
       )}
