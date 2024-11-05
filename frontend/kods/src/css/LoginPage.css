@@ -170,8 +170,8 @@
 
 .back-to-home-btn {
   position: absolute;
-  top: 100px;
-  left: 100px;
+  top: 0;
+  left: 0;
   color: white;
   background-color: rgb(51, 51, 253);
   border: 2px solid rgb(51, 51, 253);

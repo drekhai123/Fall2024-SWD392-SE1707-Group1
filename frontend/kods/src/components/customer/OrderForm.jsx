@@ -12,10 +12,36 @@ import { postOrderDetailsByOrderId } from "../api/OrdersApi";
 export default function OrderForm({ onSuggestionClick, distance }) {
   const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
+
+  // Lấy customerInfo từ user
+  const [customerInfo, setCustomerInfo] = useState({
+    nameCustomer: "",
+    phoneCustomer: "",
+    addressCustomer: "",
+    emailCustomer: "",
+    distance: 0,
+    nameSender: user?.customer?.customerName || "", 
+    phoneSender: user?.customer?.phoneNumber || "", 
+    addressSender: "",
+  });
+
+  // Check role user
+  useEffect(() => {
+    if (user?.role !== "customer") {
+      Swal.fire(
+        "Access Denied",
+        "Please login as a customer to use this function",
+        "error"
+      ).then(() => {
+        navigate("/"); 
+      });
+    }
+  }, [user, navigate]);
+
   const [modal, setOpenModal] = useState(false);
   const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(null);
-  const [check, setCheck] = useState(false)
+  const [check, setCheck] = useState(false);
   const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
@@ -28,14 +54,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [distancePriceList, setDistancePriceList] = useState([]);
   const [weightPriceList, setWeightPriceList] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const [customerInfo, setCustomerInfo] = useState({
-    nameCustomer: "",
-    phoneCustomer: "",
-    addressCustomer: "",
-    EmailCustomer: "",
-    distance: 0,
-  });
 
   const token = getJwtToken();
 
@@ -175,7 +193,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
-  // phí shipping
+  // Hàm tính phí shipping
   const calculateShippingFee = () => {
     const { distance } = customerInfo;
     var unitPrice = 0;
@@ -192,7 +210,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     return distance * parseFloat(unitPrice); // Chỉ trả về phí shipping cơ bản
   };
 
-  // Rename the function
+  // Hàm tính phí cho cá 
   const FeedingFee = () => {
     if (!customerInfo?.distance) return 0;
 
@@ -302,7 +320,24 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       console.log("Order response received:", orderResponse);
 
       if (orderResponse) {
-        // Call the API to create a new payment request
+        if (data.paymentMethod === 'CASH') {
+          // Navigate về thẳng orderhistory khi user chọn checkbox CASH
+          localStorage.removeItem("fishOrders");
+          setFishOrders([]);
+          setCustomerInfo({
+            nameCustomer: "",
+            phoneCustomer: "",
+            addressCustomer: "",
+            emailCustomer: "",
+            distance: 0,
+          });
+          Swal.fire("Success!", "Order confirmed!", "success");
+          setShowQRCode(null);
+          navigate("/profile/ViewOrderHistory");
+          return; 
+        }
+
+        // Call the API to create a new payment request for BANK_TRANSFER
         const paymentResponse = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Create', {
           orderId: orderResponse.orderId, // Use the orderId from the orderResponse
           amount: orderResponse.totalCost, // Assuming totalCost is part of the orderResponse
@@ -599,20 +634,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <div className="sender-info">
               <h3 className="label-customer">Sender Information</h3>
               <input
-                require
                 className="input-customer"
                 type="text"
                 placeholder="Name"
-                onChange={(e) =>
-                  handleCustomerChange("nameSender", e.target.value)
-                }
+                value={customerInfo.nameSender}
+                onChange={(e) => handleCustomerChange("nameSender", e.target.value)}
               />
               <div className="phone-input-container">
                 <input
                   className={`input-customer ${phoneErrors.sender ? 'error-input' : ''}`}
                   type="text"
                   placeholder="Phone"
-                  value={customerInfo.phoneSender || ''}
+                  value={customerInfo.phoneSender}
                   onChange={(e) => handleCustomerChange("phoneSender", e.target.value)}
                 />
                 {phoneErrors.sender && <span className="error-message">{phoneErrors.sender}</span>}
@@ -623,9 +656,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   type="text"
                   placeholder="Address"
                   value={customerInfo?.addressSender}
-                  onChange={(e) =>
-                    handleCustomerChange("addressSender", e.target.value)
-                  }
+                  onChange={(e) => handleCustomerChange("addressSender", e.target.value)}
                 />
                 <div>
                   {fromSuggestions?.length > 0 && (
@@ -633,9 +664,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                       {fromSuggestions?.map((suggestion) => (
                         <div
                           key={suggestion.place_id}
-                          onClick={() =>
-                            handleSuggestionClick(suggestion, "addressSender")
-                          }
+                          onClick={() => handleSuggestionClick(suggestion, "addressSender")}
                           className="suggestion-item"
                         >
                           {suggestion.display_name}

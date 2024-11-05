@@ -19,8 +19,7 @@ export const Health = ({ orderId, visible, onHide }) => {
           },
         });
         const orderDetailData = orderDetailResponse.data;
-        
-        const healthResponse = await axios.get(`${baseUrl}/HealthStatus/OrderDetails/${orderDetailData.id}`, {
+        const healthResponse = await axios.get(`${baseUrl}/HealthStatus/OrderDetails/${orderDetailData[0].orderDetailsId}`, {
           headers: {
             ...headers,
             'Authorization': `Bearer ${token}`,

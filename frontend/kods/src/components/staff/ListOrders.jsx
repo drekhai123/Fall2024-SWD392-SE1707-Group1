@@ -9,6 +9,7 @@ import { baseUrl, headers, getJwtToken } from "../api/Url";
 import { Health } from "./Health";
 
 export const ListOrders = ({ visible, onHide, transportId }) => {
+  console.log(transportId);
   const token = getJwtToken();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isOpenHealth, setIsOpenHealth] = useState(false);
@@ -47,7 +48,7 @@ export const ListOrders = ({ visible, onHide, transportId }) => {
     <Dialog
       header="List of Orders"
       visible={visible}
-      style={{ width: "50vw" }}
+      style={{ width: "70vw" }}
       onHide={onHide}
     >
       {loading ? (

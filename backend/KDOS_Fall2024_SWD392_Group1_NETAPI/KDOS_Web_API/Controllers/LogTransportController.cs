@@ -73,12 +73,12 @@ namespace KDOS_Web_API.Controllers
         [Route("customer/{customerId}")]
         public async Task<IActionResult> GetLogTransportByCustomerId([FromRoute] int customerId)
         {
-            var logTransportModel = await logTransportRepository.GetLogTransportByIdAsync(customerId);
+            var logTransportModel = await logTransportRepository.GetLogTransportByCustomerId(customerId);
             if (logTransportModel == null)
             {
                 return NotFound();
             }
-            var logTransportDto = mapper.Map<LogTransportDTO>(logTransportModel); // Map to the appropriate DTO
+            var logTransportDto = mapper.Map<List<LogTransportDTO>>(logTransportModel); // Map to the appropriate DTO
             return Ok(logTransportDto);
         }
         [HttpGet]
