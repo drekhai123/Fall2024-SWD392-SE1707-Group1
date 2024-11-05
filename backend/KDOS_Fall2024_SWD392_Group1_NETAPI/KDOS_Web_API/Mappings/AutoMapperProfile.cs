@@ -38,11 +38,17 @@ namespace KDOS_Web_API.Mappings
             CreateMap<CustomerAccountDTO, Customer>().ReverseMap();
             // Staff Mapping
             CreateMap<Staff, StaffDTO>().ReverseMap();
-			CreateMap<AddNewStaffDTO, Staff>().ReverseMap();
+            CreateMap<Staff, UpdateStaffStatusDTO>().ReverseMap();
+            CreateMap<AddNewStaffDTO, Staff>()
+                .ForMember(x=>x.StaffStatus,opt=>opt.Ignore())
+                .ReverseMap();
 			CreateMap<UpdateStaffDTO, Staff>().ReverseMap();
 			// Delivery Staff Mapping
 			CreateMap<DeliveryStaff, DeliveryStaffDTO>().ReverseMap();
-            CreateMap<DeliveryStaff, AddNewDeliveryStaffDTO>().ReverseMap();
+            CreateMap<DeliveryStaff, UpdateDeliveryStaffStatusDTO>().ReverseMap();
+            CreateMap<AddNewDeliveryStaffDTO, DeliveryStaff>()
+                .ForMember(x => x.StaffStatus, opt => opt.Ignore())
+                .ReverseMap();
             CreateMap<DeliveryStaff, UpdateDeliveryStaffDTO>().ReverseMap();
             //WeightPriceList
             CreateMap<WeightPriceList, WeightPriceListDTO>().ReverseMap();

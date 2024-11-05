@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KDOS_Web_API.Repositories
 {
-	public class SQLDeliveryStaffRepository : IDeliveryStaffRepository
-	{
+    public class SQLDeliveryStaffRepository : IDeliveryStaffRepository
+    {
         private readonly KDOSDbContext deliveryStaffContext;
 
         public SQLDeliveryStaffRepository(KDOSDbContext deliveryStaffContext)
-		{
+        {
             this.deliveryStaffContext = deliveryStaffContext;
         }
 
-       public async Task<DeliveryStaff?> AddNewDeliveryStaff(DeliveryStaff  deliveryStaff)
+        public async Task<DeliveryStaff?> AddNewDeliveryStaff(DeliveryStaff deliveryStaff)
         {
             var accountExist = await deliveryStaffContext.Account.FirstOrDefaultAsync(x => x.AccountId == deliveryStaff.AccountId);
             if (accountExist == null || !accountExist.Role.Equals("delivery"))
@@ -24,7 +24,7 @@ namespace KDOS_Web_API.Repositories
             else
             {
                 var deliveryStaffExist = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.AccountId == deliveryStaff.AccountId);
-                if(deliveryStaffExist != null)
+                if (deliveryStaffExist != null)
                 {
                     return null;
                 }
@@ -40,7 +40,7 @@ namespace KDOS_Web_API.Repositories
         public async Task<DeliveryStaff?> DeleteDeliveryStaff(int id)
         {
             var deliveryStaff = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.StaffId == id);
-            if(deliveryStaff == null)
+            if (deliveryStaff == null)
             {
                 return null;
             }
@@ -64,7 +64,7 @@ namespace KDOS_Web_API.Repositories
         }
 
         public async Task<DeliveryStaff?> GetDeliveryStaffByAccountId(int id)
-        { 
+        {
             var deliveryStaff = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.AccountId == id);
             return deliveryStaff;
         }
@@ -82,6 +82,21 @@ namespace KDOS_Web_API.Repositories
                 deliveryStaffModel.Dob = deliveryStaff.Dob;
                 deliveryStaffModel.Gender = deliveryStaff.Gender;
                 deliveryStaffModel.PhoneNumber = deliveryStaff.PhoneNumber;
+                await deliveryStaffContext.SaveChangesAsync();
+                return deliveryStaffModel;
+            }
+        }
+
+        public async Task<DeliveryStaff?> UpdateDeliveryStaffStatus(int id, DeliveryStaff staff)
+        {
+            var deliveryStaffModel = await deliveryStaffContext.DeliveryStaff.FirstOrDefaultAsync(x => x.StaffId == id);
+            if (deliveryStaffModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                deliveryStaffModel.StaffStatus = staff.StaffStatus;
                 await deliveryStaffContext.SaveChangesAsync();
                 return deliveryStaffModel;
             }
