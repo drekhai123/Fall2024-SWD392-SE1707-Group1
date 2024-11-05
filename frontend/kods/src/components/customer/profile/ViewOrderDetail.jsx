@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getOrderbyOrderId, getOrderDetailsByOrderId, updateDeliveryStatus } from '../../api/OrdersApi'; // Import the API function
+import { getOrderbyOrderId, getOrderDetailsByOrderId, updateDeliveryStatus, deleteOrderDetailsById } from '../../api/OrdersApi'; // Import the API function
 import { addFeedback } from '../../api/FeedbackApi'; // Import the API function
 import { getFeedbackByOrderId, deleteFeedback } from '../../api/FeedbackApi'; // Import the delete API function
 import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
@@ -200,19 +200,31 @@ export default function OrderDetail({ onBack }) {
     setIsDialogOpen(false);
   };
 
-  const handleConfirmCancelOrder = async () => {
+  const handleDeleteAndUpdateStatus = async (detail) => {
     try {
-      console.log('Cancelling order with ID:', orderId);
-      await updateDeliveryStatus(orderId, deliveryStatus.CANCELLED);
+
+      // First, delete the fish order details
+      const orderDetailsId = orderDetailById[0]?.orderDetailsId;
+
+      if (orderDetailsId) {
+        try {
+          await deleteOrderDetailsById(orderDetailsId);
+          console.log(`Order detail with ID ${orderDetailsId} deleted successfully.`);
+        } catch (error) {
+          console.error('Error deleting order detail:', error);
+        }
+      } else {
+        console.error('OrderDetailsId not found');
+      }
+
+      // Then, update the delivery status
+      await updateDeliveryStatus(detail.orderId, deliveryStatus.CANCELLED);
       console.log('Order status updated to CANCELLED');
       toast.success('Order cancelled successfully!');
-
-      navigate(`/profile/ViewOrderHistory/${orderId}`);
+      navigate(`/profile/ViewOrderHistory/${detail.orderId}`);
     } catch (error) {
-      console.error('Error cancelling order:', error);
-      toast.error('Failed to cancel order. Please try again.');
-    } finally {
-      handleCloseDialog();
+      console.error('Error processing order:', error);
+      toast.error('Failed to process order. Please try again.');
     }
   };
 
@@ -259,7 +271,7 @@ export default function OrderDetail({ onBack }) {
             <Button onClick={handleCloseDialog} color="primary">
               No
             </Button>
-            <Button onClick={handleConfirmCancelOrder} color="secondary" autoFocus>
+            <Button onClick={() => handleDeleteAndUpdateStatus(orderDetail)} color="secondary" autoFocus>
               Yes
             </Button>
           </DialogActions>
