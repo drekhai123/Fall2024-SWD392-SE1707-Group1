@@ -4,6 +4,7 @@ import axios from 'axios'
 const getOrderByCustomerIdUrl = baseUrl + '/Orders/customer/'
 const getOrderbyOrderIdUrl = baseUrl + '/Orders/'
 const getOrderDetailsByOrderIdUrl = baseUrl + '/OrderDetails/Order/'
+const deleteOrderDetailsByIdUrl = baseUrl + '/OrderDetails/'
 
 // const getAllOrderDetailsByCustomerIdURl= baseUrl+'/OrderDetails/'
 const postOrderDetailsByOrderIdUrl = baseUrl + '/OrderDetails/'
