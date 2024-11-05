@@ -294,6 +294,40 @@ export default function OrderDetail({ onBack }) {
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell><strong>Location</strong></TableCell>
+                    <TableCell><strong>Time</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {orderDetailById && orderDetailById.map((item) => (
+                    <TableRow key={item.fishProfileId}>
+                      <TableCell>{item.location}</TableCell>
+                      <TableCell>
+                        {item.time ? (
+                          new Date(item.time).toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                            timeZone: 'Asia/Bangkok'
+                          })
+                        ) : (
+                          'No time available'
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+          <Grid item xs={12}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
                     <TableCell><strong>Fish Name</strong></TableCell>
                     <TableCell><strong>Health Status</strong></TableCell>
                     <TableCell><strong>Action</strong></TableCell>
