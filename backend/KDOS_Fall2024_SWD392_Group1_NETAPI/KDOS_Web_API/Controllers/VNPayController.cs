@@ -3,6 +3,7 @@ using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Repositories;
 using KDOS_Web_API.Services.VNPay;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace KDOS_Web_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VNPayController : ControllerBase

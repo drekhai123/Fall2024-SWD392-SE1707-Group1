@@ -7,7 +7,6 @@ import { Card } from "primereact/card";
 import { toast } from "react-toastify";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import '../../css/DeliveryStaffTransport.css'
 import '../../css/DeliveryStaffLog.css'
 import { AddTransportLog, GetTransportByDeliveryStaffId } from '../api/TransportApi';
 import LoadingScreen from "../../utils/LoadingScreen";
@@ -31,7 +30,8 @@ export default function LogPage({ userData }) {
           const { latitude, longitude } = pos.coords;
           fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
             .then(response => response.json())
-            .then(data => {console.log('Address:', data.display_name);
+            .then(data => {
+              console.log('Address:', data.display_name);
               setFormData({
                 ...formData,
                 location: data.display_name
@@ -44,7 +44,7 @@ export default function LogPage({ userData }) {
                   customerId: order.customerId,
                 })
               }
-              })
+            })
             .catch(error => console.error('Error:', error));
         },
         (err) => {
@@ -92,14 +92,14 @@ export default function LogPage({ userData }) {
     }));
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     // Add form submission logic here
     console.log("Form Data:", formData);
     const response = await AddTransportLog(formData)
-    if(response.status === 201){
+    if (response.status === 201) {
       toast.success("Log Added!")
     }
-    else if(response.status > 400){
+    else if (response.status > 400) {
       toast.error("Error: ", response.status)
     }
   };
@@ -122,13 +122,12 @@ export default function LogPage({ userData }) {
             <div className="p-field">
               <label htmlFor="time">Time</label>
               <Calendar
-              disabled
+                disabled
                 id="time"
                 value={formData.time}
                 onChange={handleDateChange}
                 showTime
                 showSeconds
-                showIcon
                 placeholder="Select time"
               />
             </div>
@@ -179,8 +178,7 @@ export default function LogPage({ userData }) {
           </div>
         </Card>
         <Divider />
-        <DataTable
-          selectionMode="single" selection={order}
+        <DataTable selectionMode="single" selection={order}
           onSelectionChange={(e) => setOrder(e.value)} dataKey="orderId"
           scrollable
           resizableColumns
@@ -189,16 +187,11 @@ export default function LogPage({ userData }) {
           first={first}
           onPage={onPage}
           value={transport} tableStyle={{ minWidth: '50rem' }}>
-          <Column
-            header="Customer ID"
-            field="customerId"
-            frozen
-          >
-          </Column>
-          <Column field="orderId" sortable header="Order Id"></Column>
-          <Column field="senderAddress" header="From"></Column>
-          <Column field="recipientAddress" header="To"></Column>
-          <Column field="createdAt" sortable header="Date Added"></Column>
+          <Column frozen field="customerId" header="Customer ID" />
+          <Column field="orderId" header="Order ID" sortable />
+          <Column field="senderAddress" header="From" />
+          <Column field="recipientAddress" header="To" />
+          <Column field="createdAt" header="Date Added" sortable />
         </DataTable>
       </div>
     </>

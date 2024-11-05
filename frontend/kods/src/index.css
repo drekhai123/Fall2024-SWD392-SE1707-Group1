@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 .order-status-container {
   text-align: center;
   margin: 20px;
