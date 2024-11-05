@@ -28,7 +28,7 @@ import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
 import { Star, StarBorder } from '@mui/icons-material'; // Import star icons
 import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
 import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
-import { fetchLogTransportByCustomerId } from '../../api/TranslogApi'; // Import the new function
+import {fetchLogTransportByCustomerId } from '../../api/TranslogApi'; // Import the new function
 
 // Define an enum-like object for order statuses
 const deliveryStatus = {
@@ -60,6 +60,19 @@ function getStatusColor(status) {
     default:
       return 'black';
   }
+}
+
+function formatDateTime(date) {
+  return new Date(date).toLocaleString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Bangkok'
+  });
 }
 
 export default function OrderDetail({ onBack }) {
@@ -263,16 +276,7 @@ export default function OrderDetail({ onBack }) {
               <Typography><strong>Phone:</strong> {orderDetail.senderPhoneNumber}</Typography>
               <Typography>
                 <strong>Order Created: </strong>
-                {new Date(orderDetail.createdAt).toLocaleString('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  hour12: false,
-                  timeZone: 'Asia/Bangkok'
-                })}
+                {formatDateTime(orderDetail.createdAt)}
               </Typography>
             </Paper>
           </Grid>
@@ -318,7 +322,7 @@ export default function OrderDetail({ onBack }) {
                   {transportLogs.map((log, index) => (
                     <TableRow key={index}>
                       <TableCell>{log.location}</TableCell>
-                      <TableCell>{new Date(log.time).toLocaleString()}</TableCell>
+                      <TableCell>{formatDateTime(log.time)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -344,8 +348,7 @@ export default function OrderDetail({ onBack }) {
                         {item.healthStatus.length > 0 ? (
                           (() => {
                             const latestStatus = item.healthStatus[item.healthStatus.length - 1];
-                            const date = new Date(latestStatus.date);
-                            const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+                            const formattedDate = formatDateTime(latestStatus.date);
                             return (
                               <div>
                                 {formattedDate}:
@@ -460,8 +463,7 @@ export default function OrderDetail({ onBack }) {
                 <TableBody>
                   {selectedStatuses.length > 0 ? (
                     selectedStatuses.map((status, index) => {
-                      const date = new Date(status.date);
-                      const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+                      const formattedDate = formatDateTime(status.date);
                       return (
                         <TableRow key={index}>
                           <TableCell>{formattedDate}</TableCell>
