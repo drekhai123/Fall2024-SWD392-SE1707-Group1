@@ -145,6 +145,26 @@ namespace KDOS_Web_API.Repositories
             // Save changes to the database
             await orderContext.SaveChangesAsync();
 
+            return order;   
+        }
+        public async Task<Orders?> UpdateTransportIdByOrderId(int orderId, int transportId)
+        {
+            // Find the order by ID
+            var order = await orderContext.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            // If the order doesn't exist, return null
+            if (order == null)
+            {
+                return null;
+            }
+
+            // Update the transport ID
+            order.TransportId = transportId;
+            order.UpdatedAt = DateTime.Now;
+
+            // Save changes to the database
+            await orderContext.SaveChangesAsync();
+
             return order;
         }
     }

@@ -202,6 +202,28 @@ namespace KDOS_Web_API.Controllers
             // Return the updated order with a 200 OK status
             return Ok(updatedOrderDto);
         }
+        [HttpPatch("{orderId}/transport")]
+        public async Task<IActionResult> UpdateTransportIdByOrderId([FromRoute] int orderId, [FromBody] UpdateTransportInOrderDTO request)
+        {
+            // Validate transportId
+            if (request.TransportId <= 0)
+            {
+                return BadRequest("Invalid transport ID.");
+            }
+
+            // Update the transport ID in the repository
+            var orderModel = await orderRepository.UpdateTransportIdByOrderId(orderId, request.TransportId);
+
+            // Check if the order was found and updated
+            if (orderModel == null)
+            {
+                return NotFound($"Order with ID {orderId} not found.");
+            }
+
+            // Map to the DTO to return
+            var orderDto = mapper.Map<OrdersDTO>(orderModel);
+            return Ok(orderDto);
+        }
 
     }
 }
