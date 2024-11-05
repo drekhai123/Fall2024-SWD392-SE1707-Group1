@@ -101,10 +101,8 @@ export default function OrderDetail({ onBack }) {
 
     async function fetchOrderDetailByOrderId() {
       try {
-        console.log(orderId)
         const orderbyId = await getOrderDetailsByOrderId(orderId);
         setOrderDetailById(orderbyId);
-        console.log('Order details by ID:', orderbyId);
       } catch (error) {
         console.error('Error fetching order details by ID:', error);
       }
@@ -125,19 +123,21 @@ export default function OrderDetail({ onBack }) {
   }, [orderId]);
 
   useEffect(() => {
-    async function logTransportByCustomerIdAndOrderId() {
-      if (!orderDetail) return;
-      try {
-        const customerId = orderDetail.customerId;
-        const logResult = await fetchLogTransportByCustomerId(customerId, orderId);
-        console.log('Transport log result by customer ID and order ID:', logResult);
-        setTransportLogs(logResult);
-      } catch (error) {
-        console.error('Error fetching log transport by customer ID and order ID:', error);
+    if (orderDetail) {
+      async function fetchTransportLogs() {
+        try {
+          const logs = await fetchLogTransportByCustomerId(orderDetail.customerId);
+          const filteredLogs = logs.filter(log =>
+            log.transport.orders.some(order => order.orderId === orderDetail.orderId)
+          );
+          setTransportLogs(filteredLogs);
+        } catch (error) {
+          console.error('Error fetching transport logs:', error);
+        }
       }
-    }
 
-    logTransportByCustomerIdAndOrderId();
+      fetchTransportLogs();
+    }
   }, [orderDetail]);
 
   const handleDeleteFeedback = async () => {
