@@ -97,7 +97,22 @@ namespace KDOS_Web_API.Repositories
                 return null;
             }
             return staffModel;
-        }   
+        }
+
+        public async Task<Staff?> UpdateStaffStatus(int id, Staff staff)
+        {
+            var staffModel = await staffContext.Staff.FirstOrDefaultAsync(x => x.StaffId == id);
+            if (staffModel == null)
+            {
+                return null;
+            }
+            else
+            {
+                staffModel.StaffStatus = staff.StaffStatus;
+                await staffContext.SaveChangesAsync();
+                return staffModel;
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using KDOS_Web_API.Models.Domains;
 using System.ComponentModel.DataAnnotations;
+using KDOS_Web_API.Models.Enum;
 
 namespace KDOS_Web_API.Models.DTOs
 {
@@ -9,6 +10,8 @@ namespace KDOS_Web_API.Models.DTOs
         [Key]
         public int StaffId { get; set; }
         public int AccountId { get; set; }
+        [Required]
+        public StaffStatus StaffStatus { get; set; }
         [Required]
         required public string StaffName { get; set; }
         [Required]
