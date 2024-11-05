@@ -302,21 +302,7 @@ export default function OrderDetail({ onBack }) {
                   {orderDetailById && orderDetailById.map((item) => (
                     <TableRow key={item.fishProfileId}>
                       <TableCell>{item.location}</TableCell>
-                      <TableCell>
-                        {item.time ? (
-                          new Date(item.time).toLocaleString('en-GB', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                            timeZone: 'Asia/Bangkok'
-                          })
-                        ) : (
-                          'No time available'
-                        )}
-                      </TableCell>
+                      <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

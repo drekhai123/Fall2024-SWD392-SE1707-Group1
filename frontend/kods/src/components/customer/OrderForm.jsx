@@ -20,8 +20,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     addressCustomer: "",
     emailCustomer: "",
     distance: 0,
-    nameSender: user?.customer?.customerName || "", 
-    phoneSender: user?.customer?.phoneNumber || "", 
+    nameSender: user?.customer?.customerName || "",
+    phoneSender: user?.customer?.phoneNumber || "",
     addressSender: "",
   });
 
@@ -33,7 +33,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         "Please login as a customer to use this function",
         "error"
       ).then(() => {
-        navigate("/"); 
+        navigate("/");
       });
     }
   }, [user, navigate]);
@@ -210,7 +210,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     return distance * parseFloat(unitPrice); // Chỉ trả về phí shipping cơ bản
   };
 
-  // Hàm tính phí cho cá 
+  // Hàm tính phí cho cá
   const FeedingFee = () => {
     if (!customerInfo?.distance) return 0;
 
@@ -321,8 +321,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
       if (orderResponse) {
         if (data.paymentMethod === 'CASH') {
-          // Navigate về thẳng orderhistory khi user chọn checkbox CASH
-          localStorage.removeItem("fishOrders");
+          // Navigate to order history if user selects CASH
+          sessionStorage.removeItem("fishOrders");
           setFishOrders([]);
           setCustomerInfo({
             nameCustomer: "",
@@ -334,7 +334,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           Swal.fire("Success!", "Order confirmed!", "success");
           setShowQRCode(null);
           navigate("/profile/ViewOrderHistory");
-          return; 
+          return;
         }
 
         // Call the API to create a new payment request for BANK_TRANSFER
@@ -351,6 +351,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           return; // Exit the function after redirecting
         }
 
+        // Add fish profiles to order details
         for (const fish of fishOrdersList) {
           const orderDetailsData = {
             fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
@@ -362,7 +363,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           console.log("Order details response received:", orderDetailsResponse);
         }
 
-        localStorage.removeItem("fishOrders");
+        sessionStorage.removeItem("fishOrders");
         setFishOrders([]);
         setCustomerInfo({
           nameCustomer: "",
@@ -498,6 +499,9 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       setTotalWeight(calculateTotalWeight(updatedList));
       return updatedList;
     });
+
+    // Log the array of fishProfileId
+    console.log("Selected fishProfileId array:", selectedFish);
 
     setOpenModal(false);
   };
