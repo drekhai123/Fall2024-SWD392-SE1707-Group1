@@ -12,10 +12,24 @@ import { postOrderDetailsByOrderId } from "../api/OrdersApi";
 export default function OrderForm({ onSuggestionClick, distance }) {
   const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
+
+  // Check role user
+  useEffect(() => {
+    if (user?.role !== "customer") {
+      Swal.fire(
+        "Access Denied",
+        "Please login as a customer to use this function",
+        "error"
+      ).then(() => {
+        navigate("/"); 
+      });
+    }
+  }, [user, navigate]);
+
   const [modal, setOpenModal] = useState(false);
   const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(null);
-  const [check, setCheck] = useState(false)
+  const [check, setCheck] = useState(false);
   const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
@@ -175,7 +189,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
-  // phí shipping
+  // Hàm tính phí shipping
   const calculateShippingFee = () => {
     const { distance } = customerInfo;
     var unitPrice = 0;
@@ -192,7 +206,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     return distance * parseFloat(unitPrice); // Chỉ trả về phí shipping cơ bản
   };
 
-  // Rename the function
+  // Hàm tính phí cho cá 
   const FeedingFee = () => {
     if (!customerInfo?.distance) return 0;
 
@@ -302,7 +316,24 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       console.log("Order response received:", orderResponse);
 
       if (orderResponse) {
-        // Call the API to create a new payment request
+        if (data.paymentMethod === 'CASH') {
+          // Navigate về thẳng orderhistory khi user chọn checkbox CASH
+          localStorage.removeItem("fishOrders");
+          setFishOrders([]);
+          setCustomerInfo({
+            nameCustomer: "",
+            phoneCustomer: "",
+            addressCustomer: "",
+            emailCustomer: "",
+            distance: 0,
+          });
+          Swal.fire("Success!", "Order confirmed!", "success");
+          setShowQRCode(null);
+          navigate("/profile/ViewOrderHistory");
+          return; 
+        }
+
+        // Call the API to create a new payment request for BANK_TRANSFER
         const paymentResponse = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Create', {
           orderId: orderResponse.orderId, // Use the orderId from the orderResponse
           amount: orderResponse.totalCost, // Assuming totalCost is part of the orderResponse
