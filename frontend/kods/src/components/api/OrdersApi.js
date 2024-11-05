@@ -9,6 +9,7 @@ const getOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/Order/'
 const postOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/'
 const postOrdersUrl = baseUrl+'/Orders/'
 const updateDeliveryStatusUrl = baseUrl + '/Orders/';
+const deleteOrderDetailsByIdUrl = baseUrl + '/OrderDetails/';
 
 // Function to postOrders
 export async function postOrders(orderData) {
@@ -143,3 +144,21 @@ export async function getAllOrderDetails(token) {
 //         throw error;
 //     }
 // }
+
+// Function to deleteOrderDetailsById
+export async function deleteOrderDetailsById(detailsId) {
+    const token = getJwtToken();
+    try {
+        console.log(deleteOrderDetailsById)
+        const response = await axios.delete(`${deleteOrderDetailsByIdUrl}${detailsId}`, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting order details:', error);
+        throw error;
+    }
+}
