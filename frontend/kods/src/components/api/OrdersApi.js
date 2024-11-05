@@ -1,16 +1,24 @@
 // eslint-disable-next-line
 import { baseUrl, headers, getJwtToken } from './Url';
 import axios from 'axios'
-const getOrderByCustomerIdUrl = baseUrl+'/Orders/customer/'
-const getOrderbyOrderIdUrl = baseUrl+'/Orders/'
-const getOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/Order/'
+const getOrderByCustomerIdUrl = baseUrl + '/Orders/customer/'
+const getOrderbyOrderIdUrl = baseUrl + '/Orders/'
+const getOrderDetailsByOrderIdUrl = baseUrl + '/OrderDetails/Order/'
+const deleteOrderDetailsByIdUrl = baseUrl + '/OrderDetails/'
 
 // const getAllOrderDetailsByCustomerIdURl= baseUrl+'/OrderDetails/'
-const postOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/'
-const postOrdersUrl = baseUrl+'/Orders/'
+const postOrderDetailsByOrderIdUrl = baseUrl + '/OrderDetails/'
+const postOrdersUrl = baseUrl + '/Orders/'
 const updateDeliveryStatusUrl = baseUrl + '/Orders/';
-const deleteOrderDetailsByIdUrl = baseUrl + '/OrderDetails/';
+const getAllOrdersUrl = baseUrl + '/Orders/';
 
+const getHeaders = () => {
+    const token = getJwtToken(); // Retrieve the token
+    return {
+        ...headers,
+        'Authorization': `Bearer ${token}`, // Add the token to the headers
+    };
+};
 // Function to postOrders
 export async function postOrders(orderData) {
     const token = getJwtToken();
@@ -27,7 +35,15 @@ export async function postOrders(orderData) {
         throw error;
     }
 }
-
+export async function GetAllOrders() {
+    try {
+        const response = await axios.get(`${getAllOrdersUrl}`, { headers: getHeaders() }); // Use the getHeaders function
+        return response;
+    } catch (error) {
+        console.error("Error fetching Orders:", error);
+        throw error; // Throw error to be handled in the calling function
+    }
+}
 // Function to getOrderByCustomerId
 export async function getOrderByCustomerId(customerId) {
     const token = getJwtToken();

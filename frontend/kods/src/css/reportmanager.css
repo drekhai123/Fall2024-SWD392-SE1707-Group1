@@ -1,0 +1,7 @@
+.hover-row {
+  transition: transform 0.2s; /* Smooth transition */
+}
+
+.hover-row:hover {
+  transform: scale(1.02); /* Scale up on hover */
+}
