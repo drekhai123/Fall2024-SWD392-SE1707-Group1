@@ -122,6 +122,7 @@ export default function LogPage({ userData }) {
             <div className="p-field">
               <label htmlFor="time">Time</label>
               <Calendar
+               disabled
                 id="time"
                 value={formData.time}
                 onChange={handleDateChange}

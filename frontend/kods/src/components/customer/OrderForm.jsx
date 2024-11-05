@@ -227,14 +227,16 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       !customerInfo.addressSender ||
       phoneErrors.sender ||
       phoneErrors.customer ||
-      addressErrors.sender ||
+
+      addressErrors.sender || 
       addressErrors.customer ||
-      customerInfo.distance < 1 // check khoảng cách phải <1
+      emailError ||
+      customerInfo.distance < 1
     ) {
       Swal.fire(
         "Notification",
-        customerInfo.distance < 1
-          ? "Distance is too short, please provide a more specific address !!!"
+        customerInfo.distance < 1 
+          ? "Please enter complete and valid customer/sender information"
           : "Please enter complete and valid customer/sender information",
         "error"
       );
@@ -790,7 +792,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                     <div style={{ marginTop: '10px' }}>
                       <div className="fee-line">
                         <span className="fee-label">Shipping fee:</span>
-                        <span className="fee-amount">{formatCurrency(calculateShippingFee() || 0)} VND</span>
+                        <span className="fee-amount">{formatCurrency(calculateShippingFee().toFixed(0) || 0)} VND</span>
                       </div>
                       <div className="fee-line">
                         <span className="fee-label">Feeding Fee:</span>
