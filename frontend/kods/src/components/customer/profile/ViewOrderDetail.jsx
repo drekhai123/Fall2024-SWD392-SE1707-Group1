@@ -28,6 +28,7 @@ import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
 import { Star, StarBorder } from '@mui/icons-material'; // Import star icons
 import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
 import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import {fetchLogTransportByCustomerId } from '../../api/TranslogApi'; // Import the new function
 
 // Define an enum-like object for order statuses
 const deliveryStatus = {
@@ -61,6 +62,19 @@ function getStatusColor(status) {
   }
 }
 
+function formatDateTime(date) {
+  return new Date(date).toLocaleString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Bangkok'
+  });
+}
+
 export default function OrderDetail({ onBack }) {
   const { orderId } = useParams();
   const [orderDetail, setOrderDetail] = useState(null); // State to hold general order details
@@ -73,6 +87,7 @@ export default function OrderDetail({ onBack }) {
   const [open, setOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
+  const [transportLogs, setTransportLogs] = useState([]);
 
   useEffect(() => {
     async function fetchOrderDetail() {
@@ -89,7 +104,7 @@ export default function OrderDetail({ onBack }) {
         console.log(orderId)
         const orderbyId = await getOrderDetailsByOrderId(orderId);
         setOrderDetailById(orderbyId);
-        console.log('Order details by ID:', orderbyId); // Log the orderDetailById data
+        console.log('Order details by ID:', orderbyId);
       } catch (error) {
         console.error('Error fetching order details by ID:', error);
       }
@@ -103,19 +118,36 @@ export default function OrderDetail({ onBack }) {
         console.error('Error fetching feedback:', error);
       }
     }
+
     fetchOrderDetail();
     fetchOrderDetailByOrderId();
     fetchFeedback();
   }, [orderId]);
 
+  useEffect(() => {
+    async function logTransportByCustomerIdAndOrderId() {
+      if (!orderDetail) return;
+      try {
+        const customerId = orderDetail.customerId;
+        const logResult = await fetchLogTransportByCustomerId(customerId, orderId);
+        console.log('Transport log result by customer ID and order ID:', logResult);
+        setTransportLogs(logResult);
+      } catch (error) {
+        console.error('Error fetching log transport by customer ID and order ID:', error);
+      }
+    }
+
+    logTransportByCustomerIdAndOrderId();
+  }, [orderDetail]);
+
   const handleDeleteFeedback = async () => {
     try {
-      if (feedbackData && feedbackData.feedbackId) { // Use feedbackData.feedbackId
-        await deleteFeedback(feedbackData.feedbackId); // Use feedbackData.feedbackId
+      if (feedbackData && feedbackData.feedbackId) {
+        await deleteFeedback(feedbackData.feedbackId);
         console.log(`Feedback with ID ${feedbackData.feedbackId} deleted successfully.`);
-        setFeedbackData(null); // Clear the feedback data
-        setFeedback(''); // Reset feedback input
-        setRating(0); // Reset rating
+        setFeedbackData(null);
+        setFeedback('');
+        setRating(0);
       } else {
         console.log('No feedback to delete.');
       }
@@ -126,10 +158,10 @@ export default function OrderDetail({ onBack }) {
 
   const handleFeedbackSubmit = async () => {
     try {
-      const plainTextComment = feedback.replace(/<[^>]+>/g, ''); // Strip HTML tags
+      const plainTextComment = feedback.replace(/<[^>]+>/g, '');
 
       const feedbackData = {
-        comment: plainTextComment, // Use plain text comment
+        comment: plainTextComment,
         rating,
         orderId: parseInt(orderId, 10),
         customerId: orderDetail.customerId,
@@ -145,7 +177,6 @@ export default function OrderDetail({ onBack }) {
 
       console.log('Feedback submitted successfully:', response);
 
-      // Reload the page
       window.location.reload();
     } catch (error) {
       console.error('Error submitting feedback:', error);
@@ -171,18 +202,17 @@ export default function OrderDetail({ onBack }) {
 
   const handleConfirmCancelOrder = async () => {
     try {
-      console.log('Cancelling order with ID:', orderId); // Log the orderId
-      await updateDeliveryStatus(orderId, deliveryStatus.CANCELLED); // Use the correct function and enum-like object
+      console.log('Cancelling order with ID:', orderId);
+      await updateDeliveryStatus(orderId, deliveryStatus.CANCELLED);
       console.log('Order status updated to CANCELLED');
-      toast.success('Order cancelled successfully!'); // Show success toast
+      toast.success('Order cancelled successfully!');
 
-      // Navigate to the current order detail page
       navigate(`/profile/ViewOrderHistory/${orderId}`);
     } catch (error) {
       console.error('Error cancelling order:', error);
-      toast.error('Failed to cancel order. Please try again.'); // Show error toast
+      toast.error('Failed to cancel order. Please try again.');
     } finally {
-      handleCloseDialog(); // Close the dialog after the operation
+      handleCloseDialog();
     }
   };
 
@@ -192,7 +222,7 @@ export default function OrderDetail({ onBack }) {
 
   return (
     <div className="full-page-background">
-      <ToastContainer /> {/* Add ToastContainer to render toasts */}
+      <ToastContainer />
       <div className="order-detail-container">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
           <Button
@@ -206,14 +236,13 @@ export default function OrderDetail({ onBack }) {
             <Button
               variant="contained"
               color="secondary"
-              onClick={handleOpenDialog} // Open the dialog on button click
+              onClick={handleOpenDialog}
             >
               Cancel Order
             </Button>
           )}
         </div>
 
-        {/* Confirmation Dialog */}
         <Dialog
           open={isDialogOpen}
           onClose={handleCloseDialog}
@@ -248,16 +277,7 @@ export default function OrderDetail({ onBack }) {
               <Typography><strong>Phone:</strong> {orderDetail.senderPhoneNumber}</Typography>
               <Typography>
                 <strong>Order Created: </strong>
-                {new Date(orderDetail.createdAt).toLocaleString('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  hour12: false,
-                  timeZone: 'Asia/Bangkok'
-                })}
+                {formatDateTime(orderDetail.createdAt)}
               </Typography>
             </Paper>
           </Grid>
@@ -295,6 +315,27 @@ export default function OrderDetail({ onBack }) {
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell><strong>Location</strong></TableCell>
+                    <TableCell><strong>Time</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {transportLogs.map((log, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{log.location}</TableCell>
+                      <TableCell>{formatDateTime(log.time)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+
+          <Grid item xs={12}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
                     <TableCell><strong>Fish Name</strong></TableCell>
                     <TableCell><strong>Health Status</strong></TableCell>
                     <TableCell><strong>Action</strong></TableCell>
@@ -308,8 +349,7 @@ export default function OrderDetail({ onBack }) {
                         {item.healthStatus.length > 0 ? (
                           (() => {
                             const latestStatus = item.healthStatus[item.healthStatus.length - 1];
-                            const date = new Date(latestStatus.date);
-                            const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+                            const formattedDate = formatDateTime(latestStatus.date);
                             return (
                               <div>
                                 {formattedDate}:
@@ -350,8 +390,8 @@ export default function OrderDetail({ onBack }) {
                         name="read-only"
                         value={feedbackData.rating}
                         readOnly
-                        icon={<Star fontSize="large" />} // Use larger star icon
-                        emptyIcon={<StarBorder fontSize="large" />} // Use larger empty star icon
+                        icon={<Star fontSize="large" />}
+                        emptyIcon={<StarBorder fontSize="large" />}
                       />
                     </div>
                     <Button
@@ -369,8 +409,8 @@ export default function OrderDetail({ onBack }) {
                       value={rating}
                       onChange={(event, newValue) => setRating(newValue)}
                       style={{ marginBottom: '20px' }}
-                      icon={<Star fontSize="large" />} // Use larger star icon
-                      emptyIcon={<StarBorder fontSize="large" />} // Use larger empty star icon
+                      icon={<Star fontSize="large" />}
+                      emptyIcon={<StarBorder fontSize="large" />}
                     />
                     <ReactQuill
                       value={feedback}
@@ -424,8 +464,7 @@ export default function OrderDetail({ onBack }) {
                 <TableBody>
                   {selectedStatuses.length > 0 ? (
                     selectedStatuses.map((status, index) => {
-                      const date = new Date(status.date);
-                      const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+                      const formattedDate = formatDateTime(status.date);
                       return (
                         <TableRow key={index}>
                           <TableCell>{formattedDate}</TableCell>

@@ -345,7 +345,7 @@ const SignupPage = () => {
             <input
               type="tel"
               className="phone-number-input"
-              placeholder="Enter Your Phone Number (09x-xxxxxxx or 84-xxxxxxxx)"
+              placeholder="Enter Your Phone Number (09x-xxxxxxx)"
               value={phoneNumber}
               onChange={handleChangePhoneNumber}
             />
