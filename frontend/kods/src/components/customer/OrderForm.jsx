@@ -13,6 +13,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
 
+  // Lấy customerInfo từ user
+  const [customerInfo, setCustomerInfo] = useState({
+    nameCustomer: "",
+    phoneCustomer: "",
+    addressCustomer: "",
+    emailCustomer: "",
+    distance: 0,
+    nameSender: user?.customer?.customerName || "", 
+    phoneSender: user?.customer?.phoneNumber || "", 
+    addressSender: "",
+  });
+
   // Check role user
   useEffect(() => {
     if (user?.role !== "customer") {
@@ -42,14 +54,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   const [distancePriceList, setDistancePriceList] = useState([]);
   const [weightPriceList, setWeightPriceList] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const [customerInfo, setCustomerInfo] = useState({
-    nameCustomer: "",
-    phoneCustomer: "",
-    addressCustomer: "",
-    EmailCustomer: "",
-    distance: 0,
-  });
 
   const token = getJwtToken();
 
@@ -630,20 +634,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
             <div className="sender-info">
               <h3 className="label-customer">Sender Information</h3>
               <input
-                require
                 className="input-customer"
                 type="text"
                 placeholder="Name"
-                onChange={(e) =>
-                  handleCustomerChange("nameSender", e.target.value)
-                }
+                value={customerInfo.nameSender}
+                onChange={(e) => handleCustomerChange("nameSender", e.target.value)}
               />
               <div className="phone-input-container">
                 <input
                   className={`input-customer ${phoneErrors.sender ? 'error-input' : ''}`}
                   type="text"
                   placeholder="Phone"
-                  value={customerInfo.phoneSender || ''}
+                  value={customerInfo.phoneSender}
                   onChange={(e) => handleCustomerChange("phoneSender", e.target.value)}
                 />
                 {phoneErrors.sender && <span className="error-message">{phoneErrors.sender}</span>}
@@ -654,9 +656,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                   type="text"
                   placeholder="Address"
                   value={customerInfo?.addressSender}
-                  onChange={(e) =>
-                    handleCustomerChange("addressSender", e.target.value)
-                  }
+                  onChange={(e) => handleCustomerChange("addressSender", e.target.value)}
                 />
                 <div>
                   {fromSuggestions?.length > 0 && (
@@ -664,9 +664,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
                       {fromSuggestions?.map((suggestion) => (
                         <div
                           key={suggestion.place_id}
-                          onClick={() =>
-                            handleSuggestionClick(suggestion, "addressSender")
-                          }
+                          onClick={() => handleSuggestionClick(suggestion, "addressSender")}
                           className="suggestion-item"
                         >
                           {suggestion.display_name}
