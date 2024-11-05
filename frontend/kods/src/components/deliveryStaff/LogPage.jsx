@@ -96,7 +96,7 @@ export default function LogPage({ userData }) {
     // Add form submission logic here
     console.log("Form Data:", formData);
     const response = await AddTransportLog(formData)
-    if(response.status < 300){
+    if(response.status < 400){
       toast.success("Log Added!")
     }
     else if(response.status > 400){
