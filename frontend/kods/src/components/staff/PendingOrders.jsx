@@ -73,6 +73,8 @@ export function PendingOrders() {
         showGridlines
         stripedRows
         tableStyle={{ minWidth: "50rem" }}
+        paginator
+        rows={5}
       >
         <Column field="orderId" header="Order Id" />
         <Column field="senderName" header="Customer" />
@@ -83,10 +85,11 @@ export function PendingOrders() {
           body={(rowData) => {
             return (
               <Button
-                label="Update to Processing"
+                label="Confirm Delivery"
                 severity="info"
                 className="text-black !bg-cyan-500 border border-black p-2"
                 onClick={() => updateOrderStatus(rowData)}
+                disabled={rowData.deliveryStatus !== "PENDING"}
               ></Button>
             );
           }}

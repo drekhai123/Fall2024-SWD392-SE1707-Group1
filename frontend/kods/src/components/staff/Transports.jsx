@@ -42,6 +42,8 @@ export function Transports() {
   stripedRows
   tableStyle={{ minWidth: "50rem" }}
   header={buttonCreaeTransport()}
+  paginator
+  rows={5}
 >
   <Column field="transportId" header="Transport Id"></Column>
   <Column
