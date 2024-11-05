@@ -1,21 +1,47 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
 // import {QRCodeSVG} from "qrcode.react";
 import "../../css/OrderForm.css";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
-import {getJwtToken} from "../api/Url";
-import {postOrders} from "../api/OrdersApi";
-import {postOrderDetailsByOrderId} from "../api/OrdersApi";
+import { useNavigate } from 'react-router-dom';
+import { getJwtToken } from "../api/Url";
+import { postOrders } from "../api/OrdersApi";
+import { postOrderDetailsByOrderId } from "../api/OrdersApi";
 
-export default function OrderForm({onSuggestionClick, distance}) {
+export default function OrderForm({ onSuggestionClick, distance }) {
   const navigate = useNavigate();
   const user = JSON.parse(sessionStorage.getItem("user"));
+
+  // Lấy customerInfo từ user
+  const [customerInfo, setCustomerInfo] = useState({
+    nameCustomer: "",
+    phoneCustomer: "",
+    addressCustomer: "",
+    emailCustomer: "",
+    distance: 0,
+    nameSender: user?.customer?.customerName || "",
+    phoneSender: user?.customer?.phoneNumber || "",
+    addressSender: "",
+  });
+
+  // Check role user
+  useEffect(() => {
+    if (user?.role !== "customer") {
+      Swal.fire(
+        "Access Denied",
+        "Please login as a customer to use this function",
+        "error"
+      ).then(() => {
+        navigate("/");
+      });
+    }
+  }, [user, navigate]);
+
   const [modal, setOpenModal] = useState(false);
   const [data, setData] = useState(null);
   const [showQRCode, setShowQRCode] = useState(null);
-  const [check, setCheck] = useState(false)
+  const [check, setCheck] = useState(false);
   const [fishOrdersList, setFishOrdersList] = useState([]);
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [toSuggestions, setToSuggestions] = useState([]);
@@ -29,14 +55,6 @@ export default function OrderForm({onSuggestionClick, distance}) {
   const [weightPriceList, setWeightPriceList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [customerInfo, setCustomerInfo] = useState({
-    nameCustomer: "",
-    phoneCustomer: "",
-    addressCustomer: "",
-    EmailCustomer: "",
-    distance: 0,
-  });
-
   const token = getJwtToken();
 
   // Hàm validation
@@ -47,7 +65,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   // Hàm validate sđt Việt Nam
   const validateVietnamesePhone = (phone) => {
-    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    const phoneRegex = /^0[3|5|7|8|9][0-9]{8}$/; 
     return phoneRegex.test(phone);
   };
 
@@ -134,15 +152,6 @@ export default function OrderForm({onSuggestionClick, distance}) {
   }, []);
 
   useEffect(() => {
-    if (user !== null) {
-      getFishProfile();
-    } else {
-      alert("Please login to continue...");
-      navigate("/login");
-    }
-  }, []);
-
-  useEffect(() => {
     if (user?.customer?.customerId) {
       getFishProfile();
     }
@@ -175,7 +184,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
   const getTotalAmount = () => {
     return fishOrders.reduce((acc, order) => acc + order.total, 0);
   };
-  // phí shipping
+  // Hàm tính phí shipping
   const calculateShippingFee = () => {
     const { distance } = customerInfo;
     var unitPrice = 0;
@@ -192,7 +201,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     return distance * parseFloat(unitPrice); // Chỉ trả về phí shipping cơ bản
   };
 
-  // Rename the function
+  // Hàm tính phí cho cá
   const FeedingFee = () => {
     if (!customerInfo?.distance) return 0;
 
@@ -215,11 +224,19 @@ export default function OrderForm({onSuggestionClick, distance}) {
       !customerInfo.emailCustomer ||
       !customerInfo.nameSender ||
       !customerInfo.phoneSender ||
-      !customerInfo.addressSender
+      !customerInfo.addressSender ||
+      phoneErrors.sender || 
+      phoneErrors.customer ||
+      addressErrors.sender || 
+      addressErrors.customer ||
+      emailError ||
+      customerInfo.distance < 1
     ) {
       Swal.fire(
         "Notification",
-        "Please enter complete customer/sender information",
+        customerInfo.distance < 1 
+          ? "Please enter complete and valid customer/sender information"
+          : "Please enter complete and valid customer/sender information",
         "error"
       );
       return;
@@ -271,10 +288,10 @@ export default function OrderForm({onSuggestionClick, distance}) {
         <p>Address customer: ${customerInfo.addressCustomer}</p>
         <p>Feed the fish: ${check ? 'Yes' : 'No'} ${check ? `${formatCurrency(days === 1 ? 25000 : days * 20000)} VND` : ''}</p>
         <p>Total amount: ${formatCurrency(
-          getTotalAmount() +
-          FeedingFee() +
-          parseFloat(calculateShippingFee().toFixed(0))
-        )} VND</p>
+        getTotalAmount() +
+        FeedingFee() +
+        parseFloat(calculateShippingFee().toFixed(0))
+      )} VND</p>
       `,
       icon: "info",
       showCancelButton: true,
@@ -291,13 +308,49 @@ export default function OrderForm({onSuggestionClick, distance}) {
     sessionStorage.setItem("fishOrders", JSON.stringify(fishOrders));
   }, [fishOrders]);
 
+  const [isConfirmDisabled, setIsConfirmDisabled] = useState(false);
+
   const confirmPay = async (data) => {
+    setIsConfirmDisabled(true); // Disable the button
+
     try {
       console.log("Order data being sent:", data);
       const orderResponse = await postOrders(data);
       console.log("Order response received:", orderResponse);
 
       if (orderResponse) {
+        if (data.paymentMethod === 'CASH') {
+          // Navigate to order history if user selects CASH
+          sessionStorage.removeItem("fishOrders");
+          setFishOrders([]);
+          setCustomerInfo({
+            nameCustomer: "",
+            phoneCustomer: "",
+            addressCustomer: "",
+            emailCustomer: "",
+            distance: 0,
+          });
+          Swal.fire("Success!", "Order confirmed!", "success");
+          setShowQRCode(null);
+          navigate("/profile/ViewOrderHistory");
+          return;
+        }
+
+        // Call the API to create a new payment request for BANK_TRANSFER
+        const paymentResponse = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Create', {
+          orderId: orderResponse.orderId, // Use the orderId from the orderResponse
+          amount: orderResponse.totalCost, // Assuming totalCost is part of the orderResponse
+        });
+        console.log("Payment response received:", paymentResponse.data);
+
+        // Check if the payment response contains a URL
+        if (paymentResponse.data && paymentResponse.data.paymentUrl) {
+          // Redirect to the payment URL provided in the response
+          window.location.href = paymentResponse.data.paymentUrl; // Redirect to the payment URL
+          return; // Exit the function after redirecting
+        }
+
+        // Add fish profiles to order details
         for (const fish of fishOrdersList) {
           const orderDetailsData = {
             fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
@@ -309,7 +362,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
           console.log("Order details response received:", orderDetailsResponse);
         }
 
-        localStorage.removeItem("fishOrders");
+        sessionStorage.removeItem("fishOrders");
         setFishOrders([]);
         setCustomerInfo({
           nameCustomer: "",
@@ -324,6 +377,8 @@ export default function OrderForm({onSuggestionClick, distance}) {
       }
     } catch (error) {
       console.error("Failed to create order:", error);
+    } finally {
+      setIsConfirmDisabled(false); // Re-enable the button after operation
     }
   };
 
@@ -343,8 +398,8 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   const handleCustomerChange = async (field, value) => {
     if (field === "phoneSender" || field === "phoneCustomer") {
-      // Only allow numbers
-      if (!/^\d*$/.test(value)) {
+      
+      if (!/^\d{0,10}$/.test(value)) {
         return;
       }
 
@@ -353,7 +408,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
       setPhoneErrors(prev => ({
         ...prev,
         [field === "phoneSender" ? "sender" : "customer"]:
-          value ? (isValid ? '' : 'Please enter a valid Vietnamese phone number') : ''
+          value ? (isValid ? '' : 'Please enter a valid 10-digit Vietnamese phone number') : ''
       }));
     }
 
@@ -400,18 +455,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
         }
       }, 500)
     );
-    setCustomerInfo({...customerInfo, [field]: value});
+    setCustomerInfo({ ...customerInfo, [field]: value });
   };
 
   const handleSuggestionClick = (suggestion, type) => {
     if (suggestion.lat && suggestion.lon) {
       if (type === "addressSender") {
         setMarkerPositionFrom([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressSender: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressSender: suggestion?.display_name });
         setFromSuggestions(null);
       } else if ('addressCustomer') {
         setMarkerPositionTo([suggestion.lat, suggestion.lon]);
-        setCustomerInfo({...customerInfo, addressCustomer: suggestion?.display_name});
+        setCustomerInfo({ ...customerInfo, addressCustomer: suggestion?.display_name });
         setToSuggestions(null);
       }
     }
@@ -444,6 +499,9 @@ export default function OrderForm({onSuggestionClick, distance}) {
       return updatedList;
     });
 
+    // Log the array of fishProfileId
+    console.log("Selected fishProfileId array:", selectedFish);
+
     setOpenModal(false);
   };
 
@@ -461,13 +519,13 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
   useEffect(() => {
     if (markerPositionFrom && markerPositionTo) {
-      onSuggestionClick({form: markerPositionFrom, to: markerPositionTo});
+      onSuggestionClick({ form: markerPositionFrom, to: markerPositionTo });
     }
   }, [markerPositionFrom, markerPositionTo])
 
   // Hàm của Distance
   useEffect(() => {
-    setCustomerInfo({...customerInfo, distance: distance});
+    setCustomerInfo({ ...customerInfo, distance: distance });
   }, [distance])
 
   const handleCheckboxChange = (fishProfileId) => {
@@ -482,7 +540,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
     setSelectedFish(isChecked ? data.map((fish) => fish.fishProfileId) : []);
   };
 
-  const FishTable = ({data}) => {
+  const FishTable = ({ data }) => {
     return (
       <>
         <table className="fixed-table">
@@ -515,7 +573,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </td>
                 <td>
                   {fish?.notes}
-                </td> 
+                </td>
                 <td>
                   <button
                     onClick={() => deleteRow(index)}
@@ -549,6 +607,12 @@ export default function OrderForm({onSuggestionClick, distance}) {
   // Thêm state để quản lý payment method
   const [selectedPayment, setSelectedPayment] = useState('CASH');
 
+  
+  const [addressErrors] = useState({
+    sender: '',
+    customer: ''
+  });
+
   return (
     <div className="order-form">
       <div className="con">
@@ -579,20 +643,18 @@ export default function OrderForm({onSuggestionClick, distance}) {
             <div className="sender-info">
               <h3 className="label-customer">Sender Information</h3>
               <input
-                require
                 className="input-customer"
                 type="text"
                 placeholder="Name"
-                onChange={(e) =>
-                  handleCustomerChange("nameSender", e.target.value)
-                }
+                value={customerInfo.nameSender}
+                onChange={(e) => handleCustomerChange("nameSender", e.target.value)}
               />
               <div className="phone-input-container">
                 <input
                   className={`input-customer ${phoneErrors.sender ? 'error-input' : ''}`}
                   type="text"
                   placeholder="Phone"
-                  value={customerInfo.phoneSender || ''}
+                  value={customerInfo.phoneSender}
                   onChange={(e) => handleCustomerChange("phoneSender", e.target.value)}
                 />
                 {phoneErrors.sender && <span className="error-message">{phoneErrors.sender}</span>}
@@ -603,9 +665,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   type="text"
                   placeholder="Address"
                   value={customerInfo?.addressSender}
-                  onChange={(e) =>
-                    handleCustomerChange("addressSender", e.target.value)
-                  }
+                  onChange={(e) => handleCustomerChange("addressSender", e.target.value)}
                 />
                 <div>
                   {fromSuggestions?.length > 0 && (
@@ -613,9 +673,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                       {fromSuggestions?.map((suggestion) => (
                         <div
                           key={suggestion.place_id}
-                          onClick={() =>
-                            handleSuggestionClick(suggestion, "addressSender")
-                          }
+                          onClick={() => handleSuggestionClick(suggestion, "addressSender")}
                           className="suggestion-item"
                         >
                           {suggestion.display_name}
@@ -687,7 +745,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                 </div>
               </div>
 
-              <div style={{marginTop: 10}} className="customer-info">
+              <div style={{ marginTop: 10 }} className="customer-info">
                 <h3 className="label-customer">Distance (km)</h3>
                 <input
                   className="input-customer"
@@ -708,7 +766,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                   <div>
                     <div title="If the expected delivery time is greater than 100km (2 days) ! The cost of feeding the fish will be automatically calculated at 20,000VND per day"
                       className="layout-checkbox"
-                      style={{marginBottom: '10px'}}
+                      style={{ marginBottom: '10px' }}
                     >
                       <p>
                         <strong>Estimated delivery date: {deliveryDate} ({estimatedDays} days)</strong>
@@ -720,7 +778,7 @@ export default function OrderForm({onSuggestionClick, distance}) {
                         {customerInfo?.distance <= 50 && (
                           <label>
                             <input
-                              style={{cursor: 'pointer'}}
+                              style={{ cursor: 'pointer' }}
                               type="checkbox"
                               checked={check}
                               onChange={(e) => setCheck(e.target.checked)}
@@ -731,10 +789,10 @@ export default function OrderForm({onSuggestionClick, distance}) {
                       </div>
                     </div>
 
-                    <div style={{marginTop: '10px'}}>
+                    <div style={{ marginTop: '10px' }}>
                       <div className="fee-line">
                         <span className="fee-label">Shipping fee:</span>
-                        <span className="fee-amount">{formatCurrency(calculateShippingFee() || 0)} VND</span>
+                        <span className="fee-amount">{formatCurrency(calculateShippingFee().toFixed(0) || 0)} VND</span>
                       </div>
                       <div className="fee-line">
                         <span className="fee-label">Feeding Fee:</span>
@@ -807,8 +865,9 @@ export default function OrderForm({onSuggestionClick, distance}) {
 
               <div className="layout-btn">
                 <button
-                  onClick={() => confirmPay({...showQRCode, paymentMethod: selectedPayment})}
+                  onClick={() => confirmPay({ ...showQRCode, paymentMethod: selectedPayment })}
                   className="confirm-btn"
+                  disabled={isConfirmDisabled}
                 >
                   Confirm payment
                 </button>

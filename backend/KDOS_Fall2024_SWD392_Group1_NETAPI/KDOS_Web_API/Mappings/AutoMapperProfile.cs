@@ -38,11 +38,17 @@ namespace KDOS_Web_API.Mappings
             CreateMap<CustomerAccountDTO, Customer>().ReverseMap();
             // Staff Mapping
             CreateMap<Staff, StaffDTO>().ReverseMap();
-			CreateMap<AddNewStaffDTO, Staff>().ReverseMap();
+            CreateMap<Staff, UpdateStaffStatusDTO>().ReverseMap();
+            CreateMap<AddNewStaffDTO, Staff>()
+                .ForMember(x=>x.StaffStatus,opt=>opt.Ignore())
+                .ReverseMap();
 			CreateMap<UpdateStaffDTO, Staff>().ReverseMap();
 			// Delivery Staff Mapping
 			CreateMap<DeliveryStaff, DeliveryStaffDTO>().ReverseMap();
-            CreateMap<DeliveryStaff, AddNewDeliveryStaffDTO>().ReverseMap();
+            CreateMap<DeliveryStaff, UpdateDeliveryStaffStatusDTO>().ReverseMap();
+            CreateMap<AddNewDeliveryStaffDTO, DeliveryStaff>()
+                .ForMember(x => x.StaffStatus, opt => opt.Ignore())
+                .ReverseMap();
             CreateMap<DeliveryStaff, UpdateDeliveryStaffDTO>().ReverseMap();
             //WeightPriceList
             CreateMap<WeightPriceList, WeightPriceListDTO>().ReverseMap();
@@ -54,6 +60,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<DistancePriceList, UpdateDistancePriceListDTO>().ReverseMap();
             // Transport
             CreateMap<Transport, TransportDTO>().ReverseMap();
+            CreateMap<Transport, TransportOrderIdDTO>().ReverseMap();
             CreateMap<Transport, UpdateTransportDTO>().ReverseMap();
             CreateMap<Transport,AddNewTransportDTO>()
                 .ForMember(a => a.Status, opt => opt.Ignore()).ReverseMap();
@@ -63,6 +70,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<LogTransport, LogTransportDTO>().ReverseMap();
             // Order
             CreateMap<Orders, OrdersDTO>().ReverseMap();
+            CreateMap<Orders, OrderIdOnlyDTO>().ReverseMap();
             CreateMap<Orders, UpdateOrderDTO>().ReverseMap();
             CreateMap<Orders, AddNewOrderDTO>()
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())

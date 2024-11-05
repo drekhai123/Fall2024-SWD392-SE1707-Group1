@@ -53,7 +53,6 @@ namespace KDOS_Web_API.Controllers
             if (accountModel != null)
             {
                 var customerDto = mapper.Map<CustomerAccountDTO>(customerModel);
-                var response = await mailingService.SendRegisterMail(accountModel);
                 // Follow best practice
                 return CreatedAtAction(nameof(GetCustomerById), new { customerId = customerModel.CustomerId }, customerDto); // Respone with code 201 - Created Complete                                                                                                                       //CreatedAtAction will trigger the action GetCustomerById to search for the created customer in the db using the id generate by the EF. Then convert the data to a DTO and respone that bakc to client. So we can know what dot created 
             }

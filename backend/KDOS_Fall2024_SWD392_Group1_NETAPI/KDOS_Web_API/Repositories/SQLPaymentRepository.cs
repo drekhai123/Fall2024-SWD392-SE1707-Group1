@@ -67,7 +67,7 @@ namespace KDOS_Web_API.Repositories
         }
         public async Task<Payment> GetPaymentByTransactionIdAsync(string transactionId)
         {
-            return await paymentContext.Payment.FirstOrDefaultAsync(p => p.TransactionId == transactionId);
+            return await paymentContext.Payment.Include(x=>x.Orders).FirstOrDefaultAsync(p => p.TransactionId == transactionId);
         }
 
         public async Task UpdatePaymentStatusAsync(Payment payment)

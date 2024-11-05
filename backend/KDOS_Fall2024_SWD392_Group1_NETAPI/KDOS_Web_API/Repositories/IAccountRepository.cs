@@ -20,6 +20,7 @@ namespace KDOS_Web_API.Repositories
         Task<bool> ToggleBannedStatusAsync(int id);
         Task<Account?> UpdateRole(int id, Account account);
         Task<bool> CheckExistedAccountId(int id);
+        Task<Account?> UpdateAvatar(int id, Account account);
 
     }
 }

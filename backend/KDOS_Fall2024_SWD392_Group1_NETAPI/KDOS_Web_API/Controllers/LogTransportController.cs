@@ -24,6 +24,13 @@ namespace KDOS_Web_API.Controllers
             this.logTransportRepository = logTransportRepository;
             this.mapper = mapper;
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllLogTransport()
+        {
+            var logTransportModel = await logTransportRepository.GetAllLogTransportsAsync();
+            var logTransportDto = mapper.Map<List<LogTransportDTO>>(logTransportModel); // Map to the appropriate DTO
+            return Ok(logTransportDto);
+        }
         [HttpPost]
         public async Task<IActionResult> AddNewLogTransport([FromBody] AddNewLogTransportDTO addNewTransportDTO)
         {
@@ -62,6 +69,39 @@ namespace KDOS_Web_API.Controllers
             var logTransportDto = mapper.Map<LogTransportDTO>(logTransportModel); // Map to the appropriate DTO
             return Ok(logTransportDto);
         }
+        [HttpGet]
+        [Route("customer/{customerId}")]
+        public async Task<IActionResult> GetLogTransportByCustomerId([FromRoute] int customerId)
+        {
+            var logTransportModel = await logTransportRepository.GetLogTransportByCustomerId(customerId);
+            if (logTransportModel == null)
+            {
+                return NotFound();
+            }
+            var logTransportDto = mapper.Map<List<LogTransportDTO>>(logTransportModel); // Map to the appropriate DTO
+            return Ok(logTransportDto);
+        }
+        [HttpGet]
+        [Route("transport/{transportId}")]
+        public async Task<IActionResult> GetLogTransportByTransportId([FromRoute] int transportId)
+        {
+            try
+            {
+                var logTransportModels = await logTransportRepository.GetTransportLogsByTransportId(transportId);
 
+                if (logTransportModels == null || !logTransportModels.Any())
+                {
+                    return NotFound();
+                }
+
+                var logTransportDtos = mapper.Map<List<LogTransportDTO>>(logTransportModels);
+                return Ok(logTransportDtos);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (using a logging framework)
+                return StatusCode(500, "Internal server error: "+ex);
+            }
+        }
     }
 }

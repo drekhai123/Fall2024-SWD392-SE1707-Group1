@@ -111,10 +111,10 @@ const UserProfilePage = () => {
             <Sidebar items={menuItems} userData={userData} />
           </div>
 
-          <div className="flex-1 p-8">
+          <div className="flex-1 p-1">
             {currentPath === "/profile" && (
               <FormProvider {...methodsProfile}>
-                <div className="flex-1 p-8">
+                <div className="flex-1 p-3">
                   <UserProfileForm
                     userData={userData}
                     onSubmit={onSubmitProfile}
@@ -127,7 +127,7 @@ const UserProfilePage = () => {
             {/* Form Customer */}
             {currentPath === "/profile/customer" && (
               <FormProvider {...methodsCustomer}>
-                <div className="flex-1 p-8">
+                <div className="flex-1 p-3">
                   <CustomerForm
                     customerData={customerData}
                     onSubmit={onSubmitCustomer}
@@ -139,14 +139,14 @@ const UserProfilePage = () => {
 
             {/* Form Add Fish */}
             {currentPath === "/profile/AddFish" && (
-              <div className="flex-1 p-8">
+              <div className="flex-1 p-3">
                 <AddFishForm />
               </div>
             )}
 
             {/* View Order History */}
             {currentPath === "/profile/ViewOrderHistory" && (
-              <div className="flex-1 p-8">
+              <div className="flex-1 p-3">
                 <ViewOrderHistory />
               </div>
             )}

@@ -10,6 +10,7 @@ namespace KDOS_Web_API.Repositories
         Task<DeliveryStaff?> GetDeliveryStaffById(int id);
         Task<DeliveryStaff?> AddNewDeliveryStaff(DeliveryStaff staff);
         Task<DeliveryStaff?> UpdateDeliveryStaff(int id, DeliveryStaff staff);
+        Task<DeliveryStaff?> UpdateDeliveryStaffStatus(int id, DeliveryStaff staff);
         Task<DeliveryStaff?> DeleteDeliveryStaff(int id);
         Task<DeliveryStaff?> GetDeliveryStaffByAccountId(int id);
     }

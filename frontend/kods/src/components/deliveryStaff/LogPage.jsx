@@ -12,7 +12,6 @@ import '../../css/DeliveryStaffLog.css'
 import { AddTransportLog, GetTransportByDeliveryStaffId } from '../api/TransportApi';
 import LoadingScreen from "../../utils/LoadingScreen";
 import { Divider } from "primereact/divider";
-import { Toast } from "primereact/toast";
 
 export default function LogPage({ userData }) {
   const [transport, setTransport] = useState();
@@ -21,9 +20,8 @@ export default function LogPage({ userData }) {
   const [formData, setFormData] = useState({
     time: new Date,
     location: "",
-    orderId: "",
+    transportId: "",
     customerId: "",
-    transportId:""
   });
   // Geolocation API 
   useEffect(() => {
@@ -33,7 +31,7 @@ export default function LogPage({ userData }) {
           const { latitude, longitude } = pos.coords;
           fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
             .then(response => response.json())
-            .then(data => {
+            .then(data => {console.log('Address:', data.display_name);
               setFormData({
                 ...formData,
                 location: data.display_name
@@ -42,13 +40,9 @@ export default function LogPage({ userData }) {
                 setFormData({
                   ...formData,
                   time: new Date,
-                  orderId: order.orderId,
+                  transportId: order.transportId,
                   customerId: order.customerId,
-                  transportId:order.transportId
                 })
-              }
-              else{
-                setOrder(null)
               }
               })
             .catch(error => console.error('Error:', error));
@@ -98,19 +92,16 @@ export default function LogPage({ userData }) {
     }));
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
+  const handleSubmit = async() => {
     // Add form submission logic here
     console.log("Form Data:", formData);
     const response = await AddTransportLog(formData)
-    console.log(response)
     if(response.status === 201){
-      update()
+      toast.success("Log Added!")
     }
-    else if(response.status >= 400){
-      error()
+    else if(response.status > 400){
+      toast.error("Error: ", response.status)
     }
-    setLoading(false);
   };
 
   // Pagingation
@@ -122,20 +113,9 @@ export default function LogPage({ userData }) {
   };
   //
 
-  const toast = useRef(null);
-
-  const update = () => {
-      toast.current.show({ severity: 'info', summary: 'Info', detail: 'Add Log Complete!' });
-  };
-  const error = () => {
-    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Add Log Failed!' });
-};
-
-
   return (
     <>
       {loading && <LoadingScreen />}
-      <Toast ref={toast} />
       <div className="create-entry-form">
         <Card title="Add Transport Log" className="p-shadow-5" style={{ width: "100%" }}>
           <div className="p-fluid">
@@ -148,6 +128,7 @@ export default function LogPage({ userData }) {
                 onChange={handleDateChange}
                 showTime
                 showSeconds
+                showIcon
                 placeholder="Select time"
               />
             </div>
@@ -165,13 +146,13 @@ export default function LogPage({ userData }) {
             </div>
 
             <div className="p-field">
-              <label htmlFor="orderId">Order Id</label>
+              <label htmlFor="transportId">Transport ID</label>
               <InputNumber
-                id="orderId"
-                name="orderId"
-                value={formData.orderId}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, orderId: e.value }))}
-                placeholder="Enter Order ID"
+                id="transportId"
+                name="transportId"
+                value={formData.transportId}
+                onChange={(e) => setFormData((prevData) => ({ ...prevData, transportId: e.value }))}
+                placeholder="Enter Transport ID"
                 style={{ width: "100%", padding: "10px" }}
                 disabled
               />
@@ -191,7 +172,6 @@ export default function LogPage({ userData }) {
             </div>
 
             <Button
-              disabled={order===null? true : false}
               label="Submit"
               className="p-button-info mt-3"
               onClick={handleSubmit}

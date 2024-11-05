@@ -21,13 +21,14 @@ import {
 } from '@mui/material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getOrderbyOrderId, getOrderDetailsByOrderId, updateDeliveryStatus } from '../../api/OrdersApi'; // Import the API function
+import { getOrderbyOrderId, getOrderDetailsByOrderId, updateDeliveryStatus, deleteOrderDetailsById } from '../../api/OrdersApi'; // Import the API function
 import { addFeedback } from '../../api/FeedbackApi'; // Import the API function
 import { getFeedbackByOrderId, deleteFeedback } from '../../api/FeedbackApi'; // Import the delete API function
 import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
 import { Star, StarBorder } from '@mui/icons-material'; // Import star icons
 import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
 import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import {fetchLogTransportByCustomerId } from '../../api/TranslogApi'; // Import the new function
 
 // Define an enum-like object for order statuses
 const deliveryStatus = {
@@ -61,6 +62,19 @@ function getStatusColor(status) {
   }
 }
 
+function formatDateTime(date) {
+  return new Date(date).toLocaleString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Bangkok'
+  });
+}
+
 export default function OrderDetail({ onBack }) {
   const { orderId } = useParams();
   const [orderDetail, setOrderDetail] = useState(null); // State to hold general order details
@@ -73,6 +87,7 @@ export default function OrderDetail({ onBack }) {
   const [open, setOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
+  const [transportLogs, setTransportLogs] = useState([]);
 
   useEffect(() => {
     async function fetchOrderDetail() {
@@ -88,7 +103,6 @@ export default function OrderDetail({ onBack }) {
       try {
         const orderbyId = await getOrderDetailsByOrderId(orderId);
         setOrderDetailById(orderbyId);
-        console.log('Order details by ID:', orderbyId); // Log the orderDetailById data
       } catch (error) {
         console.error('Error fetching order details by ID:', error);
       }
@@ -102,19 +116,38 @@ export default function OrderDetail({ onBack }) {
         console.error('Error fetching feedback:', error);
       }
     }
+
     fetchOrderDetail();
     fetchOrderDetailByOrderId();
     fetchFeedback();
   }, [orderId]);
 
+  useEffect(() => {
+    if (orderDetail) {
+      async function fetchTransportLogs() {
+        try {
+          const logs = await fetchLogTransportByCustomerId(orderDetail.customerId);
+          const filteredLogs = logs.filter(log =>
+            log.transport.orders.some(order => order.orderId === orderDetail.orderId)
+          );
+          setTransportLogs(filteredLogs);
+        } catch (error) {
+          console.error('Error fetching transport logs:', error);
+        }
+      }
+
+      fetchTransportLogs();
+    }
+  }, [orderDetail]);
+
   const handleDeleteFeedback = async () => {
     try {
-      if (feedbackData && feedbackData.feedbackId) { // Use feedbackData.feedbackId
-        await deleteFeedback(feedbackData.feedbackId); // Use feedbackData.feedbackId
+      if (feedbackData && feedbackData.feedbackId) {
+        await deleteFeedback(feedbackData.feedbackId);
         console.log(`Feedback with ID ${feedbackData.feedbackId} deleted successfully.`);
-        setFeedbackData(null); // Clear the feedback data
-        setFeedback(''); // Reset feedback input
-        setRating(0); // Reset rating
+        setFeedbackData(null);
+        setFeedback('');
+        setRating(0);
       } else {
         console.log('No feedback to delete.');
       }
@@ -125,10 +158,10 @@ export default function OrderDetail({ onBack }) {
 
   const handleFeedbackSubmit = async () => {
     try {
-      const plainTextComment = feedback.replace(/<[^>]+>/g, ''); // Strip HTML tags
+      const plainTextComment = feedback.replace(/<[^>]+>/g, '');
 
       const feedbackData = {
-        comment: plainTextComment, // Use plain text comment
+        comment: plainTextComment,
         rating,
         orderId: parseInt(orderId, 10),
         customerId: orderDetail.customerId,
@@ -144,7 +177,6 @@ export default function OrderDetail({ onBack }) {
 
       console.log('Feedback submitted successfully:', response);
 
-      // Reload the page
       window.location.reload();
     } catch (error) {
       console.error('Error submitting feedback:', error);
@@ -168,20 +200,31 @@ export default function OrderDetail({ onBack }) {
     setIsDialogOpen(false);
   };
 
-  const handleConfirmCancelOrder = async () => {
+  const handleDeleteAndUpdateStatus = async (detail) => {
     try {
-      console.log('Cancelling order with ID:', orderId); // Log the orderId
-      await updateDeliveryStatus(orderId, deliveryStatus.CANCELLED); // Use the correct function and enum-like object
-      console.log('Order status updated to CANCELLED');
-      toast.success('Order cancelled successfully!'); // Show success toast
 
-      // Navigate to the current order detail page
-      navigate(`/profile/ViewOrderHistory/${orderId}`);
+      // First, delete the fish order details
+      const orderDetailsId = orderDetailById[0]?.orderDetailsId;
+
+      if (orderDetailsId) {
+        try {
+          await deleteOrderDetailsById(orderDetailsId);
+          console.log(`Order detail with ID ${orderDetailsId} deleted successfully.`);
+        } catch (error) {
+          console.error('Error deleting order detail:', error);
+        }
+      } else {
+        console.error('OrderDetailsId not found');
+      }
+
+      // Then, update the delivery status
+      await updateDeliveryStatus(detail.orderId, deliveryStatus.CANCELLED);
+      console.log('Order status updated to CANCELLED');
+      toast.success('Order cancelled successfully!');
+      navigate(`/profile/ViewOrderHistory/${detail.orderId}`);
     } catch (error) {
-      console.error('Error cancelling order:', error);
-      toast.error('Failed to cancel order. Please try again.'); // Show error toast
-    } finally {
-      handleCloseDialog(); // Close the dialog after the operation
+      console.error('Error processing order:', error);
+      toast.error('Failed to process order. Please try again.');
     }
   };
 
@@ -191,7 +234,7 @@ export default function OrderDetail({ onBack }) {
 
   return (
     <div className="full-page-background">
-      <ToastContainer /> {/* Add ToastContainer to render toasts */}
+      <ToastContainer />
       <div className="order-detail-container">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
           <Button
@@ -205,14 +248,13 @@ export default function OrderDetail({ onBack }) {
             <Button
               variant="contained"
               color="secondary"
-              onClick={handleOpenDialog} // Open the dialog on button click
+              onClick={handleOpenDialog}
             >
               Cancel Order
             </Button>
           )}
         </div>
 
-        {/* Confirmation Dialog */}
         <Dialog
           open={isDialogOpen}
           onClose={handleCloseDialog}
@@ -229,7 +271,7 @@ export default function OrderDetail({ onBack }) {
             <Button onClick={handleCloseDialog} color="primary">
               No
             </Button>
-            <Button onClick={handleConfirmCancelOrder} color="secondary" autoFocus>
+            <Button onClick={() => handleDeleteAndUpdateStatus(orderDetail)} color="secondary" autoFocus>
               Yes
             </Button>
           </DialogActions>
@@ -247,16 +289,7 @@ export default function OrderDetail({ onBack }) {
               <Typography><strong>Phone:</strong> {orderDetail.senderPhoneNumber}</Typography>
               <Typography>
                 <strong>Order Created: </strong>
-                {new Date(orderDetail.createdAt).toLocaleString('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  hour12: false,
-                  timeZone: 'Asia/Bangkok'
-                })}
+                {formatDateTime(orderDetail.createdAt)}
               </Typography>
             </Paper>
           </Grid>
@@ -294,6 +327,27 @@ export default function OrderDetail({ onBack }) {
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell><strong>Location</strong></TableCell>
+                    <TableCell><strong>Time</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {transportLogs.map((log, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{log.location}</TableCell>
+                      <TableCell>{formatDateTime(log.time)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+
+          <Grid item xs={12}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
                     <TableCell><strong>Fish Name</strong></TableCell>
                     <TableCell><strong>Health Status</strong></TableCell>
                     <TableCell><strong>Action</strong></TableCell>
@@ -307,8 +361,7 @@ export default function OrderDetail({ onBack }) {
                         {item.healthStatus.length > 0 ? (
                           (() => {
                             const latestStatus = item.healthStatus[item.healthStatus.length - 1];
-                            const date = new Date(latestStatus.date);
-                            const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+                            const formattedDate = formatDateTime(latestStatus.date);
                             return (
                               <div>
                                 {formattedDate}:
@@ -349,8 +402,8 @@ export default function OrderDetail({ onBack }) {
                         name="read-only"
                         value={feedbackData.rating}
                         readOnly
-                        icon={<Star fontSize="large" />} // Use larger star icon
-                        emptyIcon={<StarBorder fontSize="large" />} // Use larger empty star icon
+                        icon={<Star fontSize="large" />}
+                        emptyIcon={<StarBorder fontSize="large" />}
                       />
                     </div>
                     <Button
@@ -368,8 +421,8 @@ export default function OrderDetail({ onBack }) {
                       value={rating}
                       onChange={(event, newValue) => setRating(newValue)}
                       style={{ marginBottom: '20px' }}
-                      icon={<Star fontSize="large" />} // Use larger star icon
-                      emptyIcon={<StarBorder fontSize="large" />} // Use larger empty star icon
+                      icon={<Star fontSize="large" />}
+                      emptyIcon={<StarBorder fontSize="large" />}
                     />
                     <ReactQuill
                       value={feedback}
@@ -423,8 +476,7 @@ export default function OrderDetail({ onBack }) {
                 <TableBody>
                   {selectedStatuses.length > 0 ? (
                     selectedStatuses.map((status, index) => {
-                      const date = new Date(status.date);
-                      const formattedDate = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+                      const formattedDate = formatDateTime(status.date);
                       return (
                         <TableRow key={index}>
                           <TableCell>{formattedDate}</TableCell>

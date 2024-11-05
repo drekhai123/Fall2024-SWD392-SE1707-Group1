@@ -130,6 +130,9 @@ namespace KDOS_Web_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("StaffStatus")
+                        .HasColumnType("int");
+
                     b.HasKey("StaffId");
 
                     b.HasIndex("AccountId")
@@ -501,6 +504,9 @@ namespace KDOS_Web_API.Migrations
                     b.Property<string>("StaffName")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("StaffStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("StaffId");
 

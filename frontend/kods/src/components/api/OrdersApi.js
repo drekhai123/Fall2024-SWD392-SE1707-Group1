@@ -4,10 +4,12 @@ import axios from 'axios'
 const getOrderByCustomerIdUrl = baseUrl+'/Orders/customer/'
 const getOrderbyOrderIdUrl = baseUrl+'/Orders/'
 const getOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/Order/'
+
 // const getAllOrderDetailsByCustomerIdURl= baseUrl+'/OrderDetails/'
 const postOrderDetailsByOrderIdUrl = baseUrl+'/OrderDetails/'
 const postOrdersUrl = baseUrl+'/Orders/'
 const updateDeliveryStatusUrl = baseUrl + '/Orders/';
+const deleteOrderDetailsByIdUrl = baseUrl + '/OrderDetails/';
 
 // Function to postOrders
 export async function postOrders(orderData) {
@@ -112,6 +114,21 @@ export async function updateDeliveryStatus(orderId, deliveryStatus) {
     }
 }
 
+export async function getAllOrderDetails(token) {
+    try {
+        const response = await axios.get(`${baseUrl}/OrderDetails`, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw error;
+    }
+}
+
 // export async function getAllOrderDetailsByCustomerId(fishProfileId) {
 //     const token = getJwtToken();
 //     try {
@@ -127,3 +144,21 @@ export async function updateDeliveryStatus(orderId, deliveryStatus) {
 //         throw error;
 //     }
 // }
+
+// Function to deleteOrderDetailsById
+export async function deleteOrderDetailsById(detailsId) {
+    const token = getJwtToken();
+    try {
+        console.log(deleteOrderDetailsById)
+        const response = await axios.delete(`${deleteOrderDetailsByIdUrl}${detailsId}`, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting order details:', error);
+        throw error;
+    }
+}

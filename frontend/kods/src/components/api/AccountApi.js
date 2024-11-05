@@ -4,6 +4,7 @@ import axios from "axios";
 const baseAccount = baseUrl + "/Account";
 const localhostAccount = localhostUrl + "/Account";
 const verifyAccount = baseAccount + "/AddVerification";
+const updateAvatarURL = baseUrl + '/Account/avatar/' // URL for updating avata
 
 // Function to get headers with token
 const getHeaders = () => {
@@ -101,7 +102,7 @@ export async function AddNewDeliveryStaff(data) {
 
 export async function VerifyAccount(id) {
   try {
-    const response = await axios.post(`${verifyAccount}/${id}`, headers);
+    const response = await axios.post(`${verifyAccount}/${id}`, {}, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.error("Error Sending Verification Account:", error);
@@ -111,7 +112,7 @@ export async function VerifyAccount(id) {
 
 export async function UpdateAccount(id, Account) {
   try {
-    const response = await axios.put(`${baseAccount}/${id}`, Account, headers);
+    const response = await axios.put(`${baseAccount}/${id}`, Account, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.error("Error updating Account:", error);
@@ -121,11 +122,27 @@ export async function UpdateAccount(id, Account) {
 
 export async function DeleteAccount(id) {
   try {
-    const response = await axios.delete(`${baseAccount}/${id}`, headers);
+    const response = await axios.delete(`${baseAccount}/${id}`, { headers: getHeaders() });
     return response;
   } catch (error) {
     console.error("Error deleting Account:", error);
     throw error;
+  }
+}
+
+export async function updateAvatar(accountId, avatar) {
+  const token = getJwtToken();
+  try {
+    const response = await axios.put(updateAvatarURL + accountId, { avatar }, {
+      headers: {
+        ...headers,
+        'Authorization': `Bearer ${token}`
+      }
+    }); // Send PUT request with avatar data
+    return response.data; // Return the updated avatar data
+  } catch (error) {
+    console.error('Error updating avatar:', error);
+    throw error; // Rethrow the error for handling in the calling function
   }
 }
 

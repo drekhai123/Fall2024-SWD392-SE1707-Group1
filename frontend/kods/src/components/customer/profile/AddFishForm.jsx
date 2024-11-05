@@ -28,6 +28,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingScreen from '../../../utils/LoadingScreen';
+import { getAllOrderDetails } from '../../api/OrdersApi';
 
 
 
@@ -51,6 +52,7 @@ export default function AddFish() {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [certificate, setCertificate] = useState(''); // New state for certificate
   const [weightError, setWeightError] = useState(false); // New state for weight error
+  const [orderDetails, setOrderDetails] = useState([]); // New state for order details
 
   const user = JSON.parse(sessionStorage.getItem('user')); // Lấy đối tượng user từ Local Storage
   const customerId = user?.customer?.customerId; // Lấy accountId
@@ -72,8 +74,21 @@ export default function AddFish() {
       }
       setLoadingScreen(false)
     };
+
+    // Fetch all order details
+    const fetchOrderDetails = async () => {
+      try {
+        const token = sessionStorage.getItem('token'); // Retrieve the token from session storage
+        const response = await getAllOrderDetails(token); // Pass the token to the function
+        setOrderDetails(response);
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+      }
+    };
+
     getSpeciesList();
     fetchFishes();
+    fetchOrderDetails();
   }, [refresh, customerId]);
   // Search Feature
   // eslint-disable-next-line
@@ -204,22 +219,60 @@ export default function AddFish() {
     setLoadingScreen(false)
   };
 
+  let toastCooldown = false; // Cooldown flag
+
+  const showToast = (message, type = "error") => {
+    if (!toastCooldown) {
+      toast[type](message, {
+        autoClose: 5000 // Duration in milliseconds (5 seconds)
+      });
+      toastCooldown = true;
+      setTimeout(() => {
+        toastCooldown = false;
+      }, 3000); // Cooldown period of 3 seconds
+    }
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
+    if (toastCooldown) return; // Prevent spamming
+
     // Validation: Check if all required fields are filled
-    if (!name || !weight || !gender || !selectedFishType || !image) {
-      toast.error("Please fill out all required fields.", {
-        autoClose: 2000 // Duration in milliseconds (10 seconds)
-      });
+    if (!name) {
+      showToast("Please enter a name.");
+      return;
+    }
+
+    if (!weight) {
+      showToast("Please enter a weight.");
+      return;
+    }
+
+    if (!gender) {
+      showToast("Please select a gender.");
+      return;
+    }
+
+    if (!selectedFishType) {
+      showToast("Please select a fish type.");
+      return;
+    }
+
+    if (!image) {
+      showToast("Please upload an image.");
+      return;
+    }
+
+    // Check if notes are empty
+    if (!notes) {
+      showToast("Please add some notes.");
       return;
     }
 
     // Check if certificate is uploaded
     if (!certificate) {
-      toast.error("Please upload a certificate.", {
-        autoClose: 2000 // Duration in milliseconds (10 seconds)
-      });
+      showToast("Please upload a certificate.");
       return;
     }
 
@@ -231,20 +284,33 @@ export default function AddFish() {
   };
 
   const handleDeleteConfirm = async () => {
+    if (toastCooldown) return; // Exit if cooldown is active
+
     if (selectedFish) {
+      const fishProfileId = selectedFish.fishProfileId;
+      if (!fishProfileId) {
+        console.error('Fish profile ID does not exist.');
+        showToast("Fish profile ID does not exist.");
+        return;
+      }
+
+      console.log('Deleting fish profile with ID:', fishProfileId);
+
       try {
-        await deleteFishProfile(selectedFish.fishProfileId); // Call the actual API to delete the fish profile
-        toast.error("Delete fish success", {
-          autoClose: 2000 // Duration in milliseconds (2 seconds)
-        });
+        await deleteFishProfile(fishProfileId);
+        showToast("Delete fish success", "success");
         setIsDeleteDialogOpen(false);
       } catch (error) {
-        console.error('Error deleting fish:', error);
+        if (error.response && error.response.status === 404) {
+          showToast("Fish is part of an order and cannot be deleted.");
+        } else {
+          console.error('Error deleting fish:', error);
+          showToast("An error occurred while deleting the fish.");
+        }
       }
     }
-    setRefresh(!refresh)
+    setRefresh(!refresh);
   };
-
 
   const handleImageUpload = (e) => {
     if (e.target.files[0]) {
@@ -320,7 +386,7 @@ export default function AddFish() {
     const value = e.target.value;
 
     // Ensure the value is a positive number
-    if (isNaN(value) || value <= 0) {
+    if (isNaN(value) || value < 0) {
       setWeightError(true);
     } else {
       setWeightError(false);
@@ -358,25 +424,36 @@ export default function AddFish() {
         Add Fish
       </Button>
       <List>
-        {error ?
-          <ListItem><Typography variant="h4" fontWeight={"bold"} color='warning'>No Fish Found With That Search</Typography></ListItem>
-          :
-          paginatedFishes.map((fish, index) => (
-            <ListItem key={index}>
-              <Avatar src={fish.image} alt={fish.name} style={{ marginRight: "3%" }} />
-              <ListItemText primary={fish.name} />
-              <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
-                <InfoIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="edit" onClick={() => handleEditFish(fish)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
-                <DeleteIcon />
-              </IconButton>
-            </ListItem>
-          ))
-        }
+        {error ? (
+          <ListItem>
+            <Typography variant="h4" fontWeight={"bold"} color="warning">
+              No Fish Found With That Search
+            </Typography>
+          </ListItem>
+        ) : (
+          paginatedFishes.map((fish, index) => {
+            const isFishInOrder = orderDetails.some(order => order.fishProfileId === fish.fishProfileId);
+            return (
+              <ListItem key={index}>
+                <Avatar src={fish.image} alt={fish.name} style={{ marginRight: "3%" }} />
+                <ListItemText primary={fish.name} />
+                <IconButton edge="end" aria-label="view" onClick={() => handleViewDetail(fish)}>
+                  <InfoIcon />
+                </IconButton>
+                {!isFishInOrder && ( // Check if fish is not part of an order
+                  <>
+                    <IconButton edge="end" aria-label="edit" onClick={() => handleEditFish(fish)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFish(fish)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
+                )}
+              </ListItem>
+            );
+          })
+        )}
       </List>
       <div className='pagination-footer' style={{
         position: 'relative',
@@ -389,7 +466,7 @@ export default function AddFish() {
               page={currentPage}
               onChange={handlePageChange}
               color="primary"
-            /> 
+            />
         </div>
           }
       </div>
@@ -419,6 +496,7 @@ export default function AddFish() {
               error={weightError}
               helperText={weightError ? "Please enter a valid number greater than 0" : ""}
               required
+              step="0.01"
             />
             <FormControl required aria-selected fullWidth margin="dense">
               <InputLabel style={{ backgroundColor: "white", marginRight: "5px", marginLeft: "5px" }} required id="fish-type-label">Species</InputLabel>
@@ -538,11 +616,11 @@ export default function AddFish() {
         <DialogContent>
           {selectedFish && (
             <div>
-              <Typography variant="h6">{selectedFish.name}</Typography>
+              <Typography variant="h6"><strong>{selectedFish.name}</strong></Typography>
               <Avatar
                 src={selectedFish.image}
                 alt={selectedFish.name}
-                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                sx={{ width: 150, height: 100, cursor: 'pointer', marginTop: 2, borderRadius: 0 }}
                 onClick={handleImageZoomOpen}
               />
               <Typography variant="body1"><strong>Weight:</strong> {selectedFish.weight} kg</Typography>

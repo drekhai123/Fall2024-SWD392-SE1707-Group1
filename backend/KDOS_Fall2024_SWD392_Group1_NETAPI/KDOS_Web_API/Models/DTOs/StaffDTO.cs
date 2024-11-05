@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using KDOS_Web_API.Models.Domains;
+using KDOS_Web_API.Models.Enum;
 
 namespace KDOS_Web_API.Models.DTOs
 {
@@ -12,6 +13,8 @@ namespace KDOS_Web_API.Models.DTOs
         [Required]
         required public int AccountId { get; set; }
         [Required]
+        public StaffStatus StaffStatus { get; set; }
+        [Required]
         required public string StaffName { get; set; }
         [Required]
         required public DateOnly Dob { get; set; }
@@ -19,7 +22,7 @@ namespace KDOS_Web_API.Models.DTOs
         required public string Gender { get; set; }
         [Required]
         required public string PhoneNumber { get; set; }
-        public AccountDTO Account { get; set; } = null!;
+        public AccountCustomerViewDTO Account { get; set; } = null!;
     }
 }
 

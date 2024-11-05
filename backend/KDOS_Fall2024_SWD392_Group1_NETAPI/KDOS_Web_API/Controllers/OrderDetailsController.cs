@@ -48,7 +48,7 @@ namespace KDOS_Web_API.Controllers
             {
                 return NotFound();
             }
-            var detailsDto = mapper.Map<KoiFishDTO>(detailsModel);
+            var detailsDto = mapper.Map<OrderDetailsDTO>(detailsModel);
             return Ok(detailsDto);
         }
         [HttpGet]

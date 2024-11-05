@@ -23,6 +23,6 @@ namespace KDOS_Web_API.Models.DTOs
         public required DateTime UpdatedAt { get; set; }
         public int DistancePriceListId { get; set; }
         public int WeightPriceListId { get; set; }
-        public required int TransportId { get; set; }
+        public int TransportId { get; set; }
     }
 }

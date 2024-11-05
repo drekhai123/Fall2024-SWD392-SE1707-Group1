@@ -249,36 +249,104 @@
   }
 
   .popup {
-    z-index: 1000 !important;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: #3c3737d0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other elements */
   }
 
   .container-popup {
-    background-color: white;
+    background-color: #ffffff05;
     border-radius: 8px;
-    padding: 40px;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
   }
 
   .title-popup {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: #007bff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
     text-align: center;
+    color: #333;
   }
 
-  .layout-popup {
+  .layout-checkbox {
+    margin-bottom: 20px;
+  }
+
+  .fish-item {
     display: flex;
     align-items: center;
-    gap: 0 32px;
+    margin-bottom: 10px;
+  }
+
+  .label-checkbox-0, .label-checkbox {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .layout-select {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    background-color: #e4eeed;
+    border-radius: 4px;
+    margin-left: 10px;
+  }
+
+  .label {
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+  }
+
+  .layout-btn {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .confirm-btn, .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+  }
+
+  .confirm-btn {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  .confirm-btn:hover {
+    background-color: #45a049;
+  }
+
+  .cancel-btn {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .cancel-btn:hover {
+    background-color: #e53935;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   .layout-qrcode {
@@ -659,4 +727,35 @@
   margin-top: -10px;
   margin-bottom: 8px;
   font-size: 20px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #1039dd;
+  border-radius: 48%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  background-color: white;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #000000;
+  border-color: #000000;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
 }

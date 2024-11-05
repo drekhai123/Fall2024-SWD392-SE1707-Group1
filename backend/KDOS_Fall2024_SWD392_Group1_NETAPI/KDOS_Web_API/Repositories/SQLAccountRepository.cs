@@ -59,8 +59,9 @@ namespace KDOS_Web_API.Repositories
         public async Task<Account?> UpdateAccount(int id, Account account)
         {
             var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
-            var emailorUsernameExist = await accountContext.Account.FirstOrDefaultAsync(x => x.Email == account.Email|| x.UserName == account.UserName);
-            if (accountExist == null || emailorUsernameExist!=null)
+            var emailExist = await accountContext.Account.FirstOrDefaultAsync(x => x.Email == account.Email|| x.UserName == account.UserName);
+            var usernameExist = await accountContext.Account.FirstOrDefaultAsync(x =>x.UserName == account.UserName);
+            if (accountExist == null || emailExist != null || usernameExist!=null)
             {
                 return null;
             }
@@ -68,6 +69,21 @@ namespace KDOS_Web_API.Repositories
             {
                 accountExist.UserName = account.UserName;
                 accountExist.Email = account.Email;
+                await accountContext.SaveChangesAsync();
+                return accountExist;
+            }
+        }
+
+        public async Task<Account?> UpdateAvatar(int id, Account account)
+        {
+            var accountExist = await accountContext.Account.FirstOrDefaultAsync(x => x.AccountId == id);
+            if (accountExist == null)
+            {
+                return null;
+            }
+            else
+            {
+                accountExist.Avatar = account.Avatar;
                 await accountContext.SaveChangesAsync();
                 return accountExist;
             }

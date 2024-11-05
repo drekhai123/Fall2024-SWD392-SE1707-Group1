@@ -17,7 +17,7 @@ namespace KDOS_Web_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class StaffController : ControllerBase
     {
         private readonly KDOSDbContext staffContext;
@@ -40,19 +40,20 @@ namespace KDOS_Web_API.Controllers
             return Ok(staffDto);
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewStaff( AddNewStaffDTO addNewStaffDTO)
+        public async Task<IActionResult> AddNewStaff(AddNewStaffDTO addNewStaffDTO)
         {
 
             var staffModel = mapper.Map<Staff>(addNewStaffDTO);
-             staffModel = await staffRepository.AddNewStaff(staffModel);
-            if(staffModel == null)
+            staffModel.StaffStatus = Models.Enum.StaffStatus.FREE;
+            staffModel = await staffRepository.AddNewStaff(staffModel);
+            if (staffModel == null)
             {
                 return NotFound();
             }
             // Map model back to DTO and send to Client
             var staffDto = mapper.Map<StaffDTO>(staffModel);
             // Best Practice
-            return CreatedAtAction(nameof(GetStaffById),new { staffId = staffModel.StaffId }, staffDto);
+            return CreatedAtAction(nameof(GetStaffById), new { staffId = staffModel.StaffId }, staffDto);
             // nameof() run the fucntion inside (GetStaffById) => return the new staff id, and return the properties of the staff we added
         }
         [Authorize]
@@ -80,7 +81,7 @@ namespace KDOS_Web_API.Controllers
         {
             //Find StaffModel in db
             var staffModel = await staffRepository.GetStaffById(staffId);
-            if(staffModel == null)
+            if (staffModel == null)
             {
                 return NotFound();
             }
@@ -99,6 +100,25 @@ namespace KDOS_Web_API.Controllers
             //Find StaffModel in db
             var staffModel = mapper.Map<Staff>(updateStaffDTO);
             staffModel = await staffRepository.UpdateStaff(staffId, staffModel);
+            if (staffModel == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                //Turn Model back to DTO to send to Client
+                var staffDto = mapper.Map<StaffDTO>(staffModel);
+                return Ok(staffDto);
+            }
+        }
+        [Authorize]
+        [HttpPut]
+        [Route("Status/{staffId}")]
+        public async Task<IActionResult> UpdateStaffStatus([FromRoute] int staffId, [FromBody] UpdateStaffStatusDTO updateStaffDTO)
+        {
+            //Find StaffModel in db
+            var staffModel = mapper.Map<Staff>(updateStaffDTO);
+            staffModel = await staffRepository.UpdateStaffStatus(staffId, staffModel);
             if (staffModel == null)
             {
                 return NotFound();
@@ -145,7 +165,7 @@ namespace KDOS_Web_API.Controllers
                 var staffDto = mapper.Map<StaffDTO>(staffModel);
                 return Ok(staffDto);
             }
-        }   
+        }
     }
 }
 

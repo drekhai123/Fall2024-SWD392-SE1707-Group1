@@ -13,98 +13,30 @@ export const CheckHealStatusDialog = ({
   staffId
 }) => {
   const token = getJwtToken()
-  const [staffHealthStatus, setStaffHealthStatus] = useState([]);
 
-  useEffect(() => {
-    const fetchHealthStatus = async () => {
-      try {
-
-        const [healthStatusRes, orderDetailsRes, deliveriesRes, transportsRes] = await Promise.all([
-          axios.get(`${baseUrl}/HealthStatus`, {
-            headers: {
-              ...headers,
-              'Authorization': `Bearer ${token}`
-            }
-          }),
-          axios.get(`${baseUrl}/OrderDetails`, {
-            headers: {
-              ...headers,
-              'Authorization': `Bearer ${token}`
-            }
-          }),
-          axios.get(`${baseUrl}/Orders`, {
-            headers: {
-              ...headers,
-              'Authorization': `Bearer ${token}`
-            }
-          }),
-          axios.get(`${baseUrl}/Transport`, {
-            headers: {
-              ...headers,
-              'Authorization': `Bearer ${token}`
-            }
-          })
-        ]);
-
-        const healthStatus = healthStatusRes.data;
-        const orderDetails = orderDetailsRes.data;
-        const deliveries = deliveriesRes.data;
-        const transports = transportsRes.data;
-
-        // Build a map of OrderDetailsId to deliveryId
-        const orderDetailsToDeliveryMap = {};
-        orderDetails.forEach(detail => {
-          orderDetailsToDeliveryMap[detail.orderDetailsId] = detail.deliveryId;
-        });
-
-        // Build a map of deliveryId to transportId
-        const deliveryToTransportMap = {};
-        deliveries.forEach(delivery => {
-          deliveryToTransportMap[delivery.deliveryId] = delivery.transportId;
-        });
-
-        // Build a map of transportId to staffId
-        const transportToStaffMap = {};
-        transports.forEach(transport => {
-          transportToStaffMap[transport.transportId] = transport.staffId;
-        });
-
-        // Filter healthStatus entries where staffId matches targetStaffId
-        const filteredHealthStatus = healthStatus.filter(status => {
-          const deliveryId = orderDetailsToDeliveryMap[status.orderDetailsId];
-          const transportId = deliveryToTransportMap[deliveryId];
-          return transportToStaffMap[transportId] === staffId;
-        });
-
-        setStaffHealthStatus(filteredHealthStatus);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
-    };
-
-    fetchHealthStatus();
-  }, [token, staffId]);
-  console.log(staffHealthStatus)
+  const healthStatusData = axios.get(`${baseUrl}/HealthStatus`, {
+    headers: {
+      ...headers,
+      'Authorization': `Bearer ${token}`
+    }
+  });  
+  console.log(healthStatusData.data)
   return (
     <Dialog
-      header="Health check"
+      header="Assign Delivery Staff"
       visible={visible}
-      style={{ width: "70vw" }}
+      style={{ width: "30vw" }}
       onHide={onHide}
     >
-      <DataTable
+    <DataTable
         value={[]}
         showGridlines
         stripedRows
         tableStyle={{ minWidth: "50rem" }}
       >
-        <Column field="healthStatusId" header="Id"></Column>
-        <Column field="date" header="Date"></Column>
-        <Column field="notes" header="Note"></Column>
-        <Column field="oxygenLevel" header="Oxygen Level"></Column>
-        <Column field="phLevel" header="Php Level"></Column>
-        <Column field="status" header="Status"></Column>
-        <Column field="temperature" header="Temperatuer"></Column>
+        <Column field="customerId" header="Id"></Column>
+        <Column field="customerName" header="Name"></Column>
+        <Column field="account.email" header="Email"></Column>
         <Column
           field="id"
           header="Action"
@@ -114,7 +46,7 @@ export const CheckHealStatusDialog = ({
                 label="View Orders"
                 severity="info"
                 className="text-black !bg-cyan-500 border border-black p-2"
-              // onClick={() => confirmOrder(rowData)}
+                // onClick={() => confirmOrder(rowData)}
               ></Button>
             );
           }}

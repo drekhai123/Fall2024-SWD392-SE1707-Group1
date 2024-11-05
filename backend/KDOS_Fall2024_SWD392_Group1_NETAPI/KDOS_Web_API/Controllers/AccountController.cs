@@ -230,6 +230,7 @@ namespace KDOS_Web_API.Controllers
                     }
                     else  // Account Verification Complete! Redirect To Login Page
                     {
+                        var response = await mailingService.SendRegisterMail(accountModel);
                         string redirectUrl = "https://kdos.vercel.app/login";
                         return Redirect(redirectUrl);
                     }
@@ -350,7 +351,7 @@ namespace KDOS_Web_API.Controllers
         {
             // Map DTO to AccountModel
             var accountModel = mapper.Map<Account>(updateAccountAvatarDTO);
-            accountModel = await accountRepository.UpdateAccount(accountId, accountModel);
+            accountModel = await accountRepository.UpdateAvatar(accountId, accountModel);
             if (accountModel == null)
             {
                 return NotFound();
