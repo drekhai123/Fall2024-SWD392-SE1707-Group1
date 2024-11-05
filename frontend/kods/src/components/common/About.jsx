@@ -28,8 +28,7 @@ const teamMembers = [
   { name: 'Đoàn Tuấn Khải', role: 'Backend Engineer', avatar: '/images/ourmemories/khaidoan.png' },
   { name: 'Nguyễn Dương Gia Bảo', role: 'Backend Engineer', avatar: '/images/ourmemories/baobao.png' },
   { name: 'Võ Việt Dũng', role: 'Frontend Engineer', avatar: '/images/ourmemories/dung.png' },
-  { name: 'Phan Anh Hoàng', role: 'Frontend Engineer', avatar: '/images/ourmemories/hoang.png' },
-  { name: 'Nguyễn Tuấn Khải', role: 'Frontend Engineer', avatar: '/images/ourmemories/khaidoan.png' },
+  { name: 'Nguyễn Tuấn Khải', role: 'Frontend Engineer', avatar: '/images/ourmemories/khai.png' },
 ];
 
 const milestones = [

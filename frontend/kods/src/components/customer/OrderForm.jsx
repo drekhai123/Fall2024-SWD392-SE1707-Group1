@@ -273,7 +273,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       distancePriceListId: distancePriceListId,
       weightPriceListId: weightPriceListId || 1,
       customerId: userLogin?.customer?.customerId,
-      transportId: 2,
+      transportId: null
     }
 
     Swal.fire({
