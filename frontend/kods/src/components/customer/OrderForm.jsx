@@ -33,7 +33,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         "Please login as a customer to use this function",
         "error"
       ).then(() => {
-        navigate("/"); 
+        navigate("/");
       });
     }
   }, [user, navigate]);
@@ -148,15 +148,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     if (user !== null) {
       getFishProfile();
     } else {
-    }
-  }, []);
-
-  useEffect(() => {
-    if (user !== null) {
-      getFishProfile();
-    } else {
-      alert("Please login to continue...");
-      navigate("/login");
     }
   }, []);
 

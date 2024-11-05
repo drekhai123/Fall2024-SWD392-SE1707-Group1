@@ -22,6 +22,7 @@ import {
   TimelineDot,
 } from '@mui/lab';
 import { Star as StarIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const teamMembers = [
   { name: 'Đoàn Tuấn Khải', role: 'Backend Engineer', avatar: '/images/ourmemories/khaidoan.png' },
@@ -39,9 +40,18 @@ const milestones = [
   { year: 2022, event: 'Nhận giải thưởng Startup of the Year' },
 ];
 
+
+
 export default function AboutPage() {
+  const navigate = useNavigate();
+const handleGoBack = () => {
+    navigate(-1);  // Quay lại trang trước đó
+};
   return (
     <Container maxWidth="lg">
+      <button onClick={handleGoBack} className="go-back-button-feedback">
+                    ⭠ Previous Page
+                </button>
       <Box sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom align="center">
           Về Chúng Tôi

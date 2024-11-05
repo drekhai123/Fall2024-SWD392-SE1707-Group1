@@ -115,7 +115,7 @@ namespace KDOS_Web_API.Controllers
 
                 // Update payment status based on VNPay's response
                 payment.Status = Models.Enum.PaymentStatus.PAID;
-
+                payment.Orders.PaymentStatus = Models.Enum.PaymentStatus.PAID;
                 // Save the updated status
                 await _paymentRepository.UpdatePaymentStatusAsync(payment);
 
