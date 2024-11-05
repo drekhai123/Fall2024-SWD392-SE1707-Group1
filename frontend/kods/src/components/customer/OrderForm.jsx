@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+  /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
 // import {QRCodeSVG} from "qrcode.react";
@@ -65,7 +65,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Hàm validate sđt Việt Nam
   const validateVietnamesePhone = (phone) => {
-    const phoneRegex = /^0[3|5|7|8|9][0-9]{8}$/; 
+    const phoneRegex = /^0[3|5|7|8|9][0-9]{8}$/;
     return phoneRegex.test(phone);
   };
 
@@ -225,15 +225,15 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       !customerInfo.nameSender ||
       !customerInfo.phoneSender ||
       !customerInfo.addressSender ||
-      phoneErrors.sender || 
+      phoneErrors.sender ||
       phoneErrors.customer ||
-      addressErrors.sender || 
-      addressErrors.customer || 
+      addressErrors.sender ||
+      addressErrors.customer ||
       customerInfo.distance < 1 // check khoảng cách phải <1
     ) {
       Swal.fire(
         "Notification",
-        customerInfo.distance < 1 
+        customerInfo.distance < 1
           ? "Distance is too short, please provide a more specific address !!!"
           : "Please enter complete and valid customer/sender information",
         "error"
@@ -318,6 +318,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       console.log("Order response received:", orderResponse);
 
       if (orderResponse) {
+        // Add fish profiles to order details
+        for (const fish of fishOrdersList) {
+          const orderDetailsData = {
+            fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
+            orderId: orderResponse.orderId
+          };
+
+          console.log("Order details data being sent:", orderDetailsData);
+          const orderDetailsResponse = await postOrderDetailsByOrderId(orderDetailsData);
+          console.log("Order details response received:", orderDetailsResponse);
+        }
+
         if (data.paymentMethod === 'CASH') {
           // Navigate to order history if user selects CASH
           sessionStorage.removeItem("fishOrders");
@@ -344,21 +356,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
         // Check if the payment response contains a URL
         if (paymentResponse.data && paymentResponse.data.paymentUrl) {
-          // Redirect to the payment URL provided in the response
           window.location.href = paymentResponse.data.paymentUrl; // Redirect to the payment URL
           return; // Exit the function after redirecting
-        }
-
-        // Add fish profiles to order details
-        for (const fish of fishOrdersList) {
-          const orderDetailsData = {
-            fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
-            orderId: orderResponse.orderId
-          };
-
-          console.log("Order details data being sent:", orderDetailsData);
-          const orderDetailsResponse = await postOrderDetailsByOrderId(orderDetailsData);
-          console.log("Order details response received:", orderDetailsResponse);
         }
 
         sessionStorage.removeItem("fishOrders");
@@ -397,7 +396,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   const handleCustomerChange = async (field, value) => {
     if (field === "phoneSender" || field === "phoneCustomer") {
-      
+
       if (!/^\d{0,10}$/.test(value)) {
         return;
       }
@@ -606,7 +605,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   // Thêm state để quản lý payment method
   const [selectedPayment, setSelectedPayment] = useState('CASH');
 
-  
+
   const [addressErrors] = useState({
     sender: '',
     customer: ''
