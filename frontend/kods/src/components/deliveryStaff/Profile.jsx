@@ -2,7 +2,6 @@ import React from 'react';
 import { Card } from 'primereact/card';
 import { Avatar } from 'primereact/avatar';
 import { Divider } from 'primereact/divider';
-import { useNavigate } from 'react-router-dom';
 import "../../css/deliveryProfile.css"
 export default function Profile({userData}) {
     return (

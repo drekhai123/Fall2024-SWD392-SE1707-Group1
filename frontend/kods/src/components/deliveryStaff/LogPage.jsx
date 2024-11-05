@@ -7,6 +7,7 @@ import { Card } from "primereact/card";
 import { toast } from "react-toastify";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import '../../css/CustomDataTable.css'
 import '../../css/DeliveryStaffLog.css'
 import { AddTransportLog, GetTransportByDeliveryStaffId } from '../api/TransportApi';
 import LoadingScreen from "../../utils/LoadingScreen";
@@ -171,6 +172,7 @@ export default function LogPage({ userData }) {
             </div>
 
             <Button
+              disabled={order?false:true}
               label="Submit"
               className="p-button-info mt-3"
               onClick={handleSubmit}
@@ -183,10 +185,12 @@ export default function LogPage({ userData }) {
           scrollable
           resizableColumns
           paginator
+          stripedRows
           rows={rows}
           first={first}
           onPage={onPage}
-          value={transport} tableStyle={{ minWidth: '50rem' }}>
+          value={transport} tableStyle={{ minWidth: '50rem' }}
+          >
           <Column frozen field="customerId" header="Customer ID" />
           <Column field="orderId" header="Order ID" sortable />
           <Column field="senderAddress" header="From" />
