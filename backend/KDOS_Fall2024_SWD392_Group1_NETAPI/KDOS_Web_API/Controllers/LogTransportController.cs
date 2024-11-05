@@ -24,6 +24,13 @@ namespace KDOS_Web_API.Controllers
             this.logTransportRepository = logTransportRepository;
             this.mapper = mapper;
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllLogTransport()
+        {
+            var logTransportModel = await logTransportRepository.GetAllLogTransportsAsync();
+            var logTransportDto = mapper.Map<List<LogTransportDTO>>(logTransportModel); // Map to the appropriate DTO
+            return Ok(logTransportDto);
+        }
         [HttpPost]
         public async Task<IActionResult> AddNewLogTransport([FromBody] AddNewLogTransportDTO addNewTransportDTO)
         {
@@ -55,6 +62,18 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> GetLogTransportById([FromRoute] int logTransportId)
         {
             var logTransportModel = await logTransportRepository.GetLogTransportByIdAsync(logTransportId);
+            if (logTransportModel == null)
+            {
+                return NotFound();
+            }
+            var logTransportDto = mapper.Map<LogTransportDTO>(logTransportModel); // Map to the appropriate DTO
+            return Ok(logTransportDto);
+        }
+        [HttpGet]
+        [Route("customer/{customerId}")]
+        public async Task<IActionResult> GetLogTransportByCustomerId([FromRoute] int customerId)
+        {
+            var logTransportModel = await logTransportRepository.GetLogTransportByIdAsync(customerId);
             if (logTransportModel == null)
             {
                 return NotFound();

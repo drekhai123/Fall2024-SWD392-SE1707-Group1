@@ -2,6 +2,7 @@ import { localhostUrl, baseUrl, headers, getJwtToken } from "./Url";
 import axios from "axios";
 const getAllTransportURL = baseUrl + "/Transport";
 const getTransportByDeliveryStaffURL = baseUrl + "/Transport/DeliveryStaff/";
+const getTransportLogURL = baseUrl+ "/LogTransport"
 
 // Function to get headers with token
 const getHeaders = () => {
@@ -18,6 +19,16 @@ const getHeaders = () => {
       return response;
     } catch (error) {
       console.error("Error fetching Transport:", error);
+      return error;
+    }
+  }
+
+  export async function AddTransportLog(data) {
+    try {
+      const response = await axios.post(`${getTransportLogURL}`,data, { headers: getHeaders() });
+      return response;
+    } catch (error) {
+      console.error("Error adding Transport Log:", error);
       return error;
     }
   }

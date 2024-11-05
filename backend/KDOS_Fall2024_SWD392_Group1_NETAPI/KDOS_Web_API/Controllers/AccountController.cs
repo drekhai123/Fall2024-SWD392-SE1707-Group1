@@ -230,6 +230,7 @@ namespace KDOS_Web_API.Controllers
                     }
                     else  // Account Verification Complete! Redirect To Login Page
                     {
+                        var response = await mailingService.SendRegisterMail(accountModel);
                         string redirectUrl = "https://kdos.vercel.app/login";
                         return Redirect(redirectUrl);
                     }

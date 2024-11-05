@@ -51,8 +51,7 @@ const OrderHistory = () => {
         console.log('User data from session storage:', userData);
 
         if (userData) {
-          const user = JSON.parse(userData);
-          const customerId = user?.customer?.customerId;
+          const customerId = userData.customer?.customerId;
           console.log('Extracted customerId:', customerId);
 
           if (customerId) {
