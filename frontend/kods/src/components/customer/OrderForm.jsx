@@ -65,7 +65,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Hàm validate sđt Việt Nam
   const validateVietnamesePhone = (phone) => {
-    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    const phoneRegex = /^0[3|5|7|8|9][0-9]{8}$/; 
     return phoneRegex.test(phone);
   };
 
@@ -224,11 +224,18 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       !customerInfo.emailCustomer ||
       !customerInfo.nameSender ||
       !customerInfo.phoneSender ||
-      !customerInfo.addressSender
+      !customerInfo.addressSender ||
+      phoneErrors.sender || 
+      phoneErrors.customer ||
+      addressErrors.sender || 
+      addressErrors.customer || 
+      customerInfo.distance < 1 // check khoảng cách phải <1
     ) {
       Swal.fire(
         "Notification",
-        "Please enter complete customer/sender information",
+        customerInfo.distance < 1 
+          ? "Distance is too short, please provide a more specific address !!!"
+          : "Please enter complete and valid customer/sender information",
         "error"
       );
       return;
@@ -390,8 +397,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   const handleCustomerChange = async (field, value) => {
     if (field === "phoneSender" || field === "phoneCustomer") {
-      // Only allow numbers
-      if (!/^\d*$/.test(value)) {
+      
+      if (!/^\d{0,10}$/.test(value)) {
         return;
       }
 
@@ -400,7 +407,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       setPhoneErrors(prev => ({
         ...prev,
         [field === "phoneSender" ? "sender" : "customer"]:
-          value ? (isValid ? '' : 'Please enter a valid Vietnamese phone number') : ''
+          value ? (isValid ? '' : 'Please enter a valid 10-digit Vietnamese phone number') : ''
       }));
     }
 
@@ -598,6 +605,12 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Thêm state để quản lý payment method
   const [selectedPayment, setSelectedPayment] = useState('CASH');
+
+  
+  const [addressErrors] = useState({
+    sender: '',
+    customer: ''
+  });
 
   return (
     <div className="order-form">
