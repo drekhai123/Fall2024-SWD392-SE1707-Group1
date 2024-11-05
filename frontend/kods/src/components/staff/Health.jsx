@@ -50,11 +50,11 @@ export const Health = ({ orderId, visible, onHide }) => {
           stripedRows
           tableStyle={{ minWidth: "50rem" }}
         >
-          <Column field="orderId" header="Order ID" />
-          <Column field="senderName" header="Sender" />
-          <Column field="senderPhoneNumber" header="Sender Phone Number" />
-          <Column field="senderAddress" header="Sender Address" />
-          <Column field="totalCost" header="Total Costs" />
+          <Column field="status" header="status" />
+          <Column field="temperature" header="Temperature" />
+          <Column field="oxygenLevel" header="OxygenLevel" />
+          <Column field="phLevel" header="PhLevel" />
+          <Column field="notes" header="Notes" />
         </DataTable>
       </div>
     </Dialog>
