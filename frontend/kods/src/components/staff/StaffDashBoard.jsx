@@ -6,6 +6,12 @@ import { Transports } from "./Transports";
 export function StaffDashBoard() {
   const [selectedMenu, setSelectedMenu] = useState("Pending Orders");
 
+  // Function to handle logout
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("Logged out");
+  };
+
   // Function to render the selected component
   const renderComponent = () => {
     switch (selectedMenu) {
@@ -15,6 +21,7 @@ export function StaffDashBoard() {
         return <Transports />;
       case "Customers List":
         return <CustomersList />;
+
       default:
         return <PendingOrders />;
     }
@@ -48,7 +55,13 @@ export function StaffDashBoard() {
       </div>
 
       {/* Main Dashboard Content */}
-      <div className="w-3/4 p-6">
+      <div className="w-3/4 p-6 relative">
+        <button
+          className="absolute top-4 right-4 bg-gray-700 text-white p-2 rounded cursor-pointer"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
         <h1 className="text-3xl font-bold mb-4">{selectedMenu}</h1>
         {/* Render selected component based on the menu */}
         {renderComponent()}

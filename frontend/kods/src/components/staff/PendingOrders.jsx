@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { AddTransport } from './AddTransport';
+import { AddTransport } from "./AddTransport";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { baseUrl,headers, getJwtToken } from "../api/Url";
+import { baseUrl, headers, getJwtToken } from "../api/Url";
 
 export function PendingOrders() {
   const [orders, setOrders] = useState([]);
@@ -23,10 +23,12 @@ export function PendingOrders() {
         const response = await axios.get(`${baseUrl}/Orders`, {
           headers: {
             ...headers,
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
-        setOrders(response.data.filter(data => data.deliveryStatus === 'PENDING'));
+        setOrders(
+          response.data.filter((data) => data.deliveryStatus === "PENDING")
+        );
       } catch (err) {
         console.error(err);
         setError("Error fetching orders data");
@@ -40,12 +42,19 @@ export function PendingOrders() {
   const updateOrderStatus = (order) => {
     const updatedOrder = { deliveryStatus: "PROCESSING", updateAt: Date.now() };
     axios
-      .put(`${baseUrl}/Orders/${order.orderId}/status`, updatedOrder)
+      .put(`${baseUrl}/Orders/${order.orderId}/status`, updatedOrder, {
+        headers: {
+          ...headers,
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => {
         alert("Update order status success!");
-        setOrders(prevOrders =>
-          prevOrders.map(o =>
-            o.orderId === order.orderId ? { ...o, deliveryStatus: "PROCESSING" } : o
+        setOrders((prevOrders) =>
+          prevOrders.map((o) =>
+            o.orderId === order.orderId
+              ? { ...o, deliveryStatus: "PROCESSING" }
+              : o
           )
         );
       })
@@ -53,7 +62,10 @@ export function PendingOrders() {
         alert("Update order failed: " + err);
       });
   };
-
+  const handleAddTransport = (order) => {
+    setSelectedOrder(order);
+    setIsAddTransport(true);
+  };
   return (
     <div>
       <DataTable
@@ -79,15 +91,28 @@ export function PendingOrders() {
             );
           }}
         ></Column>
+        <Column
+          header="Add Transport"
+          body={(rowData) => {
+            return (
+              <Button
+                label="Transport"
+                severity="info"
+                className="text-black !bg-cyan-500 border border-black p-2"
+                onClick={() => handleAddTransport(rowData)}
+              ></Button>
+            );
+          }}
+        ></Column>
       </DataTable>
 
-      {isAddTransport &&
+      {isAddTransport && (
         <AddTransport
           visible={isAddTransport}
           onHide={() => setIsAddTransport(false)}
           order={selectedOrder}
         />
-      }
+      )}
     </div>
   );
 }
