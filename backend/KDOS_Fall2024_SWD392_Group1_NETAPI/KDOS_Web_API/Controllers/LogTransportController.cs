@@ -81,6 +81,28 @@ namespace KDOS_Web_API.Controllers
             var logTransportDto = mapper.Map<LogTransportDTO>(logTransportModel); // Map to the appropriate DTO
             return Ok(logTransportDto);
         }
+        [HttpGet]
+        [Route("transport/{transportId}")]
+        public async Task<IActionResult> GetLogTransportByTransportId([FromRoute] int transportId)
+        {
+            try
+            {
+                var logTransportModels = await logTransportRepository.GetTransportLogByTransportId(transportId);
+
+                if (logTransportModels == null || !logTransportModels.Any())
+                {
+                    return NotFound();
+                }
+
+                var logTransportDtos = mapper.Map<List<LogTransportDTO>>(logTransportModels);
+                return Ok(logTransportDtos);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (using a logging framework)
+                return StatusCode(500, "Internal server error");
+            }
+        }
 
     }
 }

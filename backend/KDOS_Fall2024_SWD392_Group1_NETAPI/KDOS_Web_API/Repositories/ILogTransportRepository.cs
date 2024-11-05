@@ -8,5 +8,6 @@ namespace KDOS_Web_API.Repositories
         Task<LogTransport?> GetLogTransportByIdAsync(int id);
         Task<LogTransport> CreateLogTransportAsync(LogTransport logTransport);
         Task<List<LogTransport>> GetLogTransportByCustomerId(int id);
+        Task<List<LogTransport>> GetTransportLogByTransportId(int id);
     }
 }
