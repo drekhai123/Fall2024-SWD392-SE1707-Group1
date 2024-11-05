@@ -87,7 +87,7 @@ namespace KDOS_Web_API.Controllers
         {
             try
             {
-                var logTransportModels = await logTransportRepository.GetTransportLogByTransportId(transportId);
+                var logTransportModels = await logTransportRepository.GetTransportLogsByTransportId(transportId);
 
                 if (logTransportModels == null || !logTransportModels.Any())
                 {
@@ -100,9 +100,8 @@ namespace KDOS_Web_API.Controllers
             catch (Exception ex)
             {
                 // Log the exception (using a logging framework)
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Internal server error: "+ex);
             }
         }
-
     }
 }
