@@ -9,7 +9,7 @@ import Reports from './reports';
 import Logout from './logout';
 
 function AdminPage() {
-  const [activeComponent, setActiveComponent] = useState('accountmanagement');
+  const [activeComponent, setActiveComponent] = useState('reports');
   const [selectedAccountId, setSelectedAccountId] = useState(null); // New state for selected account
   const navigate = useNavigate(); // Hook for navigation
 
@@ -60,7 +60,7 @@ function AdminPage() {
           <ul>
             <li>
               <button onClick={() => handleAccountClick('reports')} className={activeComponent === 'reports' ? 'active' : ''}>
-                Reports
+                Reports Manager
               </button>
             </li>
             <li>
@@ -90,7 +90,7 @@ function AdminPage() {
             </li>
           </ul>
         </div>
-        <div className="content">
+        <div className="content-admin">
           {renderContent()}
         </div>
       </div>

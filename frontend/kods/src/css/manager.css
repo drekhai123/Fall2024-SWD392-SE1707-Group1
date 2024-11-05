@@ -49,10 +49,12 @@
   background-color: rgba(241, 102, 34, 0.1);
 }
 
-.content {
+.content-admin {
+  background: linear-gradient(rgba(226, 230, 255, 0.7), rgba(226, 230, 255, 0.7)), 
+  url("../../public/images/koifish.png");
+  height: 120vh;
   flex-grow: 1;
   padding: 40px;
-  background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
   margin-left: 20px;
