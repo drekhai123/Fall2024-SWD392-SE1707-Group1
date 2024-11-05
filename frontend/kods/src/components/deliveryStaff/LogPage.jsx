@@ -96,7 +96,7 @@ export default function LogPage({ userData }) {
     // Add form submission logic here
     console.log("Form Data:", formData);
     const response = await AddTransportLog(formData)
-    if(response.status < 400){
+    if(response.status === 201){
       toast.success("Log Added!")
     }
     else if(response.status > 400){
@@ -122,7 +122,7 @@ export default function LogPage({ userData }) {
             <div className="p-field">
               <label htmlFor="time">Time</label>
               <Calendar
-               disabled
+              disabled
                 id="time"
                 value={formData.time}
                 onChange={handleDateChange}
