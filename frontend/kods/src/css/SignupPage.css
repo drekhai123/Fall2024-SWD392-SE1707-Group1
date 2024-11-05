@@ -85,6 +85,11 @@
   cursor: pointer;
 }
 
+.signup-page-container .signup-container .signup-form .signup-btn:disabled {
+  background-color: #a0a0a0; /* Change background color to indicate disabled state */
+  cursor: not-allowed; /* Change cursor to indicate non-clickable */
+}
+
 .signup-page-container .signup-container .signup-form .to-login-container {
   margin-top: 16px; /* Giảm margin */
   display: flex;
@@ -166,3 +171,4 @@
 .signup-page-container input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+

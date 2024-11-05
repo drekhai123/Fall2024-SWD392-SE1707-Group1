@@ -219,22 +219,60 @@ export default function AddFish() {
     setLoadingScreen(false)
   };
 
+  let toastCooldown = false; // Cooldown flag
+
+  const showToast = (message, type = "error") => {
+    if (!toastCooldown) {
+      toast[type](message, {
+        autoClose: 5000 // Duration in milliseconds (5 seconds)
+      });
+      toastCooldown = true;
+      setTimeout(() => {
+        toastCooldown = false;
+      }, 3000); // Cooldown period of 3 seconds
+    }
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
+    if (toastCooldown) return; // Prevent spamming
+
     // Validation: Check if all required fields are filled
-    if (!name || !weight || !gender || !selectedFishType || !image) {
-      toast.error("Please fill out all required fields.", {
-        autoClose: 2000 // Duration in milliseconds (10 seconds)
-      });
+    if (!name) {
+      showToast("Please enter a name.");
+      return;
+    }
+
+    if (!weight) {
+      showToast("Please enter a weight.");
+      return;
+    }
+
+    if (!gender) {
+      showToast("Please select a gender.");
+      return;
+    }
+
+    if (!selectedFishType) {
+      showToast("Please select a fish type.");
+      return;
+    }
+
+    if (!image) {
+      showToast("Please upload an image.");
+      return;
+    }
+
+    // Check if notes are empty
+    if (!notes) {
+      showToast("Please add some notes.");
       return;
     }
 
     // Check if certificate is uploaded
     if (!certificate) {
-      toast.error("Please upload a certificate.", {
-        autoClose: 2000 // Duration in milliseconds (10 seconds)
-      });
+      showToast("Please upload a certificate.");
       return;
     }
 
@@ -244,8 +282,6 @@ export default function AddFish() {
       handleAddFish(e);
     }
   };
-
-  let toastCooldown = false; // Cooldown flag
 
   const handleDeleteConfirm = async () => {
     if (toastCooldown) return; // Exit if cooldown is active
@@ -274,18 +310,6 @@ export default function AddFish() {
       }
     }
     setRefresh(!refresh);
-  };
-
-  const showToast = (message, type = "error") => {
-    if (!toastCooldown) {
-      toast[type](message, {
-        autoClose: 5000 // Duration in milliseconds (2 seconds)
-      });
-      toastCooldown = true;
-      setTimeout(() => {
-        toastCooldown = false;
-      }, 5000); // Cooldown period of 5 seconds
-    }
   };
 
   const handleImageUpload = (e) => {
@@ -362,7 +386,7 @@ export default function AddFish() {
     const value = e.target.value;
 
     // Ensure the value is a positive number
-    if (isNaN(value) || value <= 0) {
+    if (isNaN(value) || value < 0) {
       setWeightError(true);
     } else {
       setWeightError(false);
@@ -472,6 +496,7 @@ export default function AddFish() {
               error={weightError}
               helperText={weightError ? "Please enter a valid number greater than 0" : ""}
               required
+              step="0.01"
             />
             <FormControl required aria-selected fullWidth margin="dense">
               <InputLabel style={{ backgroundColor: "white", marginRight: "5px", marginLeft: "5px" }} required id="fish-type-label">Species</InputLabel>

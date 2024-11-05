@@ -100,7 +100,8 @@ const SignupPage = () => {
   const handleChangeEmail = (e) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
-    setEmailError(!validateEmail(newEmail));
+    const isValidEmail = validateEmail(newEmail);
+    setEmailError(!isValidEmail);
   };
 
   const handleChangeUsername = (e) => {
@@ -218,6 +219,11 @@ const SignupPage = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleDisabledSignupClick = (e) => {
+    e.preventDefault();
+    showToast('Please fill in all fields correctly.');
+  };
+
   return (
     <div className="signup-page-container">
 
@@ -309,17 +315,13 @@ const SignupPage = () => {
 
           {/* Date of Birth field */}
           <div className="input-wrapper">
-            <DatePicker
-              selected={dob}
-              onChange={(date) => setDob(date)}
-              dateFormat="dd/MM/yyyy"
-              showMonthDropdown
-              showYearDropdown
-              yearDropdownItemNumber={100}
-              scrollableYearDropdown
-              minDate={new Date(1924, 0, 1)}
-              placeholderText="Enter Your Date of Birth"
+            <input
+              type="date"
+              value={dob ? format(dob, 'yyyy-MM-dd') : ''}
+              onChange={(e) => setDob(new Date(e.target.value))}
               className="address-input"
+              placeholder="Enter Your Date of Birth"
+              min="1924-01-01"
             />
           </div>
 
@@ -367,7 +369,36 @@ const SignupPage = () => {
           </div>
 
           {/* Signup button */}
-          <button className="signup-btn" onClick={handleSignupClick}>
+          <button
+            className="signup-btn"
+            onClick={handleSignupClick}
+            onMouseDown={(e) => {
+              if (e.currentTarget.disabled) {
+                handleDisabledSignupClick(e);
+              }
+            }}
+            disabled={
+              !email ||
+              !username ||
+              !password ||
+              !confirmPassword ||
+              !gender ||
+              !phoneNumber ||
+              !address ||
+              !name ||
+              !dob ||
+              emailError ||
+              usernameError ||
+              passwordError ||
+              confirmPasswordError ||
+              genderError ||
+              phoneError ||
+              addressError ||
+              nameError ||
+              dobError ||
+              passwordMismatchError
+            }
+          >
             Create Account
           </button>
           {registerEmail ? (
