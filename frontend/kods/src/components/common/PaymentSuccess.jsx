@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../css/Payment.css";
+
 const PaymentSuccess = () => {
 const navigate = useNavigate(); // Initialize navigate
 
@@ -46,7 +47,7 @@ const navigate = useNavigate(); // Initialize navigate
   };
 
   return (
-
+    <div className="payment-page">
       <div className="card">
         <h1 className="title">Payment Successful!</h1>
         <p className="message">
@@ -56,7 +57,7 @@ const navigate = useNavigate(); // Initialize navigate
           Back to Homepage
         </button>
       </div>
-
+    </div>
   );
 };
 
