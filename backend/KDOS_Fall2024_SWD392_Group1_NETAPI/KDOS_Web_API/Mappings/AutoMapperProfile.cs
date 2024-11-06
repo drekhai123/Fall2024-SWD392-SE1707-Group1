@@ -3,6 +3,7 @@ using AutoMapper;
 using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Models.DTOs.HealthCareStaffDTOs;
 
 namespace KDOS_Web_API.Mappings
 {
@@ -43,8 +44,15 @@ namespace KDOS_Web_API.Mappings
                 .ForMember(x=>x.StaffStatus,opt=>opt.Ignore())
                 .ReverseMap();
 			CreateMap<UpdateStaffDTO, Staff>().ReverseMap();
-			// Delivery Staff Mapping
-			CreateMap<DeliveryStaff, DeliveryStaffDTO>().ReverseMap();
+            // HealthCare Staff Mapping
+            CreateMap<HealthCareStaff, HealthCareStaffDTO>().ReverseMap();
+            CreateMap<HealthCareStaff, UpdateHealthCareStaffDTO>().ReverseMap();
+            CreateMap<AddNewHealthCareStaffDTO, HealthCareStaff>()
+                .ForMember(x => x.StaffStatus, opt => opt.Ignore())
+                .ReverseMap();
+            CreateMap<UpdateHealthCareStaffStatus, HealthCareStaff>().ReverseMap();
+            // Delivery Staff Mapping
+            CreateMap<DeliveryStaff, DeliveryStaffDTO>().ReverseMap();
             CreateMap<DeliveryStaff, UpdateDeliveryStaffStatusDTO>().ReverseMap();
             CreateMap<AddNewDeliveryStaffDTO, DeliveryStaff>()
                 .ForMember(x => x.StaffStatus, opt => opt.Ignore())

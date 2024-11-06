@@ -51,7 +51,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<Transport?> GetTransportById(int id)
         {
-           var transport = await transportContext.Transport.Include(x => x.DeliveryStaff).Include(x=>x.Staff).FirstOrDefaultAsync(x => x.TransportId == id);
+           var transport = await transportContext.Transport.Include(x => x.DeliveryStaff).Include(x=>x.Staff).Include(x => x.HealthCareStaff).FirstOrDefaultAsync(x => x.TransportId == id);
             return transport;
 
         }
@@ -85,7 +85,7 @@ namespace KDOS_Web_API.Repositories
         }
         public async Task<Transport?> GetByDeliveryStaff(int id)
         {
-            var transportModel = await transportContext.Transport.Include(x=>x.Orders).FirstOrDefaultAsync(x=>x.DeliveryStaffId == id);
+            var transportModel = await transportContext.Transport.Include(x=>x.DeliveryStaff).Include(x=>x.Orders).FirstOrDefaultAsync(x=>x.DeliveryStaffId == id);
             if (transportModel == null)
             {
                 return null;

@@ -13,6 +13,7 @@ namespace KDOS_Web_API.Datas
         public DbSet<Account> Account { get; set; }
         public DbSet<Verification> Verification { get; set; }
         public DbSet<Staff> Staff { get; set; }
+        public DbSet<HealthCareStaff> HealthCareStaff { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<Orders> Orders { get; set; }
         public DbSet<DeliveryStaff> DeliveryStaff { get; set; }
@@ -41,6 +42,11 @@ namespace KDOS_Web_API.Datas
                 .HasOne(s => s.Account)           // A Staff has one Account
                 .WithOne(a => a.Staff)         // An Account has one Staff
                 .HasForeignKey<Staff>(s => s.AccountId)  // Staff holds the foreign key
+                .OnDelete(DeleteBehavior.Cascade);  // Optional: cascade delete when Staff is deleted Meaning delete Account will Delete Staff or Visersa
+            modelBuilder.Entity<HealthCareStaff>()
+                .HasOne(s => s.Account)           // A Staff has one Account
+                .WithOne(a => a.HealthCareStaff)         // An Account has one Staff
+                .HasForeignKey<HealthCareStaff>(s => s.AccountId)  // Staff holds the foreign key
                 .OnDelete(DeleteBehavior.Cascade);  // Optional: cascade delete when Staff is deleted Meaning delete Account will Delete Staff or Visersa
             modelBuilder.Entity<DeliveryStaff>()
                 .HasOne(s => s.Account)           // A DeliveryStaff has one Account

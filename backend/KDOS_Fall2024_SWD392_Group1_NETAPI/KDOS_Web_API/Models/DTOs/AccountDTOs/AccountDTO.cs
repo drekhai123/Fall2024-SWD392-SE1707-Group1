@@ -18,6 +18,7 @@ namespace KDOS_Web_API.Models.DTOs
         public CustomerDTO? Customer { get; set; }
         public StaffDTO? Staff { get; set; }
         public DeliveryStaffDTO? DeliveryStaff { get; set; }
+        public HealthCareStaff? HealthCareStaff { get; set; }
     }
 }
 

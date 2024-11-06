@@ -265,6 +265,29 @@ namespace KDOS_Web_API.Controllers
             return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
         }
         [HttpPost]
+        [Route("AddHealthCareStaff")]
+        public async Task<IActionResult> AddNewHealthCareStaffAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            // Turn Data to Model With AutoMApper.ReverseMap
+            var accountModel = mapper.Map<Account>(addNewAccountDTO);
+            accountModel.Banned = false; // Default Not Banned... duh
+            accountModel.Role = "healthcare"; //Set Role fixed as staff
+            accountModel.Verified = true; //Set Role fixed as staff
+            accountModel.Password = passwordHasher.HashPassword(accountModel, addNewAccountDTO.Password); // Hashing the password sent back from FE
+            accountModel = await accountRepository.AddNewAccount(accountModel);
+            if (accountModel == null)
+            {
+                return BadRequest("Email or username already in use.");
+            }
+            // Turn Model to DTO for returning a response
+            var accountDto = mapper.Map<AccountDTO>(accountModel);
+            return CreatedAtAction(nameof(GetAccountById), new { accountId = accountModel.AccountId }, accountDto);
+        }
+        [HttpPost]
         [Route("AddDeliveryStaff")]
         public async Task<IActionResult> AddNewDeliverySatffAccount([FromBody] AddNewAccountDTO addNewAccountDTO)
         {

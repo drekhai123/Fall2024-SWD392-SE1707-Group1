@@ -18,5 +18,6 @@ namespace KDOS_Web_API.Models.Domains
         public Customer? Customer { get; set; }
         public Staff? Staff { get; set; }
         public DeliveryStaff? DeliveryStaff { get; set; }
+        public HealthCareStaff? HealthCareStaff { get; set; }
     }
 }
