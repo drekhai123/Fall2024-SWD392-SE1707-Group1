@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { DataGrid } from '@mui/x-data-grid';
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
@@ -17,12 +18,24 @@ export default function LogPage({ userData }) {
   const [transport, setTransport] = useState();
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null);
+  const columns = [
+    { field: 'customerId', headerName: 'Customer ID', width: 150, align: 'center', headerAlign: 'center' },
+    { field: 'orderId', headerName: 'Order ID', width: 150, sortable: true, align: 'center', headerAlign: 'center' },
+    { field: 'senderAddress', headerName: 'From', width: 200, align: 'center', headerAlign: 'center' },
+    { field: 'recipientAddress', headerName: 'To', width: 200, align: 'center', headerAlign: 'center' },
+    { field: 'createdAt', headerName: 'Date Added', width: 180, sortable: true, align: 'center', headerAlign: 'center' },
+  ];
   const [formData, setFormData] = useState({
     time: new Date,
     location: "",
     transportId: "",
     customerId: "",
   });
+  const handleRowSelection = (newSelection) => {
+    const selectedRow = transport.find((row) => row.orderId === newSelection.id);
+    console.log(selectedRow)
+    setOrder(selectedRow);
+  };
   // Geolocation API 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -106,12 +119,8 @@ export default function LogPage({ userData }) {
   };
 
   // Pagingation
-  const [first, setFirst] = useState(0); // Track the first row for controlled pagination
-  const [rows, setRows] = useState(5); // Number of rows per page
-  const onPage = (event) => {
-    setFirst(event.first);
-    setRows(event.rows);
-  };
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
   //
 
   return (
@@ -172,7 +181,7 @@ export default function LogPage({ userData }) {
             </div>
 
             <Button
-              disabled={order?false:true}
+              disabled={order ? false : true}
               label="Submit"
               className="p-button-info mt-3"
               onClick={handleSubmit}
@@ -180,23 +189,22 @@ export default function LogPage({ userData }) {
           </div>
         </Card>
         <Divider />
-        <DataTable selectionMode="single" selection={order}
-          onSelectionChange={(e) => setOrder(e.value)} dataKey="orderId"
-          scrollable
-          resizableColumns
-          paginator
-          stripedRows
-          rows={rows}
-          first={first}
-          onPage={onPage}
-          value={transport} tableStyle={{ minWidth: '50rem' }}
-          >
-          <Column frozen field="customerId" header="Customer ID" />
-          <Column field="orderId" header="Order ID" sortable />
-          <Column field="senderAddress" header="From" />
-          <Column field="recipientAddress" header="To" />
-          <Column field="createdAt" header="Date Added" sortable />
-        </DataTable>
+        <div style={{ height: 400, width: '100%', margin: '0 auto'}}>
+          <DataGrid
+            rows={transport}
+            columns={columns}
+            getRowId={(row) => row.orderId} // `orderId` is unique for each row
+            pageSize={pageSize}
+            rowsPerPageOptions={[5, 10, 20]}
+            pagination
+            page={page}
+            onPageChange={(newPage) => setPage(newPage)}
+            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            onRowClick={(e) => handleRowSelection(e)}
+            checkboxSelection={false}
+            disableColumnMenu
+          />
+        </div>
       </div>
     </>
   )
