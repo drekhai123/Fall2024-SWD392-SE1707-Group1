@@ -40,7 +40,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<List<OrderDetails>> GetAllOrderDetails()
         {
-            return await orderDetailContext.OrderDetails.ToListAsync();
+            return await orderDetailContext.OrderDetails.Include(x=>x.FishProfile).ToListAsync();
         }
 
         public async Task<OrderDetails?> GetOrderDetailsById(int id)

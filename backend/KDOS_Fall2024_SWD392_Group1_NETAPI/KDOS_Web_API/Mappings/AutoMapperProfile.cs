@@ -60,6 +60,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<DistancePriceList, UpdateDistancePriceListDTO>().ReverseMap();
             // Transport
             CreateMap<Transport, TransportDTO>().ReverseMap();
+            CreateMap<Transport, TransportOrderIdDTO>().ReverseMap();
             CreateMap<Transport, UpdateTransportDTO>().ReverseMap();
             CreateMap<Transport,AddNewTransportDTO>()
                 .ForMember(a => a.Status, opt => opt.Ignore()).ReverseMap();
@@ -69,6 +70,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<LogTransport, LogTransportDTO>().ReverseMap();
             // Order
             CreateMap<Orders, OrdersDTO>().ReverseMap();
+            CreateMap<Orders, OrderIdOnlyDTO>().ReverseMap();
             CreateMap<Orders, UpdateOrderDTO>().ReverseMap();
             CreateMap<Orders, AddNewOrderDTO>()
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
