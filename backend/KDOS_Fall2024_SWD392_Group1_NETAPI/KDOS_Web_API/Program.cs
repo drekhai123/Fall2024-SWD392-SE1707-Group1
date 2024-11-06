@@ -27,6 +27,7 @@ builder.Services.AddScoped<IOrderDetailsRepository, SQLOrderDetailsRepository>()
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 builder.Services.AddScoped<ICustomerRepository, SQLCustomerRepository>();
 builder.Services.AddScoped<IStaffRepository, SQLStaffRespository>();
+builder.Services.AddScoped<IHealthCareStaffRepository, SQLHealthCareStaffRepository>();
 builder.Services.AddScoped<IDeliveryStaffRepository, SQLDeliveryStaffRepository>();
 builder.Services.AddScoped<IKoiFishRepository, SQLKoiFishRepository>();
 builder.Services.AddScoped<IFishProfileRepository, SQLFishProfileRepository>();

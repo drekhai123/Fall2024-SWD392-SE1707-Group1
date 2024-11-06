@@ -115,7 +115,7 @@ namespace KDOS_Web_API.Controllers
         }
         [Authorize]
         [HttpGet]
-        [Route("/DeliveryStaffAccount/{accountId}")]
+        [Route("DeliveryStaffAccount/{accountId}")]
         public async Task<IActionResult> GetDeliveryStaffByAcountId([FromRoute] int accountId)
         {
             var deliveryStaff = await deliveryStaffRepository.GetDeliveryStaffByAccountId(accountId);

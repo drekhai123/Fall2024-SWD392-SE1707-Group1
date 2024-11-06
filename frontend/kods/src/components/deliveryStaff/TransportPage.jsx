@@ -50,7 +50,8 @@ export default function TransportPage({userData}) {
     };
     //
     return (
-        <div className="card">
+        <>
+        <div className="transport-card">
             {loading && <LoadingScreen />}
             <DataTable
                 scrollable
@@ -59,7 +60,7 @@ export default function TransportPage({userData}) {
                 rows={rows}
                 first={first}
                 onPage={onPage}
-                value={transport} tableStyle={{ minWidth: '50rem' }}>
+                value={transport}>
                 <Column
                     frozen
                     alignFrozen='left'
@@ -77,5 +78,6 @@ export default function TransportPage({userData}) {
                 <Column field="createdAt" sortable header="Date Added"></Column>
             </DataTable>
         </div>
+        </>
     );
 }

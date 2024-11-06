@@ -1,25 +1,50 @@
-.card {
+/* Card Styling */
+.transport-card {
     position: relative; /* Keep it within the flow of the container */
-    width: 90%; /* Adjust width to leave some space on the left */
-    margin-left: auto; /* Push card to the right within the container */
+    width: 85%; /* Adjust width to leave some space on the left */
+    margin-left: 12%; /* Push card to the right within the container */
     float: none; /* Remove float for better control */
     margin-top: 20px; /* Add some spacing from the top */
     padding: 15px; /* Add padding inside the card for content */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for emphasis */
     border-radius: 8px; /* Rounded corners for a modern look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Softer shadow */
+    border-radius: 8px; 
 }
+
+/* Table Styling */
+.p-datatable-wrapper {
+    overflow: auto; /* For scrollable functionality */
+}
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: #f5f5f5; /* Light grey for headers */
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    padding: 10px 15px; /* Uniform padding for cells */
+    text-align: center; /* Center align all cell text */
+}
+
+/* Highlight row on hover */
+.p-datatable .p-datatable-tbody > tr:hover {
+    background-color: #e9f5ff; /* Soft blue hover effect */
+}
+
+/* Action Button Styling */
 .action_button {
     background-color: #4169e1; /* Royal blue */
-    color: #ffffff; /* White text */
+    color: #ffffff;
     border: none;
     border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 1rem;
+    padding: 8px 16px;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition */
+    transition: background-color 0.3s ease;
 }
 
 .action_button:hover {
     background-color: #27408b; /* Darker blue on hover */
 }
-

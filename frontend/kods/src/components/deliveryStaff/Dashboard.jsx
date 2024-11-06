@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DeliveryStaffMenu from './DeliveryStaffMenu'
 import MainPage from './MainPage'
-import '../../css/DeliveryStaffPage.css'
 import { useNavigate } from 'react-router-dom'
 
 

@@ -54,3 +54,20 @@
   .nav-item:hover {
     color: #ff7700;
   }
+
+.btn-Logout {
+  color: white;
+  background-color: transparent;
+  border: 1px solid white;
+  padding: 8px 16px;
+  font-size: 21px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-top: -15%;
+}
+
+.btn-Logout:hover {
+  color: #ff7700;
+  background-color: rgba(255, 255, 255, 0.1); /* Light background on hover */
+  border-color: #ff7700;
+}
