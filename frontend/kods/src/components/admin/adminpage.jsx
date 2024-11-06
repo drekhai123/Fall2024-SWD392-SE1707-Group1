@@ -90,7 +90,7 @@ function AdminPage() {
             </li>
           </ul>
         </div>
-        <div className="content-admin">
+        <div className={activeComponent === 'reports' ? '' : 'content-admin'}>
           {renderContent()}
         </div>
       </div>

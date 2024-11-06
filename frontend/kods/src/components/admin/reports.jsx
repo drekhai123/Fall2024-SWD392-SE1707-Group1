@@ -141,7 +141,7 @@ const StatisticsReport = () => {
 
   const calculateTotalSales = useCallback(() => {
     const total = ordersData.reduce((total, order) => {
-      if (order.deliveryStatus === 'DELIVERED' && order.paymentStatus === 'PAID') {
+      if (order.paymentStatus === 'PAID') {
         const cost = parseFloat(String(order.totalCost).replace(/[^0-9.-]+/g, ''));
         return total + (isNaN(cost) ? 0 : cost);
       }
@@ -175,9 +175,11 @@ const StatisticsReport = () => {
   // Calculate Total Revenue per day
   const totalRevenuePerDay = ordersData.reduce((acc, order) => {
     const date = new Date(order.createdAt).toLocaleDateString(); // Format date to DD/MM/YYYY
-    const cost = parseFloat(String(order.totalCost).replace(/[^0-9.-]+/g, ''));
-    if (!isNaN(cost)) {
-      acc[date] = (acc[date] || 0) + cost; // Sum costs for each date
+    if (order.paymentStatus === 'PAID') {
+      const cost = parseFloat(String(order.totalCost).replace(/[^0-9.-]+/g, ''));
+      if (!isNaN(cost)) {
+        acc[date] = (acc[date] || 0) + cost; // Sum costs for each date
+      }
     }
     return acc;
   }, {});
@@ -192,7 +194,7 @@ const StatisticsReport = () => {
       <h2>Statistics Report</h2>
       {/* Line Chart for Total Revenue per Day */}
       <h2 style={{ marginTop: '24px' }}>Total Revenue per Day</h2>
-      <LineChart width={600} height={300} data={revenueData}>
+      <LineChart width={1500} height={300} data={revenueData} margin={{ top: 5, right: 40, left: 30, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
         <YAxis />
@@ -230,7 +232,7 @@ const StatisticsReport = () => {
       />
 
       {/* Payment List */}
-      <h2 style={{ marginTop: '24px' }}>Latest Payment List</h2>
+      <h2 style={{ marginTop: '24px' }}>Latest VNPay Payment List</h2>
       <Table
         headerStyle={{ backcolor: 'green' }}
         dataSource={sortedPaymentsData} // Use payments data

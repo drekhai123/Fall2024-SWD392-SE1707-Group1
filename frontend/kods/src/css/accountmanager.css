@@ -1,6 +1,7 @@
 /* Add this to your CSS file */
 .role-card {
   transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition */
+  text-align: center;
 }
 
 .role-card:hover {

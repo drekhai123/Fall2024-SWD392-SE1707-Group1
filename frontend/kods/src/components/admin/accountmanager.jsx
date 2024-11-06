@@ -14,7 +14,7 @@ import { createNewDeliveryStaff } from '../api/DeliveryStaffApi';
 import { getJwtToken } from '../api/Url';
 
 const { Option } = Select;
-const roles = ['staff', 'delivery']; // Define roles for the dropdown
+const roles = ['staff', 'delivery', 'healthcare']; // Define roles for the dropdown
 
 function AccountManager() {
   const [data, setData] = useState([]); // State to hold account data
@@ -152,8 +152,23 @@ function AccountManager() {
         console.log(newDeliveryStaff);
         // Step 2: Call createNewDeliveryStaff with the additional details
         await createNewDeliveryStaff(newDeliveryStaff);
+      } else if (selectedRole === 'healthcare') {
+        const addDeliveryResponse = await AddNewDeliveryStaff({ username, password, email });
+        if (addDeliveryResponse.status !== 201) {
+          throw new Error('Failed to add delivery staff');
+        }
+        accountId = addDeliveryResponse.data.accountId; // Get the account ID from the response
+        const newDeliveryStaff = {
+          accountId: accountId,
+          staffName: staffName,
+          dob: formattedDob,
+          gender: gender,
+          phoneNumber: phoneNumber,
+        };
+        console.log(newDeliveryStaff);
+        // Step 2: Call createNewDeliveryStaff with the additional details
+        await createNewDeliveryStaff(newDeliveryStaff);
       }
-
       message.success("Account created successfully!");
       handleCloseForm(); // Close the form after successful creation
       fetchData(); // Refresh the account data
@@ -172,7 +187,7 @@ function AccountManager() {
       const newBannedStatus = !record.banned;
       const response = await ToggleAccountBannedStatus(record.accountId, newBannedStatus);
       if (response && response.status === 200) {
-        toast.success(`Account ${newBannedStatus ? 'banned' : 'unbanned'} successfully!`);
+        message.success(`Account ${newBannedStatus ? 'banned' : 'unbanned'} successfully!`);
         fetchData();
         const updatedData = data.map(item =>
           item.accountId === record.accountId ? { ...item, banned: newBannedStatus } : item
@@ -263,6 +278,7 @@ function AccountManager() {
             style={{ width: 200, cursor: 'pointer' }}
             onClick={() => handleRoleSelect(role)}
           >
+            <img src={`images/${role}.png`} alt={`${role} icon`} style={{ width: '50px', height: '50px', marginBottom: '8px' }} />
             <p>Select this role</p>
           </Card>
         ))}
