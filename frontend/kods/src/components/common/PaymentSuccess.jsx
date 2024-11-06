@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import "../../css/Payment.css";
 
 const PaymentSuccess = () => {
-  const navigate = useNavigate(); // Initialize navigate
+const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     // Get the current URL
@@ -41,65 +42,18 @@ const PaymentSuccess = () => {
     }
   }, []);
 
-  // Styles
-  const styles = {
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#f0f8ff', // Light blue background
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      transition: 'background-color 0.5s ease',
-    },
-    card: {
-      backgroundColor: 'white',
-      borderRadius: '16px',
-      padding: '40px',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-      textAlign: 'center',
-      maxWidth: '400px',
-      width: '90%',
-      animation: 'fadeIn 0.5s ease-out',
-    },
-    title: {
-      fontSize: '28px',
-      color: '#2c3e50',
-      marginBottom: '16px',
-      fontWeight: 'bold',
-    },
-    message: {
-      fontSize: '18px',
-      color: '#34495e',
-      marginBottom: '32px',
-      lineHeight: '1.5',
-    },
-    button: {
-      backgroundColor: '#3498db',
-      color: 'white',
-      border: 'none',
-      borderRadius: '30px',
-      padding: '12px 30px',
-      fontSize: '18px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease, transform 0.1s ease',
-      outline: 'none',
-    },
-  };
-
   const handleBackToHome = () => {
     navigate("/"); // Navigate back to home
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Payment Successful!</h1>
-        <p style={styles.message}>
+    <div className="payment-page">
+      <div className="card">
+        <h1 className="title">Payment Successful!</h1>
+        <p className="message">
           Thank you for your purchase. Your transaction has been completed successfully.
         </p>
-        <button onClick={handleBackToHome} style={styles.button}>
+        <button onClick={handleBackToHome} className="button">
           Back to Homepage
         </button>
       </div>
