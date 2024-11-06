@@ -32,6 +32,20 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Mappings\" />
+    <Folder Include="Models\DTOs\AccountDTOs\" />
+    <Folder Include="Models\DTOs\CustomerDTOs\" />
+    <Folder Include="Models\DTOs\StaffDTOs\" />
+    <Folder Include="Models\DTOs\DeliveryStaffDTOs\" />
+    <Folder Include="Models\DTOs\HealthCareStaffDTOs\" />
+    <Folder Include="Models\DTOs\PriceListDTOs\" />
+    <Folder Include="Models\DTOs\OrderDTOs\" />
+    <Folder Include="Models\DTOs\OrderDetailsDTOs\" />
+    <Folder Include="Models\DTOs\FeedbackDTOs\" />
+    <Folder Include="Models\DTOs\TransportDTOs\" />
+    <Folder Include="Models\DTOs\TransportLogDTOs\" />
+    <Folder Include="Models\DTOs\KoiFishDTOs\" />
+    <Folder Include="Models\DTOs\HealthCheckDTOs\" />
+    <Folder Include="Models\DTOs\MiscDTOs\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +57,20 @@
     <None Remove="Services\" />
     <None Remove="Services\MailingService\" />
     <None Remove="Services\MailingService\MailModels\" />
+    <None Remove="Models\DTOs\AccountDTOs\" />
+    <None Remove="Models\DTOs\CustomerDTOs\" />
+    <None Remove="Models\DTOs\StaffDTOs\" />
+    <None Remove="Models\DTOs\DeliveryStaffDTOs\" />
+    <None Remove="Models\DTOs\HealthCareStaffDTOs\" />
+    <None Remove="Models\DTOs\PriceListDTOs\" />
+    <None Remove="Models\DTOs\OrderDTOs\" />
+    <None Remove="Models\DTOs\OrderDetailsDTOs\" />
+    <None Remove="Models\DTOs\FeedbackDTOs\" />
+    <None Remove="Models\DTOs\TransportDTOs\" />
+    <None Remove="Models\DTOs\TransportLogDTOs\" />
+    <None Remove="Models\DTOs\KoiFishDTOs\" />
+    <None Remove="Models\DTOs\HealthCheckDTOs\" />
+    <None Remove="Models\DTOs\MiscDTOs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Properties\launchSettings.json">
