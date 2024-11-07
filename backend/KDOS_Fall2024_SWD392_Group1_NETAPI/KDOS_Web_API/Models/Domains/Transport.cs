@@ -17,7 +17,7 @@ namespace KDOS_Web_API.Models.Domains
         public DeliveryStaff? DeliveryStaff { get; set; } // 1-1 relation
         public Staff? Staff { get; set; } // 1-1 relation
         public HealthCareStaff? HealthCareStaff { get; set; } // 1-1 relation
-        public ICollection<Orders>? Orders { get; set; }// 1-Many relation with Order
+        public ICollection<Orders> Orders { get; set; } = null!;// 1-Many relation with Order
         public ICollection<LogTransport>? LogTransports { get; set; } // 1-Many relation with LogTransport
     }
 }
