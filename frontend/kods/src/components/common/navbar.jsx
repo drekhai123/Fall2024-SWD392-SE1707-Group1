@@ -31,6 +31,10 @@ export default function Navbar() {
           </ul>
         </div>
 
+        <div className="navbar-body">
+          {/* Add any additional content or structure here */}
+        </div>
+
         {user && token ? (
           <div className="nav-right">
             <ul className="nav-list">
