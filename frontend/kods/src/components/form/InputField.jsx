@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { FormControl, FormHelperText, TextField } from "@mui/material";
+import { FormControl, TextField } from "@mui/material";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
@@ -43,9 +43,9 @@ const FormInput = ({
             placeholder={placeholder}
             defaultValue={defaultValue}
           />
-          <FormHelperText variant="filled">
+          {/* <FormHelperText variant="filled">
             {fieldState.error && fieldState.error.message}
-          </FormHelperText>
+          </FormHelperText> */}
         </FormControl>
       )}
       name={name}

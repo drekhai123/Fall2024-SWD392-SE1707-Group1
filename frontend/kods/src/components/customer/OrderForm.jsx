@@ -66,7 +66,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   // Hàm validate sđt Việt Nam
   const validateVietnamesePhone = (phone) => {
-    const phoneRegex = /^0[3|5|7|8|9][0-9]{8}$/; 
+    const phoneRegex = /^0[3|5|7|8|9][0-9]{8}$/;
     return phoneRegex.test(phone);
   };
 
@@ -226,16 +226,16 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       !customerInfo.nameSender ||
       !customerInfo.phoneSender ||
       !customerInfo.addressSender ||
-      phoneErrors.sender || 
+      phoneErrors.sender ||
       phoneErrors.customer ||
-      addressErrors.sender || 
+      addressErrors.sender ||
       addressErrors.customer ||
       emailError ||
       customerInfo.distance < 1
     ) {
       Swal.fire(
         "Notification",
-        customerInfo.distance < 1 
+        customerInfo.distance < 1
           ? "Please enter complete and valid customer/sender information"
           : "Please enter complete and valid customer/sender information",
         "error"
@@ -400,7 +400,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
 
   const handleCustomerChange = async (field, value) => {
     if (field === "phoneSender" || field === "phoneCustomer") {
-      
+
       if (!/^\d{0,10}$/.test(value)) {
         return;
       }
@@ -609,7 +609,7 @@ export default function OrderForm({ onSuggestionClick, distance }) {
   // Thêm state để quản lý payment method
   const [selectedPayment, setSelectedPayment] = useState('CASH');
 
-  
+
   const [addressErrors] = useState({
     sender: '',
     customer: ''

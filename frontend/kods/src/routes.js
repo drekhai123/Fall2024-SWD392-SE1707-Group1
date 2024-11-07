@@ -27,6 +27,8 @@ import PaymentSuccess from "./components/common/PaymentSuccess"; // Import Payme
 import ForgotPassword from "./components/common/ForgotPassword"; // Import the ForgotPassword component
 import AdminPage from "./components/admin/adminpage";
 import Dashboard from "./components/deliveryStaff/Dashboard";
+import ProfileForm from "./components/customer/profile/ProfileForm";
+import IndexUserProfile from "./components/customer/profile";
 
 export const router = createBrowserRouter([
   {
@@ -52,19 +54,19 @@ export const router = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <UserProfilePage />,
+    element: <IndexUserProfile />,
     children: [
       {
-        path: "customer",
-        element: <UserProfilePage />,
+        path: "Information",
+        element: <ProfileForm />,
       },
       {
-        path: "AddFish", // Thêm đường dẫn cho Add Fish
-        element: <AddFishForm />, // Hiển thị AddFishForm
+        path: "AddFish",
+        element: <AddFishForm />,
       },
       {
-        path: "ViewOrderHistory", // Add route for View Order History
-        element: <ViewOrderHistory />, // Display ViewOrderHistory component
+        path: "ViewOrderHistory",
+        element: <ViewOrderHistory />,
       },
     ],
   },
