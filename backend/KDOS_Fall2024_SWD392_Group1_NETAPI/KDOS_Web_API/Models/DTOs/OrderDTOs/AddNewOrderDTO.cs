@@ -24,6 +24,5 @@ namespace KDOS_Web_API.Models.DTOs
         public int DistancePriceListId { get; set; }
         public int WeightPriceListId { get; set; }
         public required int CustomerId { get; set; }
-        public int TransportId { get; set; }
     }
 }

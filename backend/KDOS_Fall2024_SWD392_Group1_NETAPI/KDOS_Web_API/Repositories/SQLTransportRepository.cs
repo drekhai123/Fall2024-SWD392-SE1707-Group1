@@ -66,6 +66,16 @@ namespace KDOS_Web_API.Repositories
             return transports;
         }
 
+        public async Task<Transport?> GetActiveTransportByOrderStatus(int id)
+        {
+            // Find all orders with the specified status
+            var transports = await transportContext.Transport.Include(x => x.Orders.Where(o => !o.DeliveryStatus.Equals("DELIVERED") && !o.DeliveryStatus.Equals("CANCELLED")))
+                .FirstOrDefaultAsync(o => o.TransportId == id);
+            
+
+            return transports;
+        }
+
         public async Task<Transport?> UpdateTransport(int id, Transport transport)
         {
             var transportModel = await transportContext.Transport.FindAsync(id);

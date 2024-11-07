@@ -108,7 +108,24 @@ namespace KDOS_Web_API.Datas
                 .HasOne(cus => cus.Customer)
                 .WithMany(fe => fe.Feedback)
                 .HasForeignKey(x => x.CustomerId);
-
+            //
+            modelBuilder.Entity<Transport>() 
+               .HasMany(o => o.Orders)
+               .WithOne(t => t.Transport)
+               .HasForeignKey(x => x.TransportId);
+            modelBuilder.Entity<Transport>()
+              .HasOne(o => o.DeliveryStaff)
+              .WithOne(t => t.Transport)
+              .HasForeignKey<Transport>(x => x.DeliveryStaffId);
+            modelBuilder.Entity<Transport>()
+              .HasOne(o => o.HealthCareStaff)
+              .WithOne(t => t.Transport)
+              .HasForeignKey<Transport>(x => x.HealthCareStaffId);
+            modelBuilder.Entity<Staff>()
+              .HasMany(o => o.Transports)
+              .WithOne(t => t.Staff)
+              .HasForeignKey(x => x.StaffId);
+            //
         }
         public KDOSDbContext(DbContextOptions<KDOSDbContext> options) : base(options)
         {

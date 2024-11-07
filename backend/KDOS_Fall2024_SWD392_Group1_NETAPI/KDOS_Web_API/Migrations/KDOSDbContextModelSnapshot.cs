@@ -575,9 +575,11 @@ namespace KDOS_Web_API.Migrations
 
                     b.HasKey("TransportId");
 
-                    b.HasIndex("DeliveryStaffId");
+                    b.HasIndex("DeliveryStaffId")
+                        .IsUnique();
 
-                    b.HasIndex("HealthCareStaffId");
+                    b.HasIndex("HealthCareStaffId")
+                        .IsUnique();
 
                     b.HasIndex("StaffId");
 
@@ -812,14 +814,14 @@ namespace KDOS_Web_API.Migrations
             modelBuilder.Entity("KDOS_Web_API.Models.Domains.Transport", b =>
                 {
                     b.HasOne("KDOS_Web_API.Models.Domains.DeliveryStaff", "DeliveryStaff")
-                        .WithMany("Transport")
-                        .HasForeignKey("DeliveryStaffId")
+                        .WithOne("Transport")
+                        .HasForeignKey("KDOS_Web_API.Models.Domains.Transport", "DeliveryStaffId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("KDOS_Web_API.Models.Domains.HealthCareStaff", "HealthCareStaff")
-                        .WithMany("Transport")
-                        .HasForeignKey("HealthCareStaffId")
+                        .WithOne("Transport")
+                        .HasForeignKey("KDOS_Web_API.Models.Domains.Transport", "HealthCareStaffId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
