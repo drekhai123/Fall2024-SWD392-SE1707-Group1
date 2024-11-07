@@ -1,124 +1,231 @@
-import React, { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Select,
+  MenuItem,
+  FormControl,
+} from "@mui/material";
 import { InputField } from "../../form";
-import { UpdateAccount } from "../../api/AccountApi";
+import { UpdateCustomer } from "../../api/CustomerApi";
+import { GetAccountById, DeleteAccount } from "../../api/AccountApi";
+import { useNavigate } from "react-router-dom";
+import { Toast } from 'primereact/toast'; // Import Toast from primereact
+import 'primereact/resources/themes/saga-blue/theme.css'; // Import theme
+import 'primereact/resources/primereact.min.css'; // Import primereact styles
+import 'primeicons/primeicons.css'; // Import primeicons
 
-const UserProfileForm = ({ onSubmit, methods }) => {
+const ProfileForm = ({ onSubmit = () => {}, methods }) => {
+  const { register, handleSubmit, watch, setValue } = methods;
+  const [customer, setCustomer] = useState({
+    customerName: '',
+    dob: '',
+    gender: '',
+    phoneNumber: '',
+    address: '',
+  });
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const { formState: { isDirty } } = methods;
+  const [isCooldown, setIsCooldown] = useState(false);
+  const navigate = useNavigate();
+  const toast = useRef(null); // Create a ref for the Toast component
 
-  const handleOpen = (data) => {
-    setFormData(data);
-    setOpen(true);
-  };
+  const watchedFields = watch(["customerName", "dob", "gender", "phoneNumber", "address"]);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  useEffect(() => {
+    const fetchAccountData = async () => {
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      const accountId = user?.accountId;
+      const token = sessionStorage.getItem('token');
 
-  const handleConfirm = async () => {
-    try {
-      await UpdateAccount(formData.id, formData);
-      onSubmit(formData);
-    } catch (error) {
-      console.error("Failed to update account:", error);
+      if (accountId) {
+        try {
+          const response = await GetAccountById(accountId, token);
+          const fetchedCustomer = response.data.customer;
+          setCustomer(fetchedCustomer);
+
+          Object.keys(fetchedCustomer).forEach(key => {
+            setValue(key, fetchedCustomer[key]);
+          });
+        } catch (error) {
+          console.error("Error fetching account data:", error);
+        }
+      }
+    };
+
+    fetchAccountData();
+  }, [setValue]);
+
+  const handleChange = (field) => (e) => {
+    let value = e.target.value;
+
+    // Automatically prepend '+84 ' if the phone number starts with '84'
+    if (field === "phoneNumber" && value.startsWith('84') && !value.startsWith('+84 ')) {
+      value = `+84 ${value.slice(2)}`;
     }
-    handleClose();
+
+    setCustomer((prev) => {
+      const updatedCustomer = { ...prev, [field]: value };
+      console.log('Updated Customer:', updatedCustomer);
+      return updatedCustomer;
+    });
   };
 
-  const handleSubmit = (data) => {
-    console.log("Updated form data:", data);
-    handleOpen(data);
+  const handleFormSubmit = async (e) => {
+    if (isCooldown) return;
+    try {
+      const updatedCustomer = await UpdateCustomer(customer.customerId, {
+        customerName: customer.customerName,
+        dob: customer.dob,
+        gender: customer.gender,
+        phoneNumber: customer.phoneNumber,
+        address: customer.address,
+      });
+      onSubmit(updatedCustomer);
+
+      // Show success notification using primereact Toast
+      toast.current.show({ severity: 'success', summary: 'Success', detail: 'Customer details saved successfully!', life: 3000 });
+      setIsCooldown(true);
+      setTimeout(() => setIsCooldown(false), 5000);
+    } catch (error) {
+      console.error('Error updating customer:', error);
+    }
   };
 
-  const handleDeleteConfirm = () => {
-    console.log("Account deleted");
-    setDeleteConfirmOpen(false);
+  const handleConfirm = () => {
+    setOpen(false);
+    handleFormSubmit({ preventDefault: () => {} });
+  };
+
+  const handleDeleteConfirm = async () => {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const accountId = user?.accountId;
+
+    if (!accountId) {
+      console.error("No account ID found.");
+      return;
+    }
+
+    try {
+      await DeleteAccount(accountId);
+      setDeleteConfirmOpen(false);
+      // Optionally, redirect the user or perform other actions after deletion
+    } catch (error) {
+      console.error("Error deleting account:", error);
+    }
   };
 
   return (
     <>
-      <div>
-        <p className="text-4xl font-semibold">Profile</p>
-        <p className="text-gray-600 text-lg my-2">
-          This is your user profile. You can update your name, email here.
-        </p>
-        <div className="border-b border-gray-300 my-4"></div>
-      </div>
-      <div className="max-w-5xl">
-        <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-6">
-          {/* User Name Field */}
-          <div>
-            <label className="block mb-2">UserName</label>
-            <InputField
-              defaultValue="userName"
-              name="userName"
-              label="User Name"
-              fullWidth
-              style={{ boxSizing: 'border-box' }}
-            />
-          </div>
-
-          {/* Email Field */}
-          <div>
-            <label className="block mb-2">Email</label>
-            <InputField
-              defaultValue="email"
-              name="email"
-              label="Email"
-              fullWidth
-              type="email"
-              rules={{
-                pattern: {
-                  value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                  message: "Enter a valid email address",
-                },
-              }}
-              placeholder="Enter your email"
-              style={{ boxSizing: 'border-box' }}
-            />
-          </div>
-
-          {/* Avatar Field */}
-          {/* <div>
-            <label className="block mb-2">Change your avatar here</label>
-            <InputField
-              defaultValue="avatar"
-              name="avatar"
-              label="Avatar"
-              fullWidth
-              placeholder="Enter your avatar URL"
-              style={{ boxSizing: 'border-box' }}
-            />
-          </div> */}
-
-          {/* Submit Button */}
-          {isDirty && (
+      <Toast ref={toast} /> {/* Add the Toast component */}
+      {customer && (
+        <div className="max-w-5xl">
+          <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+            {/* Customer Name Field */}
             <div>
-              <Button type="button" variant="contained" color="primary" onClick={methods.handleSubmit(handleSubmit)}>
+              <label className="block mb-2">Customer Name</label>
+              <InputField
+                name="customerName"
+                fullWidth
+                placeholder="Enter your customer name"
+                value={customer.customerName || ""}
+                onChange={handleChange("customerName")}
+              />
+            </div>
+
+            {/* Date of Birth Field */}
+            <div>
+              <label className="block mb-2">Date of Birth</label>
+              <InputField
+                name="dob"
+                type="text"
+                fullWidth
+                placeholder="Enter your date of birth"
+                value={customer?.dob || ""}
+                onChange={handleChange("dob")}
+                  InputProps={{
+                  readOnly: true, // Ensure the field is read-only
+                }}
+              />
+            </div>
+
+            {/* Gender Field as Select Dropdown */}
+            <div>
+              <FormControl fullWidth>
+                <label className="block mb-2">Gender</label>
+                <Select
+                  {...register("gender")}
+                  value={customer.gender || ""}
+                  onChange={handleChange("gender")}
+                  fullWidth
+                >
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
+                  <MenuItem value="Others">Others</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            {/* Phone Number Field */}
+            <div>
+            <label className="block mb-2">Phone Number</label>
+            <InputField
+              name="phoneNumber"
+              type="number"
+              fullWidth
+              placeholder="Enter your phone number"
+              value={customer?.phoneNumber || ""}
+              onChange={handleChange("phoneNumber")}
+            />
+          </div>
+            {/* Address Field */}
+            <div>
+              <label className="block mb-2">Address</label>
+              <InputField
+                {...register("address")}
+                name="address"
+                fullWidth
+                placeholder="Enter your address"
+                value={customer.address || ""}
+                onChange={handleChange("address")}
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={
+                  isCooldown ||
+                  !Object.keys(watchedFields).some(key => watchedFields[key] !== customer[key])
+                }
+              >
                 Save Changes
               </Button>
             </div>
-          )}
 
-          {/* Delete Account Button */}
-          <div className="mt-4">
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => setDeleteConfirmOpen(true)}
-            >
-              Delete Account
-            </Button>
-          </div>
-        </form>
-      </div>
+            {/* Delete Account Button */}
+            <div className="mt-4">
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => setDeleteConfirmOpen(true)}
+              >
+                Delete Account
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Confirmation Dialog */}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Confirm Changes</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -126,7 +233,7 @@ const UserProfileForm = ({ onSubmit, methods }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={() => setOpen(false)} color="primary">
             Cancel
           </Button>
           <Button onClick={handleConfirm} color="primary" autoFocus>
@@ -156,4 +263,4 @@ const UserProfileForm = ({ onSubmit, methods }) => {
   );
 };
 
-export default UserProfileForm;
+export default ProfileForm;

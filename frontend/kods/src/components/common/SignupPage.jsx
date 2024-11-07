@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/SignupPage.css";
 import "../../css/LoginPage.css";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from 'date-fns';
 
@@ -42,6 +42,8 @@ const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [dobErrorText, setDobErrorText] = useState("");
+
   const navigate = useNavigate();
 
   const lastToastRef = useRef({ message: '', timestamp: 0 });
@@ -49,9 +51,11 @@ const SignupPage = () => {
 
   const showToast = (message) => {
     const now = Date.now();
-    if (lastToastRef.current.message !== message || (now - lastToastRef.current.timestamp) > toastCooldown) {
-      toast.error(message);
-      lastToastRef.current = { message, timestamp: now };
+    const { message: lastMessage, timestamp: lastTimestamp } = lastToastRef.current;
+
+    if (lastMessage !== message || (now - lastTimestamp) > toastCooldown) {
+        toast.error(message);
+        lastToastRef.current = { message, timestamp: now };
     }
   };
 
@@ -128,10 +132,30 @@ const SignupPage = () => {
     setNameError(!newName);
   };
 
+  const validateDob = (dob) => {
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age >= 18 && age <= 100;
+  };
+
   const handleChangeDob = (e) => {
     const newDob = e.target.value;
+    const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(newDob);
+    if (!isValidDate) {
+        setDobErrorText("Invalid date format. Please use YYYY-MM-DD.");
+        setDobError(true);
+        return;
+    }
+
     setDob(newDob);
-    setDobError(!newDob);
+    const isValidDob = validateDob(newDob);
+    setDobError(!isValidDob);
+    setDobErrorText(isValidDob ? "" : "Date of birth must be greater than 18");
   };
 
   const handleSignupClick = async (e) => {
@@ -317,12 +341,13 @@ const SignupPage = () => {
           <div className="input-wrapper">
             <input
               type="date"
-              value={dob ? format(dob, 'yyyy-MM-dd') : ''}
-              onChange={(e) => setDob(new Date(e.target.value))}
-              className="address-input"
+              value={dob || ''}
+              onChange={handleChangeDob}
+              className="dob-input"
               placeholder="Enter Your Date of Birth"
               min="1924-01-01"
             />
+            {dobErrorText && <p className="error-text">{dobErrorText}</p>}
           </div>
 
           {/* Gender field */}
@@ -405,10 +430,10 @@ const SignupPage = () => {
             <h3 style={{ color: "yellow" }}>Check Your Email For Verification Code</h3>
           ) : ""}
           <div className="to-login-container">
-            <p className="to-login-text">Already have an account?</p>
-            <button className="to-login-btn" onClick={handleLoginClick}>
+            <p className="to-login-text">Already have an account? </p>
+            <a href="/login" className="to-login-btn">
               Log In.
-            </button>
+            </a>
           </div>
         </form>
       </div>
