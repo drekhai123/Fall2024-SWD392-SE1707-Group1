@@ -1,79 +1,82 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form, Input, Select, message } from 'antd';
-import { GetAllStaff, UpdateStaff } from '../api/StaffApi'; // Adjust the import path as necessary
+import { GetAllHealthCareStaff, UpdateHealthCareStaff } from '../api/HealthcareStaffApi'; // Adjust the import path as necessary
 import '../../css/accountmanager.css';
 
 const { Option } = Select;
 
-function StaffManager() {
-  // const [staffData, setStaffData] = useState([]); // State to hold delivery staff data
-  const [showEditModal, setShowEditModal] = useState(false); // State for edit modal
-  const [selectedStaff, setSelectedStaff] = useState(null); // State to hold selected staff for editing
-  const [form] = Form.useForm(); // Ant Design form instance
-  const [searchTerm, setSearchTerm] = useState(''); // State for search term
-  const [filteredData, setFilteredData] = useState([]); // State for filtered data
+function HealthcareStaffManager() {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState(null);
+  const [form] = Form.useForm();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Fetch delivery staff data
-  const fetchStaff = async () => {
+
+  // Fetch healthcare staff data
+  const fetchHealthcareStaff = async () => {
     try {
-      setLoading(true); // Set loading to true while fetching
-      const response = await GetAllStaff(); // Fetch delivery staff data from API
+      setLoading(true);
+      const response = await GetAllHealthCareStaff();
       if (response && response.status === 200) {
-        // Filter out staff with staffId = 0
         const filteredStaff = response.data.filter(staff => staff.staffId !== 0);
-        setFilteredData(filteredStaff || []); // Initialize filtered data
+        setFilteredData(filteredStaff || []);
       }
     } catch (error) {
-      console.error('Error fetching staff:', error);
-      message.error("Error fetching staff: " + error.message);
-    } finally {
-      setLoading(false); // Set loading to false after fetching
-    }
-  };
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    searchStaffsByName(value); // Corrected function call
-  };
-  const searchStaffsByName = async (name) => {
-    setLoading(true);
-    try {
-      const response = await GetAllStaff(); // Fetch all delivery staff
-      if (response && response.status === 200) {
-        const filtered = response.data.filter(staff =>
-          staff.staffName.toLowerCase().includes(name.toLowerCase()) && staff.staffId !== 0 // Exclude staff with staffId = 0
-        );
-        setFilteredData(filtered); // Set filtered data
-      }
-    } catch (error) {
-      console.error('Error searching staff:', error);
-      message.error("Error searching staff: " + error.message);
+      console.error('Error fetching healthcare staff:', error);
+      message.error("Error fetching healthcare staff: " + error.message);
     } finally {
       setLoading(false);
     }
   };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    searchHealthcareStaffsByName(value);
+  };
+
+  const searchHealthcareStaffsByName = async (name) => {
+    setLoading(true);
+    try {
+      const response = await GetAllHealthCareStaff();
+      if (response && response.status === 200) {
+        const filtered = response.data.filter(staff =>
+          staff.staffName.toLowerCase().includes(name.toLowerCase()) && staff.staffId !== 0
+        );
+        setFilteredData(filtered);
+      }
+    } catch (error) {
+      console.error('Error searching healthcare staff:', error);
+      message.error("Error searching healthcare staff: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchStaff(); // Fetch data on component mount
+    fetchHealthcareStaff();
   }, []);
 
   // Handle edit button click
   const handleEdit = (record) => {
-    setSelectedStaff(record); // Set the selected staff for editing
-    form.setFieldsValue(record); // Populate the form with the selected staff data
-    setShowEditModal(true); // Show the edit modal
+    setSelectedStaff(record);
+    form.setFieldsValue(record);
+    setShowEditModal(true);
   };
 
   // Handle form submission for editing
   const handleEditSubmit = async (values) => {
     try {
-      await UpdateStaff(selectedStaff.staffId, values); // Call API to update staff
-      message.success("Staff updated successfully!");
-      setShowEditModal(false); // Close the modal
-      fetchStaff(); // Refresh the staff data
+      await UpdateHealthCareStaff(selectedStaff.staffId, values);
+      message.success("Healthcare staff updated successfully!");
+      setShowEditModal(false);
+      fetchHealthcareStaff();
     } catch (error) {
-      console.error('Error updating staff:', error);
-      message.error("Error updating staff: " + error.message);
+      console.error('Error updating healthcare staff:', error);
+      message.error("Error updating healthcare staff: " + error.message);
     }
   };
 
@@ -86,16 +89,16 @@ function StaffManager() {
     {
       title: 'Actions',
       render: (text, record) => (
-        <Button className="ban-button" onClick={() => handleEdit(record)}>Edit</Button>
+        <Button className="edit-button" onClick={() => handleEdit(record)}>Edit</Button>
       ),
     },
   ];
 
   return (
     <div>
-      <h2>Manage Staff</h2>
+      <h2>Manage Healthcare Staff</h2>
       <Input
-        placeholder="Search by staff name..."
+        placeholder="Search by healthcare staff name..."
         value={searchTerm}
         onChange={handleSearchChange}
         style={{ marginBottom: '16px' }}
@@ -103,7 +106,7 @@ function StaffManager() {
       <Table
         columns={columns}
         dataSource={filteredData}
-        loading={loading} // Show loading state
+        loading={loading}
         rowKey="staffId"
         pagination={{
           pageSize: 5,
@@ -111,7 +114,7 @@ function StaffManager() {
         }}
       />
       <Modal
-        title="Edit Staff"
+        title="Edit Healthcare Staff"
         open={showEditModal}
         onCancel={() => setShowEditModal(false)}
         footer={null}
@@ -147,4 +150,4 @@ function StaffManager() {
   );
 }
 
-export default StaffManager;
+export default HealthcareStaffManager;

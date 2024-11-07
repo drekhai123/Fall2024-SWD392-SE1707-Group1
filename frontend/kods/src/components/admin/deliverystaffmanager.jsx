@@ -19,8 +19,9 @@ function DeliveryStaffManager() {
       setLoading(true); // Set loading to true while fetching
       const response = await GetAllDeliveryStaff(); // Fetch delivery staff data from API
       if (response && response.status === 200) {
-        // setStaffData(response.data || []); // Set the fetched data
-        setFilteredData(response.data || []); // Initialize filtered data
+        // Filter out staff with staffId = 0
+        const filteredStaff = response.data.filter(staff => staff.staffId !== 0);
+        setFilteredData(filteredStaff || []); // Initialize filtered data
       }
     } catch (error) {
       console.error('Error fetching delivery staff:', error);
@@ -41,7 +42,7 @@ function DeliveryStaffManager() {
       const response = await GetAllDeliveryStaff(); // Fetch all delivery staff
       if (response && response.status === 200) {
         const filtered = response.data.filter(staff =>
-          staff.staffName.toLowerCase().includes(name.toLowerCase())
+          staff.staffName.toLowerCase().includes(name.toLowerCase()) && staff.staffId !== 0 // Exclude staff with staffId = 0
         );
         setFilteredData(filtered); // Set filtered data
       }
