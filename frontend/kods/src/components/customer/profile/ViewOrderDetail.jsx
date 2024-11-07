@@ -28,7 +28,7 @@ import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
 import { Star, StarBorder } from '@mui/icons-material'; // Import star icons
 import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
 import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
-import {fetchLogTransportByCustomerId } from '../../api/TranslogApi'; // Import the new function
+import { fetchLogTransportByCustomerId } from '../../api/TranslogApi'; // Import the new function
 
 
 function getStatusColor(status) {
@@ -256,13 +256,15 @@ export default function OrderDetail({ onBack }) {
           </Button>
           {orderDetail && orderDetail.deliveryStatus === 'PENDING' && (
             <>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleOpenDialog}
-              >
-                Cancel Order
-              </Button>
+              {orderDetailById == null &&
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleOpenDialog}
+                >
+                  Cancel Order
+                </Button>
+              }
               {orderDetailById && orderDetailById.map((item) => (
                 <Button
                   key={item.orderDetailsId}
@@ -507,8 +509,8 @@ export default function OrderDetail({ onBack }) {
                         <TableRow key={index}>
                           <TableCell>{formattedDate}</TableCell>
                           <TableCell><strong><span style={{ color: getStatusColor(status.status) }}>
-                              {status.status}
-                            </span></strong>
+                            {status.status}
+                          </span></strong>
                           </TableCell>
                           <TableCell>{status.temperature}</TableCell>
                           <TableCell>{status.oxygenLevel}</TableCell>
