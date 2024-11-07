@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import '../../css/DeliveryStaffTransport.css'
 import { GetTransportByDeliveryStaffId } from '../api/TransportApi';
 import LoadingScreen from '../../utils/LoadingScreen';
-import { CheckCircleOutlineOutlined } from '@mui/icons-material';
+import { CheckCircleOutlineOutlined, CloseOutlined} from '@mui/icons-material';
 import { confirmDialog, } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { toast } from 'react-toastify';
@@ -22,13 +22,16 @@ export default function TransportPage({ userData, setCurrentOrder }) {
     const [refreshData, setRefreshData] = useState(false);
 
     useEffect(() => {
-        setCurrentOrder(order)
         if (order !== null) {
             setSelected(true)
         } else {
             setSelected(false)
         }
     }, [order])
+
+    useEffect(() => {
+        if (order) confirmCheckOut();
+    }, [order]);
 
     useEffect(() => {
         const getTransport = async () => {
@@ -52,20 +55,21 @@ export default function TransportPage({ userData, setCurrentOrder }) {
     }, [refreshData]);
 
     const handleConfirmOrder = async () => {
+        console.log(order)
         setLoading(true)
         const orderstatusData = {
             deliveryStatus: "DELIVERED"
         }
-        if (selectedOrder != null) {
-            var response = await updateOrderStatus(selectedOrder.orderId, orderstatusData)
+        if (order != null) {
+            var response = await updateOrderStatus(order.orderId, orderstatusData)
             console.log(response)
             if (response.status === 200) {
-                if (selectedOrder.paymentStatus === "PENDING") {
+                if (order.paymentStatus === "PENDING") {
                    //console.log(selectedOrder.paymentStatus)
                     const deliverystatusData = {
                         paymentStatus: "PAID"
                     }
-                    response = await updatePaymentStatus(selectedOrder.orderId, deliverystatusData)
+                    response = await updatePaymentStatus(order.orderId, deliverystatusData)
                     console.log(response)
                 }
             }
@@ -82,7 +86,8 @@ export default function TransportPage({ userData, setCurrentOrder }) {
     }
 
     const accept = async () => {
-        const response = await handleConfirmOrder()
+        const response = await handleConfirmOrder(selectedOrder)
+        console.log(response)
         if (response !=null) {
             if(response.status === 200)
             confirmOrder.current.show({ severity: 'success', summary: 'Confirmed', detail: 'Order Completed', life: 3000 });
@@ -97,15 +102,14 @@ export default function TransportPage({ userData, setCurrentOrder }) {
         confirmOrder.current.show({ severity: 'warn', summary: 'Rejected', detail: 'Order Not Completed', life: 3000 });
     }
 
-    const confirmCheckOut = (rowData) => {
-        setSelectedOrder(rowData)
+    const confirmCheckOut = () => {
         confirmDialog({
             message: (
                 <div>
-                    <p>Confirm Delivery Of The Order: {rowData.orderId}</p>
-                    <p>On Customer: {rowData.customerId}</p>
-                    {rowData.paymentStatus === "PENDING" && (
-                        <p>Order Payment: {rowData.totalCost} VND</p>
+                    <p>Confirm Delivery Of The Order: {order.orderId}</p>
+                    <p>On Customer: {order.customerId}</p>
+                    {order.paymentStatus === "PENDING" && (
+                        <p>Order Payment: {order.totalCost} VND</p>
                     )}
                 </div>
             ),
@@ -155,8 +159,10 @@ export default function TransportPage({ userData, setCurrentOrder }) {
                                 <>
                                     <Button icon={<MapIcon />} onClick={() => trackRoute(rowData)} className="action_button" label="Track Route" />
                                     <Button
+                                        style={{backgroundColor:rowData.deliveryStatus !== "DELIVERED"?"green":"gray"}}
                                         disabled={rowData.deliveryStatus == "DELIVERED"}
-                                        icon={<CheckCircleOutlineOutlined />} onClick={() => confirmCheckOut(rowData)} className="check_button" label="Confirm Delivery" />
+                                        icon={rowData.deliveryStatus !== "DELIVERED"?<CheckCircleOutlineOutlined />:<CloseOutlined/>} 
+                                        onClick={()=>{ setOrder(rowData)}} className="check_button" label="Confirm Delivery" />
                                 </>
                             );
                         }}>
