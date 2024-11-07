@@ -35,6 +35,15 @@ export async function GetAllStaff() {
     throw error; // Throw error to be handled in the calling function
   }
 }
+export async function GetStaffByAccountId(id) {
+  try {
+    const response = await axios.get(`${getAllStaffURL}/StaffAccount/${id}`, { headers: getHeaders() }); // Use the getHeaders function
+    return response;
+  } catch (error) {
+    console.error("Error fetching Staff:", error);
+    throw error; // Throw error to be handled in the calling function
+  }
+}
 
 // export async function GetAllStaffs() {
 //   var allStaff = null;

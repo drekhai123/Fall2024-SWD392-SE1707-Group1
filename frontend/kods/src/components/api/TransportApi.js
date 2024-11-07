@@ -35,7 +35,8 @@ export async function AddTransportLog(data) {
 export async function GetAllTransports() {
   try {
     const response = await axios.get(`${getAllTransportURL}`, { headers: getHeaders() });
-    return response;
+    const filteredTransports = response.data.filter(transport => transport.transportId !== 0); // Filter out transports with ID = 0
+    return filteredTransports; // Return the filtered list
   } catch (error) {
     console.error("Error getting All Transports :", error);
     return error;
