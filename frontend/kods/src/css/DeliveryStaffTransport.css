@@ -25,7 +25,7 @@
 
 .p-datatable .p-datatable-tbody > tr > td {
     padding: 10px 15px; /* Uniform padding for cells */
-    text-align: center; /* Center align all cell text */
+    text-align: left; /* Center align all cell text */
 }
 
 /* Highlight row on hover */
@@ -43,8 +43,44 @@
     font-size: 0.9rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin: 1% 1% 1% 1%;
+    z-index: 100;
+}
+
+.check_button {
+    background-color: green; /* Royal blue */
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 1% 1% 1% 1%;
+    z-index: 100;
+}
+
+.focus_button {
+    background-color: #4169e1; /* Royal blue */
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 1% 1% 1% 1%;
+    z-index: 1;
+}
+
+.check_button:hover{
+    background-color: darkgreen; /* Darker blue on hover */
 }
 
 .action_button:hover {
+    background-color: #27408b; /* Darker blue on hover */
+}
+
+.focus_button:hover {
     background-color: #27408b; /* Darker blue on hover */
 }

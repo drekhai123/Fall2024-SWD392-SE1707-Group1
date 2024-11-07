@@ -7,10 +7,10 @@ namespace KDOS_Web_API.Models.Enum
     [JsonConverter(typeof(StringEnumConverter))]
     public enum TransportStatus
     {
-        [EnumMember(Value = "PROCESSING")] //Dang delivery
-        PROCESSING,
+        [EnumMember(Value = "FREE")] //Dang delivery
+        FREE,
 
-        [EnumMember(Value = "DELIVERED")] //Da giao hang
-        DELIVERED,
+        [EnumMember(Value = "DELIVERING")] //Da giao hang
+        DELIVERING,
     }
 }

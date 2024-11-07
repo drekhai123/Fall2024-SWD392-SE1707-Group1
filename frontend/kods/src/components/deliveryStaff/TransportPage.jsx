@@ -1,18 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MapIcon from '@mui/icons-material/Map';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import '../../css/DeliveryStaffTransport.css'
 import { GetTransportByDeliveryStaffId } from '../api/TransportApi';
-import { toast } from 'react-toastify';
 import LoadingScreen from '../../utils/LoadingScreen';
+import {  CheckCircleOutlineOutlined } from '@mui/icons-material';
+import { confirmDialog,  } from 'primereact/confirmdialog';
+import { Toast } from 'primereact/toast';
+import { toast } from 'react-toastify';
 
-export default function TransportPage({userData}) {
-    const [products, setProducts] = useState([1, 2, 3]); //backup
+export default function TransportPage({ userData,setCurrentOrder }) {
     const [transport, setTransport] = useState();
     const [loading, setLoading] = useState(false);
-    
+    const [order, setOrder] = useState(null);
+    const [selected, setSelected] = useState(false);
+    const confirmOrder = useRef(null);
+
+    useEffect(()=>{
+        setCurrentOrder(order)
+        if(order!== null){
+            setSelected(true)
+        } else {
+            setSelected(false)
+        }
+    },[order])
+
     useEffect(() => {
         const getTransport = async () => {
             setLoading(true)
@@ -41,6 +55,29 @@ export default function TransportPage({userData}) {
         window.open(url, '_blank');
     }
 
+    const accept = () => {
+        confirmOrder.current.show({ severity: 'success', summary: 'Confirmed', detail: 'Order Completed', life: 3000 });
+
+    }
+
+    const reject = () => {
+        confirmOrder.current.show({ severity: 'warn', summary: 'Rejected', detail: 'Order Not Completed', life: 3000 });
+       
+    }
+
+    const confirmCheckOut = () => {
+        confirmDialog({
+            message: 'Confirm Delivery',
+            header: 'Confirm The Order Have Been Delivered?',
+            icon: 'pi pi-info-circle',
+            defaultFocus: 'reject',
+            rejectClassName:'p-button-danger',
+            acceptClassName: 'p-button-success',
+            accept,
+            reject
+        });
+    };
+
     // Pagingation
     const [first, setFirst] = useState(0); // Track the first row for controlled pagination
     const [rows, setRows] = useState(5); // Number of rows per page
@@ -51,33 +88,50 @@ export default function TransportPage({userData}) {
     //
     return (
         <>
-        <div className="transport-card">
-            {loading && <LoadingScreen />}
-            <DataTable
-                scrollable
-                resizableColumns
-                paginator
-                rows={rows}
-                first={first}
-                onPage={onPage}
-                value={transport}>
-                <Column
-                    frozen
-                    alignFrozen='left'
-                    field="id"
-                    header="Action"
-                    body={(rowData) => {
-                        return (
-                            <Button icon={<MapIcon />} onClick={() => trackRoute(rowData)} className="action_button" label="Track Route" />
-                        );
-                    }}>
-                </Column>
-                <Column field="orderId" sortable header="Order Id"></Column>
-                <Column field="senderAddress" header="From"></Column>
-                <Column field="recipientAddress" header="To"></Column>
-                <Column field="createdAt" sortable header="Date Added"></Column>
-            </DataTable>
-        </div>
+        <Toast ref={confirmOrder} />
+            <div className="transport-card">
+                {loading && <LoadingScreen />}
+                <DataTable
+                selection={order} 
+                onSelectionChange={(e) => setOrder(e.value)}
+                    dataKey="orderId"
+                    scrollable
+                    resizableColumns
+                    stripedRows
+                    paginator
+                    rows={rows}
+                    first={first}
+                    onPage={onPage}
+                    value={transport}
+                    >
+                    <Column
+                        frozen
+                        alignFrozen='left'
+                        field="id"
+                        header="Action"
+                        body={(rowData) => {
+                            return (
+                                <>
+                                    <Button icon={<MapIcon />} onClick={() => trackRoute(rowData)} className="action_button" label="Track Route" />
+                                    <Button icon={<CheckCircleOutlineOutlined />} onClick={()=>confirmCheckOut()} className="check_button" label="Confirm Delivery" />
+                                </>
+                            );
+                        }}>
+                    </Column>
+                    <Column field="orderId" sortable header="Order Id"></Column>
+                    <Column field="senderAddress" header="From"></Column>
+                    <Column field="recipientAddress" header="To"></Column>
+                    <Column field="createdAt" sortable header="Date Added"></Column>
+                    <Column
+                    alignFrozen='right'
+                    frozen={selected}
+                    selectionMode="single" headerStyle={{ width: '3rem' }}
+                    field="orderId" header="Focus Order"
+                    style={{textAlign: 'center'}}
+                    >
+                    </Column>
+                </DataTable>
+            </div>
         </>
     );
 }

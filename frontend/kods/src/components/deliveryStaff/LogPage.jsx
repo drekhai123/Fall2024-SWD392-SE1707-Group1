@@ -6,34 +6,44 @@ import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
 import { Card } from "primereact/card";
 import { toast } from "react-toastify";
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import '../../css/CustomDataTable.css'
 import '../../css/DeliveryStaffLog.css'
 import { AddTransportLog, GetTransportByDeliveryStaffId } from '../api/TransportApi';
 import LoadingScreen from "../../utils/LoadingScreen";
 import { Divider } from "primereact/divider";
+import { styled } from "@mui/material";
 
-export default function LogPage({ userData }) {
+export default function LogPage({ userData, selectOrder }) {
   const [transport, setTransport] = useState();
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null);
-  const columns = [
-    { field: 'customerId', headerName: 'Customer ID', width: 150, align: 'center', headerAlign: 'center' },
-    { field: 'orderId', headerName: 'Order ID', width: 150, sortable: true, align: 'center', headerAlign: 'center' },
-    { field: 'senderAddress', headerName: 'From', width: 200, align: 'center', headerAlign: 'center' },
-    { field: 'recipientAddress', headerName: 'To', width: 200, align: 'center', headerAlign: 'center' },
-    { field: 'createdAt', headerName: 'Date Added', width: 180, sortable: true, align: 'center', headerAlign: 'center' },
-  ];
+
   const [formData, setFormData] = useState({
     time: new Date,
     location: "",
     transportId: "",
     customerId: "",
   });
+
+  const BoldHeaderDataGrid = styled(DataGrid)({
+    '& .MuiDataGrid-columnHeaderTitle': {
+      fontWeight: 'bold',
+      fontSize: '1.3rem',
+    },
+    '& .MuiDataGrid-row': {
+      fontSize: '1rem',
+
+    }
+  });
+
+  const columns = [
+    { field: 'orderId', headerName: 'Order ID', headerClassName: 'bold-header', width: 150 },
+    { field: 'senderAddress', headerName: 'From', headerClassName: 'bold-header', width: 200 },
+    { field: 'recipientAddress', headerName: 'To', headerClassName: 'bold-header', width: 200 },
+    { field: 'createdAt', headerName: 'Date Added', headerClassName: 'bold-header', width: 150 },
+  ];
   const handleRowSelection = (newSelection) => {
     const selectedRow = transport.find((row) => row.orderId === newSelection.id);
-    console.log(selectedRow)
     setOrder(selectedRow);
   };
   // Geolocation API 
@@ -45,18 +55,28 @@ export default function LogPage({ userData }) {
           fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
             .then(response => response.json())
             .then(data => {
-              console.log('Address:', data.display_name);
-              setFormData({
-                ...formData,
-                location: data.display_name
-              });
               if (order !== null) {
                 setFormData({
-                  ...formData,
+                  location: data.display_name,
+                  customerId: order.customerId,
+                  orderId: order.orderId,
                   time: new Date,
                   transportId: order.transportId,
-                  customerId: order.customerId,
                 })
+              }else if(selectOrder!=null){
+                setFormData({
+                  location: data.display_name,
+                  time: new Date,
+                  transportId: selectOrder.transportId,
+                  customerId: selectOrder.customerId,
+                  orderId: selectOrder.orderId
+                })
+              }else{
+                setFormData({ 
+                  time: new Date,
+                  location: "",
+                  transportId: "",
+                  customerId: "",})
               }
             })
             .catch(error => console.error('Error:', error));
@@ -99,23 +119,17 @@ export default function LogPage({ userData }) {
     }));
   };
 
-  const handleDateChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      time: e.value,
-    }));
-  };
-
   const handleSubmit = async () => {
+    setLoading(true);
     // Add form submission logic here
-    console.log("Form Data:", formData);
     const response = await AddTransportLog(formData)
-    if (response.status === 201) {
+    if (response.status === 201 ) {
       toast.success("Log Added!")
     }
     else if (response.status > 400) {
       toast.error("Error: ", response.status)
     }
+    setLoading(false);
   };
 
   // Pagingation
@@ -135,13 +149,11 @@ export default function LogPage({ userData }) {
                 disabled
                 id="time"
                 value={formData.time}
-                onChange={handleDateChange}
                 showTime
                 showSeconds
                 placeholder="Select time"
               />
             </div>
-
             <div className="p-field">
               <label htmlFor="location">Location</label>
               <InputText
@@ -153,15 +165,13 @@ export default function LogPage({ userData }) {
                 style={{ width: "100%", padding: "10px" }}
               />
             </div>
-
             <div className="p-field">
-              <label htmlFor="transportId">Transport ID</label>
+              <label htmlFor="orderId">Order ID</label>
               <InputNumber
-                id="transportId"
-                name="transportId"
-                value={formData.transportId}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, transportId: e.value }))}
-                placeholder="Enter Transport ID"
+                id="orderId"
+                name="orderId"
+                value={formData.orderId}
+                placeholder="Enter Order ID"
                 style={{ width: "100%", padding: "10px" }}
                 disabled
               />
@@ -173,13 +183,11 @@ export default function LogPage({ userData }) {
                 id="customerId"
                 name="customerId"
                 value={formData.customerId}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, customerId: e.value }))}
                 placeholder="Enter Customer ID"
                 style={{ width: "100%", padding: "10px" }}
                 disabled
               />
             </div>
-
             <Button
               disabled={order ? false : true}
               label="Submit"
@@ -189,20 +197,18 @@ export default function LogPage({ userData }) {
           </div>
         </Card>
         <Divider />
-        <div style={{ height: 400, width: '100%', margin: '0 auto'}}>
-          <DataGrid
+        <div style={{ height: 400, width: '100%', margin: '0 auto' }}>
+          <BoldHeaderDataGrid
             rows={transport}
             columns={columns}
             getRowId={(row) => row.orderId} // `orderId` is unique for each row
             pageSize={pageSize}
-            rowsPerPageOptions={[5, 10, 20]}
             pagination
             page={page}
+            checkboxSelection={false}
             onPageChange={(newPage) => setPage(newPage)}
             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-            onRowClick={(e) => handleRowSelection(e)}
-            checkboxSelection={false}
-            disableColumnMenu
+            onRowClick={(newSelection) => handleRowSelection(newSelection)}
           />
         </div>
       </div>

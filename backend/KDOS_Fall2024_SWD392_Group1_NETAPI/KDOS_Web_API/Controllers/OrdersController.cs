@@ -6,6 +6,7 @@ using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using KDOS_Web_API.Models.Enum;
 using Microsoft.AspNetCore.Authorization;
+using KDOS_Web_API.Models.DTOs.OrderDTOs;
 
 namespace KDOS_Web_API.Controllers
 {
@@ -173,8 +174,8 @@ namespace KDOS_Web_API.Controllers
             return Ok(orderDto);
         }
 
-        [HttpPut]
-        [Route("{orderId}/status")]
+        [HttpPatch]
+        [Route("{orderId}/OrderStatus")]
         public async Task<IActionResult> UpdateOrderStatus([FromRoute] int orderId, [FromBody] UpdateOnlyOrderStatusDTO orderStatus)
         {
             // Validate the model state
@@ -195,6 +196,35 @@ namespace KDOS_Web_API.Controllers
                 {
                     return NotFound();
                 }
+
+            // Map the updated order back to a DTO for the response
+            var updatedOrderDto = mapper.Map<OrdersDTO>(orderModel);
+
+            // Return the updated order with a 200 OK status
+            return Ok(updatedOrderDto);
+        }
+        [HttpPatch]
+        [Route("{orderId}/PaymentStatus")]
+        public async Task<IActionResult> UpdatePaymentStatus([FromRoute] int orderId, [FromBody] UpdateOnlyPaymentStatusDTO orderStatus)
+        {
+            // Validate the model state
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Retrieve the order by ID
+
+            // Update the order status
+            var orderModel = mapper.Map<Orders>(orderStatus);
+            orderModel.UpdatedAt = DateTime.Now;
+            orderModel = await orderRepository.UpdateOnlyOrderStatus(orderId, orderModel);
+
+            // If the orderModel is still null after the update, something went wrong
+            if (orderModel == null)
+            {
+                return NotFound();
+            }
 
             // Map the updated order back to a DTO for the response
             var updatedOrderDto = mapper.Map<OrdersDTO>(orderModel);

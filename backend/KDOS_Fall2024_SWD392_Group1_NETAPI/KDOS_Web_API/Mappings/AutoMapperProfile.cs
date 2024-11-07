@@ -84,8 +84,7 @@ namespace KDOS_Web_API.Mappings
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.DeliveryStatus, opt => opt.Ignore())
             .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore()).ReverseMap();
-            CreateMap<Orders, UpdateOnlyOrderStatusDTO>()
-             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()).ReverseMap();
+            CreateMap<Orders, UpdateOnlyOrderStatusDTO>().ReverseMap();
             // OrderDetails
             CreateMap<OrderDetails, OrderDetailsDTO>().ReverseMap();
             CreateMap<OrderDetails, AddNewOrderDetailsDTO>().ReverseMap();
