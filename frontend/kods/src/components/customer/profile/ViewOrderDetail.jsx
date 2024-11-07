@@ -401,6 +401,7 @@ export default function OrderDetail({ onBack }) {
                           View All Status
                         </Button>
                         <Button
+                          disabled = {orderDetail.deliveryStatus === 'PENDING'? false:true}
                           key={item.orderDetailsId}
                           variant="contained"
                           color="secondary"
