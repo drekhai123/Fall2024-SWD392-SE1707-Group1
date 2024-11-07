@@ -4,6 +4,7 @@ using KDOS_Web_API.Models;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Models.DTOs.HealthCareStaffDTOs;
+using KDOS_Web_API.Models.DTOs.OrderDTOs;
 
 namespace KDOS_Web_API.Mappings
 {
@@ -85,6 +86,7 @@ namespace KDOS_Web_API.Mappings
             .ForMember(dest => dest.DeliveryStatus, opt => opt.Ignore())
             .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore()).ReverseMap();
             CreateMap<Orders, UpdateOnlyOrderStatusDTO>().ReverseMap();
+            CreateMap<Orders, UpdateOnlyPaymentStatusDTO>().ReverseMap();
             // OrderDetails
             CreateMap<OrderDetails, OrderDetailsDTO>().ReverseMap();
             CreateMap<OrderDetails, AddNewOrderDetailsDTO>().ReverseMap();

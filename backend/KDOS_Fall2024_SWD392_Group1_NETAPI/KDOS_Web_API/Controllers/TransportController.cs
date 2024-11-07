@@ -53,6 +53,27 @@ public class TransportController : ControllerBase
         }
     }
     [HttpGet]
+    [Route("Active/{id}")]
+    public async Task<IActionResult> GetActiveTransportById([FromRoute] int id)
+    {
+        try
+        {
+            var transportModel = await transportRepository.GetActiveTransportByOrderStatus(id);
+            if (transportModel == null)
+            {
+                return NotFound("Transport not Found!!!");
+            }
+
+            var transportDto = mapper.Map<TransportDTO>(transportModel);
+            return Ok(transportDto);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving transport with ID {Id}", id);
+            return StatusCode(500, "Internal server error");
+        }
+    }
+    [HttpGet]
     [Route("DeliveryStaff/{id}")]
     public async Task<IActionResult> GetByDeliveryStaff([FromRoute] int id)
     {
@@ -83,7 +104,7 @@ public class TransportController : ControllerBase
         }
 
         var transportModel = mapper.Map<Transport>(addNewTransportDTO);
-        transportModel.Status = TransportStatus.PROCESSING;
+        transportModel.Status = TransportStatus.FREE;
 
         try
         {

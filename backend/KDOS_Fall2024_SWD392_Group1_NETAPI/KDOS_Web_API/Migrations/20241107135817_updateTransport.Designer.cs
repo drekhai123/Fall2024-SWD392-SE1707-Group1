@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KDOS_Web_API.Migrations
 {
     [DbContext(typeof(KDOSDbContext))]
-    [Migration("20241106055134_HealthCareStaff")]
-    partial class HealthCareStaff
+    [Migration("20241107135817_updateTransport")]
+    partial class updateTransport
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

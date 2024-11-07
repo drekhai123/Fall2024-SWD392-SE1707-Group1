@@ -17,7 +17,8 @@ namespace KDOS_Web_API.Repositories
         Task<List<Orders>> GetOrderByCustomerId(int id);
         Task<List<Orders>> GetOrderByTransportId(int id);
         Task<List<Orders>> GetOrderByStatus(OrderStatus status);
-        Task<Orders?> UpdateOnlyOrderStatus(int id, Orders orderStatus);  
+        Task<Orders?> UpdateOnlyOrderStatus(int id, Orders orderStatus);
+        Task<Orders?> UpdateOnlyPaymentStatus(int id, Orders orderStatus);
         Task<Orders?> UpdateTransportIdByOrderId(int orderId, int transportId);
     }
 }

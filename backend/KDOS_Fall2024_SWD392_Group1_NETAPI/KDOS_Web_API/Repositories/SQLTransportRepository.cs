@@ -46,7 +46,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<List<Transport>> GetAllTransport()
         {
-            return await transportContext.Transport.ToListAsync();
+            return await transportContext.Transport.Include(x => x.DeliveryStaff).Include(x => x.Staff).Include(x => x.HealthCareStaff).ToListAsync();
         }
 
         public async Task<Transport?> GetTransportById(int id)
@@ -62,6 +62,16 @@ namespace KDOS_Web_API.Repositories
             var transports = await transportContext.Transport
                 .Where(o => o.Status == status)
                 .ToListAsync();
+
+            return transports;
+        }
+
+        public async Task<Transport?> GetActiveTransportByOrderStatus(int id)
+        {
+            // Find all orders with the specified status
+            var transports = await transportContext.Transport.Include(x => x.Orders.Where(o => !o.DeliveryStatus.Equals("DELIVERED") && !o.DeliveryStatus.Equals("CANCELLED")))
+                .FirstOrDefaultAsync(o => o.TransportId == id);
+            
 
             return transports;
         }
