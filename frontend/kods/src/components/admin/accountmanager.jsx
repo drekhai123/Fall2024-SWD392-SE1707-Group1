@@ -51,8 +51,9 @@ function AccountManager() {
     try {
       const response = await GetAllAccount(); // Use the API function
       if (response && response.status === 200) {
-        setData(response.data || []); // Set the fetched data directly
-        setFilteredData(response.data || []); // Initialize filtered data
+        const filteredAccounts = response.data.filter(account => account.accountId !== 0);
+        setData(filteredAccounts); // Set the fetched data directly
+        setFilteredData(filteredAccounts); // Initialize filtered data
       }
     } catch (error) {
       console.error('Error fetching accounts:', error);
@@ -75,7 +76,7 @@ function AccountManager() {
       const response = await GetAllAccount(); // Fetch all accounts
       if (response && response.status === 200) {
         const filtered = response.data.filter(account =>
-          account.userName.toLowerCase().includes(username.toLowerCase())
+          account.userName.toLowerCase().includes(username.toLowerCase()) && account.accountId !== 0 // Exclude account with accountId = 0
         );
         setFilteredData(filtered); // Set filtered data
       }
