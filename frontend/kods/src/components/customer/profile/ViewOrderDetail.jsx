@@ -194,13 +194,12 @@ export default function OrderDetail({ onBack }) {
   };
 
   const handleCancelOrder = async () => {
-    const deliveryStatus = "CANCELLED";
     try {
       console.log(`Attempting to cancel order with ID: ${orderId}`);
       console.log(`Status to be set: 'CANCELLED'`);
 
       // Call the API to update the order status using PATCH
-      const response = await updateOrderStatus(orderId, deliveryStatus);
+      const response = await updateOrderStatus(orderId, { deliveryStatus: 'CANCELLED' });
 
       // Log the response from the API
       console.log('API response:', response);

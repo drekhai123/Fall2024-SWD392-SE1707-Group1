@@ -182,10 +182,10 @@ export async function deleteOrderDetailsById(detailsId) {
 
 // Function to update order status using PATCH
 
-export async function updateOrderStatus(id,data) {
+export async function updateOrderStatus(orderId,deliveryStatus) {
     const token = getJwtToken();
     try {
-        const response = await axios.patch(`${updateOrderStatusUrl}${id}`,data, {
+        const response = await axios.patch(`${updateOrderStatusUrl}${orderId}`,deliveryStatus, {
 
             headers: {
                 ...headers,
