@@ -175,7 +175,7 @@ namespace KDOS_Web_API.Controllers
         }
 
         [HttpPatch]
-        [Route("{orderId}/OrderStatus")]
+        [Route("OrderStatus/{orderId}")]
         public async Task<IActionResult> UpdateOrderStatus([FromRoute] int orderId, [FromBody] UpdateOnlyOrderStatusDTO orderStatus)
         {
             // Validate the model state
@@ -204,7 +204,7 @@ namespace KDOS_Web_API.Controllers
             return Ok(updatedOrderDto);
         }
         [HttpPatch]
-        [Route("{orderId}/PaymentStatus")]
+        [Route("PaymentStatus/{orderId}")]
         public async Task<IActionResult> UpdatePaymentStatus([FromRoute] int orderId, [FromBody] UpdateOnlyPaymentStatusDTO orderStatus)
         {
             // Validate the model state
@@ -218,7 +218,7 @@ namespace KDOS_Web_API.Controllers
             // Update the order status
             var orderModel = mapper.Map<Orders>(orderStatus);
             orderModel.UpdatedAt = DateTime.Now;
-            orderModel = await orderRepository.UpdateOnlyOrderStatus(orderId, orderModel);
+            orderModel = await orderRepository.UpdateOnlyPaymentStatus(orderId, orderModel);
 
             // If the orderModel is still null after the update, something went wrong
             if (orderModel == null)
@@ -232,7 +232,7 @@ namespace KDOS_Web_API.Controllers
             // Return the updated order with a 200 OK status
             return Ok(updatedOrderDto);
         }
-        [HttpPatch("{orderId}/transport")]
+        [HttpPatch("Transport/{orderId}")]
         public async Task<IActionResult> UpdateTransportIdByOrderId([FromRoute] int orderId, [FromBody] UpdateTransportInOrderDTO request)
         {
             // Validate transportId

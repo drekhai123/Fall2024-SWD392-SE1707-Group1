@@ -141,11 +141,29 @@ namespace KDOS_Web_API.Repositories
             // Update the order status based on the DTO
             order.DeliveryStatus = orderStatus.DeliveryStatus; // Ensure orderStatus has DeliveryStatus property
             order.UpdatedAt = DateTime.Now;
-
             // Save changes to the database
             await orderContext.SaveChangesAsync();
 
             return order;   
+        }
+        public async Task<Orders?> UpdateOnlyPaymentStatus(int id, Orders orderStatus)
+        {
+            // Find the order by ID
+            var order = await orderContext.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+
+            // If the order doesn't exist, return null
+            if (order == null)
+            {
+                return null;
+            }
+
+            // Update the order status based on the DTO
+            order.PaymentStatus = orderStatus.PaymentStatus; // Ensure orderStatus has DeliveryStatus property
+            order.UpdatedAt = DateTime.Now;
+            // Save changes to the database
+            await orderContext.SaveChangesAsync();
+
+            return order;
         }
         public async Task<Orders?> UpdateTransportIdByOrderId(int orderId, int transportId)
         {

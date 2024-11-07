@@ -9,8 +9,9 @@ namespace KDOS_Web_API.Models.Enum
     {
         [EnumMember(Value = "FREE")] //Dang delivery
         FREE,
-
         [EnumMember(Value = "DELIVERING")] //Da giao hang
         DELIVERING,
+        [EnumMember(Value = "DELIVERED")] //Da giao hang
+        DELIVERED,
     }
 }

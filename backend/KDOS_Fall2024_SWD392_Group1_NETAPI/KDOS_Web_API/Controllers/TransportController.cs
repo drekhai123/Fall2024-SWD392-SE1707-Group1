@@ -83,7 +83,7 @@ public class TransportController : ControllerBase
         }
 
         var transportModel = mapper.Map<Transport>(addNewTransportDTO);
-        transportModel.Status = TransportStatus.PROCESSING;
+        transportModel.Status = TransportStatus.FREE;
 
         try
         {

@@ -11,6 +11,8 @@ const postOrderDetailsByOrderIdUrl = baseUrl + '/OrderDetails/'
 const postOrdersUrl = baseUrl + '/Orders/'
 const updateDeliveryStatusUrl = baseUrl + '/Orders/';
 const getAllOrdersUrl = baseUrl + '/Orders/';
+const updateOrderStatusUrl = baseUrl + '/Orders/OrderStatus/';
+const updatePaymentStatusUrl = baseUrl + '/Orders/PaymentStatus/';
 
 const getHeaders = () => {
     const token = getJwtToken(); // Retrieve the token
@@ -178,3 +180,36 @@ export async function deleteOrderDetailsById(detailsId) {
         throw error;
     }
 }
+
+export async function updateOrderStatus(id,data) {
+    const token = getJwtToken();
+    try {
+        const response = await axios.patch(`${updateOrderStatusUrl}${id}`,data, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error('Error deleting order details:', error);
+        throw error;
+    }
+}
+
+export async function updatePaymentStatus(id,data) {
+    const token = getJwtToken();
+    try {
+        const response = await axios.patch(`${updatePaymentStatusUrl}${id}`,data, {
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error('Error deleting order details:', error);
+        throw error;
+    }
+}
+

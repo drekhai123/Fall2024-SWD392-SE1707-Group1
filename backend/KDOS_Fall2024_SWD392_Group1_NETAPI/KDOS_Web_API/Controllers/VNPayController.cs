@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace KDOS_Web_API.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class VNPayController : ControllerBase
@@ -32,6 +32,7 @@ namespace KDOS_Web_API.Controllers
         }
 
         // POST: api/Payments/Create
+        [Authorize]
         [HttpPost("Create")]
         public async Task<IActionResult> CreatePayment([FromBody] AddNewPaymentDTO addNewPayment)
         {
@@ -143,6 +144,7 @@ namespace KDOS_Web_API.Controllers
 
 
         // GET: api/Payments
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllPayments()
         {

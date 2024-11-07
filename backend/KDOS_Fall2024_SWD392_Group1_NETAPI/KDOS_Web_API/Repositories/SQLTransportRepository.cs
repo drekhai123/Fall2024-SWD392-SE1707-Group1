@@ -46,7 +46,7 @@ namespace KDOS_Web_API.Repositories
 
         public async Task<List<Transport>> GetAllTransport()
         {
-            return await transportContext.Transport.ToListAsync();
+            return await transportContext.Transport.Include(x => x.DeliveryStaff).Include(x => x.Staff).Include(x => x.HealthCareStaff).ToListAsync();
         }
 
         public async Task<Transport?> GetTransportById(int id)

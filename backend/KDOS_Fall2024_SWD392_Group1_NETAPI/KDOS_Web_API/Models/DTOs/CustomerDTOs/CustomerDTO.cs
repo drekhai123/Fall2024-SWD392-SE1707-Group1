@@ -22,8 +22,6 @@ namespace KDOS_Web_API.Models.DTOs
         [Required]
         required public string Address { get; set; }
         [Required]
-        required public string Avatar { get; set; }
-        [Required]
         public DateTime CreatedAt { get; set; } // Include CreatedAt
         public DateTime UpdatedAt { get; set; } // Include UpdatedAt
     }
