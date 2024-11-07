@@ -190,79 +190,81 @@ const StatisticsReport = () => {
   }));
 
   return (
-    <div style={{ position: 'absolute', top: 0, right: 0, padding: '24px', maxWidth: '85%' }}>
-      <h2>Statistics Report</h2>
-      {/* Line Chart for Total Revenue per Day */}
-      <h2 style={{ marginTop: '24px' }}>Total Revenue per Day</h2>
-      <LineChart width={1500} height={300} data={revenueData} margin={{ top: 5, right: 40, left: 30, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="totalRevenue" stroke="#8884d8" />
-      </LineChart>
-      <Row gutter={16}>
-        {statisticsData.map((stat, index) => (
-          <Col span={6} key={index}>
-            <Card>
-              <Statistic
-                title={stat.title}
-                value={stat.value}
-                valueStyle={{ color: stat.trend === 'up' ? '#3f8600' : '#cf1322' }}
-                prefix={stat.trend === 'up' ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-              />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+    <div className="report-container">
+      <div style={{ position: 'absolute', top: 0, right: 0, padding: '24px', maxWidth: '85%' }}>
+        <h2>Statistics Report</h2>
+        {/* Line Chart for Total Revenue per Day */}
+        <h2 style={{ marginTop: '24px' }}>Total Revenue per Day</h2>
+        <LineChart width={1500} height={300} data={revenueData} margin={{ top: 5, right: 40, left: 30, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="totalRevenue" stroke="#8884d8" />
+        </LineChart>
+        <Row gutter={16}>
+          {statisticsData.map((stat, index) => (
+            <Col span={6} key={index}>
+              <Card>
+                <Statistic
+                  title={stat.title}
+                  value={stat.value}
+                  valueStyle={{ color: stat.trend === 'up' ? '#3f8600' : '#cf1322' }}
+                  prefix={stat.trend === 'up' ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                />
+              </Card>
+            </Col>
+          ))}
+        </Row>
 
 
 
-      {/* Orders Table */}
-      <h2 style={{ marginTop: '24px' }}>Latest Orders List</h2>
-      <Table
-        dataSource={sortedOrdersData}
-        columns={columns}
-        pagination={{ pageSize: 5 }}
-        onRow={(record) => ({
-          onClick: () => handleRowClick(record), // Handle row click
-        })}
-        rowClassName="hover-row" // Apply custom class for hover effect
-      />
+        {/* Orders Table */}
+        <h2 style={{ marginTop: '24px' }}>Latest Orders List</h2>
+        <Table
+          dataSource={sortedOrdersData}
+          columns={columns}
+          pagination={{ pageSize: 5 }}
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record), // Handle row click
+          })}
+          rowClassName="hover-row" // Apply custom class for hover effect
+        />
 
-      {/* Payment List */}
-      <h2 style={{ marginTop: '24px' }}>Latest VNPay Payment List</h2>
-      <Table
-        headerStyle={{ backcolor: 'green' }}
-        dataSource={sortedPaymentsData} // Use payments data
-        columns={paymentColumns} // Use payment columns
-        pagination={{ pageSize: 5 }}
-        rowClassName="hover-row" // Apply custom class for hover effect
-      />
+        {/* Payment List */}
+        <h2 style={{ marginTop: '24px' }}>Latest VNPay Payment List</h2>
+        <Table
+          headerStyle={{ backcolor: 'green' }}
+          dataSource={sortedPaymentsData} // Use payments data
+          columns={paymentColumns} // Use payment columns
+          pagination={{ pageSize: 5 }}
+          rowClassName="hover-row" // Apply custom class for hover effect
+        />
 
-      {/* Modal for Order Details */}
-      <Modal
-        title={<div style={{ textAlign: 'center' }}>Order Details</div>} // Center the title
-        open={isModalVisible}
-        onCancel={handleModalClose}
-        footer={null}
-      >
-        {selectedOrder && (
-          <div>
-            <p><strong>Order ID:</strong> {selectedOrder.orderId}</p>
-            <p><strong>Sender Name:</strong> {selectedOrder.senderName}</p>
-            <p><strong>Sender Address:</strong> {selectedOrder.senderAddress}</p>
-            <p><strong>Recipient Name:</strong> {selectedOrder.recipientName}</p>
-            <p><strong>Recipient Address:</strong> {selectedOrder.recipientAddress}</p>
-            <p><strong>Recipient Email:</strong> {selectedOrder.recipientEmail}</p>
-            <p><strong>Payment Method:</strong> {selectedOrder.paymentMethod}</p>
-            <p><strong>Payment Status:</strong> {selectedOrder.paymentStatus}</p>
-            <p><strong>Delivery Status:</strong> {selectedOrder.deliveryStatus}</p>
-            <p><strong>Total Cost:</strong> {selectedOrder.totalCost}</p>
-          </div>
-        )}
-      </Modal>
+        {/* Modal for Order Details */}
+        <Modal
+          title={<div style={{ textAlign: 'center' }}>Order Details</div>} // Center the title
+          open={isModalVisible}
+          onCancel={handleModalClose}
+          footer={null}
+        >
+          {selectedOrder && (
+            <div>
+              <p><strong>Order ID:</strong> {selectedOrder.orderId}</p>
+              <p><strong>Sender Name:</strong> {selectedOrder.senderName}</p>
+              <p><strong>Sender Address:</strong> {selectedOrder.senderAddress}</p>
+              <p><strong>Recipient Name:</strong> {selectedOrder.recipientName}</p>
+              <p><strong>Recipient Address:</strong> {selectedOrder.recipientAddress}</p>
+              <p><strong>Recipient Email:</strong> {selectedOrder.recipientEmail}</p>
+              <p><strong>Payment Method:</strong> {selectedOrder.paymentMethod}</p>
+              <p><strong>Payment Status:</strong> {selectedOrder.paymentStatus}</p>
+              <p><strong>Delivery Status:</strong> {selectedOrder.deliveryStatus}</p>
+              <p><strong>Total Cost:</strong> {selectedOrder.totalCost}</p>
+            </div>
+          )}
+        </Modal>
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { googleLogout } from '@react-oauth/google';
 
 export default function Navbar() {
+  const token = sessionStorage.getItem("token"); // Get token from session storage
   const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
   const logout = () => {
@@ -30,7 +31,7 @@ export default function Navbar() {
           </ul>
         </div>
 
-        {user ? (
+        {user && token ? (
           <div className="nav-right">
             <ul className="nav-list">
               {user.role === "customer" && <li className="nav-item"><Link to="/profile">VIEW PROFILE</Link></li>}

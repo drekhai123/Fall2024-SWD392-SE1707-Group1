@@ -7,11 +7,13 @@ import {
   GetAllAccount,
   ToggleAccountBannedStatus,
   AddNewDeliveryStaff,
-  AddNewStaff
+  AddNewStaff,
+  AddNewHealthCareStaff
 } from '../api/AccountApi'; // Adjust the import path as necessary
 import { createNewStaff } from '../api/StaffApi';
 import { createNewDeliveryStaff } from '../api/DeliveryStaffApi';
 import { getJwtToken } from '../api/Url';
+import { createNewHealthCareStaff } from '../api/HealthcareStaffApi';
 
 const { Option } = Select;
 const roles = ['staff', 'delivery', 'healthcare']; // Define roles for the dropdown
@@ -153,21 +155,21 @@ function AccountManager() {
         // Step 2: Call createNewDeliveryStaff with the additional details
         await createNewDeliveryStaff(newDeliveryStaff);
       } else if (selectedRole === 'healthcare') {
-        const addDeliveryResponse = await AddNewDeliveryStaff({ username, password, email });
-        if (addDeliveryResponse.status !== 201) {
+        const addNewHealthCareStaff = await AddNewHealthCareStaff({ username, password, email });
+        if (addNewHealthCareStaff.status !== 201) {
           throw new Error('Failed to add delivery staff');
         }
-        accountId = addDeliveryResponse.data.accountId; // Get the account ID from the response
-        const newDeliveryStaff = {
+        accountId = addNewHealthCareStaff.data.accountId; // Get the account ID from the response
+        const newHealthCareStaff = {
           accountId: accountId,
           staffName: staffName,
           dob: formattedDob,
           gender: gender,
           phoneNumber: phoneNumber,
         };
-        console.log(newDeliveryStaff);
+        console.log(newHealthCareStaff);
         // Step 2: Call createNewDeliveryStaff with the additional details
-        await createNewDeliveryStaff(newDeliveryStaff);
+        await createNewHealthCareStaff(newHealthCareStaff);
       }
       message.success("Account created successfully!");
       handleCloseForm(); // Close the form after successful creation
@@ -223,7 +225,8 @@ function AccountManager() {
           backgroundColor: role === 'staff' ? '#FF8C00' :
             role === 'delivery' ? '#4169E1' :
               role === 'customer' ? '#3CB371' :
-                role === 'admin' ? '#87CEEB' : 'transparent',
+                role === 'admin' ? '#87CEEB' :
+                  role === 'healthcare' ? '#87CEEB' : 'transparent',
           color: 'white',
           padding: '4px 0', // Adjust padding for vertical centering
           borderRadius: '4px'
@@ -244,7 +247,8 @@ function AccountManager() {
             backgroundColor: record.role === 'staff' ? '#FF8C00' :
               record.role === 'delivery' ? '#4169E1' :
                 record.role === 'customer' ? '#3CB371' :
-                  record.role === 'admin' ? '#87CEEB' : 'transparent',
+                  record.role === 'admin' ? '#87CEEB' :
+                    record.role === 'healthcare' ? '#87CEEB' : 'transparent',
             color: 'white',
             padding: '4px 8px',
             borderRadius: '4px',
@@ -289,7 +293,7 @@ function AccountManager() {
   return (
     <div>
       <h2>Manage Accounts</h2>
-      <Button type="primary" onClick={handleOpenRoleModal} style={{ marginBottom: '16px' }}>
+      <Button type="primary" onClick={handleOpenRoleModal} style={{ marginBottom: '16px', height: '40px', fontSize: '16px' }}>
         Create a New Staff/Deliver/HealthCare
       </Button>
       <Input
