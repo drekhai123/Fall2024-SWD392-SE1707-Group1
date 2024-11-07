@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../css/Payment.css";
+import { getJwtToken } from '../api/Url';
+const token = getJwtToken();
 
 const PaymentSuccess = () => {
 const navigate = useNavigate(); // Initialize navigate
@@ -26,7 +28,9 @@ const navigate = useNavigate(); // Initialize navigate
       // Call the API to execute the payment
       const executePayment = async () => {
         try {
-          const response = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Execute', data);
+      const response = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Execute', data, {headers: {
+        'Authorization': `Bearer ${token}`
+      }});
           console.log('Payment executed successfully:', response.data);
           // Handle success (e.g., show a success message or redirect)
         } catch (error) {
