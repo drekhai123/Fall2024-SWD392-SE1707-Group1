@@ -181,10 +181,6 @@ export async function deleteOrderDetailsById(detailsId) {
 }
 
 // Function to update order status using PATCH
-export async function updateOrderStatus(orderId, deliveryStatus) {
-    const token = getJwtToken();
-    try {
-        const response = await axios.patch(`${updateOrderStatusUrl}${orderId}`, { deliveryStatus }, {
 
 export async function updateOrderStatus(id,data) {
     const token = getJwtToken();
@@ -200,13 +196,6 @@ export async function updateOrderStatus(id,data) {
         return response.data; // Return the response data directly
     } catch (error) {
         console.error('Error updating order status:', error);
-        throw error;
-    }
-}
-
-        return response;
-    } catch (error) {
-        console.error('Error deleting order details:', error);
         throw error;
     }
 }
