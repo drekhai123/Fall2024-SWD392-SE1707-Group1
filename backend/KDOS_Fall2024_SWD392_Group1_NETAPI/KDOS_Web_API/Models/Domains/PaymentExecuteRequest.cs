@@ -8,7 +8,7 @@
         //public string VnpCardType { get; set; }
         //public string VnpOrderInfo { get; set; }
         //public string VnpPayDate { get; set; }
-        //public string VnpResponseCode { get; set; }
+        public string VnpResponseCode { get; set; }
         //public string VnpTmnCode { get; set; }
         //public string VnpTransactionNo { get; set; }
         //public string VnpTransactionStatus { get; set; }
