@@ -109,6 +109,10 @@ public class TransportController : ControllerBase
         try
         {
             transportModel = await transportRepository.AddNewTransport(transportModel);
+            if (transportModel == null)
+            {
+                return NotFound("Something is wrong when adding Transport");
+            }
             var newTransportDto = mapper.Map<TransportDTO>(transportModel);
             return CreatedAtAction(nameof(GetTransportById), new { id = transportModel.TransportId }, newTransportDto);
         }
