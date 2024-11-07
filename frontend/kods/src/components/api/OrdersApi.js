@@ -116,21 +116,21 @@ export async function getOrderDetailsByOrderId(orderId) {
 }
 
 // Function to update order status
-export async function updateDeliveryStatus(orderId, deliveryStatus) {
-    const token = getJwtToken();
-    try {
-        const response = await axios.put(`${updateDeliveryStatusUrl}${orderId}/status`, { deliveryStatus }, {
-            headers: {
-                ...headers,
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return await response.data;
-    } catch (error) {
-        console.error('Error updating order status:', error);
-        throw error;
-    }
-}
+// export async function updateDeliveryStatus(orderId, deliveryStatus) {
+//     const token = getJwtToken();
+//     try {
+//         const response = await axios.put(`${updateDeliveryStatusUrl}${orderId}/status`, { deliveryStatus }, {
+//             headers: {
+//                 ...headers,
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         });
+//         return await response.data;
+//     } catch (error) {
+//         console.error('Error updating order status:', error);
+//         throw error;
+//     }
+// }
 
 export async function getAllOrderDetails(token) {
     try {
@@ -167,7 +167,6 @@ export async function getAllOrderDetails(token) {
 export async function deleteOrderDetailsById(detailsId) {
     const token = getJwtToken();
     try {
-        console.log(deleteOrderDetailsById)
         const response = await axios.delete(`${deleteOrderDetailsByIdUrl}${detailsId}`, {
             headers: {
                 ...headers,
@@ -181,15 +180,30 @@ export async function deleteOrderDetailsById(detailsId) {
     }
 }
 
+// Function to update order status using PATCH
+export async function updateOrderStatus(orderId, deliveryStatus) {
+    const token = getJwtToken();
+    try {
+        const response = await axios.patch(`${updateOrderStatusUrl}${orderId}`, { deliveryStatus }, {
+
 export async function updateOrderStatus(id,data) {
     const token = getJwtToken();
     try {
         const response = await axios.patch(`${updateOrderStatusUrl}${id}`,data, {
+
             headers: {
                 ...headers,
                 'Authorization': `Bearer ${token}`
             }
         });
+
+        return response.data; // Return the response data directly
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        throw error;
+    }
+}
+
         return response;
     } catch (error) {
         console.error('Error deleting order details:', error);
@@ -212,4 +226,5 @@ export async function updatePaymentStatus(id,data) {
         throw error;
     }
 }
+
 
