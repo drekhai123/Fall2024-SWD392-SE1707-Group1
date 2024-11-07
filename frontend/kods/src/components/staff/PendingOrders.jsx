@@ -13,7 +13,6 @@ import '../../css/PendingOrders.css';
 
 export function PendingOrders() {
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState([]);
@@ -25,6 +24,7 @@ export function PendingOrders() {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
   const [selectedTransportId, setSelectedTransportId] = useState(null);
+  const [transportStatus, setTransportStatus] = useState(null);
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -66,7 +66,7 @@ export function PendingOrders() {
   };
 
   const handleAddTransport = (order) => {
-    setSelectedOrder(order);
+    setSelectedOrders(order);
     setIsTransportDialogVisible(true);
   };
 
@@ -88,7 +88,7 @@ export function PendingOrders() {
 
   const closeTransportModal = () => {
     setIsTransportDialogVisible(false);
-    setSelectedOrder(null);
+    setSelectedOrders(null);
     setSelectedTransportId(null); // Reset selected transport ID
   };
 
@@ -102,6 +102,14 @@ export function PendingOrders() {
     try {
       const response = await GetAllTransports();
       setTransports(response || []); // Assuming response.data contains the transport array
+
+      // Set transport status based on available transports
+      if (response && response.length > 0) {
+        const freeTransport = response.find(transport => transport.status === 'FREE');
+        setTransportStatus(freeTransport ? 'FREE' : 'DELIVERING'); // Set status based on available transport
+      } else {
+        setTransportStatus('DELIVERING'); // If no transports are available, set to DELIVERING
+      }
     } catch (error) {
       console.error("Error fetching transports:", error);
       setTransports([]); // Fallback to empty array on error;
@@ -128,7 +136,7 @@ export function PendingOrders() {
   // Function to update the order with the selected transport ID
   const updateOrderWithTransport = async (transportId) => {
     try {
-      const orderId = selectedOrder.orderId; // Replace with your actual order ID
+      const orderId = selectedOrders.orderId; // Replace with your actual order ID
       const updatedOrder = { transportId }; // Create an object with the transport ID
 
       await axios.patch(`${baseUrl}/Orders/Transport/${orderId}`, updatedOrder, {
@@ -151,10 +159,11 @@ export function PendingOrders() {
 
   // Function to handle confirm button click
   const handleConfirmClick = () => {
-    if (transports.transportId !== null) {
-      updateOrderStatus(selectedTransportId);
+    console.log("Selected Order:", selectedOrders); // Log the selected order
+    if (selectedOrders && selectedOrders.transportId !== null && selectedOrders.transportId !== 0) {
+      updateOrderStatus(selectedOrders);
     } else {
-      alert("Please select a transport before confirming.");
+      alert("Please select a valid transport before confirming.");
     }
   };
 
@@ -178,6 +187,20 @@ export function PendingOrders() {
           body={(rowData) => formatDate(rowData.createdAt)} // Use body to format the date
         />
         <Column field="deliveryStatus" header="Status" />
+        <Column
+          field="totalCost"
+          header="Total Cost"
+          body={(rowData) => {
+            return `${rowData.totalCost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} VND`; // Format totalCost with commas and append "VND"
+          }}
+        />
+        <Column
+          field="totalWeight"
+          header="Total Weight"
+          body={(rowData) => {
+            return `${rowData.totalWeight.toString()} kg`; // Format totalWeight with commas and append "kg"
+          }}
+        />
         <Column field="transportId" header="Transport Id" />
         <Column
           header="Add Transport"
@@ -211,20 +234,24 @@ export function PendingOrders() {
         <div className="card-container">
           {currentItems.length === 0
             ? <p>No transports available</p>
-            : currentItems.map((transport) => (
-              <div
-                key={transport.transportId}
-                className="card"
-                onClick={() => handleTransportSelect(transport.transportId)} // Add click handler
-                style={{ backgroundColor: selectedTransportId === transport.transportId ? '#cf8235' : 'white' }} // Highlight selected card
-              >
-                <h3>Transport ID: {transport.transportId}</h3>
-                <p>Status: {transport.status === 'FREE' ? 'Free' : 'Not Free'}</p>
-                <p>Delivery Staff Name: {transport.deliveryStaff.staffName}</p>
-                <p>Healthcare Staff Name: {transport.healthCareStaff.staffName}</p>
-                <p>Staff Name: {transport.staff.staffName}</p>
-              </div>
-            ))}
+            : currentItems
+              .filter(transport => transport.status === 'FREE') // Filter out transports that are not FREE
+              .map((transport) => (
+                <div
+                  key={transport.transportId}
+                  className="card"
+                  onClick={() => handleTransportSelect(transport.transportId)} // Add click handler
+                  style={{ backgroundColor: selectedTransportId === transport.transportId ? '#cf8235' : 'white' }} // Highlight selected card
+                >
+                  <h3><strong>Transport ID:</strong> {transport.transportId}</h3>
+                  <p style={{ color: 'green' }}>
+                    <strong>Status:</strong> FREE
+                  </p>
+                  <p><strong>Delivery Staff Name:</strong> {transport.deliveryStaff.staffName}</p>
+                  <p><strong>Healthcare Staff Name:</strong> {transport.healthCareStaff.staffName}</p>
+                  <p><strong>Staff Name:</strong> {transport.staff.staffName}</p>
+                </div>
+              ))}
         </div>
         <div className="pagination">
           {Array.from({ length: Math.ceil(transports.length / itemsPerPage) }, (_, index) => (
@@ -261,6 +288,8 @@ export function PendingOrders() {
             <p><strong>Payment Method:</strong> {selectedOrders.paymentMethod}</p>
             <p><strong>Payment Status:</strong> {selectedOrders.paymentStatus}</p>
             <p><strong>Delivery Status:</strong> {selectedOrders.deliveryStatus}</p>
+            <p><strong>Total Cost:</strong> {selectedOrders.totalCost} VND</p>
+            <p><strong>Total Weight:</strong> {selectedOrders.totalWeight} kg</p>
 
             <Button
               label="Confirm Delivery"
@@ -268,7 +297,7 @@ export function PendingOrders() {
               severity="success"
               className="mt-4" // Add margin-top for spacing
               onClick={handleConfirmClick} // Call the update function with selected order
-              disabled={selectedOrders.transportId === 0} // Disable if not pending
+              disabled={selectedOrders.transportId === 0} // Disable if transportId is 0
             />
           </div>
         )}

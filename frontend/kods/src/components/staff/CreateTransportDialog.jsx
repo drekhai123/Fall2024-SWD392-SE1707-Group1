@@ -7,13 +7,11 @@ import { headers, getJwtToken } from "../api/Url";
 import { GetAllStaff } from "../api/StaffApi";
 import { GetAllDeliveryStaff } from "../api/DeliveryStaffApi";
 import { GetAllHealthCareStaff } from "../api/HealthcareStaffApi";
+import { GetAllTransports } from "../api/TransportApi";
 import { toast } from "react-toastify";
 
-export const CreateTransportDialog = ({
-  visible,
-  onHide,
-}) => {
-  const token = getJwtToken()
+export const CreateTransportDialog = ({ visible, onHide, setTransports }) => {
+  const token = getJwtToken();
   const [staff, setStaff] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [deliveryStaff, setDeliveryStaff] = useState([]);
@@ -21,15 +19,31 @@ export const CreateTransportDialog = ({
   const [healthCareStaff, setHealthCareStaff] = useState([]);
   const [selectedHealthCareStaff, setSelectedHealthCareStaff] = useState(null);
 
+  // Fetch all transports
+  const fetchTransports = async () => {
+    try {
+      const response = await GetAllTransports();
+      console.log("Fetched transports:", response); // Debugging line
+      setTransports(response.data || []); // Assuming response.data contains the transports
+    } catch (error) {
+      console.error("Error fetching transports:", error);
+    }
+  };
 
   const handleConfirm = async () => {
+    // Validate selections
+    if (!selectedHealthCareStaff || !selectedDeliveryStaff || !selectedStaff) {
+      toast.error("Please select healthcare staff, delivery staff, and general staff before proceeding.");
+      return; // Exit the function if any selection is missing
+    }
+
     const transportData = {
-      status: "DELIVERING",
+      status: "DELIVERING", // or whatever initial status you want
       deliveryStaffId: selectedDeliveryStaff,
       healthCareStaffId: selectedHealthCareStaff,
       staffId: selectedStaff
     };
-    console.log(transportData);
+
     try {
       await axios.post("https://kdosdreapiservice.azurewebsites.net/api/Transport", transportData, {
         headers: {
@@ -40,20 +54,23 @@ export const CreateTransportDialog = ({
 
       await Promise.all([
         axios.patch(`https://kdosdreapiservice.azurewebsites.net/api/Staff/Status/${selectedStaff}`, { staffStatus: "OCCUPIED" }, { headers: { 'Authorization': `Bearer ${token}` } }),
-        axios.patch(`https://kdosdreapiservice.azurewebsites.net/api/DeliveryStaff/Status/${selectedDeliveryStaff.value}`, { staffStatus: "OCCUPIED" }, { headers: { 'Authorization': `Bearer ${token}` } }),
+        axios.patch(`https://kdosdreapiservice.azurewebsites.net/api/DeliveryStaff/Status/${selectedDeliveryStaff}`, { staffStatus: "OCCUPIED" }, { headers: { 'Authorization': `Bearer ${token}` } }),
         axios.patch(`https://kdosdreapiservice.azurewebsites.net/api/HealthCareStaff/Status/${selectedHealthCareStaff}`, { staffStatus: "OCCUPIED" }, { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
-      // Reload staff lists
+
+      // Reload staff lists and transports
       await Promise.all([
         fetchDeliveryStaff(),
         fetchHealthCareStaff(),
-        fetchStaff()
+        fetchStaff(),
+        fetchTransports() // Ensure this is called
       ]);
-      toast.success("Transport assigned successfully");
 
-      onHide();
+      toast.success("Transport assigned successfully");
+      onHide(); // Close the dialog after successful assignment
     } catch (error) {
-      console.error(error);
+      console.error("Error during transport assignment:", error);
+      toast.error("Error creating transport. Please try again.");
     }
   };
 
