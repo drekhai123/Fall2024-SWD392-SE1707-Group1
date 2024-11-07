@@ -23,6 +23,7 @@ import { storage } from '../../../config/ConfigFirebase';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { updateAvatar, GetAccountById } from "../../api/AccountApi"; // Import API functions
+import '../../../css/index.css'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -199,12 +200,12 @@ export default function IndexUserProfile() {
   };
 
   return (
-    <>
+    <div className="profile-background">
       <ToastContainer />
       <Navbar />
-      <Container maxWidth="xl" sx={{ mt: 13, mb: 4 }}>
+      <Container maxWidth="xl" sx={{ mt: 3, mb: 3 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} mt={13}>
             <Card>
               <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: 2, mt: 2 }}>
                 <Avatar
@@ -225,10 +226,10 @@ export default function IndexUserProfile() {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={9}>
+          <Grid item xs={12} md={9} mt={13}>
             <Card>
               <CardContent>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
                   <Tabs
                     value={value}
                     onChange={handleChange}
@@ -293,6 +294,6 @@ export default function IndexUserProfile() {
           </div>
         </Box>
       </Modal>
-    </>
+    </div>
   );
 }
