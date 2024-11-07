@@ -86,7 +86,16 @@ export async function AddNewStaff(data) {
     const response = await axios.post(`${baseAccount}/AddStaff`, data, { headers: getHeaders() });
     return response;
   } catch (error) {
-    console.error("Error adding Account:", error);
+    console.error("Error adding Staff:", error);
+    throw error;
+  }
+}
+export async function AddNewHealthCareStaff(data) {
+  try {
+    const response = await axios.post(`${baseAccount}/AddHealthCareStaff`, data, { headers: getHeaders() });
+    return response;
+  } catch (error) {
+    console.error("Error adding HealthCare Staff:", error);
     throw error;
   }
 }
@@ -95,7 +104,7 @@ export async function AddNewDeliveryStaff(data) {
     const response = await axios.post(`${baseAccount}/AddDeliveryStaff`, data, { headers: getHeaders() });
     return response;
   } catch (error) {
-    console.error("Error adding Account:", error);
+    console.error("Error adding Delivery Staff:", error);
     throw error;
   }
 }

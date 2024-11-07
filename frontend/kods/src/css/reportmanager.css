@@ -5,3 +5,7 @@
 .hover-row:hover {
   transform: scale(1.02); /* Scale up on hover */
 }
+
+.report-container{
+  background-color: #e2e6ff;
+}

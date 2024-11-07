@@ -25,7 +25,7 @@ import { Star as StarIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const teamMembers = [
-  { name: 'Đoàn Tuấn Khải', role: 'Backend Engineer', avatar: '/images/ourmemories/khaidoan.png' },
+  { name: 'Đoàn Tuấn Khải', role: 'Backend Engineer', avatar: '/images/doantuankhai.png' },
   { name: 'Nguyễn Dương Gia Bảo', role: 'Backend Engineer', avatar: '/images/ourmemories/baobao.png' },
   { name: 'Võ Việt Dũng', role: 'Frontend Engineer', avatar: '/images/ourmemories/dung.png' },
   { name: 'Nguyễn Tuấn Khải', role: 'Frontend Engineer', avatar: '/images/ourmemories/khai.png' },
@@ -43,14 +43,14 @@ const milestones = [
 
 export default function AboutPage() {
   const navigate = useNavigate();
-const handleGoBack = () => {
+  const handleGoBack = () => {
     navigate(-1);  // Quay lại trang trước đó
-};
+  };
   return (
     <Container maxWidth="lg">
       <button onClick={handleGoBack} className="go-back-button-feedback">
-                    ⭠ Previous Page
-                </button>
+        ⭠ Previous Page
+      </button>
       <Box sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom align="center">
           Về Chúng Tôi

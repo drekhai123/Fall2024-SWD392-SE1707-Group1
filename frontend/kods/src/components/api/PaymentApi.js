@@ -19,3 +19,12 @@ export async function GetAllPayments() {
     throw error; // Throw error to be handled in the calling function
   }
 }
+export async function createNewPaymentRequest(paymentRequest) {
+  try {
+    const response = await axios.post(`${getAllPaymentsURL}/Create`, paymentRequest, { headers: getHeaders() });
+    return response.data; // Assuming the API returns the created staff data
+  } catch (error) {
+    console.error('Error creating new Payment Request:', error);
+    throw error; // Rethrow the error for handling in the calling function
+  }
+}
