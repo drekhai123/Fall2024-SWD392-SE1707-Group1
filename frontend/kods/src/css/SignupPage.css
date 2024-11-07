@@ -62,7 +62,8 @@
 .signup-page-container .signup-container .signup-form .confirm-password-input,
 .signup-page-container .signup-container .signup-form .phone-number-input,
 .signup-page-container .signup-container .signup-form .address-input,
-.signup-page-container .signup-container .signup-form .gender-input {
+.signup-page-container .signup-container .signup-form .gender-input,
+.signup-page-container .signup-container .signup-form .dob-input {
   font-size: 18px;
   padding: 10px 8px; /* Giảm padding để tránh tràn */
   width: 100%;
@@ -91,14 +92,14 @@
 }
 
 .signup-page-container .signup-container .signup-form .to-login-container {
-  margin-top: 16px; /* Giảm margin */
   display: flex;
-  gap: 4px;
+  align-items: center;
 }
 
 .signup-page-container .signup-container .signup-form .to-login-container .to-login-text {
   color: white;
   font-size: 16px; /* Giảm font-size */
+  margin-right: 5px; /* Adjust spacing as needed */
 }
 
 .signup-page-container .signup-container .signup-form .to-login-container .to-login-btn {
@@ -108,6 +109,7 @@
   font-size: 16px; /* Giảm font-size */
   font-family: 'Times New Roman', Times, serif;
   cursor: pointer;
+  text-decoration: none; /* Remove underline if desired */
 }
 
 .input-wrapper {
