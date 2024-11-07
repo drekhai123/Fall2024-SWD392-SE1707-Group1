@@ -273,7 +273,8 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       distancePriceListId: distancePriceListId,
       weightPriceListId: weightPriceListId || 1,
       customerId: userLogin?.customer?.customerId,
-      transportId: null
+      transportId: 0,
+      fishProfileIds: fishOrdersList.map(fish => fish.fishProfileId)
     }
 
     Swal.fire({
@@ -319,7 +320,30 @@ export default function OrderForm({ onSuggestionClick, distance }) {
       const orderResponse = await postOrders(data);
       console.log("Order response received:", orderResponse);
 
+      // Fetch API tạo cá
       if (orderResponse) {
+        // Add fish profiles to order details
+        for (const fish of fishOrdersList) {
+          const orderDetailsData = {
+            fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
+            orderId: orderResponse.orderId
+          };
+
+          console.log("Order details data being sent:", orderDetailsData);
+          const orderDetailsResponse = await axios.post(
+            "https://kdosdreapiservice.azurewebsites.net/api/OrderDetails",
+            orderDetailsData,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          console.log("Order details response received:", orderDetailsResponse);
+        }
+
+        // Cash
         if (data.paymentMethod === 'CASH') {
           // Navigate to order history if user selects CASH
           sessionStorage.removeItem("fishOrders");
@@ -336,32 +360,25 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           navigate("/profile/ViewOrderHistory");
           return;
         }
-        const request = {
-          orderId: orderResponse.orderId, // Use the orderId from the orderResponse
-          amount: orderResponse.totalCost, // Assuming totalCost is part of the orderResponse
-        }
 
-        // Call the API to create a new payment request for BANK_TRANSFER
-        const paymentResponse = await createNewPaymentRequest(request)
-        console.log("Payment response received:", paymentResponse);
-
-        // Check if the payment response contains a URL
-        if (paymentResponse && paymentResponse.paymentUrl) {
-          // Redirect to the payment URL provided in the response
-          window.location.href = paymentResponse.paymentUrl; // Redirect to the payment URL
-          return; // Exit the function after redirecting
-        }
-
-        // Add fish profiles to order details
-        for (const fish of fishOrdersList) {
-          const orderDetailsData = {
-            fishProfileId: fish.fishProfileId, // Post each fishProfileId individually
-            orderId: orderResponse.orderId
+        // VNPay
+        if (data.paymentMethod === 'BANK_TRANSFER') {
+          const request = {
+            orderId: orderResponse.orderId,
+            amount: orderResponse.totalCost,
+            fishProfileIds: data.fishProfileIds
           };
 
-          console.log("Order details data being sent:", orderDetailsData);
-          const orderDetailsResponse = await postOrderDetailsByOrderId(orderDetailsData);
-          console.log("Order details response received:", orderDetailsResponse);
+          // Call the API to create a new payment request for BANK_TRANSFER
+          const paymentResponse = await createNewPaymentRequest(request);
+          console.log("Payment response received:", paymentResponse);
+
+          // Check if the payment response contains a URL
+          if (paymentResponse && paymentResponse.paymentUrl) {
+            // Redirect to the payment URL provided in the response
+            window.location.href = paymentResponse.paymentUrl;
+            return;
+          }
         }
 
         sessionStorage.removeItem("fishOrders");

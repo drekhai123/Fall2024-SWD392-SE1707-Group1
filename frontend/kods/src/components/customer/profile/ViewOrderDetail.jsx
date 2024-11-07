@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getOrderbyOrderId, getOrderDetailsByOrderId, updateDeliveryStatus, deleteOrderDetailsById } from '../../api/OrdersApi'; // Import the API function
+import { getOrderbyOrderId, getOrderDetailsByOrderId, deleteOrderDetailsById, updateOrderStatus } from '../../api/OrdersApi'; // Import the API function
 import { addFeedback } from '../../api/FeedbackApi'; // Import the API function
 import { getFeedbackByOrderId, deleteFeedback } from '../../api/FeedbackApi'; // Import the delete API function
 import '../../../css/ViewOrderDetail.css'; // Import the new CSS file
@@ -30,14 +30,6 @@ import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 import {fetchLogTransportByCustomerId } from '../../api/TranslogApi'; // Import the new function
 
-// Define an enum-like object for order statuses
-const deliveryStatus = {
-  PENDING: 'PENDING',
-  DELIVERED: 'DELIVERED',
-  PROCESSING: 'PROCESSING',
-  CANCELLED: 'CANCELLED',
-  // Add other statuses as needed
-};
 
 function getStatusColor(status) {
   switch (status) {
@@ -102,6 +94,7 @@ export default function OrderDetail({ onBack }) {
     async function fetchOrderDetailByOrderId() {
       try {
         const orderbyId = await getOrderDetailsByOrderId(orderId);
+        console.log('Order Details by ID:', orderbyId);
         setOrderDetailById(orderbyId);
       } catch (error) {
         console.error('Error fetching order details by ID:', error);
@@ -200,37 +193,54 @@ export default function OrderDetail({ onBack }) {
     setIsDialogOpen(false);
   };
 
-  const handleDeleteAndUpdateStatus = async (detail) => {
+  const handleCancelOrder = async () => {
+    const deliveryStatus = "CANCELLED";
     try {
+      console.log(`Attempting to cancel order with ID: ${orderId}`);
+      console.log(`Status to be set: 'CANCELLED'`);
 
-      // First, delete the fish order details
-      const orderDetailsId = orderDetailById[0]?.orderDetailsId;
+      // Call the API to update the order status using PATCH
+      const response = await updateOrderStatus(orderId, deliveryStatus);
 
-      if (orderDetailsId) {
-        try {
-          await deleteOrderDetailsById(orderDetailsId);
-          console.log(`Order detail with ID ${orderDetailsId} deleted successfully.`);
-        } catch (error) {
-          console.error('Error deleting order detail:', error);
-        }
+      // Log the response from the API
+      console.log('API response:', response);
+
+      // Check if the response contains the expected deliveryStatus
+      if (response && response.deliveryStatus === 'CANCELLED') {
+        console.log(`Order with ID ${orderId} cancelled successfully.`);
+        toast.success('Order cancelled successfully.');
+        window.location.reload(); // Reload the page after cancellation
       } else {
-        console.error('OrderDetailsId not found');
+        console.error('Failed to cancel order. Unexpected response:', response);
+        toast.error('Failed to cancel order.');
       }
-
-      // Then, update the delivery status
-      await updateDeliveryStatus(detail.orderId, deliveryStatus.CANCELLED);
-      console.log('Order status updated to CANCELLED');
-      toast.success('Order cancelled successfully!');
-      navigate(`/profile/ViewOrderHistory/${detail.orderId}`);
     } catch (error) {
-      console.error('Error processing order:', error);
-      toast.error('Failed to process order. Please try again.');
+      // Log any errors that occur during the cancellation process
+      console.error('Error cancelling order:', error);
+      toast.error('Failed to cancel order.');
     }
   };
 
-  if (!orderDetail) {
-    return <Typography variant="h6">Order not found</Typography>;
-  }
+  const handleCancelFish = async (orderDetailId) => {
+    try {
+      console.log(`Attempting to cancel fish with order detail ID: ${orderDetailId}`);
+
+      // Call the API to delete the order details using the correct endpoint
+      const response = await deleteOrderDetailsById(orderDetailId);
+
+      // Log the response from the API
+      console.log('API response:', response);
+
+      // Provide feedback to the user
+      toast.success('Fish cancelled successfully.');
+      // Optionally, refresh the order details or navigate away
+      window.location.reload();
+    } catch (error) {
+      // Log any errors that occur during the cancellation process
+      console.error('Error cancelling fish:', error);
+      toast.error('Failed to cancel fish.');
+    }
+  };
 
   return (
     <div className="full-page-background">
@@ -244,14 +254,26 @@ export default function OrderDetail({ onBack }) {
           >
             Go Back
           </Button>
-          {orderDetail.deliveryStatus === 'PENDING' && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleOpenDialog}
-            >
-              Cancel Order
-            </Button>
+          {orderDetail && orderDetail.deliveryStatus === 'PENDING' && (
+            <>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleOpenDialog}
+              >
+                Cancel Order
+              </Button>
+              {orderDetailById && orderDetailById.map((item) => (
+                <Button
+                  key={item.orderDetailsId}
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleCancelFish(item.orderDetailsId)}
+                >
+                  Cancel Fish
+                </Button>
+              ))}
+            </>
           )}
         </div>
 
@@ -271,57 +293,61 @@ export default function OrderDetail({ onBack }) {
             <Button onClick={handleCloseDialog} color="primary">
               No
             </Button>
-            <Button onClick={() => handleDeleteAndUpdateStatus(orderDetail)} color="secondary" autoFocus>
-              Yes
+            <Button onClick={handleCancelOrder} color="secondary">
+              Yes, Cancel Order
             </Button>
           </DialogActions>
         </Dialog>
 
         <Typography variant="h4" gutterBottom>
-          Order Details {orderDetail.code}
+          Order Details {orderDetail ? orderDetail.code : ''}
         </Typography>
         <Grid container spacing={3} alignItems="stretch">
-          <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
-            <Paper style={{ padding: '20px', flex: 1, border: '1px solid #ccc', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-              <Typography variant="h6" gutterBottom><strong>Sender Information</strong></Typography>
-              <Typography><strong>Name:</strong> {orderDetail.senderName}</Typography>
-              <Typography><strong>Address:</strong> {orderDetail.senderAddress}</Typography>
-              <Typography><strong>Phone:</strong> {orderDetail.senderPhoneNumber}</Typography>
-              <Typography>
-                <strong>Order Created: </strong>
-                {formatDateTime(orderDetail.createdAt)}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
-            <Paper style={{ padding: '20px', flex: 1, border: '1px solid #ccc', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-              <Typography variant="h6" gutterBottom><strong>Receiver Information</strong></Typography>
-              <Typography><strong>Name:</strong> {orderDetail.recipientName}</Typography>
-              <Typography><strong>Address:</strong> {orderDetail.recipientAddress}</Typography>
-              <Typography><strong>Email:</strong> {orderDetail.recipientEmail}</Typography>
-              <Typography><strong>Phone:</strong> {orderDetail.recipientPhoneNumber}</Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <Paper style={{ padding: '20px' }}>
-              <Typography variant="h6" gutterBottom><strong>Order Information</strong></Typography>
-              <Typography><strong>Payment Method:</strong> {orderDetail.paymentMethod}</Typography>
-              <Typography>
-                <strong>Payment Status:</strong>
-                <span style={{ color: getStatusColor(orderDetail.paymentStatus) }}>
-                  <strong>{orderDetail.paymentStatus}</strong>
-                </span>
-              </Typography>
-              <Typography>
-                <strong>Delivery Status:</strong>
-                <span style={{ color: getStatusColor(orderDetail.deliveryStatus) }}>
-                  <strong>{orderDetail.deliveryStatus}</strong>
-                </span>
-              </Typography>
-              <Typography><strong>Total Weight:</strong> {orderDetail.totalWeight} kg</Typography>
-              <Typography><strong>Total Cost:</strong> {orderDetail.totalCost.toLocaleString('vi-VN')} VND</Typography>
-            </Paper>
-          </Grid>
+          {orderDetail && (
+            <>
+              <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
+                <Paper style={{ padding: '20px', flex: 1, border: '1px solid #ccc', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                  <Typography variant="h6" gutterBottom><strong>Sender Information</strong></Typography>
+                  <Typography><strong>Name:</strong> {orderDetail.senderName}</Typography>
+                  <Typography><strong>Address:</strong> {orderDetail.senderAddress}</Typography>
+                  <Typography><strong>Phone:</strong> {orderDetail.senderPhoneNumber}</Typography>
+                  <Typography>
+                    <strong>Order Created: </strong>
+                    {formatDateTime(orderDetail.createdAt)}
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
+                <Paper style={{ padding: '20px', flex: 1, border: '1px solid #ccc', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                  <Typography variant="h6" gutterBottom><strong>Receiver Information</strong></Typography>
+                  <Typography><strong>Name:</strong> {orderDetail.recipientName}</Typography>
+                  <Typography><strong>Address:</strong> {orderDetail.recipientAddress}</Typography>
+                  <Typography><strong>Email:</strong> {orderDetail.recipientEmail}</Typography>
+                  <Typography><strong>Phone:</strong> {orderDetail.recipientPhoneNumber}</Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper style={{ padding: '20px' }}>
+                  <Typography variant="h6" gutterBottom><strong>Order Information</strong></Typography>
+                  <Typography><strong>Payment Method:</strong> {orderDetail.paymentMethod}</Typography>
+                  <Typography>
+                    <strong>Payment Status:</strong>
+                    <span style={{ color: getStatusColor(orderDetail.paymentStatus) }}>
+                      <strong>{orderDetail.paymentStatus}</strong>
+                    </span>
+                  </Typography>
+                  <Typography>
+                    <strong>Delivery Status:</strong>
+                    <span style={{ color: getStatusColor(orderDetail.deliveryStatus) }}>
+                      <strong>{orderDetail.deliveryStatus}</strong>
+                    </span>
+                  </Typography>
+                  <Typography><strong>Total Weight:</strong> {orderDetail.totalWeight} kg</Typography>
+                  <Typography><strong>Total Cost:</strong> {orderDetail.totalCost.toLocaleString('vi-VN')} VND</Typography>
+                </Paper>
+              </Grid>
+            </>
+          )}
           <Grid item xs={12}>
             <TableContainer component={Paper}>
               <Table>
@@ -390,7 +416,7 @@ export default function OrderDetail({ onBack }) {
               </Table>
             </TableContainer>
           </Grid>
-          {orderDetail.deliveryStatus === 'DELIVERED' && (
+          {orderDetail && orderDetail.deliveryStatus === 'DELIVERED' && (
             <Grid item xs={12}>
               <Paper style={{ padding: '20px' }}>
                 <Typography variant="h6" gutterBottom><strong>Feedback and Rating</strong></Typography>
