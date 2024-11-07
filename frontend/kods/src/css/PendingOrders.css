@@ -1,0 +1,40 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap to the next line */
+  justify-content: space-between; /* Space out the cards */
+  margin: 20px 0; /* Add some margin */
+}
+
+.card {
+  flex: 0 0 calc(33.33% - 10px); /* 3 cards on top */
+  margin-bottom: 20px; /* Space between rows */
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer; /* Change cursor to pointer on hover */
+  transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+.card:hover {
+  background-color: #f0f0f0; /* Change background on hover */
+}
+
+.pagination {
+  margin: 20px 0; /* Add some margin */
+}
+
+.pagination button {
+  margin: 0 5px; /* Space between pagination buttons */
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc; /* Disabled button style */
+  cursor: not-allowed; /* Change cursor for disabled button */
+}

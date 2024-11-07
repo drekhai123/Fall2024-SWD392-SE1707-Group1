@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { AddTransport } from "./AddTransport";
 import { baseUrl, headers, getJwtToken } from "../api/Url";
 import { GetAllOrders, getOrderbyOrderId } from "../api/OrdersApi";
 import { GetAllTransports } from "../api/TransportApi";
@@ -10,10 +9,10 @@ import { DataTable } from "primereact/datatable";
 import { Message } from "primereact/message";
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
+import '../../css/PendingOrders.css';
 
 export function PendingOrders() {
   const [orders, setOrders] = useState([]);
-  const [isAddTransport, setIsAddTransport] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,6 +24,7 @@ export function PendingOrders() {
   const [transports, setTransports] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
+  const [selectedTransportId, setSelectedTransportId] = useState(null);
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -49,7 +49,7 @@ export function PendingOrders() {
 
   const updateOrderStatus = (order) => {
     const updatedOrder = { deliveryStatus: "PROCESSING", updateAt: Date.now() };
-    axios.put(`${baseUrl}/Orders/${order.orderId}/status`, updatedOrder, {
+    axios.patch(`${baseUrl}/Orders/OrderStatus/${order.orderId}`, updatedOrder, {
       headers: {
         ...headers,
         Authorization: `Bearer ${token}`,
@@ -57,17 +57,8 @@ export function PendingOrders() {
     })
       .then(() => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Update order status success!', life: 3000 });
-
-        setOrders((prevOrders) =>
-          prevOrders.map((o) =>
-            o.orderId === order.orderId
-              ? { ...o, deliveryStatus: "PROCESSING", confirmed: true }
-              : o
-          )
-        );
-
         closeOrdersModal();
-        fetchOrders();
+        fetchOrders(); // Refresh orders
       })
       .catch((err) => {
         setError("Update order failed: " + err);
@@ -79,7 +70,7 @@ export function PendingOrders() {
     setIsTransportDialogVisible(true);
   };
 
-  function displayOrders(orderId) {
+  const displayOrders = (orderId) => {
     getOrderbyOrderId(orderId)
       .then(response => {
         setSelectedOrders(response);
@@ -88,7 +79,7 @@ export function PendingOrders() {
       .catch(err => {
         console.error("Error fetching order details:", err);
       });
-  }
+  };
 
   const closeOrdersModal = () => {
     setIsOrdersVisible(false);
@@ -98,6 +89,7 @@ export function PendingOrders() {
   const closeTransportModal = () => {
     setIsTransportDialogVisible(false);
     setSelectedOrder(null);
+    setSelectedTransportId(null); // Reset selected transport ID
   };
 
   const formatDate = (date) => {
@@ -109,7 +101,7 @@ export function PendingOrders() {
   const fetchTransports = async () => {
     try {
       const response = await GetAllTransports();
-      setTransports(response.data || []); // Assuming response.data contains the transport array
+      setTransports(response || []); // Assuming response.data contains the transport array
     } catch (error) {
       console.error("Error fetching transports:", error);
       setTransports([]); // Fallback to empty array on error;
@@ -126,6 +118,44 @@ export function PendingOrders() {
   // Function to handle page change
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+  };
+
+  // Function to handle transport selection
+  const handleTransportSelect = (transportId) => {
+    setSelectedTransportId(transportId);
+  };
+
+  // Function to update the order with the selected transport ID
+  const updateOrderWithTransport = async (transportId) => {
+    try {
+      const orderId = selectedOrder.orderId; // Replace with your actual order ID
+      const updatedOrder = { transportId }; // Create an object with the transport ID
+
+      await axios.patch(`${baseUrl}/Orders/Transport/${orderId}`, updatedOrder, {
+        headers: {
+          ...headers,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Show success message
+      toast.current.show({ severity: 'success', summary: 'Success', detail: 'Transport updated successfully!', life: 3000 });
+      fetchOrders();
+      // Close the transport dialog
+      closeTransportModal(); // Close the transport dialog after updating
+    } catch (error) {
+      console.error("Error updating order:", error);
+      setError("Error updating order with transport."); // Set error message if update fails
+    }
+  };
+
+  // Function to handle confirm button click
+  const handleConfirmClick = () => {
+    if (transports.transportId !== null) {
+      updateOrderStatus(selectedTransportId);
+    } else {
+      alert("Please select a transport before confirming.");
+    }
   };
 
   return (
@@ -148,6 +178,7 @@ export function PendingOrders() {
           body={(rowData) => formatDate(rowData.createdAt)} // Use body to format the date
         />
         <Column field="deliveryStatus" header="Status" />
+        <Column field="transportId" header="Transport Id" />
         <Column
           header="Add Transport"
           body={(rowData) => {
@@ -178,15 +209,22 @@ export function PendingOrders() {
 
       <Dialog header="Transport Details" visible={isTransportDialogVisible} onHide={closeTransportModal}>
         <div className="card-container">
-          {currentItems.map((transport) => (
-            <div key={transport.transportId} className="card">
-              <h3>Transport ID: {transport.transportId}</h3>
-              <p>Status: {transport.status === 'FREE' ? 'Free' : 'Not Free'}</p>
-              <p>Delivery Staff Name: {transport.deliveryStaff.staffName}</p>
-              <p>Healthcare Staff Name: {transport.healthCareStaff.staffName}</p>
-              <p>Staff Name: {transport.staff.staffName}</p>
-            </div>
-          ))}
+          {currentItems.length === 0
+            ? <p>No transports available</p>
+            : currentItems.map((transport) => (
+              <div
+                key={transport.transportId}
+                className="card"
+                onClick={() => handleTransportSelect(transport.transportId)} // Add click handler
+                style={{ backgroundColor: selectedTransportId === transport.transportId ? '#cf8235' : 'white' }} // Highlight selected card
+              >
+                <h3>Transport ID: {transport.transportId}</h3>
+                <p>Status: {transport.status === 'FREE' ? 'Free' : 'Not Free'}</p>
+                <p>Delivery Staff Name: {transport.deliveryStaff.staffName}</p>
+                <p>Healthcare Staff Name: {transport.healthCareStaff.staffName}</p>
+                <p>Staff Name: {transport.staff.staffName}</p>
+              </div>
+            ))}
         </div>
         <div className="pagination">
           {Array.from({ length: Math.ceil(transports.length / itemsPerPage) }, (_, index) => (
@@ -195,6 +233,14 @@ export function PendingOrders() {
             </button>
           ))}
         </div>
+        {/* Confirm Button */}
+        <Button
+          label="Confirm Transport"
+          severity="info"
+          className="text-black !bg-cyan-500 border border-black p-2"
+          onClick={() => updateOrderWithTransport(selectedTransportId)} // Call the update function with selected transport ID
+          disabled={!selectedTransportId} // Disable if transport not chosen
+        ></Button>
       </Dialog>
 
       {error && (
@@ -221,8 +267,8 @@ export function PendingOrders() {
               icon="pi pi-check"
               severity="success"
               className="mt-4" // Add margin-top for spacing
-              onClick={() => updateOrderStatus(selectedOrders)} // Call the update function with selected order
-              disabled={selectedOrders.deliveryStatus !== "PENDING"} // Disable if not pending
+              onClick={handleConfirmClick} // Call the update function with selected order
+              disabled={selectedOrders.transportId === 0} // Disable if not pending
             />
           </div>
         )}

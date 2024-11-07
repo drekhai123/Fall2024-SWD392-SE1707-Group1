@@ -3,25 +3,33 @@ import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import axios from "axios";
-import { baseUrl, headers, getJwtToken } from "../api/Url";
+import { headers, getJwtToken } from "../api/Url";
+import { GetAllStaff } from "../api/StaffApi";
+import { GetAllDeliveryStaff } from "../api/DeliveryStaffApi";
+import { GetAllHealthCareStaff } from "../api/HealthcareStaffApi";
+import { toast } from "react-toastify";
 
 export const CreateTransportDialog = ({
   visible,
   onHide,
 }) => {
   const token = getJwtToken()
-  const [selectedStaff, setSelectedStaff] = useState(null);
-  const [selectedDeliveryStaff, setSelectedDeliveryStaff] = useState(null);
-  const [deliveryStaff, setDeliveryStaff] = useState([]);
   const [staff, setStaff] = useState([]);
+  const [selectedStaff, setSelectedStaff] = useState(null);
+  const [deliveryStaff, setDeliveryStaff] = useState([]);
+  const [selectedDeliveryStaff, setSelectedDeliveryStaff] = useState(null);
+  const [healthCareStaff, setHealthCareStaff] = useState([]);
+  const [selectedHealthCareStaff, setSelectedHealthCareStaff] = useState(null);
+
 
   const handleConfirm = async () => {
     const transportData = {
-      status: "PROCESSING",
+      status: "DELIVERING",
       deliveryStaffId: selectedDeliveryStaff,
-      healthCareStaffId: selectedDeliveryStaff,
+      healthCareStaffId: selectedHealthCareStaff,
       staffId: selectedStaff
     };
+    console.log(transportData);
     try {
       await axios.post("https://kdosdreapiservice.azurewebsites.net/api/Transport", transportData, {
         headers: {
@@ -29,59 +37,118 @@ export const CreateTransportDialog = ({
           'Authorization': `Bearer ${token}`
         }
       });
+
+      await Promise.all([
+        axios.patch(`https://kdosdreapiservice.azurewebsites.net/api/Staff/Status/${selectedStaff}`, { staffStatus: "OCCUPIED" }, { headers: { 'Authorization': `Bearer ${token}` } }),
+        axios.patch(`https://kdosdreapiservice.azurewebsites.net/api/DeliveryStaff/Status/${selectedDeliveryStaff.value}`, { staffStatus: "OCCUPIED" }, { headers: { 'Authorization': `Bearer ${token}` } }),
+        axios.patch(`https://kdosdreapiservice.azurewebsites.net/api/HealthCareStaff/Status/${selectedHealthCareStaff}`, { staffStatus: "OCCUPIED" }, { headers: { 'Authorization': `Bearer ${token}` } })
+      ]);
+      // Reload staff lists
+      await Promise.all([
+        fetchDeliveryStaff(),
+        fetchHealthCareStaff(),
+        fetchStaff()
+      ]);
+      toast.success("Transport assigned successfully");
+
       onHide();
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    const fetchDeliveryStaff = async () => {
-      try {
-        const deliveryStaffResponse = await axios.get(`${baseUrl}/DeliveryStaff`, {
-          headers: {
-            ...headers,
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const deliveryStaffList = deliveryStaffResponse.data.map(staff => ({
-          label: staff.staffName, // or whatever field represents the name
-          value: staff.staffId    // or whatever unique identifier
+  // Fetch Delivery Staff
+  const fetchDeliveryStaff = async () => {
+    try {
+      const deliveryStaffResponse = await GetAllDeliveryStaff();
+      const deliveryStaffList = deliveryStaffResponse.data
+        .filter(staff => staff.staffId !== 0 && staff.staffStatus !== "OCCUPIED")
+        .map(staff => ({
+          label: staff.staffName,
+          value: staff.staffId,
+          staffStatus: staff.staffStatus
         }));
-        setDeliveryStaff(deliveryStaffList);
-      } catch (error) {
-        console.error("Error fetching delivery staff:", error);
-      }
-    };
+      setDeliveryStaff(deliveryStaffList);
+    } catch (error) {
+      console.error("Error fetching delivery staff:", error);
+    }
+  };
+
+  // Use Effect for Delivery Staff
+  useEffect(() => {
     fetchDeliveryStaff();
   }, []);
 
-  useEffect(() => {
-    const fetchStaff = async () => {
-      try {
-        const staffResponse = await axios.get(`${baseUrl}/Staff`, {
-          headers: {
-            ...headers,
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const staffList = staffResponse.data.map(staff => ({
-          label: staff.staffName, // or whatever field represents the name
-          value: staff.staffId    // or whatever unique identifier
+  // Fetch Health Care Staff
+  const fetchHealthCareStaff = async () => {
+    try {
+      const healthStaffResponse = await GetAllHealthCareStaff();
+      const healthStaffList = healthStaffResponse.data
+        .filter(staff => staff.staffId !== 0 && staff.staffStatus !== "OCCUPIED")
+        .map(staff => ({
+          label: staff.staffName,
+          value: staff.staffId,
+          staffStatus: staff.staffStatus
         }));
-        setStaff(staffList);
-      } catch (error) {
-        console.error("Error fetching staff:", error);
-      }
-    };
+      setHealthCareStaff(healthStaffList);
+    } catch (error) {
+      console.error("Error fetching staff:", error);
+    }
+  };
+
+  // Use Effect for Health Care Staff
+  useEffect(() => {
+    fetchHealthCareStaff();
+  }, []);
+
+  // Fetch Staff
+  const fetchStaff = async () => {
+    try {
+      const staffResponse = await GetAllStaff();
+      const staffList = staffResponse.data
+        .filter(staff => staff.staffId !== 0 && staff.staffStatus !== "OCCUPIED")
+        .map(staff => ({
+          label: staff.staffName,
+          value: staff.staffId,
+          staffStatus: staff.staffStatus
+        }));
+      setStaff(staffList);
+    } catch (error) {
+      console.error("Error fetching staff:", error);
+    }
+  };
+  //
+  useEffect(() => {
     fetchStaff();
   }, []);
+
+  const itemTemplateDeliveryStaff = (deliveryStaff) => {
+    return (
+      <div>
+        <strong>{deliveryStaff.value}</strong> - {deliveryStaff.label} - <p style={{ color: deliveryStaff.staffStatus === "FREE" ? "green" : "red" }}>{deliveryStaff.staffStatus}</p>
+      </div>
+    );
+  };
+  const itemTemplateStaff = (staff) => {
+    return (
+      <div>
+        <strong>{staff.value}</strong> - {staff.label} - <p style={{ color: staff.staffStatus === "FREE" ? "green" : "red" }}>{staff.staffStatus}</p>
+      </div>
+    );
+  };
+  const itemTemplateHealthCareStaffS = (healthCareStaff) => {
+    return (
+      <div>
+        <strong>{healthCareStaff.value}</strong> - {healthCareStaff.label} - <p style={{ color: healthCareStaff.staffStatus === "FREE" ? "green" : "red" }}>{healthCareStaff.staffStatus}</p>
+      </div>
+    );
+  };
 
   return (
     <Dialog
       header="Assign Delivery Staff"
       visible={visible}
-      style={{ width: "30vw" }}
+      style={{ width: "40vw" }}
       footer={
         <div className="flex justify-end gap-2 p-3">
           <Button
@@ -95,33 +162,41 @@ export const CreateTransportDialog = ({
       }
       onHide={onHide}
     >
-      <div className="space-y-4 p-8">
-        <div className="flex flex-col space-y-1">
-          <label htmlFor="deliveryStaff" className="font-medium text-gray-700">
-            Delivery Staff
-          </label>
-          <Dropdown
-            value={selectedDeliveryStaff}
-            options={deliveryStaff}
-            onChange={(e) => setSelectedDeliveryStaff(e.value)}
-            placeholder="Select a delivery staff"
-            className="w-full border border-gray-300 rounded-md"
-          />
-        </div>
-      </div>
-      <div className="space-y-4 p-8">
-        <div className="flex flex-col space-y-1">
-          <label htmlFor="staff" className="font-medium text-gray-700">
-            Staff
-          </label>
-          <Dropdown
-            value={selectedStaff}
-            options={staff}
-            onChange={(e) => setSelectedStaff(e.value)}
-            placeholder="Select a staff"
-            className="w-full border border-gray-300 rounded-md"
-          />
-        </div>
+      <div className="p-4">
+        <label htmlFor="healthCareStaff" className="font-medium text-gray-700 mb-2">
+          Health Care Staff
+        </label>
+        <Dropdown
+          itemTemplate={itemTemplateHealthCareStaffS}
+          value={selectedHealthCareStaff}
+          options={healthCareStaff}
+          onChange={(e) => setSelectedHealthCareStaff(e.value)}
+          placeholder="Select a health care staff"
+          className="w-full border border-gray-300 rounded-md mb-4"
+        />
+        <label htmlFor="deliveryStaff" className="font-medium text-gray-700 mb-2">
+          Delivery Staff
+        </label>
+        <Dropdown
+          itemTemplate={itemTemplateDeliveryStaff}
+          value={selectedDeliveryStaff}
+          options={deliveryStaff}
+          onChange={(e) => setSelectedDeliveryStaff(e.value)}
+          placeholder="Select a delivery staff"
+          className="w-full border border-gray-300 rounded-md mb-4"
+        />
+
+        <label htmlFor="staff" className="font-medium text-gray-700 mb-2">
+          Staff
+        </label>
+        <Dropdown
+          itemTemplate={itemTemplateStaff}
+          value={selectedStaff}
+          options={staff}
+          onChange={(e) => setSelectedStaff(e.value)}
+          placeholder="Select a staff"
+          className="w-full border border-gray-300 rounded-md"
+        />
       </div>
     </Dialog>
   );

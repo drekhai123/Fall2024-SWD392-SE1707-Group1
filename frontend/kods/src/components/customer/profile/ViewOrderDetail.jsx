@@ -264,16 +264,6 @@ export default function OrderDetail({ onBack }) {
                   Cancel Order
                 </Button>
               }
-              {orderDetailById && orderDetailById.map((item) => (
-                <Button
-                  key={item.orderDetailsId}
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleCancelFish(item.orderDetailsId)}
-                >
-                  Cancel Fish
-                </Button>
-              ))}
             </>
           )}
         </div>
@@ -409,6 +399,14 @@ export default function OrderDetail({ onBack }) {
                           onClick={() => handleViewAllStatus(item.healthStatus)}
                         >
                           View All Status
+                        </Button>
+                        <Button
+                          key={item.orderDetailsId}
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => handleCancelFish(item.orderDetailsId)}
+                        >
+                          Cancel Fish
                         </Button>
                       </TableCell>
                     </TableRow>
