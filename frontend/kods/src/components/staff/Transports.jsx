@@ -22,7 +22,7 @@ export function Transports() {
           Authorization: `Bearer ${token}`,
         },
       })
-      setTransports(transportResponse.data)
+      setTransports(transportResponse.data.filter(transport => transport.transportId !== 0));
     }
     fetchTransport();
   }, []);
@@ -37,39 +37,43 @@ export function Transports() {
   return (
     <div>
       <DataTable
-  value={transports}
-  showGridlines
-  stripedRows
-  tableStyle={{ minWidth: "50rem" }}
-  header={buttonCreaeTransport()}
-  paginator
-  rows={5}
->
-  <Column field="transportId" header="Transport Id"></Column>
-  <Column
-    header="View orders"
-    body={(rowData) => (
-      <Button
-        label="Orders"
-        severity="info"
-        className="text-black !bg-cyan-500 border border-black p-2"
-        onClick={() => {
-          setSelectedTransport(rowData.transportId); // Set selected transport on click
-          setIsOpenTransport(true); // Open the dialog only when clicked
-        }}
-      ></Button>
-    )}
-  ></Column>
-</DataTable>
-{
-  isOpenTransport && (
-    <ListOrders
-      visible={isOpenTransport}
-      onHide={() => setIsOpenTransport(false)}
-      transportId={selectedTransport}
-    />
-  )
-}
+        value={transports}
+        showGridlines
+        stripedRows
+        tableStyle={{ minWidth: "50rem" }}
+        header={buttonCreaeTransport()}
+        paginator
+        rows={5}
+      >
+        <Column field="transportId" header="Transport Id"></Column>
+        <Column field="staff.staffName" header="Staff"></Column>
+        <Column field="deliveryStaff.staffName" header="Delivery Staff"></Column>
+        <Column field="healthCareStaff.staffName" header="Health Care Staff"></Column>
+        <Column field="status" header="Status"></Column>
+        <Column
+          header="View orders"
+          body={(rowData) => (
+            <Button
+              label="Orders"
+              severity="info"
+              className="text-black !bg-cyan-500 border border-black p-2"
+              onClick={() => {
+                setSelectedTransport(rowData.transportId); // Set selected transport on click
+                setIsOpenTransport(true); // Open the dialog only when clicked
+              }}
+            ></Button>
+          )}
+        ></Column>
+      </DataTable>
+      {
+        isOpenTransport && (
+          <ListOrders
+            visible={isOpenTransport}
+            onHide={() => setIsOpenTransport(false)}
+            transportId={selectedTransport}
+          />
+        )
+      }
       {showConfirmDialog && (
         <CreateTransportDialog
           visible={showConfirmDialog}
