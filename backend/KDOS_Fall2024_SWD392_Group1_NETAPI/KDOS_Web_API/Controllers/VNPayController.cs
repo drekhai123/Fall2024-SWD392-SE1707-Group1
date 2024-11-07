@@ -128,7 +128,7 @@ namespace KDOS_Web_API.Controllers
                 }
                 else if (responseCode == "24") // Payment failed
                 {
-                    return BadRequest(new ResponsePayment
+                    return Ok(new ResponsePayment
                     {
                         Success = false,
                         StatusMessage = "Payment failed!",
