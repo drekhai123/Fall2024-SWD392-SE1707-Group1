@@ -29,6 +29,7 @@ import AdminPage from "./components/admin/adminpage";
 import Dashboard from "./components/deliveryStaff/Dashboard";
 import ProfileForm from "./components/customer/profile/ProfileForm";
 import IndexUserProfile from "./components/customer/profile";
+import HealthCareDashboard from "./components/healthcare/HealthCareDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -143,5 +144,9 @@ export const router = createBrowserRouter([
   {
     path: "/admin",
     element: <AdminPage />,
+  },
+  {
+    path: "/healthcare", // Define the new route path
+    element: <HealthCareDashboard />, // Set the component as the element
   },
 ]);
