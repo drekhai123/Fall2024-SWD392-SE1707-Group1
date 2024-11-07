@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { getJwtToken } from "../api/Url";
 import { postOrders } from "../api/OrdersApi";
 import { postOrderDetailsByOrderId } from "../api/OrdersApi";
+import { createNewPaymentRequest } from "../api/PaymentApi";
 
 export default function OrderForm({ onSuggestionClick, distance }) {
   const navigate = useNavigate();
@@ -335,18 +336,19 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           navigate("/profile/ViewOrderHistory");
           return;
         }
-
-        // Call the API to create a new payment request for BANK_TRANSFER
-        const paymentResponse = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Create', {
+        const request = {
           orderId: orderResponse.orderId, // Use the orderId from the orderResponse
           amount: orderResponse.totalCost, // Assuming totalCost is part of the orderResponse
-        });
-        console.log("Payment response received:", paymentResponse.data);
+        }
+
+        // Call the API to create a new payment request for BANK_TRANSFER
+        const paymentResponse = await createNewPaymentRequest(request)
+        console.log("Payment response received:", paymentResponse);
 
         // Check if the payment response contains a URL
-        if (paymentResponse.data && paymentResponse.data.paymentUrl) {
+        if (paymentResponse && paymentResponse.paymentUrl) {
           // Redirect to the payment URL provided in the response
-          window.location.href = paymentResponse.data.paymentUrl; // Redirect to the payment URL
+          window.location.href = paymentResponse.paymentUrl; // Redirect to the payment URL
           return; // Exit the function after redirecting
         }
 
