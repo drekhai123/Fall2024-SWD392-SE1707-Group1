@@ -76,7 +76,7 @@ namespace KDOS_Web_API.Datas
             modelBuilder.Entity<LogTransport>()
                .HasOne(o => o.Customer) // One Transport can have Many orders
                .WithMany(cs => cs.LogTransport)
-               .HasForeignKey(o => o.TransportId);
+               .HasForeignKey(o => o.CustomerId);
             modelBuilder.Entity<OrderDetails>()
                 .HasOne(od => od.Order) // Each OrderDetails references one Order
                 .WithMany(o => o.OrderDetails) // An Order can have many OrderDetails
