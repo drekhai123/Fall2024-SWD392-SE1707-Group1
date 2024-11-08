@@ -71,8 +71,6 @@ namespace KDOS_Web_API.Repositories
             // Find all orders with the specified status
             var transports = await transportContext.Transport.Include(x => x.Orders.Where(o => !o.DeliveryStatus.Equals("DELIVERED") && !o.DeliveryStatus.Equals("CANCELLED")))
                 .FirstOrDefaultAsync(o => o.TransportId == id);
-            
-
             return transports;
         }
 

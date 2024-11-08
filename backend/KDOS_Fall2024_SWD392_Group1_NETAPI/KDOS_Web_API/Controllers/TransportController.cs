@@ -184,7 +184,7 @@ public class TransportController : ControllerBase
     }
     [HttpPatch]
     [Route("Status/{transportId}")]
-    public async Task<IActionResult> UpdateOrderStatus([FromRoute] int transportId, [FromBody] UpdateTransportStatusDTO updateTransportDTO)
+    public async Task<IActionResult> UpdateTransportStatus([FromRoute] int transportId, [FromBody] UpdateTransportStatusDTO updateTransportDTO)
     {
         if (!ModelState.IsValid)
         {
@@ -198,13 +198,13 @@ public class TransportController : ControllerBase
             transportModel = await transportRepository.UpdateTransportStatus(transportId, transportModel);
             if (transportModel == null)
             {
-                return NotFound("Transport Cannot Be Changed!");
+                return NotFound("Transport Status Cannot Be Changed!");
             }
         }
         catch (Exception ex)
         {
             // Log the exception
-            return StatusCode(500, "Internal server error" + ex);
+            return StatusCode(500, "Something is wrong" + ex);
         }
 
         // Map the updated order back to a DTO for the response
