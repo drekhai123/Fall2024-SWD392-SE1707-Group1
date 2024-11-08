@@ -175,11 +175,17 @@ const ProfileForm = ({ onSubmit = () => {}, methods }) => {
             <label className="block mb-2">Phone Number</label>
             <InputField
               name="phoneNumber"
-              type="number"
+              type="text"
               fullWidth
               placeholder="Enter your phone number"
               value={customer?.phoneNumber || ""}
-              onChange={handleChange("phoneNumber")}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Allow only numbers and limit to 10 digits
+                if (/^\d{0,10}$/.test(value)) {
+                  handleChange("phoneNumber")(e);
+                }
+              }}
             />
           </div>
             {/* Address Field */}
