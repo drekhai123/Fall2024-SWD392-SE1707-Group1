@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ListOrders } from "./ListOrders";
 import { CreateTransportDialog } from "./CreateTransportDialog";
 import { Button } from "primereact/button";
+import ConfirmationModal from "../ConfirmationModal";
 
 import axios from "axios";
 import { baseUrl, headers, getJwtToken } from "../api/Url";
@@ -16,6 +17,9 @@ export function Transports() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isOpenTransport, setIsOpenTransport] = useState(false)
   const [deliveryStatus, setDeliveryStatus] = useState({});
+  const [orders, setOrders] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [currentRowData, setCurrentRowData] = useState(null);
 
   useEffect(() => {
     const fetchTransport = async () => {
@@ -42,7 +46,7 @@ export function Transports() {
   const updateTransportStatus = async (transportId) => {
     console.log(`Attempting to update transport status for ID: ${transportId}`);
     try {
-      const response = await axios.put(`${baseUrl}/Transport/${transportId}`, {
+      const response = await axios.patch(`${baseUrl}/Transport/Status/${transportId}`, {
         status: "DELIVERING"
       }, {
         headers: {
@@ -63,6 +67,24 @@ export function Transports() {
     } catch (error) {
       console.error("Error updating transport status:", error);
     }
+  };
+
+  const handleOrdersFetched = (fetchedOrders) => {
+    setOrders(fetchedOrders);
+  };
+
+  const confirmStartDelivery = (rowData) => {
+    setCurrentRowData(rowData);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirm = () => {
+    if (currentRowData) {
+      toast.success("Delivery Started Successfully");
+      updateTransportStatus(currentRowData.transportId);
+      setDeliveryStatus(prev => ({ ...prev, [currentRowData.transportId]: "On the way" }));
+    }
+    setShowConfirmModal(false);
   };
 
   return (
@@ -99,19 +121,17 @@ export function Transports() {
           header="Start Delivery"
           body={(rowData) => {
             const isOnTheWay = deliveryStatus[rowData.transportId] === "On the way";
-            return (
+            const isDelivering = rowData.status === "DELIVERING"; // Check if status is DELIVERING
+
+            return isDelivering || isOnTheWay ? ( // Display "On the way" if status is DELIVERING or already marked as "On the way"
+              "On the way"
+            ) : (
               <Button
-                label={isOnTheWay ? "On the way" : "Start Delivery"}
+                label="Start Delivery"
                 severity="success"
                 className="text-black !bg-green-500 border border-black p-2"
-                onClick={() => {
-                  if (!isOnTheWay) {
-                    toast.success("Delivery Started Successfully");
-                    updateTransportStatus(rowData.transportId);
-                    setDeliveryStatus(prev => ({ ...prev, [rowData.transportId]: "On the way" }));
-                  }
-                }}
-                disabled={isOnTheWay} // Disable the button if it's already "On the way"
+                onClick={() => confirmStartDelivery(rowData)} // Call the confirmation function
+                disabled={isOnTheWay} // Disable the button if it's already "On the way" or there are no orders
               />
             );
           }}
@@ -123,9 +143,15 @@ export function Transports() {
             visible={isOpenTransport}
             onHide={() => setIsOpenTransport(false)}
             transportId={selectedTransport}
+            onOrdersFetched={handleOrdersFetched}
           />
         )
       }
+      <ConfirmationModal
+        visible={showConfirmModal}
+        onHide={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirm}
+      />
       {showConfirmDialog && (
         <CreateTransportDialog
           visible={showConfirmDialog}

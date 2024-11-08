@@ -32,9 +32,9 @@ export function PendingOrders() {
 
     try {
       const response = await GetAllOrders();
-      setOrders(
-        response.data.filter((data) => data.deliveryStatus === "PENDING")
-      );
+      // Reverse the orders before setting the state
+      const reversedOrders = response.data.filter((data) => data.deliveryStatus === "PENDING").reverse();
+      setOrders(reversedOrders);
     } catch (err) {
       console.error(err);
       setError("Error fetching orders data");
