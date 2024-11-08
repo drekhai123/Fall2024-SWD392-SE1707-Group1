@@ -174,10 +174,10 @@ public class TransportController : ControllerBase
 
         try
         {
-            transportModel = await transportRepository.UpdateTransport(transportId, transportModel);
+            transportModel = await transportRepository.UpdateTransportStatus(transportId, transportModel);
             if (transportModel == null)
             {
-                return NotFound("Transprt Cannot Be Changed!");
+                return NotFound("Transport Cannot Be Changed!");
             }
         }
         catch (Exception ex)
