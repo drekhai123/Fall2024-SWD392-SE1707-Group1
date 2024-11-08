@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { ListOrders } from "./ListOrders";
 import { CreateTransportDialog } from "./CreateTransportDialog";
 import { Button } from "primereact/button";
-import ConfirmationModal from "../ConfirmationModal";
+import ConfirmationModal from "./ConfirmationModal";
 
 import axios from "axios";
 import { baseUrl, headers, getJwtToken } from "../api/Url";
