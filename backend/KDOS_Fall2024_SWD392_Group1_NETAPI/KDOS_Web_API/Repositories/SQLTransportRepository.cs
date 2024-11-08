@@ -93,6 +93,17 @@ namespace KDOS_Web_API.Repositories
             await transportContext.SaveChangesAsync();
             return transportModel;
         }
+        public async Task<Transport?> UpdateTransportStatus(int id, Transport transport)
+        {
+            var transportModel = await transportContext.Transport.FindAsync(id);
+            if (transportModel == null)
+            {
+                return null;
+            }
+            transportModel.Status = transport.Status;
+            await transportContext.SaveChangesAsync();
+            return transportModel;
+        }
         public async Task<Transport?> GetByDeliveryStaff(int id)
         {
             var transportModel = await transportContext.Transport.Include(x=>x.DeliveryStaff).Include(x=>x.Orders).FirstOrDefaultAsync(x=>x.DeliveryStaffId == id);

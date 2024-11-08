@@ -5,6 +5,7 @@ using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
 using KDOS_Web_API.Models.DTOs.HealthCareStaffDTOs;
 using KDOS_Web_API.Models.DTOs.OrderDTOs;
+using KDOS_Web_API.Models.DTOs.TransportDTOs;
 
 namespace KDOS_Web_API.Mappings
 {
@@ -69,6 +70,7 @@ namespace KDOS_Web_API.Mappings
             CreateMap<DistancePriceList, UpdateDistancePriceListDTO>().ReverseMap();
             // Transport
             CreateMap<Transport, TransportDTO>().ReverseMap();
+            CreateMap<Transport, UpdateTransportStatusDTO>().ReverseMap();
             CreateMap<Transport, TransportOrderIdDTO>().ReverseMap();
             CreateMap<Transport, UpdateTransportDTO>().ReverseMap();
             CreateMap<Transport,AddNewTransportDTO>()
