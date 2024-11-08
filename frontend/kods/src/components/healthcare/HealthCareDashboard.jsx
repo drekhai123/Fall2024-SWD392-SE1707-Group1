@@ -52,7 +52,6 @@ const HealthCareDashboard = ({ order, onClose }) => {
         setLoading(false);
       }
     };
-
     fetchOrders();
   }, []);
 
@@ -64,7 +63,7 @@ const HealthCareDashboard = ({ order, onClose }) => {
     }
 
     const newHealthStatusData = {
-      date: new Date().toISOString(),
+      date: new Date(),
       status: healthStatus,
       temperature: parseFloat(temperature),
       oxygenLevel: parseFloat(oxygenLevel),

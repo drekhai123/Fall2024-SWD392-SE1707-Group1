@@ -22,8 +22,8 @@ const getHeaders = () => {
 
 export async function createNewHealthCareStaff(healthCareStaffData) {
   try {
-    const response = await axios.post(getAllHealthCareStaffURL, healthCareStaffData, { headers: getHeaders() });
-    return response.data; // Assuming the API returns the created staff data
+    const response = await axios.post(healthStatusURL, healthCareStaffData, { headers: getHeaders() });
+    return await response.data; // Assuming the API returns the created staff data
   } catch (error) {
     console.error('Error creating new staff:', error);
     throw error; // Rethrow the error for handling in the calling function
