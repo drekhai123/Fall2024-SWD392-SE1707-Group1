@@ -14,5 +14,6 @@ namespace KDOS_Web_API.Repositories
         Task<Transport?> GetByDeliveryStaff(int id);
         Task<List<Transport>> GetTransportByStatus(TransportStatus status);
         Task<Transport?> GetActiveTransportByOrderStatus(int id);
+        Task<Transport?> GetByHealthCareStaff(int id);
     }
 }

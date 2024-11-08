@@ -193,7 +193,7 @@ export async function updateOrderStatus(id,data) {
             }
         });
 
-        return response.data; // Return the response data directly
+        return response; // Return the response data directly
     } catch (error) {
         console.error('Error updating order status:', error);
         throw error;

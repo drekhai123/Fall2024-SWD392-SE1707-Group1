@@ -4,7 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import '../../css/DeliveryStaffTransport.css'
-import { GetTransportByDeliveryStaffId } from '../api/TransportApi';
+import { GetTransportByDeliveryStaffId, updateTransportById } from '../api/TransportApi';
 import LoadingScreen from '../../utils/LoadingScreen';
 import { CheckCircleOutlineOutlined, CloseOutlined} from '@mui/icons-material';
 import { confirmDialog, } from 'primereact/confirmdialog';
@@ -30,8 +30,37 @@ export default function TransportPage({ userData, setCurrentOrder }) {
     }, [order])
 
     useEffect(() => {
-        if (order) confirmCheckOut();
-    }, [order]);
+        if (selectedOrder) confirmCheckOut();
+    }, [selectedOrder]);
+
+    useEffect(()=>{
+        if(transport){
+            const allOrdersCompleted = checkAllOrdersCompleted(transport);
+            if (allOrdersCompleted) {
+                console.log("All orders are either DELIVERED or CANCELED.");
+                //TODO
+                const data = {
+                    "status": "DELIVERED"
+                }
+                const response = updateTransportById(transport?.transportId, data);
+                if (response.status === 200) {
+                    console.log("Transport status updated successfully.");
+                    toast.success("Transport Status Updated!", { autoClose: 2000 }); // Show toast for 2 seconds
+                    setRefreshData(true);
+                }
+              } else {
+                console.log("Some orders are still pending or in progress.");
+              }
+        }
+    },[transport])
+
+    const checkAllOrdersCompleted = (orders) => {
+        // Check if every order has a deliveryStatus of "DELIVERED" or "CANCELED"
+        return orders.every(order => 
+          order.deliveryStatus === "DELIVERED" || order.deliveryStatus === "CANCELED"
+        );
+      };
+      
 
     useEffect(() => {
         const getTransport = async () => {
@@ -55,21 +84,21 @@ export default function TransportPage({ userData, setCurrentOrder }) {
     }, [refreshData]);
 
     const handleConfirmOrder = async () => {
-        console.log(order)
+        //console.log(order)
         setLoading(true)
         const orderstatusData = {
             deliveryStatus: "DELIVERED"
         }
-        if (order != null) {
-            var response = await updateOrderStatus(order.orderId, orderstatusData)
+        if (selectedOrder != null) {
+            var response = await updateOrderStatus(selectedOrder.orderId, orderstatusData)
             console.log(response)
             if (response.status === 200) {
-                if (order.paymentStatus === "PENDING") {
+                if (selectedOrder.paymentStatus === "PENDING") {
                    //console.log(selectedOrder.paymentStatus)
                     const deliverystatusData = {
                         paymentStatus: "PAID"
                     }
-                    response = await updatePaymentStatus(order.orderId, deliverystatusData)
+                    response = await updatePaymentStatus(selectedOrder.orderId, deliverystatusData)
                     console.log(response)
                 }
             }
@@ -86,8 +115,8 @@ export default function TransportPage({ userData, setCurrentOrder }) {
     }
 
     const accept = async () => {
-        const response = await handleConfirmOrder(selectedOrder)
-        console.log(response)
+        const response = await handleConfirmOrder()
+        //console.log(response)
         if (response !=null) {
             if(response.status === 200)
             confirmOrder.current.show({ severity: 'success', summary: 'Confirmed', detail: 'Order Completed', life: 3000 });
@@ -106,10 +135,10 @@ export default function TransportPage({ userData, setCurrentOrder }) {
         confirmDialog({
             message: (
                 <div>
-                    <p>Confirm Delivery Of The Order: {order.orderId}</p>
-                    <p>On Customer: {order.customerId}</p>
-                    {order.paymentStatus === "PENDING" && (
-                        <p>Order Payment: {order.totalCost} VND</p>
+                    <p>Confirm Delivery Of The Order: {selectedOrder.orderId}</p>
+                    <p>On Customer: {selectedOrder.customerId}</p>
+                    {selectedOrder.paymentStatus === "PENDING" && (
+                        <p>Order Payment: {selectedOrder.totalCost} VND</p>
                     )}
                 </div>
             ),
@@ -138,7 +167,7 @@ export default function TransportPage({ userData, setCurrentOrder }) {
                 {loading && <LoadingScreen />}
                 <DataTable
                     selection={order}
-                    onSelectionChange={(e) => setOrder(e.value)}
+                    onSelectionChange={(e) => {setOrder(e.value);setCurrentOrder(e.value)}}
                     dataKey="orderId"
                     scrollable
                     resizableColumns
@@ -162,7 +191,7 @@ export default function TransportPage({ userData, setCurrentOrder }) {
                                         style={{backgroundColor:rowData.deliveryStatus !== "DELIVERED"?"green":"gray"}}
                                         disabled={rowData.deliveryStatus == "DELIVERED"}
                                         icon={rowData.deliveryStatus !== "DELIVERED"?<CheckCircleOutlineOutlined />:<CloseOutlined/>} 
-                                        onClick={()=>{ setOrder(rowData)}} className="check_button" label="Confirm Delivery" />
+                                        onClick={()=>{ setSelectedOrder(rowData)}} className="check_button" label="Confirm Delivery" />
                                 </>
                             );
                         }}>

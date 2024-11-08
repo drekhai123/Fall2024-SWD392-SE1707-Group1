@@ -3,7 +3,7 @@ import axios from "axios";
 const getAllTransportURL = baseUrl + "/Transport";
 const getTransportByDeliveryStaffURL = baseUrl + "/Transport/DeliveryStaff/";
 const getTransportLogURL = baseUrl + "/LogTransport"
-
+const updateTransportStatus = baseUrl + "/Transport/Status/";
 // Function to get headers with token
 const getHeaders = () => {
   const token = getJwtToken(); // Retrieve the token
@@ -22,6 +22,18 @@ export async function GetTransportByDeliveryStaffId(id) {
     return error;
   }
 }
+
+export async function updateTransportById(id,data) {
+  try {
+    const response = await axios.get(`${updateTransportStatus}${id}`, data,{ headers: getHeaders() });
+    return response;
+  } catch (error) {
+    console.error("Error fetching Transport:", error);
+    return error;
+  }
+}
+
+
 
 export async function AddTransportLog(data) {
   try {
