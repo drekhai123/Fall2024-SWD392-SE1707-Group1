@@ -48,6 +48,10 @@ namespace KDOS_Web_API.Controllers
             try
             {
                 ordersModel = await orderRepository.AddNewOrder(ordersModel);
+                if (ordersModel==null)
+                {
+                    return NotFound("Cannot Add New Order");
+                }
             }
             catch (Exception ex)
             {
@@ -83,7 +87,7 @@ namespace KDOS_Web_API.Controllers
             {
                 return NotFound();
             }
-            var orderDto = mapper.Map<List<OrdersDTO>>(ordersList);
+            var orderDto = mapper.Map<List<OrderDTOWithDetail>>(ordersList);
             return Ok(orderDto);
         }
         [HttpGet]

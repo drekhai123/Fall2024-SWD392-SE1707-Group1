@@ -90,14 +90,14 @@ namespace KDOS_Web_API.Repositories
             return orderToDelete;
         }
 
-        public async Task<List<Orders?>> GetOrderByDate(DateTime date)
+        public async Task<List<Orders>> GetOrderByDate(DateTime date)
         {
             // Find all orders created on the specified date
             var orders = await orderContext.Orders
                 .Where(o => o.CreatedAt.Date == date.Date)
                 .ToListAsync();
 
-            return orders;
+            return orders ?? new List<Orders>();
         }
 
         public async Task<List<Orders>> GetOrderByCustomerId(int id)
@@ -105,9 +105,10 @@ namespace KDOS_Web_API.Repositories
             // Find all orders associated with the specified customer ID
             var orders = await orderContext.Orders
                 .Where(o => o.CustomerId == id)
+                .Include(x=>x.OrderDetails)
                 .ToListAsync();
 
-            return orders ?? new List<Orders>();// Return an empty list if no orders are found
+            return orders;// Return an empty list if no orders are found
         }
         public async Task<List<Orders>> GetOrderByTransportId(int id)
         {

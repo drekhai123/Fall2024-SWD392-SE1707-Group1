@@ -39,7 +39,7 @@ namespace KDOS_Web_API.Models.Domains
         public Customer Customer { get; set; } = null!; // REQUIRED Many-to-one relationship with Customer
         public Feedback? Feedback { get; set; }
         public ICollection<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>(); // One-to-many relationship with OrderDetails
-        public Transport Transport { get; set; } // many-1 relationship with Tranport
+        public Transport? Transport { get; set; } // many-1 relationship with Tranport
         public Payment? Payment { get; set; } // many-1 relationship with Tranport
 }
 }

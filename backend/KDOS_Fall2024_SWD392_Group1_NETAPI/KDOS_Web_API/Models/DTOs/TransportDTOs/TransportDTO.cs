@@ -1,5 +1,6 @@
 ﻿using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs.HealthCareStaffDTOs;
+using KDOS_Web_API.Models.DTOs.OrderDTOs;
 using KDOS_Web_API.Models.Enum;
 
 namespace KDOS_Web_API.Models.DTOs
@@ -14,6 +15,6 @@ namespace KDOS_Web_API.Models.DTOs
         public DeliveryStaffDTO? DeliveryStaff { get; set; } // 1-1 relation
         public StaffDTO? Staff { get; set; } 
         public HealthCareStaffDTO? HealthCareStaff { get; set; } // 1-1 relation
-        public ICollection<OrdersDTO>? Orders { get; set; }
+        public ICollection<OrderDTOWithDetail>? Orders { get; set; }
     }
 }

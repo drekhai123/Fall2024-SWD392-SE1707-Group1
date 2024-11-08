@@ -78,6 +78,7 @@ namespace KDOS_Web_API.Mappings
                 .ForMember(dest => dest.Time, opt => opt.Ignore()).ReverseMap();
             CreateMap<LogTransport, LogTransportDTO>().ReverseMap();
             // Order
+            CreateMap<Orders, OrderDTOWithDetail>().ReverseMap();
             CreateMap<Orders, OrdersDTO>().ReverseMap();
             CreateMap<Orders, OrderIdOnlyDTO>().ReverseMap();
             CreateMap<Orders, UpdateOrderDTO>().ReverseMap();
