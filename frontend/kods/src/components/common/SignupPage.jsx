@@ -32,7 +32,7 @@ const SignupPage = () => {
   const [emailError, setEmailError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   // const [confirmPasswordError, setConfirmPasswordError] = useState(false);
-  const [confirmPasswordError,setConfirmPasswordError] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [genderError, setGenderError] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [nameError, setNameError] = useState(false);
@@ -54,8 +54,8 @@ const SignupPage = () => {
     const { message: lastMessage, timestamp: lastTimestamp } = lastToastRef.current;
 
     if (lastMessage !== message || (now - lastTimestamp) > toastCooldown) {
-        toast.error(message);
-        lastToastRef.current = { message, timestamp: now };
+      toast.error(message);
+      lastToastRef.current = { message, timestamp: now };
     }
   };
 
@@ -93,7 +93,7 @@ const SignupPage = () => {
     }
 
     setPhoneNumber(newPhoneNumber);
-    setPhoneError(!newPhoneNumber || !validatePhoneNumber(newPhoneNumber.replace('+',  '')));
+    setPhoneError(!newPhoneNumber || !validatePhoneNumber(newPhoneNumber.replace('+', '')));
   };
 
   const validateEmail = (email) => {
@@ -147,9 +147,9 @@ const SignupPage = () => {
     const newDob = e.target.value;
     const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(newDob);
     if (!isValidDate) {
-        setDobErrorText("Invalid date format. Please use YYYY-MM-DD.");
-        setDobError(true);
-        return;
+      setDobErrorText("Invalid date format. Please use YYYY-MM-DD.");
+      setDobError(true);
+      return;
     }
 
     setDob(newDob);
@@ -176,7 +176,7 @@ const SignupPage = () => {
       return;
     }
 
-    const formattedDob = dob ? format(dob, 'yyyy-MM-dd') : null;
+    const formattedDob = dob && validateDob(dob) ? format(new Date(dob), 'yyyy-MM-dd') : null;
 
     const signupData = {
       email,
