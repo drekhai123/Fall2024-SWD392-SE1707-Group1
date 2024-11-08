@@ -292,7 +292,7 @@ const HealthCareDashboard = ({ order, onClose }) => {
                     <p><strong>Name:</strong> {detail.fishProfile.name}</p>
                     <p><strong>Weight:</strong> {detail.fishProfile.weight}</p>
                     <p><strong>Gender:</strong> {detail.fishProfile.gender}</p>
-                    <p><strong>Current Health Status:</strong> {latestStatus.status}</p>
+                    <p><strong>Current Health Status:</strong> {latestStatus?.status}</p>
                   </div>
                 );
               })}
