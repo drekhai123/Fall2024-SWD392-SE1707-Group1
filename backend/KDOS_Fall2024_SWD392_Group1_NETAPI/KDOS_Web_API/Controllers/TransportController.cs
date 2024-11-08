@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KDOS_Web_API.Models.Domains;
 using KDOS_Web_API.Models.DTOs;
+using KDOS_Web_API.Models.DTOs.TransportDTOs;
 using KDOS_Web_API.Models.Enum;
 using KDOS_Web_API.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -33,7 +34,7 @@ public class TransportController : ControllerBase
     }
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> GetTransportById([FromRoute]int id)
+    public async Task<IActionResult> GetTransportById([FromRoute] int id)
     {
         try
         {
@@ -146,6 +147,37 @@ public class TransportController : ControllerBase
             if (transportModel == null)
             {
                 return NotFound("Staffs Cannot Be Assigned!");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            return StatusCode(500, "Internal server error" + ex);
+        }
+
+        // Map the updated order back to a DTO for the response
+        var updatedTransportDto = mapper.Map<TransportDTO>(transportModel);
+
+        // Return the updated order with a 200 OK status
+        return Ok(updatedTransportDto);
+    }
+    [HttpPatch]
+    [Route("Status/{transportId}")]
+    public async Task<IActionResult> UpdateOrderStatus([FromRoute] int transportId, [FromBody] UpdateTransportStatusDTO updateTransportDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var transportModel = mapper.Map<Transport>(updateTransportDTO);
+
+        try
+        {
+            transportModel = await transportRepository.UpdateTransport(transportId, transportModel);
+            if (transportModel == null)
+            {
+                return NotFound("Transprt Cannot Be Changed!");
             }
         }
         catch (Exception ex)

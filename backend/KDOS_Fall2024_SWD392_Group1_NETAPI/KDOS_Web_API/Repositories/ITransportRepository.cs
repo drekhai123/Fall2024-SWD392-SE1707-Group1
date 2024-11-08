@@ -9,6 +9,7 @@ namespace KDOS_Web_API.Repositories
         Task<Transport?> GetTransportById(int id);
         Task<Transport?> AddNewTransport(Transport transport);
         Task<Transport?> UpdateTransport(int id, Transport transport);
+        Task<Transport?> UpdateTransportStatus(int id, Transport transport);
         Task<Transport?> DeleteTransport(int id);
         Task<Transport?> GetByDeliveryStaff(int id);
         Task<List<Transport>> GetTransportByStatus(TransportStatus status);
