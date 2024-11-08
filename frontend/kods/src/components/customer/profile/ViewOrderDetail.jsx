@@ -44,7 +44,7 @@ function getStatusColor(status) {
     case 'HEALTHY':
       return 'green';
     case 'UNHEALTHY':
-      return 'yellow';
+      return 'purple';
     case 'SICK':
       return 'orange';
     case 'DECEASED':

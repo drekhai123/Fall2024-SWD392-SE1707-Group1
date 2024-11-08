@@ -37,6 +37,11 @@ const HealthCareDashboard = ({ order, onClose }) => {
   const [selectedFishProfileId, setSelectedFishProfileId] = useState('');
   const toast = useRef(null);
   const navigate = useNavigate();
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' for ascending, 'desc' for descending
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -45,7 +50,15 @@ const HealthCareDashboard = ({ order, onClose }) => {
         const response = await GetAllOrders(token);
         console.log("Fetched orders:", response.data);
         console.log(`Total orders fetched: ${response.data.length}`);
-        setOrders(response.data);
+
+        // Sort orders by date based on sortOrder
+        const sortedOrders = response.data.sort((a, b) => {
+          return sortOrder === 'asc'
+            ? new Date(a.createdAt) - new Date(b.createdAt)
+            : new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        setOrders(sortedOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
@@ -53,7 +66,7 @@ const HealthCareDashboard = ({ order, onClose }) => {
       }
     };
     fetchOrders();
-  }, []);
+  }, [sortOrder]); // Add sortOrder as a dependency
 
   const handleSubmit = async () => {
     // Check for negative values
@@ -182,7 +195,21 @@ const HealthCareDashboard = ({ order, onClose }) => {
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>CustomerId</th>
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>OrderId</th>
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>Delivery Status</th>
-                <th style={{ border: '1px solid #ccc', padding: '8px' }}>Created At</th>
+                <th style={{ border: '1px solid #ccc', padding: '8px', whiteSpace: 'nowrap' }}>
+                  Created At
+                  <Button
+                    label={sortOrder === 'asc' ? '↑' : '↓'}
+                    onClick={toggleSortOrder}
+                    style={{
+                      display: 'inline-block',
+                      padding: '2px 5px',
+                      fontSize: '12px',
+                      lineHeight: '1',
+                      minWidth: 'auto',
+                      marginLeft: '2px'
+                    }}
+                  />
+                </th>
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>Sender Name</th>
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>Recipient Name</th>
                 <th style={{ border: '1px solid #ccc', padding: '8px' }}>Action</th>
@@ -253,16 +280,22 @@ const HealthCareDashboard = ({ order, onClose }) => {
             <h2 style={{ fontSize: '28px', fontWeight: 'bold', textAlign: 'center', margin: '20px 0' }}>Fish Profile</h2>
             {orderDetails && orderDetails
               .filter(detail => detail.orderDetailsId === selectedFishProfileId)
-              .map((detail) => (
-                <div key={detail.orderDetailsId}>
-                  <p><strong>OrderDetails ID:</strong> {detail.orderDetailsId}</p>
-                  <p><strong>Fish Profile ID:</strong> {detail.fishProfileId}</p>
-                  <p><strong>Name:</strong> {detail.fishProfile.name}</p>
-                  <p><strong>Weight:</strong> {detail.fishProfile.weight}</p>
-                  <p><strong>Gender:</strong> {detail.fishProfile.gender}</p>
-                  <p><strong>Current Health Status:</strong> {detail.orderDetailsId.healthStatus}</p>
-                </div>
-              ))}
+              .map((detail) => {
+                const latestStatus = detail.healthStatus.reduce((latest, current) => {
+                  return new Date(current.date) > new Date(latest.date) ? current : latest;
+                }, detail.healthStatus[0]);
+
+                return (
+                  <div key={detail.orderDetailsId}>
+                    <p><strong>OrderDetails ID:</strong> {detail.orderDetailsId}</p>
+                    <p><strong>Fish Profile ID:</strong> {detail.fishProfileId}</p>
+                    <p><strong>Name:</strong> {detail.fishProfile.name}</p>
+                    <p><strong>Weight:</strong> {detail.fishProfile.weight}</p>
+                    <p><strong>Gender:</strong> {detail.fishProfile.gender}</p>
+                    <p><strong>Current Health Status:</strong> {latestStatus.status}</p>
+                  </div>
+                );
+              })}
             <label htmlFor="healthStatus" style={{ fontWeight: 'bold', marginBottom: '10px', fontSize: '18px' }}>Change Health Status:</label>
             <Dropdown
               id="healthStatus"
