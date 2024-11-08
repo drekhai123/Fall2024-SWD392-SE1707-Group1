@@ -121,7 +121,7 @@ export function Transports() {
           header="Start Delivery"
           body={(rowData) => {
             const isOnTheWay = deliveryStatus[rowData.transportId] === "On the way";
-            const isDelivering = rowData.status === "DELIVERING"; // Check if status is DELIVERING
+            const isDelivering = rowData.status === "DELIVERED" || rowData.status === "DELIVERING"; // Check if status is DELIVERING
 
             return isDelivering || isOnTheWay ? ( // Display "On the way" if status is DELIVERING or already marked as "On the way"
               "On the way"
@@ -131,7 +131,7 @@ export function Transports() {
                 severity="success"
                 className="text-black !bg-green-500 border border-black p-2"
                 onClick={() => confirmStartDelivery(rowData)} // Call the confirmation function
-                disabled={isOnTheWay} // Disable the button if it's already "On the way" or there are no orders
+                disabled={isOnTheWay || isDelivering} // Disable the button if it's already "On the way" or there are no orders
               />
             );
           }}
