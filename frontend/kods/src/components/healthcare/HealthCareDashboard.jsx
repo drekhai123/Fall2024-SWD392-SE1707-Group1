@@ -7,6 +7,7 @@ import { Toast } from 'primereact/toast';
 import { GetAllOrders, getOrderDetailsByOrderId } from '../api/OrdersApi';
 import { createNewHealthCareStaff } from '../api/HealthcareStaffApi';
 import { useNavigate } from 'react-router-dom';
+import { googleLogout } from '@react-oauth/google';
 
 const healthStatuses = [
   'HEALTHY',
@@ -89,6 +90,7 @@ const HealthCareDashboard = ({ order, onClose }) => {
   const handleLogout = () => {
     console.log('User logged out');
     sessionStorage.clear(); // Clear all session storage data
+    googleLogout()
     navigate('/login');
   };
 
@@ -150,8 +152,15 @@ const HealthCareDashboard = ({ order, onClose }) => {
   };
 
   const user = JSON.parse(sessionStorage.getItem('user'));
-  const username = user.userName;
-  const role = user.role || 'User';
+  const username = user?.userName;
+  const role = user?.role || 'User';
+  useEffect(() => {
+    if(user?.role !=="healthcare"){
+      alert('Invalid User!')
+      console.log("User is not a healthcare Staff, redirecting to home page")
+      navigate('/error');
+    }
+  },[user])
 
   return (
     <div style={{ display: 'flex' }}>

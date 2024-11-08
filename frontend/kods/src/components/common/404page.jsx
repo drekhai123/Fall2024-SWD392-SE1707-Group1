@@ -5,7 +5,7 @@ import styles from '../../css/NotFound.module.css';
 export default function NotFound() {
   const navigate = useNavigate();
   const goBackHome = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   return (
