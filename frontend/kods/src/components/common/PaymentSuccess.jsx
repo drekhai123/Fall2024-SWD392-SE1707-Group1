@@ -30,7 +30,7 @@ const PaymentSuccess = () => {
       // Call the API to execute the payment
       const executePayment = async () => {
         try {
-          const response = await axios.post('https://localhost:7250/api/VNPay/Execute', data, {
+          const response = await axios.post('https://kdosdreapiservice.azurewebsites.net/api/VNPay/Execute', data, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
