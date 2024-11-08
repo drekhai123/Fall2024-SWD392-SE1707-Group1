@@ -6,6 +6,7 @@ import DeliveryStaffManager from './deliverystaffmanager';
 import StaffManager from './staffmanager';
 import CustomerManager from './customermanager';
 import Reports from './reports';
+import HealthcareStaffManager from './healthcaremanager';
 import Logout from './logout';
 
 function AdminPage() {
@@ -38,6 +39,8 @@ function AdminPage() {
         return <DeliveryStaffManager selectedAccountId={selectedAccountId} />;
       case 'staffmanagement': // New case for staff management
         return <StaffManager selectedAccountId={selectedAccountId} />;
+      case 'healthcaremanagement':
+        return <HealthcareStaffManager selectedAccountId={selectedAccountId} />;
       case 'customermanagement': // New case for customer management
         return <CustomerManager selectedAccountId={selectedAccountId} />;
       case 'logout': // New case for logout
@@ -76,6 +79,11 @@ function AdminPage() {
             <li>
               <button onClick={() => handleAccountClick('staffmanagement')} className={activeComponent === 'staffmanagement' ? 'active' : ''}>
                 Manage Staff
+              </button>
+            </li>
+            <li>
+              <button onClick={() => handleAccountClick('healthcaremanagement')} className={activeComponent === 'healthcaremanagement' ? 'active' : ''}>
+                Manage Healthcare Staff
               </button>
             </li>
             <li>

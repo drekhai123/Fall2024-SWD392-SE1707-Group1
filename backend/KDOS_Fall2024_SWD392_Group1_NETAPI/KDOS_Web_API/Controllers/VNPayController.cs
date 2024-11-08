@@ -89,21 +89,9 @@ namespace KDOS_Web_API.Controllers
             {
                 var pay = new PayLib();
 
-                // Validate the payment signature
-                //bool isValidSignature = pay.ValidateSignature(request.VnpSecureHash, _configuration["Vnpay:HashSecret"]);
-
-                //if (isValidSignature)
-                //{
-                //    return BadRequest(new ResponsePayment
-                //    {
-                //        Success = false,
-                //        StatusMessage = "Invalid payment signature" ,
-                //        ResponseDate = DateTime.UtcNow
-                //    });
-                //}
-
-                // Retrieve the transaction ID and update payment status
+                // Retrieve the transaction ID and response code
                 var transactionId = request.VnpTxnRef;
+                var responseCode = request.VnpResponseCode;
                 var payment = await _paymentRepository.GetPaymentByTransactionIdAsync(transactionId);
 
                 if (payment == null)
@@ -116,28 +104,51 @@ namespace KDOS_Web_API.Controllers
                     });
                 }
 
-                // Update payment status based on VNPay's response
-                payment.Status = Models.Enum.PaymentStatus.PAID;
-                payment.Orders.PaymentStatus = Models.Enum.PaymentStatus.PAID;
-                // Save the updated status
-                await _paymentRepository.UpdatePaymentStatusAsync(payment);
-
-                // Construct the response
-                var responsePayment = new ResponsePayment
+                // Check the response code
+                if (responseCode == "00") // Payment successful
                 {
-                    paymentId = payment.PaymentId,
-                    VnpTransactionId = transactionId,
-                    OrderId = payment.OrderId,
-                    Success = true,
-                    ResponseDate = DateTime.UtcNow,
-                    StatusMessage = "Payment successful"
-                };
+                    // Update payment status to PAID
+                    payment.Status = Models.Enum.PaymentStatus.PAID;
+                    payment.Orders.PaymentStatus = Models.Enum.PaymentStatus.PAID;
+                    // Save the updated status
+                    await _paymentRepository.UpdatePaymentStatusAsync(payment);
 
-                return Ok(responsePayment);
+                    // Construct the response
+                    var responsePayment = new ResponsePayment
+                    {
+                        paymentId = payment.PaymentId,
+                        VnpTransactionId = transactionId,
+                        OrderId = payment.OrderId,
+                        Success = true,
+                        ResponseDate = DateTime.UtcNow,
+                        StatusMessage = "Payment successful"
+                    };
+
+                    return Ok(responsePayment);
+                }
+                else if (responseCode == "24") // Payment failed
+                {
+                    return Ok(new ResponsePayment
+                    {
+                        Success = false,
+                        StatusMessage = "Payment failed!",
+                        ResponseDate = DateTime.UtcNow
+                    });
+                }
+                else
+                {
+                    // Handle other response codes as necessary
+                    return BadRequest(new ResponsePayment
+                    {
+                        Success = false,
+                        StatusMessage = "Unknown response code.",
+                        ResponseDate = DateTime.UtcNow
+                    });
+                }
             }
             catch (Exception ex)
             {
-                // Log the error and return a 500 error
+                // Log the error (ex) if necessary
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "An error occurred while processing the payment." });
             }
         }

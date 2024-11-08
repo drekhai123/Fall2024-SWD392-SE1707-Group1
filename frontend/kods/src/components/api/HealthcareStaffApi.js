@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { baseUrl, headers, getJwtToken } from "./Url";
 import axios from "axios";
 const getAllHealthCareStaffURL = baseUrl + "/HealthCareStaff";
+const healthStatusURL = baseUrl + "/HealthStatus";
 
 // Function to get headers with token
 const getHeaders = () => {
@@ -51,6 +52,16 @@ export async function UpdateHealthCareStaff(id, data) {
   } catch (error) {
     console.error("Error fetching HealthCare Staff:", error);
     throw error; // Throw error to be handled in the calling function
+  }
+}
+
+export async function createHealthStatus(healthStatusData) {
+  try {
+    const response = await axios.post(healthStatusURL, healthStatusData, { headers: getHeaders() });
+    return response.data; // Assuming the API returns the created health status data
+  } catch (error) {
+    console.error('Error creating health status:', error);
+    throw error; // Rethrow the error for handling in the calling function
   }
 }
 

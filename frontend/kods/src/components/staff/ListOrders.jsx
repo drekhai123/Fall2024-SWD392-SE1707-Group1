@@ -26,7 +26,9 @@ export const ListOrders = ({ visible, onHide, transportId }) => {
             'Authorization': `Bearer ${token}`,
           },
         });
-        setOrdersData(response.data.filter(data => data.deliveryStatus === 'PROCESSING'));
+        setOrdersData(response.data.filter(data =>
+          data.deliveryStatus === 'PROCESSING' && data.transportId !== 0
+        ));
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
@@ -67,17 +69,6 @@ export const ListOrders = ({ visible, onHide, transportId }) => {
           <Column field="senderPhoneNumber" header="Sender Phone Number" />
           <Column field="senderAddress" header="Sender Address" />
           <Column field="totalCost" header="Total Costs" />
-          <Column
-            header="Health Check"
-            body={(rowData) => (
-              <Button
-                label="Check"
-                severity="info"
-                className="text-black !bg-cyan-500 border border-black p-2"
-                onClick={() => openAddTransportDialog(rowData)}
-              />
-            )}
-          />
         </DataTable>
       )}
       {isOpenHealth && selectedOrder && (
