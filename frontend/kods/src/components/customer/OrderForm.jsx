@@ -6,7 +6,7 @@ import "../../css/OrderForm.css";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { getJwtToken } from "../api/Url";
-import { postOrders } from "../api/OrdersApi";
+import { getOrderByCustomerId, postOrders } from "../api/OrdersApi";
 import { postOrderDetailsByOrderId } from "../api/OrdersApi";
 import { createNewPaymentRequest } from "../api/PaymentApi";
 
@@ -80,6 +80,16 @@ export default function OrderForm({ onSuggestionClick, distance }) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+  // Filtering the fish Profile already inside any order
+  const filterFishProfiles = (fishProfiles, orders) => {
+    // Create a set of fishprofileIds in orders for faster lookup
+    const orderFishProfileIds = new Set(
+      orders.flatMap(order => order.orderDetails.map(details => details.fishProfileId))
+    );
+    console.log(orderFishProfileIds)
+    // Filter out fishProfiles that are found in orderFishProfileIds
+    return fishProfiles.filter(profile => !orderFishProfileIds.has(profile.fishProfileId));
+  };
 
   //Hàm fecth API get FishProfile
   const getFishProfile = useCallback(async () => {
@@ -91,6 +101,13 @@ export default function OrderForm({ onSuggestionClick, distance }) {
         }
       });
       setData(response?.data);
+
+      const customerOrderData = await getOrderByCustomerId(user?.customer?.customerId);
+      //console.log(customerOrderData)
+      // Filter the fishProfiles based on the cross-reference
+      const filteredFishProfiles = filterFishProfiles(response?.data, customerOrderData);
+
+      setData(filteredFishProfiles); // Update state with filtered data
     } catch (error) {
       console.error("Error fetching fish data:", error);
     } finally {
@@ -905,7 +922,6 @@ export default function OrderForm({ onSuggestionClick, distance }) {
           <div className="popup">
             <div className="container-popup">
               <h3 className="title-popup">Choose fish</h3>
-
               <div className="layout-checkbox">
                 <div className="fish-item">
                   <label className="label-checkbox-0">

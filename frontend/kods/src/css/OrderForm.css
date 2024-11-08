@@ -265,8 +265,8 @@
     background-color: #ffffff05;
     border-radius: 8px;
     padding: 20px;
-    width: 80%;
-    max-width: 600px;
+    width: 90%;
+    max-width: 100px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease-in-out;
   }
