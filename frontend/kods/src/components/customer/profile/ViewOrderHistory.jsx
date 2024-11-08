@@ -59,17 +59,21 @@ const OrderHistory = () => {
           if (customerId) {
             const data = await getOrderByCustomerId(customerId);
             console.log('Fetched order data:', data);
-            setOrders(data);
+            setTimeout(() => {
+              setOrders(data);
+              setLoading(false); // Chỉ cập nhật loading sau khi load xong dữ liệu
+            }, 2000); // Trì hoãn 2 giây
           } else {
             console.error('Customer ID not found');
+            setLoading(false);
           }
         } else {
           console.error('User data not found in session storage');
+          setLoading(false);
         }
       } catch (error) {
         console.error('Error fetching orders:', error);
-      } finally {
-        setLoading(false); // delay loading từ từ lại
+        setLoading(false);
       }
     };
 
