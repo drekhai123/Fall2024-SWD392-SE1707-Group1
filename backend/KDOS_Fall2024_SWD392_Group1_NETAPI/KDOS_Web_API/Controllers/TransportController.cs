@@ -134,7 +134,7 @@ public class TransportController : ControllerBase
         var transportModel = await transportRepository.GetTransportById(transportId);
         if (transportModel == null)
         {
-            return null;
+            return NotFound();
         }
 
         // Update the order model with the new data
@@ -143,6 +143,10 @@ public class TransportController : ControllerBase
         try
         {
             transportModel = await transportRepository.UpdateTransport(transportId, transportModel);
+            if (transportModel == null)
+            {
+                return NotFound("Staffs Cannot Be Assigned!");
+            }
         }
         catch (Exception ex)
         {
@@ -151,10 +155,10 @@ public class TransportController : ControllerBase
         }
 
         // Map the updated order back to a DTO for the response
-        var updatedOrderDto = mapper.Map<TransportDTO>(transportModel);
+        var updatedTransportDto = mapper.Map<TransportDTO>(transportModel);
 
         // Return the updated order with a 200 OK status
-        return Ok(updatedOrderDto);
+        return Ok(updatedTransportDto);
     }
 
     [HttpDelete]

@@ -80,7 +80,7 @@ namespace KDOS_Web_API.Repositories
         {
             var transportModel = await transportContext.Transport.FindAsync(id);
             var staffExist = await transportContext.Transport.FirstOrDefaultAsync(x => x.HealthCareStaffId == transport.HealthCareStaffId || x.DeliveryStaffId == transport.DeliveryStaffId);
-            if (transportModel == null || !transportModel.Equals(staffExist))
+            if (transportModel == null || (staffExist!=null && !transportModel.Equals(staffExist)))
             {
                 // Checking if the staff they wanted to change is free (not in other transport)
                 return null;

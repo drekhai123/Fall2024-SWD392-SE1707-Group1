@@ -102,7 +102,7 @@ namespace KDOS_Web_API.Controllers
         public async Task<IActionResult> UpdateDeliveryStaffStatus([FromRoute] int staffId, [FromBody] UpdateDeliveryStaffStatusDTO updateDeliveryStaffDTO)
         {
             var deliveryStaffModel = mapper.Map<DeliveryStaff>(updateDeliveryStaffDTO);
-            deliveryStaffModel = await deliveryStaffRepository.UpdateDeliveryStaff(staffId, deliveryStaffModel);
+            deliveryStaffModel = await deliveryStaffRepository.UpdateDeliveryStaffStatus(staffId, deliveryStaffModel);
             if (deliveryStaffModel == null)
             {
                 return NotFound();
